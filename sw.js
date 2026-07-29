@@ -1,7 +1,7 @@
 /* Rota — çevrimdışı önbellek.
    HTML için ÖNCE AĞ: yeni sürüm yayınlanınca anında görünür, internet yoksa önbellekten açılır.
    Diğer dosyalar için önce önbellek, arkada sessizce tazelenir. */
-const SURUM = 'rota-2026-09-26a';
+const SURUM = 'rota-2026-09-30a';
 const KABUK  = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
