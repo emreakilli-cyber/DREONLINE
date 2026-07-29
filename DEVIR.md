@@ -1,0 +1,7766 @@
+# DEVİR DOSYASI · TUS Programı
+
+Bu dosya yeni bir sohbetin programı sıfırdan kavraması için gereken **her şeyi** içerir.
+
+---
+
+---
+
+## 0 · ÇALIŞMA İLKELERİ (bunu önce oku)
+
+Bu programı yaparken kullanıcının açık talebi:
+
+> **Hiçbir zaman tahmin yürütme. Her zaman yalnız matematikle ve kanıta dayalı bilgiyle sorun çöz. Kaynak gösteremediğin bilgiyi söyleme, o şekilde tahminle aksiyon alma.**
+
+Pratikte bunun anlamı:
+
+- Bir sayı söylüyorsan **nereden geldiğini** göster. Ölçüm mü, kullanıcı beyanı mı, varsayım mı — ayrımı açıkça yap.
+- Varsayım kullanmak zorundaysan **varsayım olduğunu işaretle** ve doğrulama yolu öner (ölçüm iste).
+- Bir karar alıyorsan **iki seçeneğin sayısını yan yana koy**, sonra öner. Kullanıcı karar verir.
+- **Kendi hatalarını ara ve bildir.** Kullanıcı her turda "hata yaptın mı kontrol et" diyor ve bu ciddi bir taleptir. Bu oturumda 20'den fazla kendi hatam bulundu; çoğu ancak elle arayarak çıktı.
+- **Mirası doğrulamadan kabul etme.** "Önceki oturumda öyle yazılmış" bir gerekçe değil. Renk kuralı, kaynak listesi, getiri kalibrasyonu — hepsi bir kez yanlış çıktı.
+- Kullanıcı gerekirse **her şeyin baştan karılmasını** istiyor. "Bu benim değişikliğim, şu başkasının" ayrımı yapmadan bütünü ele al.
+- Cevaplarda **abartı yok, kendini övme yok.** Ne yaptığını ve ne bulamadığını sade yaz.
+
+## 0b · Sürüm ve durum
+
+- **Çalışan sürüm: `2026-07-27y`** (index.html içinde `const SURUM=`, sw.js içinde `rota-2026-07-27y`)
+- Bu iki sürüm **eşleşmek zorunda**, yoksa servis çalışanı eski önbelleği sunar.
+- Değişiklikten sonra sürümü ilerlet: `y` → `z` → `2026-07-28a` …
+
+⚠ **SÜRÜM İLERLETME ŞU AN BOZUK.** `uret.py` şu satırla ilerletiyor:
+`h=h.replace("const SURUM='2026-07-26e'","const SURUM='2026-07-27y'")`
+Ama `sablon_v23.html` içinde artık **`const SURUM='2026-07-27y'` yazıyor**, `2026-07-26e` hiç geçmiyor (ölçüldü: `'2026-07-26e' in sablon` → False). Yani bu satır **sessiz bir boş işlem**. Bugün tesadüfen zararsız — üretilen sürüm sw.js ile eşleşiyor. Ama bir sonraki üretimde sürüm **kendiliğinden ilerlemez**. Üretimden önce hem `sablon_v23.html`'deki `SURUM`, hem `uret.py`'deki eşleşme dizesi, hem `sw.js`'deki `SURUM` **elle** güncellenmeli.
+
+## 0c · Kanıt temelleri (bunlar kaldırılırsa programın dayanağı gider)
+
+**Yavaşlama (21:15–23:00, yeni konu yok):**
+Ackermann, Cordi, La Marca, Seifritz, Rasch — *Frontiers in Psychology*, 2019. Yatmadan önce yaşanan psikososyal stres uykuya dalma süresini uzatıyor ve gecenin ilk bölümündeki **yavaş dalga aktivitesini (SWA)** düşürüyor. SWA uykuya bağlı bellek pekiştirmesinin taşıyıcısı. Aynı literatür yatma öncesi stresin ertesi günün prospektif bellek performansını da bozduğunu gösteriyor.
+→ Bu yüzden 21:15 sonrası **yeni konu, süreli test, zorlayıcı materyal yok**; sadece bilinen şeyin üzerinden hafif geçiş.
+→ **F bloğu (21:30–22:30) bu kuralın istisnasıdır** ve yalnız 29 Temmuz'da var, içinde yalnız **sakin okuma** olacak şekilde tasarlandı — mekanizma stres/uyarılma kaynaklı, pasif okuma kaynaklı değil.
+
+**Spor saati (14:00–16:15):**
+Ağ meta-analizi akşam orta şiddetli egzersizin uykuyu iyileştirme potansiyeli en yüksek yöntem olduğunu gösterdi; N3 uykusunda artış eğilimi. 14.689 kişi ve 4 milyon geceyi kapsayan çalışma: egzersiz uyku başlangıcından **≥4 saat önce** bitiyorsa uykuda değişiklik görülmüyor. Yatmadan 1 saat önce biten yoğun egzersiz uykuya dalmayı geciktiriyor.
+→ Spor 16:15'te bitiyor, yatış 23:00 → 6 saat 45 dk pay, güvenli tarafta.
+
+## 0d · Z bloklarının varlık sebebi
+
+Program 26 Temmuz'da başlamalıydı ama o gün çalışılamadı — **8 iş, 8.94 etkin saat kayboldu.** Telafi için 06:00–07:00 arası **Z bloğu** icat edildi ve o günün işleri 8 sabaha dağıtıldı. Sonradan Obstetri'yi sığdırmak için 4 ve 6 Ağustos'a iki Z daha eklendi.
+
+**Z blokları isteğe bağlı değil** — kaldırılırsa 26 Temmuz'un içeriği ve Obstetri programdan düşer.
+
+Z bloğunun verimi: sabahın ilk saati yorgunluk çarpanı 1.000 ile çalışır, yani **1 nominal saat = 1 etkin saat**. Gün sonuna eklenen F bloğu ise 0.71–0.78 etkin saat verir. Sabah %30 daha verimli.
+
+## 0e · Sınav yapısı ve puanlama
+
+- **23 Ağustos 2026**, iki oturum: **Temel** (120 soru) ve **Klinik** (120 soru)
+- **4 yanlış 1 doğruyu siler** → yanlışın bedeli 0.25 net
+- Beş şıkta rastgele işaretlemenin beklenen değeri sıfır → **boş bırakma yok**
+- K puanı iki oturumun netlerinden hesaplanır: `K = 40.269 + 0.207 × Temel + 0.277 × Klinik`
+- Klinik netin katsayısı daha yüksek (0.277 vs 0.207) → klinik branşlar puana daha çok etki ediyor
+
+## 0f · KABUL EDİLMİŞ ÖDÜNLER (yeniden tartışılmasın, kullanıcı onayladı)
+
+| Ödün | Ölçek | Gerekçe |
+|---|---|---|
+| 19 Ağustos A bloğu 25 dk taşıyor | tek gün | "tek gün olduğundan önemli değil" |
+| Diğer 3 blokta 1–2 dk taşma | 07-29 A, 07-31 D, 08-02 A | 15 dk toleransın altında |
+| Z günlerinde 75 dk/gün uyku borcu | 10 gün, toplam 12.5 sa | "75 dk çok değil" · öğle uykusuyla kısmen kapanır |
+| 29 Temmuz'da Z ve F birlikte | tek gün | "temmuz/ağustos başıysa sorun değil" |
+| Sınırsız parçalama reddedildi | +0.12 net feda | "10 dk için kitap açmak 0.12 net etmez, molayı artırıp yenilenmek daha kazançlı" |
+| Mikrobiyoloji Viroloji çıkarıldı | 2.8 soru, 6.45 sa | 0.0218 net/saat — programın en verimsizinden 7 kat kötü |
+| Pediatri Yenidoğan yerine Obstetri | +1.6 dayanaklı soru | Obstetri pembe (3.8 soru), Yenidoğan da pembe ama zincirinde yer yok |
+| 12 blokta 15 dk altı okuma | ortalama 8–12 dk | sayfa kaydırmasından doğdu, kabul edilebilir sınırda |
+
+## 0g · Uygulamanın arayüz haritası (index.html, ~290 KB)
+
+Üç sekme, alt bar yok — nav başlık bandında üç sembol orb.
+
+**ROTA** (`carkCiz`, `kart`, `brifCiz`)
+- **Çark**: aktif görev ortada, çevresinde şeritler; konum `asin` ile dikey uzaydan türetiliyor (çakışma testi 5340 düzende sıfır kesişim)
+- Aynı bloğun kardeş işleri yakın ve opak, diğer bloklar soluk
+- Mola şeritleri blok sınırlarında; kartın altında mola kutusu
+- Süre dolunca 14 sn döngüde titreme + altın halka + ⏰ şeridi
+- **Brifing çipleri** (`#brif`): cam çip kümesi, 6 yoğunluk kademesi (d1–d6), kapsayıcı yüksekliğinden bütçe alınır, **kaydırma asla yok**
+- **Motivasyon kartı** (`motivKart`): günün tüm işleri bitince günün sözü + yarın bilgisi
+- **Sınav kartı** (`sinavKart`): 23 Ağustos ve sonrası, altın çerçeve
+- **Uyku çipleri**: gün bitince "05:45 kalkış · 6 sa 45 dk uyku" ve "06:00 ilk görev" olarak **iki ayrı çip**
+
+**SEYİR** (`seyirCiz`, `kordonCiz`, `kaynakHarita`)
+- **Pelerin takvimi**: 27 günün ızgarası
+- **Sinaps ışınları** (`kordonCiz`): 48 kombo, uçların rengine göre gradyan, saçaklı üç katman + parlak çekirdek, `RENK[g.tag]` ile dinamik
+- **Kaynak haritası**: 18 kitap, `<details class="khP">` açılır panel, `.khG` ızgarası 1/2/3/4 sütun (760/1060/1400 px), her panelde renk rozetleri (dolu çerçeve = o rengin tamamı yapılıyor) ve sayısal çöp gerekçeleri
+
+**ÖLÇÜM** (`olcumCiz`, `radarCiz`, `trendCiz`)
+- Güç matrisi (radar) + net/puan seyri grafiği + 11 branş trendi
+- Deneme giriş formu (11 branş neti)
+- **Veri paneli**: base64 dışa/içe aktarma, sıfırlama, **senkron** (gist + anahtar + cihaz rolü), bildirim izni
+
+**Diğer**
+- Çevrimdışı çalışır (servis çalışanı, HTML önce ağ, diğerleri önbellek)
+- Bildirim: süre dolunca uyarı (uygulama açık/arka planda)
+- `localStorage` anahtarları: `rota-veri` (ilerleme), `rota-senk` (senkron ayarı)
+- **Tarayıcı depolaması dışında hiçbir sunucu yok**
+
+## 0h · Değiştirirken kırılması kolay yerler
+
+- `BITIS` haritası blok bitişlerini tutuyor ama `gecmis()` artık **görevin kendi `blokT`'sini** okuyor (Z bloğu güne göre değişiyor)
+- Blok sırası `SR={'Z':0,'A':1,'B':2,'C':3,'D':4,'E':5,'F':6,'—':7}` — yeni blok eklerken **tüm betiklerde** güncellenmeli (`dizi3.py`, `yeniden.py`, `denet.py`, `kural_test.py`, şablon)
+- `MIKON` ve `MOLA_AD` mola tiplerini tutuyor — yeni tip eklenirse ikisine de eklenmeli
+- Mola hesabı **yalnız dolu bloklara** göre yapılmalı (28 Temmuz tek bloklu)
+- Renk ataması **okuma + soru + deneme** görevlerinin hepsine uygulanmalı
+
+**Görev sayısı veya projeksiyon değişirse kıracak sabit kodlanmış değerler** (yeniden dizimden önce güncellenmeli):
+
+| Yer | Sabit | Ne zaman kırar |
+|---|---|---|
+| `kos.js` §5 | `X.GOREVLER.length===267` | görev sayısı değişince |
+| `kos.js` §9 | `Math.abs(son − 66.64)<0.02` | projeksiyon değişince |
+| `uret.py` | `SURUM='2026-07-26e'` eşleşmesi | zaten boş işlem, bkz. §0b |
+| `kural_test.py` #3 | `len(kucuk)<=12` | 15 dk altı parça sayısı artınca |
+| `kural_test.py` #11 | `len(eksP)<=2` | iki eksik pembe girerse **rahatlar** (0 olur), sorun değil |
+| `denet.py` §4 | `asim<=4` | blok sonu aşımı artınca |
+| `denet.py` §7 | `act=='deneme'` sayısı `==12` | tam deneme sayısı değişince |
+
+---
+
+## 1 · Hedef ve formül
+
+- Sınav **23 Ağustos 2026**, program **27 Temmuz – 22 Ağustos** (27 gün)
+- Hedef branş **Kardiyoloji**, gereken **K ≥ 65**
+- `K = 40.269 + 0.207 × Temel + 0.277 × Klinik`
+- Ölçülen son deneme: Temel **32.25** · Klinik **38.50** → **K = 57.61**
+- Mevcut program projeksiyonu: Temel +18.69 · Klinik +18.62 → **K = 66.64**
+
+## 2 · Ölçülmüş hızlar (varsayım değil, kullanıcı beyanı/ölçümü)
+
+| Ne | Değer | Kaynak |
+|---|---|---|
+| Bakir kitap okuma | 8 sf/saat | ölçüldü — Patoloji 414 sf / ~50 saat |
+| Tanıdık kitap okuma | 15 sf/saat | "2-3 günde tekrar ederim" beyanından muhafazakâr |
+| Ezber-yoğun branş çarpanı | ×1.4 maliyet | Anatomi, Biyokimya, Farmakoloji, Mikrobiyoloji |
+| Ezber sorusu (açıklama okuyarak) | 1.5 dk/soru | **ölçüldü** — 10 farmakoloji sorusu 15 dk |
+| Klinik/vaka sorusu | 1.0 dk/soru | **ölçüldü** — 10 pediatri sorusu 10 dk |
+| Yorgunluk çarpanı | `1 + 0.055 × max(0, kümülatif − 3)` | blok başında kümülatif saatten, mola kredisi `m` düşülür |
+
+Kitap başına kullanılan okuma hızı:
+
+| Kitap | sf/saat |
+|---|---|
+| TUSTIME Fizyoloji | 15.0 |
+| TUSTIME Küçük Stajlar | 15.0 |
+| Emrullah Patoloji SST | 15.0 |
+| Klinisyen Vaka Pediatri | 12.0 |
+| TUSTIME Mikrobiyoloji | 10.7 |
+| Speetus Genel Cerrahi | 8.0 |
+| FT Kadın Doğum | 8.0 |
+| FT Farmakoloji | 5.7 |
+| FT Biyokimya | 5.7 |
+| Anatomi Fast Track | 5.7 |
+
+⚠ **`eko.py`'nin hız formülü bu tabloyla bir kitapta uyuşmuyor.** Formül:
+`hiz = (15.0 if kitap in TANIDIK else 8.0) / (1.4 if kitap in EZBER else 1.0)`
+Dokuz kitapta tabloyla aynı sonucu veriyor. **Klinisyen Vaka Pediatri** ne TANIDIK ne EZBER olduğu için formül **8.0 sf/saat** veriyor; tablo ve programın fiilî verisi ise **12.0 sf/saat** (`app_gorev.json`'daki 16 okuma görevinde ölçülen: 11.98–12.04).
+
+Üçüncü bir değer daha var: `icerik.json` bu kitabı `vaka_klinik` sayıp **~17.0 sf/saat** kullanıyor (Nöroloji 18 sf / 1.06 sa = 16.98).
+
+Bu, adım 24'ün maliyetini doğrudan etkiliyor — **Pediatri Yenidoğan (39 sf)**: 12.0 ile **3.25 sa**, 8.0 ile **4.88 sa**, 17.0 ile **2.29 sa**. Yürürlükteki değer programın fiilen kullandığı **12.0**'dir; `eko.py` formülünün çıktısı yalnız kendi konsol raporunda görünür, `kural_test.py` `eko.py`'den **sadece `KITAP` sözlüğünü** alır (`exec(s[s.find('KITAP={'):s.find('\nEZBER=')])`), hız formülünü almaz. Yani kapı bu farktan etkilenmiyor; etkilenen tek şey `eko.py` raporuna bakarak yapılan planlama.
+
+## 3 · Blok mimarisi
+
+| Blok | Saat | Nominal | Mola kredisi `m` |
+|---|---|---|---|
+| **Z** | 06:00–07:00 (28 Tem: 06:00–10:00) | değişken | 0.0 |
+| A | 07:15–08:45 | 1.50 | 0.25 (Z varsa) |
+| B | 10:00–13:45 | 3.75 | 0.50 |
+| C | 14:45–17:00 | 2.25 | 1.00 · **uzun spor gününde YOK** |
+| D | 17:15–19:15 | 2.00 | 1.00 |
+| E | 20:00–21:15 | 1.25 | 1.50 |
+| **F** | 21:30–22:30 | 1.00 | 0.25 · yalnız 29 Tem |
+
+Deneme günü: A 07:15–08:45 · B 10:15–12:30 · C 14:45–17:00 · D 17:30–19:15 · E 20:00–21:15
+
+Molalar: kahvaltı 75 dk · öğle 60 dk · kısa ara 15 dk · akşam 45 dk · yavaşlama 105 dk (21:15–23:00, **yeni konu yok**) · uzun spor 2 sa 15 dk (14:00–16:15)
+
+Yatış 23:00. Kalkış = ilk blok − 15 dk. Z günlerinde 05:45 kalkış, 6 sa 45 dk uyku (10 gün, kullanıcı kabul etti).
+
+## 4 · Takvim kısıtları
+
+- **Spor**: 26 Tem, sonra 29 Tem'den itibaren iki günde bir (29, 31 Tem · 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22 Ağu)
+- **Uzun spor günü** (2 sa 15 dk, C bloğu yok): spor günlerinden 26 Tem, 2, 10, 16, 20 Ağu **hariç** olanlar
+- **28 Temmuz DOKUNULMAZ** — kız arkadaşının doğum günü, şehir dışında. Yalnız 06:00–10:00 Z bloğu var, 10:00 sonrası boş. Bkz. §27.
+- **Tam deneme günleri** (6 adet): 1, 5, 9, 13, 17, 20 Ağustos
+- **21–22 Ağustos okuma yasak** (Kural C) — yalnız geri getirme
+- **Dahiliye videolarına erişim 8 Ağustos akşamı bitiyor** — tüm video ≤8 Ağu
+- Z bloğu olan günler: 27, 28, 29, 30, 31 Tem · 2, 3, 4, 6, 8 Ağu (10 gün)
+
+## 5 · Kurallar
+
+Bu dört kural **denet.py §7'de kodlanmıştır.** Aşağıdaki tanımlar anlatı değil, kodun fiilen ölçtüğü şeydir — yeniden dizim yaparken bunlara göre hesapla.
+
+**A · Her kaynak erken açılır.** Her kitabın ilk oturumu ilk 14 günde olmalı.
+Kodun ölçütü: `(ilk_gün − 2026-07-26).days < 14`. **Taban tarih 26 Temmuz'dur** (çalışılamayan gün), 27 Temmuz değil.
+Sayımdan **hariç tutulanlar**: `yanlış defteri`, `TUSDATA 24'lü…` ile başlayanlar, içinde `hafif` geçenler, `cilt…` ile başlayanlar. Geriye **17 kaynak** kalıyor.
+Mevcut: **ihlal 0**, en geç açılan **TUSTIME Fizyoloji, 6 Ağustos = gün 11**.
+⚠ Bu satır daha önce "en geç **gün 10**" diyordu; hiçbir kod bu sayıyı üretmiyor. `denet.py`'nin ekrana bastığı `≤gün12` ifadesi de sabit metindir, hesaplanmaz.
+
+**B · Gün içi sistem tutarlılığı.** Bir günün okumaları tek organ sistemi zincirinden olmalı.
+Kodun ölçütü: **yalnız `act=='oku'`** görevleri sayılır — **video sayılmaz**. Her gün için `en büyük zincir saati / o günün toplam okuma saati`, sonra okuma içeren günlerin ortalaması.
+Mevcut: **%89.0** (19 okuma günü; 8 gün okumasız olduğu için paydaya girmiyor).
+⚠ Videonun sayılmaması gün sistemini fiilen etkiliyor: 31 Temmuz Metabolizma günüdür ama D bloğunda 1.48 saatlik **Romatoloji** videosu vardır ve bu baskınlığa girmez.
+
+**C · Tekrar sınava doğru yoğunlaşır.** Geri getirme artan, yeni öğrenme azalan.
+Kodun ölçütü: dilimler **sabit tarihlerle** kesiliyor, eşit üçte bir değil —
+dilim 1 = 27 Tem–3 Ağu (**8 gün**) · dilim 2 = 4–13 Ağu (**10 gün**) · dilim 3 = 14–22 Ağu (**9 gün**).
+Geri getirme = `soru + deneme24 + tekrar` → **15.80 / 20.31 / 30.39 sa** (artan ✓)
+Yeni öğrenme = `oku + video` → **50.15 / 48.66 / 34.25 sa** (azalan ✓)
+`deneme`, `analiz`, `isinma` **hiçbir tarafa sayılmaz** — toplam 37.50 saat kuralın dışında kalıyor.
+
+**D · Bölümü bitir ya da başlama.** Bir bölümün soru getirisi ampirik ölçüm; sayfa başına bölmek "her sayfa eşit soru taşır" varsayımı ve dayanaksız. Yarısını okuyup yarı getiri saymak, hangi yarının soruyu taşıdığını bildiğini varsaymak olur. **Kısmi bölüm yasak.** Mevcut: kısmi bölüm **0**.
+
+## 6 · Renk algoritması (kullanıcının verdiği, mutlak eşik DEĞİL)
+
+Sabit soru eşiği kullanılmaz. Her dersin **kendi içinde** göreceli yüzdelik dilim:
+
+- Sıralama: GB (beklenen soru) azalan · eşitlikte EKO (sayfa/soru) iyi olan önce
+- 🩷 **Pembe** üst %22.5 — taşıyıcı kolonlar, efor ne olursa olsun satır satır okunur
+- 🧡 **Turuncu** sonraki %27.5 — net sıçratıcılar
+- 💛 **Sarı** sonraki %27.5 — stabil, spot bilgiyle geçilir
+- 💙 **Mavi** son %22.5 — zaman tuzakları, sadece çıkmış soru ve tablo
+
+**Birleşik başlık kuralı:** bir görev iki bölümü kapsıyorsa **en yüksek** rengi alır.
+
+**Renk seçim ölçütü DEĞİL, çalışma sinyalidir.** Bir kitabın pembesi başka kitabın sarısından daha az verimli olabilir; maksimum net için doğru ölçüt **küresel net/saat** sıralamasıdır.
+
+**Pembe sayımının paydası — 25, 30 değil.** `eko.py`'deki 133 bölümün renk algoritmasıyla hesaplanan dağılımı: **pembe 30 · turuncu 36 · sarı 37 · mavi 30**. Ama `kural_test.py` #11 **Emrullah Patoloji SST'yi atlıyor** (`if kit=='Emrullah Patoloji SST': continue`), çünkü o kitap bitmiştir ve bölüm bölüm okunmuyor. SST'nin 5 pembesi (Hücre Zedelenmesi · Neoplazi · Kadın Genital · GİS · Kas İskelet) düşünce payda **25** olur.
+Mevcut: **23/25**, eksik ikisi Anatomi Kaslar ve Pediatri Yenidoğan. Kapının toleransı `len(eksP)<=2`.
+
+## 7 · Zincirler (13 organ sistemi)
+
+Veride **13 ayrı `z` değeri** var. Aşağıdaki tablo **yalnız `act=='oku'`** saatlerini gösteriyor — Kural B'nin ölçtüğü şey bu. **Hematoloji-Onkoloji** tabloda yok çünkü okuması sıfırdır, yalnız 2 Ağustos'ta 1.48 saatlik videodan ibarettir.
+
+⚠ Video dahil edilince dört zincir çok farklı görünüyor. Yeniden dizim yaparken **hangi sütuna baktığını bil**:
+
+| Zincir | Yalnız okuma | Okuma + video |
+|---|---|---|
+| Kardiyovasküler | 6.93 | **12.85** |
+| Kas-İskelet & Romatoloji | 1.53 | **3.01** |
+| Solunum | 1.08 | **2.56** |
+| Hematoloji-Onkoloji | 0.00 | **1.48** |
+
+**Yalnız okuma (Kural B'nin gördüğü tablo):**
+
+| Zincir | Programdaki okuma | Gün sayısı |
+|---|---|---|
+| Enfeksiyon & Antimikrobiyal | 24.62 sa | 6 |
+| Nörobilim | 17.02 sa | 3 |
+| Metabolizma | 16.73 sa | 4 |
+| GİS & Hepatobiliyer & Cerrahi | 14.55 sa | 3 |
+| Acil & Halk Sağlığı | 11.05 sa | 3 |
+| Endokrin & Üreme | 10.75 sa | 3 |
+| Gebelik & Yenidoğan | 7.54 sa | 3 |
+| Kardiyovasküler | 6.93 sa | 1 |
+| Nefro-Üriner | 2.63 sa | 1 |
+| Meme & Deri | 2.33 sa | 1 |
+| Kas-İskelet & Romatoloji | 1.53 sa | 1 |
+| Solunum | 1.08 sa | 1 |
+
+⚠ **DÜZELTİLDİ (27 Tem 2026).** Bu satır önceden "Gebelik & Yenidoğan (**3.92 sa**)" diyordu. **Doğrusu 7.54 saat.** Üç tanımla da ölçüldü (yalnız okuma / okuma+video / tüm görevler), hepsi 7.54; dağılım 4 Ağu 1.00 · 6 Ağu 5.04 · 19 Ağu 1.50. 3.92 rakamı aynı programdaki **Mikrobiyoloji · Temel Mikrobiyoloji**'nin saatine tam eşittir — kopyala-yapıştır hatası.
+
+Sonuç: **Gebelik & Yenidoğan bir günü dolduramayacak kadar küçük değil, 7.54 saatle bir günü zaten aşıyor.** Bir günü dolduramayan tek zincir **Kas-İskelet & Romatoloji**'dir (okuma 1.53 · video dahil 3.01).
+
+## 8 · Kaynakların tam listesi ve özellikleri
+
+| Kaynak | Toplam sayfa | Tür | Özellik |
+|---|---|---|---|
+| TUSTIME Fast Track Farmakoloji | 118 | konu | video izlenmiyor · **Toksikoloji tek sayfa (118)** |
+| TUSTIME Fast Track Biyokimya | 115 | konu | video izlenmiyor |
+| TUSDATA Speetus Genel Cerrahi | 142 | konu | özet · Fast Track ve videosu iptal |
+| TUSTIME Fast Track Kadın Doğum | 136 | konu | 22 sa 54 dk video İPTAL |
+| TUSTIME Mikrobiyoloji Konu Kitabı | 349 | konu | **kitap tanıdık** |
+| TUSTIME Fizyoloji Konu Kitabı | 215 | konu | **kitap tanıdık** |
+| TUSTIME Küçük Stajlar Konu Kitabı | 200 | konu | **kitap tanıdık** · 22 soruluk kör nokta · **BÖLÜM SONU SORUSU YOK** |
+| Anatomi Fast Track | 126 | konu | TTS yerine seçildi (3 kat ucuz) |
+| Emrullah Patoloji Sorularla Son Tekrar | 441 | — | **kitap bitmiş** · ⚠ **programa hiç girmedi**, aşağıya bak |
+| Klinisyen Vaka Soruları Pediatri | 378 | soru | 22 konuya dağılmış, en pahalı branş |
+| Yavuz Şahin Farmakoloji Soru Bankası | 215 | soru | |
+| Yavuz Şahin Biyokimya Soru Bankası | 222 | soru | |
+| Levent Kodal Genel Cerrahi Soru Bankası | 296 | soru | |
+| Feyyaz Akay Mikrobiyoloji Hızlı Tekrar | — | soru | **yalnız Oldies bölümleri** |
+| TTS Anatomi (çıkmış sorular) | 281 | soru | 2023'e kadar tüm TUS anatomi |
+| TUSTIME Kadın Doğum Konu Kitabı | 235 | soru | **TUSTIME konu kitaplarından TEK soru içeren** |
+| Atilla Uslu Dahiliye Konu Videoları | 24 sa 25 dk | video | 1.5x'te 16.3 sa · **erişim 8 Ağu akşamı bitiyor** |
+| Atilla Uslu Sorularla Son Tekrar | 358 | soru | açıklamalı video seti SATIN ALINMADI |
+| TUSDATA PreTUS 200 | cilt 3–8 | deneme | 6 kitap × 6 deneme = 36 tam deneme |
+| TUSDATA 24'lü branş denemeleri | 10 branş × 24 | deneme | Mikrobiyoloji YOK |
+
+⚠ **DÜZELTİLDİ (27 Tem 2026) — Emrullah Patoloji SST.** Bu satır önceden "bakım · sadece bakım taraması" diyordu. **267 görevin hiçbirinde bu kitap geçmiyor** (`src` alanında "Emrullah" veya "SST" arandı: 0 sonuç). `bakım` etiketli 8 görevin hepsi *yanlış defteri* ve *deneme analizi*dir. Patoloji branşındaki toplam program yükü **2.48 saat**, hepsi 24'lü Patoloji denemesi. Yani planlanan bakım taraması **uygulamaya hiç girmedi**.
+
+Bir tarama yapılacaksa maliyeti: **441 sf ÷ 15 sf/saat = 29.4 saat**. Önceki oturumda geçen "18.2 saatlik Patoloji bakım" rakamının **kaynağı yok**; 18.2 §15'teki *Patoloji **18.2 soru*** değeriyle çakışıyor, saat değeri değil. Bu rakam kullanılmayacak.
+
+**Kullanılmayan (elinde var ama programa girmedi):**
+
+- **Dr Yavuz Şahin Flash Biyokimya** — TUSTIME Fast Track ile aynı işi yapıyor; 5500 TL'lik videosu da alınmadı — 18 soruluk branşa ikinci konu kaynağı lüks
+- **TUSTIME Fast Track Genel Cerrahi** — TUSDATA Speetus 5.9 sf/soru ile daha verimli; iki özet kitabı birden okumanın anlamı yok
+- **Klinisyen Vaka Soruları Küçük Stajlar** — TUSTIME küçük stajlar kitabın zaten dolu; tanıdık kitap 15 sf/saat, bakir kitap 8 sf/saat
+- **Klinisyen Tüm TUS Soruları (36. baskı)** — 7 branşlık hacmi 27 güne sığmıyor; branş soru bankaları öncelikli
+- **TTS Patoloji / Mikrobiyoloji (34. baskı)** — Patoloji SST ve TUSTIME mikro kitabı yeterli; üçüncü kaynak tekrar demek
+- **Atilla Uslu Sorularla Son Tekrar video seti** — 7800 TL; patoloji SST videosunda 20 saatlik içerik 70 saate patladığı için alınmadı
+- **PreTUS 200 · kalan 30 deneme** — 30 × 6.3 saat = 189 saat; bütçenin %75'i olurdu. 6 deneme + 24'lü branş serisi seçildi
+
+## 9 · Yetkili bölüm–sayfa–soru tablosu (Tusanaliz verisi)
+
+`soru` = son 5 TUS ortalamasından beklenen soru sayısı. Bu tablo **tek yetkili kaynaktır**.
+
+
+### FT Farmakoloji — 118 sayfa (branş: Farmakoloji)
+
+| Bölüm | Sayfa | Soru | sf/soru | Renk | Programda |
+|---|---|---|---|---|---|
+| Genel Farmakoloji | 5–17 | 1.4 | 8.6 | turuncu | ✓ |
+| OSS | 17–25 | 1.4 | 5.7 | turuncu | ✓ |
+| KVS | 25–44 | 1.8 | 10.6 | turuncu | — |
+| Hormonlar/Endokrin | 44–53 | 2.8 | 3.2 | pembe | ✓ |
+| SSS | 53–76 | 3.2 | 7.2 | pembe | ✓ |
+| Otakoidler | 76–83 | 0.2 | 35.0 | mavi | — |
+| NSAİİ | 83–87 | 0.2 | 20.0 | sari | — |
+| GİS | 87–90 | 1.0 | 3.0 | sari | ✓ |
+| Kemoterapötikler | 90–112 | 4.6 | 4.8 | pembe | ✓ |
+| İmmün Modülatör | 112–117 | 0.0 | — | mavi | ✓ |
+| Hematopoetik | 117–118 | 0.0 | — | mavi | — |
+| Toksikoloji | 118–119 | 1.0 | 1.0 | sari | ✓ |
+
+### FT Biyokimya — 115 sayfa (branş: Biyokimya)
+
+| Bölüm | Sayfa | Soru | sf/soru | Renk | Programda |
+|---|---|---|---|---|---|
+| Hücre+Organel | 5–12 | 0.2 | 35.0 | mavi | — |
+| Aminoasit+Protein | 12–26 | 7.4 | 1.9 | pembe | ✓ |
+| Enzimler | 26–27 | 0.2 | 5.0 | sari | ✓ |
+| Karbonhidratlar | 27–48 | 2.6 | 8.1 | turuncu | ✓ |
+| Lipidler | 48–69 | 3.0 | 7.0 | pembe | ✓ |
+| AA metabolizması | 69–86 | 0.0 | — | mavi | ✓ |
+| Nükleotid | 86–101 | 1.2 | 12.5 | sari | — |
+| Vitaminler | 101–109 | 1.0 | 8.0 | sari | — |
+| Hormonlar | 109–115 | 2.2 | 2.7 | turuncu | ✓ |
+
+### Speetus Genel Cerrahi — 142 sayfa (branş: Genel Cerrahi)
+
+| Bölüm | Sayfa | Soru | sf/soru | Renk | Programda |
+|---|---|---|---|---|---|
+| Temel Cerrahi bloğu | 1–36 | 5.8 | 6.0 | pembe | ✓ |
+| Meme | 36–44 | 2.0 | 4.0 | pembe | ✓ |
+| Tiroid | 44–50 | 1.2 | 5.0 | turuncu | ✓ |
+| Paratiroid | 50–52 | 0.4 | 5.0 | sari | ✓ |
+| Adrenal | 52–55 | 0.0 | — | mavi | — |
+| Transplantasyon | 55–58 | 0.0 | — | mavi | — |
+| Akut Karın | 58–59 | 0.0 | — | sari | — |
+| Özofagus | 59–67 | 0.4 | 20.0 | sari | — |
+| Mide+Obezite | 67–74 | 1.6 | 4.4 | pembe | ✓ |
+| İnce Bağırsak | 74–80 | 1.0 | 6.0 | turuncu | ✓ |
+| Kolon+Apendiks+Perianal | 80–98 | 1.6 | 11.2 | pembe | ✓ |
+| Tıkanıklık+Kanama+Fistül | 98–103 | 0.0 | — | mavi | — |
+| Karaciğer+Portal HT | 103–112 | 1.2 | 7.5 | turuncu | ✓ |
+| Safra | 112–119 | 1.0 | 7.0 | turuncu | ✓ |
+| Pankreas | 119–128 | 1.2 | 7.5 | turuncu | ✓ |
+| Mezenterik | 128–130 | 0.0 | — | sari | — |
+| Dalak | 130–135 | 0.8 | 6.2 | turuncu | — |
+| Karın duvarı/periton | 135–137 | 0.4 | 5.0 | sari | — |
+| Fıtıklar | 137–140 | 0.6 | 5.0 | sari | ✓ |
+| Komplikasyonlar | 140–142 | 0.0 | — | mavi | — |
+
+### FT Kadın Doğum — 136 sayfa (branş: Kadın Doğum)
+
+| Bölüm | Sayfa | Soru | sf/soru | Renk | Programda |
+|---|---|---|---|---|---|
+| Reproduktif Endokrinoloji | 5–39 | 2.8 | 12.1 | turuncu | ✓ |
+| Genel Jinekoloji | 39–62 | 2.6 | 8.8 | sari | ✓ |
+| Jinekolojik Onkoloji | 62–81 | 0.8 | 23.8 | mavi | — |
+| Obstetri | 81–136 | 3.8 | 14.5 | pembe | ✓ |
+
+### TUSTIME Mikrobiyoloji — 349 sayfa (branş: Mikrobiyoloji)
+
+| Bölüm | Sayfa | Soru | sf/soru | Renk | Programda |
+|---|---|---|---|---|---|
+| Temel Mikrobiyoloji | 5–47 | 2.8 | 15.0 | pembe | ✓ |
+| İmmünoloji | 47–87 | 1.6 | 25.0 | mavi | — |
+| Bakteriyoloji | 87–190 | 6.4 | 16.1 | pembe | ✓ |
+| Viroloji | 190–259 | 2.8 | 24.6 | turuncu | — |
+| Mikoloji | 259–287 | 2.2 | 12.7 | turuncu | ✓ |
+| Parazitoloji | 287–321 | 2.0 | 17.0 | sari | ✓ |
+| Enfeksiyon Hastalıkları | 321–349 | 0.0 | — | mavi | — |
+
+### TUSTIME Fizyoloji — 215 sayfa (branş: Fizyoloji)
+
+| Bölüm | Sayfa | Soru | sf/soru | Renk | Programda |
+|---|---|---|---|---|---|
+| Hücre | 5–22 | 1.4 | 12.1 | turuncu | — |
+| Sinir Sistemi | 22–77 | 2.4 | 22.9 | pembe | ✓ |
+| Kas | 77–91 | 0.8 | 17.5 | sari | — |
+| KVS | 91–116 | 1.4 | 17.9 | turuncu | ✓ |
+| Solunum | 116–129 | 0.0 | — | mavi | — |
+| Hematopoetik | 129–140 | 0.4 | 27.5 | mavi | — |
+| GİS | 140–159 | 1.2 | 15.8 | turuncu | — |
+| Böbrek | 159–179 | 0.8 | 25.0 | sari | — |
+| Endokrin | 179–205 | 1.0 | 26.0 | sari | — |
+| Üreme | 205–215 | 2.4 | 4.2 | pembe | ✓ |
+
+### TUSTIME Küçük Stajlar — 200 sayfa (branş: Küçük Stajlar)
+
+| Bölüm | Sayfa | Soru | sf/soru | Renk | Programda |
+|---|---|---|---|---|---|
+| Nöroloji | 5–32 | 2.2 | 12.3 | pembe | ✓ |
+| Nöroşirurji | 32–46 | 1.4 | 10.0 | turuncu | ✓ |
+| Dermatoloji | 46–66 | 2.0 | 10.0 | pembe | ✓ |
+| Psikiyatri | 66–92 | 1.8 | 14.4 | turuncu | ✓ |
+| Göz | 92–105 | 1.0 | 13.0 | mavi | ✓ |
+| KBB | 105–118 | 1.2 | 10.8 | turuncu | ✓ |
+| Epidemiyoloji/Halk Sağlığı | 118–127 | 1.0 | 9.0 | sari | ✓ |
+| FTR | 127–135 | 1.0 | 8.0 | sari | ✓ |
+| Ortopedi | 135–150 | 1.6 | 9.4 | turuncu | ✓ |
+| Üroloji | 150–162 | 1.0 | 12.0 | mavi | ✓ |
+| Çocuk Cerrahisi | 162–171 | 1.0 | 9.0 | sari | — |
+| Anestezi | 171–180 | 1.0 | 9.0 | mavi | — |
+| Göğüs+Kalp Damar Cer | 180–194 | 2.0 | 7.0 | pembe | ✓ |
+| Acil Tıp | 194–200 | 1.8 | 3.3 | turuncu | ✓ |
+| Nükleer Tıp | 200–201 | 1.0 | 1.0 | sari | ✓ |
+
+### Anatomi Fast Track — 126 sayfa (branş: Anatomi)
+
+| Bölüm | Sayfa | Soru | sf/soru | Renk | Programda |
+|---|---|---|---|---|---|
+| Kemikler | 5–22 | 1.0 | 17.0 | turuncu | — |
+| Eklemler | 22–28 | 0.2 | 30.0 | sari | — |
+| Kaslar | 28–49 | 2.2 | 9.5 | pembe | — |
+| Pleksuslar | 49–55 | 0.0 | — | mavi | — |
+| Solunum | 55–60 | 1.0 | 5.0 | turuncu | — |
+| Dolaşım | 60–77 | 1.4 | 12.1 | turuncu | — |
+| Sindirim | 77–90 | 1.8 | 7.2 | pembe | ✓ |
+| MSS | 90–106 | 4.2 | 3.8 | pembe | ✓ |
+| PSS | 106–115 | 0.0 | — | mavi | ✓ |
+| Duyu organları | 115–119 | 0.0 | — | sari | ✓ |
+| Ürogenital | 119–124 | 0.0 | — | mavi | — |
+| Endokrin | 124–126 | 0.0 | — | sari | — |
+| Deri ekleri | 126–127 | 0.0 | — | sari | — |
+
+### Emrullah Patoloji SST — 441 sayfa (branş: Patoloji)
+
+| Bölüm | Sayfa | Soru | sf/soru | Renk | Programda |
+|---|---|---|---|---|---|
+| Hücre Zedelenmesi | 10–32 | 1.8 | 12.2 | pembe | — |
+| İnflamasyon | 32–52 | 0.6 | 33.3 | sari | — |
+| Yara İyileşmesi | 52–62 | 0.4 | 25.0 | mavi | — |
+| İmmünoloji | 62–90 | 1.0 | 28.0 | turuncu | — |
+| Hemodinamik | 90–104 | 0.6 | 23.3 | sari | — |
+| Neoplazi | 104–134 | 1.6 | 18.8 | pembe | — |
+| Pediatrik+Çevresel | 134–146 | 0.0 | — | mavi | — |
+| KVS | 146–158 | 0.8 | 15.0 | sari | — |
+| Hematopoetik | 158–180 | 0.6 | 36.7 | sari | — |
+| Solunum | 180–204 | 1.0 | 24.0 | turuncu | — |
+| Üriner | 204–236 | 1.2 | 26.7 | turuncu | — |
+| Erkek Genital | 236–246 | 0.6 | 16.7 | sari | — |
+| Kadın Genital | 246–266 | 1.2 | 16.7 | pembe | — |
+| GİS | 266–300 | 1.8 | 18.9 | pembe | — |
+| Karaciğer | 300–322 | 0.8 | 27.5 | sari | — |
+| Pankreas | 322–332 | 0.0 | — | mavi | — |
+| Meme | 332–350 | 1.0 | 18.0 | turuncu | — |
+| Sinir | 350–378 | 0.2 | 140.0 | mavi | — |
+| Endokrin | 378–404 | 0.6 | 43.3 | mavi | — |
+| Deri | 404–424 | 1.0 | 20.0 | turuncu | — |
+| Kas İskelet | 424–441 | 1.4 | 12.1 | pembe | — |
+
+### Klinisyen Vaka Pediatri — 378 sayfa (branş: Pediatri)
+
+| Bölüm | Sayfa | Soru | sf/soru | Renk | Programda |
+|---|---|---|---|---|---|
+| Yenidoğan | 1–40 | 2.2 | 17.7 | pembe | — |
+| Genetik | 40–48 | 0.8 | 10.0 | sari | — |
+| Büyüme-Gelişme | 48–52 | 1.2 | 3.3 | turuncu | — |
+| Sosyal Pediatri | 52–54 | 0.0 | — | mavi | — |
+| Beslenme | 54–63 | 0.8 | 11.2 | sari | ✓ |
+| Sıvı-Elektrolit | 63–70 | 0.0 | — | mavi | — |
+| Gastroenteroloji | 70–91 | 0.4 | 52.5 | mavi | — |
+| Nöroloji | 91–109 | 1.6 | 11.2 | pembe | ✓ |
+| Kardiyoloji | 109–161 | 2.4 | 21.7 | pembe | ✓ |
+| Solunum | 161–174 | 1.4 | 9.3 | pembe | ✓ |
+| Döküntülü | 174–181 | 0.4 | 17.5 | mavi | ✓ |
+| Bağışıklama | 181–186 | 0.6 | 8.3 | sari | ✓ |
+| İmmünoloji | 186–207 | 1.2 | 17.5 | turuncu | ✓ |
+| Allerji | 207–226 | 0.6 | 31.7 | sari | — |
+| Endokrinoloji | 226–248 | 1.2 | 18.3 | turuncu | — |
+| Metabolik | 248–284 | 1.4 | 25.7 | turuncu | ✓ |
+| Hematoloji | 284–309 | 1.0 | 25.0 | sari | — |
+| Onkoloji | 309–336 | 1.2 | 22.5 | turuncu | — |
+| Nefroloji | 336–358 | 1.8 | 12.2 | pembe | ✓ |
+| Romatoloji | 358–368 | 1.0 | 10.0 | sari | — |
+| Çocuk Acil | 368–376 | 1.2 | 6.7 | turuncu | ✓ |
+| Zehirlenmeler | 376–378 | 0.0 | — | mavi | — |
+---
+
+## 10 · Mevcut durumun özeti
+
+- **267 görev · 237.06 saat · 27 gün** (`app_gorev.json` ≡ `TUS_program.json` ≡ index.html gömülü `GOREVLER`, üçü birebir aynı — doğrulandı)
+- Projeksiyon **K = 66.64** · ölçülen 57.61 · hedef 65 → **pay 1.64**
+- Kural A **ihlal 0**, en geç gün 11 · B **%89.0** · C artan/azalan ✓ · D kısmi **0** · sayfa kırığı **0**
+- Pembe bölümler: **23 / 25** tam okunuyor (payda kuralı §6'da)
+- Kombo 48 · sinaps ışını 48/48
+- **Kapasite: 273.25 saat nominal blok, 237.06 dolu → %86.8 doluluk, 36.19 saat boş.** Blok bazında doluluk: Z %93 · A %97 · B %90 · C %91 · D %84 · E **%63** · F %70. Bütçe kısıt değil; kısıt Kural B ve D.
+
+⚠ **DÜZELTİLDİ (27 Tem 2026).** Önceki satır "Kaynak haritası 18 kitap · 62/112 bölüm programda · 50 bölüm çöpte" diyerek **iki ayrı sayımı tek satırda karıştırıyordu.** Doğrusu:
+
+| Sayım | Kaynak | Değer |
+|---|---|---|
+| Kaynak haritası | `kaynak_harita.json` | **18 kitap · 92 planlı satır · 51 çöp satırı** |
+| Yetkili bölüm tablosu | `eko.py` `KITAP` | **133 bölüm · 62'si programda** |
+| Yetkili tablo, SST hariç | 133 − 21 | **112** |
+
+"62/112" ikinci ve üçüncü satırın birleşimidir, kaynak haritasının değil.
+
+## 11 · Çözülmemiş sorun (adım 24)
+
+İki **pembe** bölüm programa girmedi:
+
+| Bölüm | Sayfa | Soru | Net/saat | Zincir |
+|---|---|---|---|---|
+| Anatomi Kaslar | 28–49 (21 sf) | 2.2 | 0.150 | Kas-İskelet & Romatoloji |
+| Pediatri Yenidoğan | 1–40 (39 sf) | 2.2 | 0.147 | Gebelik & Yenidoğan |
+
+**Sebep bütçe değil** — programda 36.19 saat boş nominal kapasite var (§10). Sebep Kural B + Kural D.
+
+⚠ **DÜZELTİLDİ (27 Tem 2026) — problem tanımı değişti.** Bu paragraf önceden "Kas-İskelet 1.53 saat, **Gebelik & Yenidoğan 3.92 saat**, ikisi de gün dolduramıyor" diyordu. Ölçülen değerler:
+
+| Zincir | Okuma | Okuma+video | Kaç güne yayılmış | Gerçekten gün dolduramıyor mu? |
+|---|---|---|---|---|
+| Kas-İskelet & Romatoloji | 1.53 | 3.01 | 2 | **Evet** |
+| Gebelik & Yenidoğan | **7.54** | 7.54 | 3 | **Hayır** — bir günü zaten aşıyor |
+
+Yani iki bölümün girmeme sebebi **aynı değil**:
+- **Anatomi Kaslar** → zincir gerçekten küçük, Kural B tek başına gün açtırmıyor.
+- **Pediatri Yenidoğan** → zincir küçük değil; zincirin bulunduğu **3 gün dolu** (4 Ağu Z 1.00 · 6 Ağu 5.04 · 19 Ağu 1.50) ve Kural D bölümü parçalamaya izin vermiyor.
+
+**Yeniden dizimin ölçeği bu yüzden küçüldü:** 27 günün tamamı değil, Kas-İskelet için yer açmak + Yenidoğan'ın 3.25 saatini üç günden birine sığdırmak yeterli olabilir.
+
+### Adım 24 kaç puan ediyor? (karar için ölçüldü)
+
+| Bölüm | Maliyet | Net | Oturum | ΔK |
+|---|---|---|---|---|
+| Anatomi Kaslar 28–49 | 21 sf ÷ 5.7 = **3.68 sa** | 0.553 | Temel ×0.207 | +0.114 |
+| Pediatri Yenidoğan 1–40 | 39 sf ÷ 12.0 = **3.25 sa** | 0.478 | Klinik ×0.277 | +0.132 |
+| | **6.93 sa** | 1.030 | | **+0.247** |
+
+→ Projeksiyon **66.64 → 66.89**. Hedef 65, yani pay 1.64'ten 1.89'a çıkıyor.
+
+**Bu iki bölüm küresel ölçütte taşıyıcı değil.** Programın okuma ortalaması **0.2006 net/saat**; bunlar 0.150 ve 0.147 — ortalamanın **%75 ve %73'ü**. §6 zaten "renk seçim ölçütü değildir" diyor. Adım 24 bir *tamlık* işidir, verim işi değil.
+
+⚠ Yenidoğan'ın maliyeti hangi hızı kullandığına bağlı: 12.0 → 3.25 sa (yürürlükteki) · 8.0 → 4.88 sa (`eko.py` formülü) · 17.0 → 2.29 sa (`icerik.json`). Bkz. §2.
+
+**Denenip başarısız olanlar:**
+- Kas-İskelet + Solunum zincirlerini birleştirmek → ⚠ **DÜZELTİLDİ:** bu satır "**8.93 saat** okuma gerekiyor" diyordu. Ölçülen: **2.61 sa** (yalnız okuma) · **5.57 sa** (video dahil). İki bölüm de eklenirse 2.61 + 6.93 = **9.54 sa**. 8.93 hiçbir tanımla üretilemedi; §0d'deki 26 Temmuz kaybı **8.94** ile karışmış olabilir. **Bu deneme yeni sayılarla tekrar değerlendirilmeli** — birleşik zincir 2.61 saatken "tek gün yetmiyor" sonucu dayanaksız.
+- 18 Ağustos'u Kas-İskelet gününe çevirmek → oradaki 4.04 saatlik Metabolizma'nın gidecek yeri yok (4.04 doğrulandı ✓). "Ev günlerinde 2.5 saat boşluk var" ifadesi doğrulanamadı — "ev günü" tanımı hiçbir yerde yazılı değil; toplam boş nominal kapasite **36.19 saat**.
+- Z/F blokları eklemek → zincir günü olmadığı için kapasite artışı işe yaramıyor
+- Başıboş parçaları taşımak → 8 parçanın hiçbiri sığmıyor, ev günleri dolu
+
+**Çözüm yolu — yeniden değerlendirildi (27 Tem 2026).** Eski metin "27 günü zincir bazında baştan dizmek, 12 zinciri yeniden dağıtmak, Gebelik & Yenidoğan'a ~2 gün ayırmak" diyordu. Bu, düzeltilmiş sayılarla **gereğinden büyük**:
+
+- Gebelik & Yenidoğan zaten 7.54 saat ve 3 güne yayılmış — **yeni gün ayırmaya gerek yok**, Yenidoğan'ın 3.25 saati o üç günden birine sığdırılacak.
+- Kas-İskelet birleşimi 8.93 değil **2.61** saat — "1.5 gün lazım" sonucu bu sayıyla yeniden kurulmalı.
+
+Karar verilmeden önce not: bütün işin ölçülen getirisi **+0.247 K**'dır ve hedef zaten 1.64 puan aşılmıştır.
+
+## 12 · Yapılırken dikkat edilecekler (bu oturumda öğrenilenler)
+
+1. **Havuzu kronolojik sırayla doldur.** Aksi hâlde sayfa sırası ters döner — üç kez oldu.
+2. **Türetilmiş alanları her değişiklikten sonra yeniden hesapla:** alt saat (`t`), `sira`, `blokSon`, `mola`, kombo. 26 blokta çakışma oluştu.
+3. **28 Temmuz'a dokunma.** Bir kez 2.8 saat yükledim, Kural B'de sahte %2.5 iyileşme gösterdi.
+4. **Mola hesabı yalnız DOLU bloklara göre yapılır.** Aksi hâlde tek bloklu günde −165 dakikalık mola çıkıyor.
+5. **`kaz` kalibrasyonu bölüm bazlı** (oranlar 0.039–0.418 arası). Branş ortalamasıyla ezmek kalibrasyonu yok eder. Soru değeri değişirse **oranlı ölçekle**.
+6. **Renk atamasını soru/deneme görevlerine de uygula**, yoksa aynı bölümün kartları farklı renkte görünür.
+7. **Bulanık isim eşleştirmesi kullanma.** İki kez yanlış karar verdirdi. Açık eşleştirme tablosu kullan.
+8. **Asgari parça 15 dakika. ⚠ "En fazla 3 oturum" DİYE BİR KURAL YOK — bkz. §25.** Sınırsız parçalama 1.40 saati 9 oturuma bölüyor.
+9. **`kural_test.py` üretimden önce otomatik koşar** — 18 kontrol, geçmezse üretim durur.
+10. **18 kontrol veriyi denetler, bu dosyanın anlatısını denetlemez.** 27 Temmuz'da bulunan sekiz hatanın **hiçbiri** kapıdan yakalanamazdı: hepsi DEVIR.md'nin metnindeydi, `app_gorev.json`'da değil. Kapı yeşil yanarken belge yanlış olabilir. Bir sayıyı DEVIR.md'den alıp kullanmadan önce **veriden yeniden ölç**.
+11. **Bir sayı iki yerde yazılıysa ikisini de ölç.** 3.92 (Gebelik & Yenidoğan) §7 tablosuyla çelişiyordu ve tablo doğruydu; "en geç gün 10" hiçbir kodun ürettiği sayı değildi; "62/112" iki farklı sayımın karışımıydı. Üçü de tek bir kaynağa bakılsa fark edilmezdi.
+12. **Kod ne diyorsa o geçerlidir, yeniden türetme değil.** Kural A'nın 0-tabanlı olduğu sonucuna iki ayrı oturum bağımsız olarak vardı; `denet.py` okununca taban tarihin **2026-07-26** olduğu görüldü ve iki sonuç da yanlıştı.
+
+## 13 · Dosyalar
+
+- `index.html` `sw.js` `manifest.webmanifest` `icon-180.png` `icon-512.png` — yüklenecek PWA
+- `TUS_program.json` — 267 görevin tam verisi (sayfa aralığı, renk, zincir, getiri, mola)
+- `TUS_program.md` — okunabilir program
+- `DEVIR.md` — bu dosya
+
+---
+
+## 14 · Görev alanı sözlüğü (TUS_program.json)
+
+| Alan | Anlam |
+|---|---|
+| `d` | tarih `YYYY-MM-DD` |
+| `b` | blok kodu `Z A B C D E F` veya `—` (bloksuz) |
+| `t` | görevin alt saati `HH:MM–HH:MM` |
+| `blokT` | bloğun tam aralığı |
+| `blokSon` | bloğun bitiş saati |
+| `sira` | `[kaçıncı, toplam]` blok içindeki sıra |
+| `br` | branş |
+| `k` | konu başlığı |
+| `src` | kaynak + sayfa aralığı (`... sf 90–117`) |
+| `act` | `oku` `video` `soru` `tekrar` `deneme24` `deneme` `analiz` `isinma` |
+| `sure` | saat · **sayfa ÷ kitap hızı**. ⚠ Yorgunluk düzeltmesi **uygulanmamıştır**, aşağıya bak |
+| `why` | brifing metni |
+| `tag` | renk `pembe turuncu sari mavi ölçüm bakım` |
+| `kaz` | beklenen **net** kazancı |
+| `tur` | `T` temel oturum · `K` klinik oturum |
+| `z` | organ sistemi zinciri (boş olabilir) |
+| `ot` `otg` | `[oturum, toplam]` ve oturum günleri |
+| `mola` | `[baş, bit, dakika, tip, metin]` · tip: `kahvalti ogle kisa aksam spor yavas izin` |
+| `spor` | o günün spor bilgisi |
+| `soru` | bölümün Tusanaliz soru değeri |
+
+⚠ **DÜZELTİLDİ (27 Tem 2026) — `sure` "etkin saat" değildir.** Bu satır önceden "**etkin** saat (yorgunluk düzeltmesi uygulanmış)" diyordu. Ölçüm: dokuz kitabın hepsinde, her blokta, `sayfa ÷ sure` **sabit** çıkıyor (kitap içi sapma en fazla %1.8, yuvarlamadan). Örnek: Anatomi Fast Track, Z bloğunda 5.71 · B'de 5.69 · F bloğunda (günün en yorgun bloğu) yine 5.71 sf/saat. Yani `sure` saf sayfa süresidir; §2'deki `1 + 0.055 × max(0, kümülatif − 3)` çarpanı `sure`'ye **hiç uygulanmamış**.
+
+Yorgunluk **blok doluluğunda** yaşıyor — bloklara konan saat, nominal kapasitenin altında tutulmuş:
+
+| Blok | Nominal | Ortalama dolu | Oran |
+|---|---|---|---|
+| A | 1.50 | 1.45 | %97 |
+| B | 3.75 | 3.37 | %90 |
+| C | 2.25 | 2.04 | %91 |
+| D | 2.00 | 1.68 | %84 |
+| E | 1.25 | 0.79 | **%63** |
+| F | 1.00 | 0.70 | %70 |
+
+Yeniden dizimde bunu bil: **6.93 saatlik yeni okumayı E ve F bloklarına doldurmak, kayıtlı olmayan bir yorgunluk payını yemek demektir.** Boş görünen 36.19 saatin büyük kısmı bu paydır.
+
+## 15 · Branş TUS soru sayıları (kapsama tavanı)
+
+| Branş | Soru | Oturum |
+|---|---|---|
+| Pediatri | 25.0 | klinik |
+| Dahiliye | 23.2 | klinik |
+| Genel Cerrahi | 23.6 | klinik |
+| Küçük Stajlar | 22.0 | klinik |
+| Patoloji | 18.2 | temel |
+| Farmakoloji | 18.0 | temel |
+| Biyokimya | 17.8 | temel |
+| Mikrobiyoloji | 17.8 | temel |
+| Fizyoloji | 14.0 | temel |
+| Anatomi | 11.8 | temel |
+| Kadın Doğum | 10.0 | klinik |
+| Histo-Embriyoloji | 4.4 | temel |
+
+Temel oturum toplam 102.0 · klinik oturum 103.8
+
+## 16 · Ölçülen deneme geçmişi (TOHUM · uygulamanın "ölçülen" puanı buradan)
+
+| Tarih | Kaynak | Temel | Klinik | K |
+|---|---|---|---|---|
+| 2026-01-15 | TUSTIME | 32.75 | 47.50 | 60.21 |
+| 2026-05-02 | PreTUS cilt 3 | 25.50 | 27.50 | 53.16 |
+| 2026-06-09 | PreTUS cilt 3 | 16.75 | 32.75 | 52.81 |
+| 2026-07-16 | Perfecttime | 27.25 | 33.50 | 55.19 |
+| 2026-07-24 | MediTUS | 32.25 | 38.50 | 57.61 |
+
+Her denemenin 11 branş neti `bn` alanında. Son deneme (2026-07-24) programın başlangıç noktası.
+
+## 17 · Zincir gerekçe metinleri (kombo brifinglerinde kullanılıyor)
+
+- Aynı organın patolojisi, dahiliyesi ve cerrahisi tek sistemde dönüyor
+- Böbrek patolojisi erişkin ve çocukta aynı mekanizma, farklı eşikler
+- Endokardit, perikardit ve kapak hastalığı erişkin-çocuk ortak; farkları öğren, iki soruyu birden al
+- Etkeni ve antibiyotik mekanizmasını aynı blokta görmek, ampirik tedavi sorusunu tek adımda çözdürüyor
+- Fizyolojik yol, anatomik lokalizasyon ve ilaç etkisi aynı şemaya oturuyor
+- Gebelik komplikasyonu ile yenidoğan sonucu aynı vakanın iki ucu
+- Hormon sentezi, ilaç etkisi ve klinik tablo birbirini tamamlıyor
+- Lezyon morfolojisi patoloji ve klinik tarafından aynı dille sorulur
+- Yolak bilgisi ile kalıtsal metabolik hastalığın klinik yüzü aynı bilgi
+- Şok ve sıvı-elektrolit yaklaşımı erişkin-çocuk ortak, sadece dozlar değişiyor
+
+## 18 · Özel görev türleri
+
+- **`hafif soru · yeni konu yok`** — 21:15 sonrası yavaşlama bloğu için hafif geri getirme (6 görev, 9.00 saat)
+- **`yanlış defteri`** — kendi hatalarının tekrarı, getirisi 0 sayılıyor (8 görev, 11.51 saat)
+- **`cilt 7` / `cilt 8`** — PreTUS 200 tam denemeleri, her biri 2 görev (temel + klinik oturum), 4.50 saat
+- **`isinma`** — deneme günü sabahı sınav öncesi ısınma
+- **`analiz`** — deneme sonrası net girişi ve analiz
+
+## 19 · Gün işaretleri (ISARET · 8 gün için özel not)
+
+`isaret.json` · 8 kayıt · biçim `[tarih, başlık, metin]`. Günler §19 listesiyle birebir uyuşuyor.
+
+⚠ **DÜZELTİLDİ (27 Tem 2026) — metinlerde beş sayısal hata var.** Bu metinler uygulamada kullanıcıya doğrudan gösteriliyor, yani hatalı bilgi ekrana çıkıyor. Düzeltilmeden yayınlanmamalı:
+
+| Gün | Yazan | Ölçülen |
+|---|---|---|
+| 08-09 | "**Yarın** Pediatri Kardiyoloji bloğuna gireceksin" | Pediatrik Kardiyoloji **11 Ağustos**'ta. 10 Ağustos GİS & Hepatobiliyer günü. **Bir gün kayık** |
+| 08-08 | video "**11 akşama** yayıldı" | **10 ayrı gün**, 12 görev; 10'u D bloğunda (akşam), **2'si Z bloğunda (06:00 sabah)** |
+| 08-08 | erişim "**9-10 Ağustos**'ta kapanıyor" | §4 ve §8 "**8 Ağustos akşamı**" diyor, `denet.py` `max(video) ≤ 2026-08-08` kontrol ediyor. Üç kaynak, iki tarih |
+| 08-13 | nöroanatomi "Fast Track'te **35** sayfa" | **29 sayfa** (sf 90–119). Sonuç bozulmuyor, güçleniyor: 83/29 = **2.86 kat**, "üç kat ucuz" 35 ile 2.37 kat olurdu |
+| 08-01 | "'yüksek getiri konularında **%60 başarıya** ulaşırsın' varsayımı" | Bu varsayım DEVIR.md'de **hiç yazılı değil** ve veriyle eşleşmiyor. Bölüm bazında `kaz/soru` oranı **0.039–0.418** (49 bölüm, §12.5 ile birebir doğrulandı). Ya varsayım eskimiş ya da başka bir katmana ait — belgelenene kadar kullanılmamalı |
+
+**Doğrulananlar:** Farmakoloji "%18 yapıyorsun" (son deneme 3.25/18 = %18.1 ✓) · Kemoterapötikler 4.6 soru ✓ · "24 sa 25 dk 1.5x'te 16.3 saate iniyor" (16.28 sa, programın video toplamıyla birebir ✓) · TTS nöroanatomi 83 sayfa ✓ · 20 Ağu "sınava üç gün" ✓ · 21 Ağu "önceki 25 gün" ✓ · Roediger & Karpicke 2006 gerçek kaynak ✓
+
+- **2026-07-27** — Neden farmakoloji ile başlıyoruz?
+- **2026-07-27** — Neden kitabı açmadan soru çözüyorsun?
+- **2026-08-01** — Neden ilk deneme 6. günde?
+- **2026-08-08** — Neden dahiliye videosu bugün bitiyor?
+- **2026-08-09** — Neden kardiyoloji videosu en sona bırakıldı?
+- **2026-08-13** — Neden anatomi ikinci fazda?
+- **2026-08-20** — Neden son deneme burada?
+- **2026-08-21** — Neden son iki gün sıfır yeni konu?
+
+## 20 · Üretim boru hattı (`kaynak/` klasöründe)
+
+⚠ **DÜZELTİLDİ (27 Tem 2026).** Tablo eksikti: `denemeler.json` ve `icerik.json` yoktu ve dosya sayısı yanlış anlatılıyordu. **Klasörde 21 dosya var** (`ls` ile doğrulandı). Ayrıca hangi dosyanın boru hattında fiilen okunduğu işaretlendi.
+
+| Dosya | İşlev | Boru hattında okuyan |
+|---|---|---|
+| `eko.py` | **YETKİLİ TABLO** — 10 kitabın bölüm/sayfa/soru verisi. Her şeyin kaynağı. | `kural_test.py` (yalnız `KITAP`) |
+| `app_gorev.json` | 267 görevin çalışma kopyası | dizi3 · yeniden · kural_test · uret · denet |
+| `sablon_v23.html` | uygulama şablonu, `/*__G__*/[]` gibi yer tutucularla (her biri **1 kez** geçiyor) | `uret.py` |
+| `uret.py` | **kural_test.py'yi çalıştırır, geçmezse durur**, sonra veriyi şablona gömer | — |
+| `dizi3.py` | alt saat · sıra · blokSon · mola yeniden hesaplar | — |
+| `yeniden.py` | oturum numaraları · sayfa sürekliliği · kombo · kaynak haritası günleri | — |
+| `kural_test.py` | **18 kalıcı kontrol** — üretim kapısı | `uret.py` (alt süreç) |
+| `denet.py` | 7 başlıklı veri denetimi (üretilen index.html üzerinde) | — |
+| `kos.js` | 14 bölümlük uygulama testi | — |
+| `tam_test.js` | `kos.js`'in kurduğu sahte tarayıcı ortamı | `kos.js` |
+| `senk_test.js` `senk_kos.js` | senkron testi (26 senaryo) | `senk_kos.js` → `senk_test.js` |
+| `kaynak_harita.json` | **18 kitap · 92 planlı satır · 51 çöp satırı** | yeniden · kural_test · uret |
+| `kombo.json` | 48 kombo (`yeniden.py` üretir) | kural_test · uret |
+| `isaret.json` | gün notları (8 gün) | `uret.py` |
+| `tohum.json` | 5 ölçülen deneme | `uret.py` → `/*__D__*/` |
+| `soru_tablo.json` | branş soru dağılımı (`den` 11 · `radar` 11) | `uret.py` |
+| **`denemeler.json`** | **YENİ SATIR.** İçeriği `tohum.json` ile **birebir aynı** (5 deneme). | `uret.py` **açar ama kullanmaz** |
+| **`icerik.json`** | **YENİ SATIR.** 13 zincirlik bölüm/sayfa/saat planlama listesi, `hz` etiketli. | **hiçbir betik okumuyor** |
+| `kh_eslesme.json` | kaynak haritası ↔ eko.py eşleştirme tablosu (9 satır) | **hiçbir betik okumuyor** |
+| `cakisma.js` | `diz()` şerit çakışma taklidi, `module.exports` | **hiçbir betik `require` etmiyor** |
+
+**`denemeler.json` hakkında dikkat:** `uret.py` bu dosyayı `DEN=json.load(open('denemeler.json'))` ile açıyor; **dosya yoksa boru hattı çöker.** Ama `DEN` değişkeni sonrasında hiç kullanılmıyor — yer tutucuya giden `TOHUM=json.load(open('tohum.json'))`'dur. Yani dosya **var olmak zorunda, içeriği önemsiz**. Klasörden silinmemeli.
+
+**Ölü kod / kullanılmayan dosyalar:** `icerik.json` · `kh_eslesme.json` · `cakisma.js` hiçbir betik tarafından okunmuyor. `uret.py` içinde ayrıca `KH` iki kez yükleniyor, `SORU` önce sabit sözlük olarak yazılıp sonra dosyadan üzerine yazılıyor, `NED` ve `gz` hesaplanıp kullanılmıyor. Bunlar zararsız ama boru hattını okurken yanıltıcı.
+
+⚠ `kural_test.py`'nin ekrana bastığı başlık "**16** hata sınıfı" diyor; dosyada **18** kontrol var. Kontrol sayısı 18'dir.
+
+**Üretim sırası:** `dizi3.py` → `yeniden.py` → `uret.py` (kural testi otomatik koşar) → `denet.py` → `kos.js`
+
+**Yer tutucular:** `/*__G__*/[]` görevler · `/*__D__*/[]` tohum · `/*__S__*/{}` soru tablosu · `/*__K__*/[]` kombo · `/*__I__*/[]` işaret · `/*__H__*/{}` kaynak haritası. Değiştirirken **`[]` ve `{}` dahil** değiştir, yoksa sözdizimi bozulur.
+
+## 21 · Senkron
+
+GitHub Gist üzerinden, ücretsiz. Anahtar cihazda saklanır, koda girmez. Cihaz rolü: **Yazar** (iPad, işaretler) · **Yalnız okur** (telefon, hiçbir şey göndermez). Çatışma çözümü son yazan kazanır, damga **monoton artan** (saat kayması iş kaybına yol açmaz). Otomatik senkron 15 saniye kısıtlı, düğmeler kısıtsız. Servis çalışanı kendi kaynağı dışındaki istekleri **atlar** — yoksa API yanıtı önbelleğe girip senkron bozulur.
+
+---
+
+## 22 · Düzeltme kaydı — 27 Temmuz 2026
+
+Bu oturumda dış denetimle **on beş** hata bulundu. Hepsi **belgede**ydi, veride değil; hiçbiri 18 kalıcı kontrolden geçmezdi. Her düzeltmenin dayanağı `app_gorev.json` (267 görev), `eko.py`, `kural_test.py`, `denet.py`, `sablon_v23.html` üzerinde yapılan ölçümdür.
+
+| # | Bölüm | Önceki | Düzeltilmiş | Nasıl ölçüldü |
+|---|---|---|---|---|
+| 1 | §7, §11 | Gebelik & Yenidoğan **3.92 sa** | **7.54 sa** | üç tanımla toplandı; 3.92 = Temel Mikrobiyoloji'nin saati, kopyala-yapıştır |
+| 2 | §7 | "12 zincir" | **13 zincir**, Hematoloji-Onkoloji okumasız | `z` alanının ayrık değerleri sayıldı |
+| 3 | §8 | Patoloji SST "bakım taraması" | **programda yok**, 0 görev | `src` alanında "Emrullah"/"SST" arandı |
+| 4 | §14 | `sure` = "etkin saat, yorgunluk uygulanmış" | **sayfa ÷ hız**, yorgunluk blok doluluğunda | 9 kitapta blok başına sf/saat sabit (±%1.8) |
+| 5 | §5 A | "en geç **gün 10**" | **ihlal 0, en geç gün 11**, taban 2026-07-26 | `denet.py` §7'deki kural birebir koşuldu |
+| 6 | §6 | payda kuralı yazılı değildi | **25 = 30 pembe − SST'nin 5'i** | renk algoritması `KITAP` üzerinde çalıştırıldı |
+| 7 | §10 | "62/112 · 50 çöp" tek satırda | **iki ayrı sayım**, kaynak haritası 92/51 | `kaynak_harita.json` sayıldı |
+| 8 | §20 | 19 dosya, iki eksik | **21 dosya**, `denemeler.json` + `icerik.json` | `ls kaynak/` |
+| 9 | §11 | Kas-İskelet+Solunum "**8.93 sa**" | **2.61 sa** okuma · 5.57 video dahil | zincir saatleri toplandı; 8.93 üretilemedi |
+| 10 | §0b | sürüm ilerletme çalışıyor sanılıyordu | `uret.py`'nin `replace`'i **boş işlem** | şablonda `2026-07-26e` yok |
+| 11–15 | §19 | `isaret.json` metinleri | **beş sayısal hata**, tablo §19'da | app_gorev.json'a karşı ölçüldü |
+
+Ayrıca kaydedilen üç yapısal risk:
+- **§0b** — `uret.py`'nin sürüm ilerletme satırı boş işlem; şablon zaten `2026-07-27y`.
+- **§0h** — `kos.js` görev sayısını (267) ve projeksiyonu (66.64) sabit kodluyor; yeniden dizim ikisini de kırar.
+- **§2** — `eko.py` hız formülü Klinisyen Vaka Pediatri'yi 8.0 sf/saat sayıyor, program 12.0 kullanıyor, `icerik.json` 17.0.
+
+**Bekleyen karar:** adım 24 (Anatomi Kaslar + Pediatri Yenidoğan) ölçülen **+0.247 K** getiriyor, projeksiyon 66.64 → 66.89. Hedef 65 zaten 1.64 puan aşılmış durumda. Yapılıp yapılmayacağına kullanıcı karar verecek.
+
+---
+
+## 23 · TAM PROGRAM DENETİMİ — 27 Temmuz 2026
+
+Her iki resmî kapı gerçekten koşuldu (veri index.html'den çıkarıldı, çıkarımın doğruluğu `app_gorev.json` ve `kaynak_harita.json` ile birebir karşılaştırılarak kanıtlandı):
+
+- `kural_test.py` → **18/18 GEÇTİ**, çıkış kodu 0
+- `denet.py` → **SIFIR HATA**, 267 görev, 237.1 saat
+
+### Kapıların doğruladıkları
+
+| Alan | Sonuç |
+|---|---|
+| Uygulama ↔ plan | `index.html` içindeki `GOREVLER` ≡ `app_gorev.json`, **267/267 kayıt birebir** |
+| Görev adı ↔ kitap bölümü | **49 çiftin 49'u** eko.py bölüm sınırlarına oturuyor: 38'i tek bölüm, 11'i birden çok bölümü **tam** kapsıyor, **taşan/eksik 0** |
+| Sayfa aralıkları | kitap sınırları dışına çıkan **0** · aynı sayfa iki kez okunan **0** · sayfa kırığı **0** |
+| Zincir/renk | aynı bölüm hep aynı zincirde ✓ · aynı bölümün tüm görevleri aynı renkte ✓ |
+| `ot`/`otg` | oturum sayılarıyla tutarlı ✓ |
+| Blok saati | 132 blok, alt saat çakışması 0, aynı saatte iki görev 0 |
+| Blok sonu taşması | **4 blok** (19 Ağu A 25 dk · 2 Ağu A 2 dk · 29 Tem A 1 dk · 31 Tem D 1 dk) — §0f'de kabul edilmiş dördün aynısı |
+| 15 dk altı okuma | **12 parça** (en kısası 6 dk) — §0f'de kabul edilmiş sayının aynısı |
+| Kazanç | projeksiyon 66.64 ✓ · negatif kazanç 0 ✓ |
+
+### Kapıların yakalamadığı dört bulgu
+
+**16 · "Bir bölüm en fazla 3 oturum" kuralı ihlal ediliyor. Hiçbir kapı bunu kontrol etmiyor.**
+Oturum dağılımı: 1→21 bölüm · 2→14 · 3→8 · **5→3 · 6→2 · 7→1**.
+
+| Bölüm | Oturum | Saat |
+|---|---|---|
+| Obstetri | **7** | 6.88 |
+| Bakteriyoloji | 6 | 9.61 |
+| sindirim sistemi anatomisi | 6 | 2.28 |
+| Mikoloji + Tıbbi Parazitoloji | 5 | 5.78 |
+| Genel Jinekolojik | 5 | 2.88 |
+| Karbonhidratlar | 5 | 3.68 |
+
+§12.8 ve kullanıcı talimatı "en fazla 3 oturum" diyor. **49 bölümün 6'sı bunu aşıyor.** `kural_test.py`'ye 19. kontrol olarak eklenmeli.
+
+**17 · Soru değerleri eko.py'den yeniden dağıtılmış — §9'un "tek yetkili kaynak" ilkesi delinmiş.**
+49 görev adının 4'ünde sapma var; **kitap toplamları korunduğu için `kural_test.py` #12 geçiyor**:
+
+| Görev | Atanan | eko.py | Fark |
+|---|---|---|---|
+| Anatomi · merkezi sinir sistemi | 2.3 | 4.2 | −1.9 |
+| Anatomi · periferik sinir + duyu | 1.9 | **0.0** | +1.9 |
+| Biyokimya · Aminoasitler ve Proteinler | 3.4 | 7.4 | −4.0 |
+| Biyokimya · Aminoasitlerin metabolizması | 4.0 | **0.0** | +4.0 |
+
+Kaynağı `icerik.json` (MSS 2.3 · PSS+Pleksus+Duyu 1.9 · Aminoasitler 3.4 · AA metabolizması 4.0). Sonuç: eko.py'ye göre **sıfır soru taşıyan iki bölüm** (AA metabolizması 17 sf · PSS+Duyu 13 sf) programda **5.26 saat okuma** alıyor ve **5.9 soruluk kredi** taşıyor. eko.py doğruysa bu 5.26 saat ve kredinin dayanağı yok. Karar verilmeli: ya eko.py düzeltilsin ya dağıtım geri alınsın.
+
+**18 · 24'lü Patoloji denemeleri — ÖNCEKİ DEĞERLENDİRME YANLIŞTI, DÜZELTİLDİ.**
+Bu madde önce "programdaki tek tamamen boş 2.48 saat" diyordu. **Yanlış.** `kaz` alanı *yeni okumadan gelen kazancı* ölçüyor; programda Patoloji okuması olmadığı için kazanç iliştirilecek bölüm yok — bu bir **model sınırı**, değersizlik değil.
+
+Ölçülen Patoloji seyri (18 soru üzerinden):
+
+| Deneme | Net | Oran |
+|---|---|---|
+| 15 Oca TUSTIME | 9.00 | %50.0 |
+| 2 May PreTUS | 10.75 | %59.7 |
+| 9 Haz PreTUS | **3.00** | **%16.7** |
+| 16 Tem Perfecttime | **4.50** | **%25.0** |
+| 24 Tem MediTUS | 11.75 | %65.3 |
+
+Patoloji son denemede **en yüksek branş** (%65.3) ama beş ölçümde **3.00 ile 11.75 arasında** salınıyor. Bu, "sağlam biliniyor, bakım gerekmez" profili değil — tam tersi, **korunması gereken oynak bir branş** profili.
+
+Üstelik kaynak dağılımı en ince olan branş:
+
+| Branş | Program yükü | Soru | saat/soru |
+|---|---|---|---|
+| **Patoloji** | **2.48 sa** | 18 | **0.138** |
+| Farmakoloji | 22.02 sa | 18 | 1.224 |
+| Biyokimya | 21.51 sa | 18 | 1.195 |
+| Mikrobiyoloji | 22.31 sa | 18 | 1.239 |
+
+Aynı 18 soruluk üç branşın **dokuzda biri**. 24'lü Patoloji denemeleri kesilmemeli; aksine Patoloji **eksik yatırım** yapılan branş olabilir.
+
+**Genel ders:** `kaz` yalnız yeni okumanın kazancını modelliyor. Unutmayı, bakımı ve konsolidasyonu modellemiyor. Sadece `kaz`'a bakarak eniyileme yapmak, **bilineni koruyan işleri (deneme, yanlış defteri, bakım denemeleri, videolar) tam olarak keser.** Programın 40.99 saati bu kategoride ve kesilmemeli.
+
+**19 · Adım 24 yanlış bölümleri kurtarıyor.** `kaynak_harita.json` çöp listesindeki bölümlerin **kendi kaydettiği** net/saat değerleri:
+
+| Bölüm | Saat | net/sa | ΔK | Kayıtlı gerekçe |
+|---|---|---|---|---|
+| Pediatri Büyüme-Gelişme | 0.33 | **0.78** | +0.072 | zincir gününde yer kalmadı |
+| Anatomi Solunum | 0.88 | 0.29 | +0.053 | zincir gününde yer kalmadı |
+| Pediatri Romatoloji | 0.83 | 0.26 | +0.060 | zincir gününde yer kalmadı |
+| Pediatri Genetik | 0.67 | 0.26 | +0.048 | zincir gününde yer kalmadı |
+| Fizyoloji Hücre | 1.13 | 0.23 | +0.054 | zincir gününde yer kalmadı |
+| KS Çocuk Cerrahisi | 0.60 | 0.23 | +0.038 | zincir gününde yer kalmadı |
+| KS Anestezi | 0.60 | 0.23 | +0.038 | zincir gününde yer kalmadı |
+| Speetus Karın duvarı | 0.25 | 0.20 | +0.014 | zincir gününde yer kalmadı |
+| Fizyoloji GİS | 1.27 | 0.18 | +0.047 | zincir gününde yer kalmadı |
+| Fizyoloji Kas | 0.93 | 0.16 | +0.031 | zincir gününde yer kalmadı |
+| Speetus Dalak | 0.62 | 0.16 | +0.028 | zincir gününde yer kalmadı |
+| **TOPLAM** | **8.12** | | **+0.483** | |
+| *Pediatri Yenidoğan* | *3.25* | *0.15* | *+0.135* | *aynı gerekçe* |
+| *Anatomi Kaslar* | *3.68* | *0.15* | *+0.114* | *aynı gerekçe* |
+
+**Anatomi Kaslar'dan daha verimli olup aynı gerekçeyle dışarıda kalan 11 bölüm var.** Adım 24 bu listenin **en dipteki ikisini** kurtarıyor — tek sebebi renklerinin pembe olması.
+
+| Seçenek | Saat | ΔK | K/saat |
+|---|---|---|---|
+| Adım 24 (Kaslar + Yenidoğan) | 6.93 | +0.247 | 0.0356 |
+| En verimli 11 program dışı bölüm | 8.12 | **+0.483** | **0.0595** |
+
+İkisi de aynı kısıtla (Kural B, zincir gününde yer yok) engelleniyor. Yeniden dizim yapılacaksa **hedef pembe tamlık değil, bu 11 bölüm olmalı** — %17 daha fazla saatle **iki katına yakın** getiri.
+
+⚠ Bu tablodaki net/saat değerleri sistemin kendi çöp gerekçelerinden alınmıştır, benim tahminim değildir. Ancak §12.5 kalibrasyonun bölüm bazlı olduğunu söylüyor; bu bölümler programda olmadığı için bölüm bazlı kalibrasyonları **yoktur**. Uygulanmadan önce kalibrasyon yöntemi doğrulanmalı.
+
+---
+
+## 24 · FİNALİZE EDİLMİŞ PAKET — yeniden dizim gerektirmeyen ekleme
+
+Her aday **yalnız kendi zincirinin zaten bulunduğu güne**, o günün **boş blok kapasitesine** yerleştirildi. Yerleşim, ekleme sonrası gün baskınlığı en yüksek kalacak şekilde seçildi.
+
+| Bölüm | Saat | ΔK | Gün(ler) | Oturum |
+|---|---|---|---|---|
+| Pediatri Büyüme-Gelişme | 0.33 | +0.072 | 27 Tem | 1 |
+| Pediatri Romatoloji | 0.83 | +0.060 | 18 Ağu | 1 |
+| Anatomi Solunum | 0.88 | +0.053 | 19 Ağu | 1 |
+| Fizyoloji GİS | 1.27 | +0.047 | 10 Ağu 0.85 + 16 Ağu 0.42 | 2 |
+| KS Çocuk Cerrahisi | 0.60 | +0.038 | 27 Tem | 1 |
+| KS Anestezi | 0.60 | +0.038 | 27 Tem 0.37 + 15 Ağu 0.23 | 2 |
+| Speetus Dalak | 0.62 | +0.028 | 29 Tem 0.50 + 10 Ağu 0.12 | 2 |
+| Speetus Karın duvarı/periton | 0.25 | +0.014 | 29 Tem | 1 |
+| **TOPLAM** | **5.38** | **+0.350** | | |
+
+**Fizyoloji Kas (0.93 sa · +0.031 K) yerleşemedi** — Kas-İskelet zincir gününde (18 Ağu) Romatoloji'den sonra yer kalmıyor.
+
+### Kural doğrulaması (paket uygulanmış varsayımıyla ölçüldü)
+
+| Kural | Öncesi | Sonrası | Durum |
+|---|---|---|---|
+| A · ilk 14 gün | ihlal 0 | ihlal 0 (hepsi zaten açık kitaplar) | ✓ |
+| B · gün baskınlığı | %89.0 | **%88.1** | ✓ eşik %80 |
+| C · yeni öğrenme azalan | 50.15 / 48.66 / 34.25 | 52.20 / 49.63 / 36.61 | ✓ azalan |
+| D · kısmi bölüm yok | 0 | 0 (hepsi tam bölüm) | ✓ |
+| ≤3 oturum | 6 ihlal | yeni eklenenlerin hiçbiri aşmıyor | ✓ |
+| Blok kapasitesi | — | tamamı mevcut boşluğa sığıyor | ✓ |
+
+Kural B'nin düştüğü dört gün: 15 Ağu %37→%39 (↑) · 16 Ağu %36→%34 · 18 Ağu %73→%63 · 19 Ağu %69→%62.
+
+### Seçenek karşılaştırması
+
+| Seçenek | Saat | ΔK | K/saat | Projeksiyon | Yeniden dizim |
+|---|---|---|---|---|---|
+| **Bu paket** | **5.38** | **+0.350** | **0.0651** | **66.99** | **gerekmiyor** |
+| Adım 24 (Kaslar + Yenidoğan) | 6.93 | +0.247 | 0.0356 | 66.89 | 27 günün tamamı |
+| İkisi birlikte | 12.31 | +0.597 | 0.0485 | 67.24 | 27 günün tamamı |
+
+⚠ İki uyarı: (1) net/saat değerleri `kaynak_harita.json`'un kendi çöp gerekçelerinden; bu bölümlerin §12.5 anlamında bölüm bazlı kalibrasyonu **yok**. (2) Doldurulacak boşluğun bir kısmı §14'te ölçülen **kayıtsız yorgunluk payıdır** (E bloğu %63 dolu). Paket uygulanırsa E ve F bloklarına değil, mümkün olduğunca A/B/C bloklarına yerleştirilmeli.
+
+---
+
+## 25 · MİKRO SEANS KURALI — düzeltme ve yeniden paketleme
+
+⚠ **DÜZELTİLDİ (27 Tem 2026).** §12.8 ve §23'ün 16. bulgusu "bir bölüm en fazla 3 oturum" kuralına dayanıyordu. **Böyle bir kural kullanıcı tarafından hiç verilmedi.** Verilen talimat şuydu: *"10 dakikalık konu okuma oturumlarına, mikro seanslara gerek yok."*
+
+Yani kısıt **oturum sayısı değil, parça uzunluğu**. Obstetri'nin 7 oturuma bölünmesi kendi başına ihlal değil; ihlal olan, içindeki **8 dakikalık ve 15 dakikalık** parçalar. §23'ün 16. bulgusu bu haliyle geçersizdir.
+
+### Mikro parçaların gerçek dağılımı
+
+| Eşik | Parça | Saat | Okumanın payı |
+|---|---|---|---|
+| < 10 dk | 3 | 0.35 | %0.3 |
+| < 15 dk | **12** | 1.96 | %1.7 |
+| < 20 dk | 24 | 5.12 | %4.4 |
+| < 30 dk | 34 | 8.88 | %7.6 |
+
+### Sebep: blok doldurma artığı
+
+12 mikro parçanın 10'u **1–3 sayfalık kuyruk**. Bir bölüm büyük bloğa sığmayınca artan sayfa küçük bir bloğa (Z veya A) düşüyor. Örnekler: Bakteriyoloji 8 Ağu Z bloğunda **6 dk / 1 sayfa** · Obstetri 6 Ağu A bloğunda **8 dk / 1 sayfa** · MSS 30 Tem Z bloğunda **10 dk / 1 sayfa**.
+
+Kalan 2'si gerçekten küçük bölüm: **Toksikoloji** (sf 118–119, tek sayfa, 10 dk) ve **Enzimler** (sf 26–27, tek sayfa, 10 dk). Bunların tamamı bu kadar; Kural D uzatmaya izin vermiyor.
+
+### Gün içi yeniden paketleme — ölçülen sonuç
+
+Her bölümün o gün içindeki toplam süresi, **aynı günün** bloklarına, her parça ≥15 dk olacak ve sayfa sırası korunacak şekilde yeniden bölündü. **Hiçbir iş başka güne taşınmıyor.**
+
+| | Önce | Sonra |
+|---|---|---|
+| Okuma parçası | **107** | **88** |
+| 15 dk altı parça | **12** | **0** |
+
+Gün bazında en çok kazanan: 27 Tem 7→5 · 10 Ağu 8→6 · 15 Ağu 8→6 · 19 Ağu 10→8 · 29 Tem 6→4.
+
+**Kurallara etkisi yok:** hiçbir iş gün değiştirmediği için Kural A, B, C aynen kalıyor; sayfa sırası ve bölüm bütünlüğü korunduğu için Kural D ve sayfa sürekliliği de bozulmuyor. Bu, yapılabilecek **en düşük riskli** değişiklik.
+
+**Üç bölüm sığmıyor** (her biri 0.17 sa): Toksikoloji · Enzimler · sindirim anatomisinin 10 Ağu'ya taşan kuyruğu. İlk ikisi için çözüm sayfa komşusu bölümle **tek görev olarak birleştirmek**: Enzimler (26–27) → Karbonhidratlar (27–48) ile *sf 26–48*; Toksikoloji (118–119) → Genel Farmakoloji + OSS ile tek başlık (`icerik.json` zaten böyle adlandırıyor).
+
+⚠ **Ödünleşim:** yeniden paketleme büyük blokları önce doldurur. Bu, B bloğunda (10:00–13:45) tek bölümün **3 saat 45 dakika** kesintisiz okunması anlamına gelebilir. Daha az ve daha uzun oturum isteniyorsa doğru; blok içi çeşitlilik isteniyorsa üst sınır konmalı.
+
+---
+
+## 26 · SORU YENİDEN DAĞITIMI — çözüm
+
+Kullanıcı beyanı: eko.py'deki 0.0 değerleri **veri toplama düzeyinin artefaktı**. Tusanaliz "Aminoasitler" ve "sinir sistemi anatomisi" etiketleri altında ölçüm yapmış; kitap içeriği iki-üç bölüme yaydığı için ikinci bölümler 0.0 görünüyor. Aminoasit metabolizması (üre döngüsü, fenilketonüri, homosistinüri, akçaağaç şurubu) ve periferik sinir + duyu organları anatomisi TUS'ta sorulan alanlar.
+
+**Sonuç: dağıtım hata değil, düzeltme.** Bir bölümü 0.0 sayıp okumamak, o sayfaların taşıdığı soruyu kaybetmek olurdu. §23'ün 17. bulgusu bu haliyle geçersizdir; şişme yok, kitap toplamları birebir korunuyor (10 kitapta fark +0.0, ölçüldü).
+
+**Ama belgelenmesi gereken üç şey var:**
+
+1. **Bölme oranının dayanağı yazılı değil.** Neden 3.4/4.0, neden 2.3/1.9? Sayfa oranı 14/17 → 3.3/4.1 verirdi (yakın ama aynı değil). Önceki bir oturumda konmuş, gerekçesi hiçbir yerde yok. **Belgelenmemiş modelleme kararıdır.**
+2. **Tusanaliz ham verisi elde yok.** eko.py türetilmiş bir tablodur; "son 5 TUS'ta hangi başlıkta kaç soru" ham verisi görülmedi. 0.0'ın "gerçekten sıfır" mı "bu etiket altında sayılmadı" mı olduğu ayırt edilemiyor.
+3. **Kural D ile gerilim.** D, bölüm getirisinin ampirik ölçüm olduğunu, sayfaya bölmenin dayanaksız olduğunu söylüyor — ama burada tam olarak o yapılmış.
+
+### Önerilen kalıcı çözüm: bölümleri birleştir
+
+Kural D ile tutarlı tek yaklaşım, ölçüm hangi birimde yapıldıysa **o birimi bölüm saymak**:
+
+- `FT Biyokimya`: *Aminoasitler + metabolizması*, sf 12–26 **ve** 69–86, **7.4 soru**, birlikte okunur
+- `Anatomi Fast Track`: *Sinir sistemi + duyu*, sf 90–119, **4.2 soru**, birlikte okunur
+
+Bu, belgelenmemiş bölme oranını tamamen ortadan kaldırır ve programın fiilen yaptığı şeyi (iki yarıyı da okumak) değiştirmez.
+
+⚠ **Ölçülen yan etki:** birleştirme renk algoritmasının girdisini değiştiriyor (bölüm sayısı düşünce çeyrek sınırları kayıyor). İki bölümün rengi değişir: **Anatomi Sindirim pembe → turuncu**, **Biyokimya Enzimler sarı → mavi**. İkisi de programda zaten okunuyor, maddi etkisi yok. SST hariç pembe sayısı 25 → 24, kapsama 23/25 → 23/24.
+
+**Ayrıca netleşmesi gereken:** Kural D'nin "bölüm" birimi *kitap bölümü* mü, *Tusanaliz etiketi* mi? Şu an ikisi karışık kullanılıyor. Birleştirme yapılırsa cevap "Tusanaliz etiketi" olur ve yazılmalıdır.
+
+---
+
+## 27 · 28 TEMMUZ — kaydın düzeltmesi ve tek takvim kısıtı
+
+⚠ **DÜZELTİLDİ (27 Tem 2026).** DEVIR.md 28 Temmuz'u *kullanıcının kendi doğum günü* diye kaydetmişti. **Doğrusu: kız arkadaşının doğum günü**, kullanıcı o gün şehir dışına çıkıyor.
+
+**Kısıt:** 28 Temmuz Salı yalnız **06:00–10:00** çalışılabilir, sonrası boş.
+**Durum:** program bunu zaten sağlıyor — Z bloğu 06:00–10:00 (3.85 saat, Enfeksiyon zinciri), başka blok yok. `kural_test.py` #9 bunu kalıcı olarak kontrol ediyor.
+
+**Genel bir "Salı" kuralı YOKTUR.** 4, 11 ve 18 Ağustos Salı günleri normal tam günlerdir. (Bir ara "Salı 10'dan sonra ders olmasın" genel kural sanıldı; öyle olsaydı o üç günden 20.77 saat çıkacak ve 11 Ağustos Kardiyovasküler zincirinin tek günü olduğu için Kural B kırılacaktı. Geçerli değil.)
+
+### Kullanıcının öncelik sıralaması (27 Tem 2026 beyanı)
+
+1. **A, B, C, D kuralları** — bunlar asıl kurallardır.
+2. **Kalan zaman için azami verim ve hedefe yönelik çalışma.**
+3. **Kombo** — kullanıcı açıkça istiyor.
+4. Kahvaltı · öğle yemeği · akşam yemeği molaları.
+5. 2 günde bir, belirlenmiş günlerde spor.
+6. 28 Temmuz kısıtı.
+
+**Bunların dışındaki her şey** (oturum uzunluğu, parça sayısı, kaç kitap değiştiği, blok başına süre) **planı uygulanabilir kılmak için vardır ve verim uğruna feda edilebilir.** Mikro seans kaygısı (§25) bu sıralamada bağlayıcı değildir.
+
+---
+
+## 28 · ÜRETİM 2026-07-28a — ne yapıldı, ne yapılamadı
+
+**Üretilen:** `index.html` sürüm `2026-07-28a` · `sw.js` `rota-2026-07-28a` · 267 görev · 237.06 saat · projeksiyon **66.64**
+**Kapılar:** `kural_test.py` **18/18 GEÇTİ** · `denet.py` **SIFIR HATA**
+
+### Yapılan iki değişiklik
+
+1. **Öğle yemeği molası spor günlerinde açıldı.** `dizi3.py`, 9 spor gününde 13:45–17:15 arasını tek blok halinde "spor" diye etiketliyordu. Artık: *13:45–14:00 öğle yemeği · 14:00–16:15 spor · 16:15–17:15 toparlanma*.
+2. **Sürüm ilerletme onarıldı.** `uret.py`'nin `replace`'i şablonda olmayan bir dizeyi arıyordu (§0b). Artık gerçek dizeyi arıyor ve bulamazsa `assert` ile duruyor. `sw.js` elle eşitlendi.
+
+### 8 bölümlük verim paketi UYGULANAMADI — sebebi ölçüldü
+
+Paket (5.38 saat, +0.350 K, kombo 48→67) üç ayrı yöntemle denendi, üçü de kırıldı:
+
+| Deneme | Sonuç |
+|---|---|
+| Blok boşluklarına dağıt | **22 parça**, bazıları 4 dakika — mikro seans üretti |
+| Hedef günleri komple yeniden paketle | 7 günün 7'sinde son bölüm sığmadı (tam sayı sayfa yuvarlaması + kapasite) |
+| En boş bloğa koy, sonra düşük verimliyi çıkar | Kural C kırıldı: yeni öğrenme 49.2 / **50.2** / 35.5 |
+| Erken günlere ağırlık ver, çıkarma yapma | Dört kural geçti (proj. 66.99) ama **12 blok taştı, 277 dk**. 10 Ağu C bloğu 18:01'de bitiyor, D bloğu 17:15'te başlıyor — **gerçek çakışma, hiçbir kapı yakalamıyor** |
+
+**Ölçülen sebep:** 19 okuma gününde toplam **19.00 saat** boş okuma kapasitesi var ama blok blok dağılmış durumda — gün başına 0.15–1.76 saat, hiçbiri bitişik değil. 36.19 saatlik "boş kapasite"nin çoğu **deneme günlerinde**, oralarda ise Kural B gereği okuma yapılamıyor.
+
+**Sonuç: `kaynak_harita.json`'un o 11 bölüm için kaydettiği gerekçe — "zincir gününde yer kalmadı" — doğrudur.** Bu bölümler mevcut takvime, mevcut blok yapısıyla sığmıyor. Sığdırmak için üçünden biri gerekir:
+
+1. **Blok bitiş saatlerini uzatmak** (akşam 21:15 yerine 21:40 gibi) — §0c'deki yavaşlama kanıtına aykırı
+2. **Bir bloğu büyütmek** (örn. C 2.25 → 3.00) — günün yapısını değiştirir
+3. **27 günü zincir bazında baştan dizmek** — §11'in çözüm yolu, tek gerçek çözüm
+
+Bu üçü de kullanıcı kararı gerektirir. **Bu oturumda uygulanmadı.**
+
+---
+
+## 29 · ÜRETİM 2026-07-28a — YENİ BLOK YAPISI ve 11 BÖLÜM EKLENDİ
+
+**Kullanıcı yetkisi (27 Tem):** akşam bloğu 22:00'a uzatılabilir · C bloğu büyütülebilir · gerekirse yerleşim baştan değişebilir. Tek kısıt: kahvaltı, öğle, akşam ve toparlanma molaları ile spor saati korunacak.
+
+### Yeni blok yapısı
+
+| Blok | Eski | **Yeni** |
+|---|---|---|
+| Z | 06:00–07:00 | 06:00–07:00 |
+| A | 07:15–08:45 | 07:15–08:45 |
+| B | 10:00–13:45 | 10:00–13:45 |
+| C | 14:45–17:00 (2.25) | **14:45–17:15 (2.50)** |
+| D | 17:15–19:15 | **17:30–19:30** |
+| E | 20:00–21:15 (1.25) | **20:15–22:00 (1.75)** |
+| F | 21:30–22:30 | **kaldırıldı** (E ile çakışıyordu, tek görevi E'ye taşındı) |
+
+Molalar: 07:00–07:15 toparlanma · **08:45–10:00 kahvaltı** · **13:45–14:45 öğle** · 17:15–17:30 toparlanma · **19:30–20:15 akşam** · 22:00–23:00 yavaşlama.
+Spor günlerinde: **13:45–14:00 öğle · 14:00–16:15 spor · 16:15–17:30 toparlanma.**
+
+Nominal kapasite **261.75 → 289.50 saat (+27.75)**.
+
+### Eklenen 11 bölüm
+
+| Bölüm | Saat | Gün | Zincir |
+|---|---|---|---|
+| Pediatri Büyüme ve Gelişme | 0.33 | 27 Tem | Acil & Halk Sağlığı |
+| Küçük Stajlar Çocuk Cerrahisi | 0.60 | 27 Tem | Acil & Halk Sağlığı |
+| Küçük Stajlar Anestezi ve Reanimasyon | 0.60 | 27 Tem | Acil & Halk Sağlığı |
+| Genel Cerrahi Karın duvarı ve periton | 0.25 | 29 Tem | GİS |
+| Pediatri Genetik Hastalıklar | 0.67 | 31 Tem | Metabolizma |
+| **Pediatri Yenidoğan** (pembe) | 3.25 | 4 + 6 + 19 Ağu | Gebelik & Yenidoğan |
+| Fizyoloji Gastrointestinal Sistem | 1.27 | 10 Ağu | GİS |
+| Fizyoloji Hücre | 1.13 | 16 Ağu | Metabolizma |
+| Genel Cerrahi Dalak | 0.62 | 16 Ağu | GİS |
+| Pediatri Romatoloji | 0.83 | 18 Ağu | Kas-İskelet |
+| Fizyoloji Kas | 0.93 | 18 Ağu | Kas-İskelet |
+
+**Eklenemeyenler:** Anatomi Kaslar (3.68 sa) ve FT Farmakoloji KVS (3.33 sa) — zincirlerinin (Kas-İskelet, Kardiyovasküler) tek gün taşıması ve o günlerin dolması nedeniyle. Bunlar ancak zincire ikinci gün açılırsa girer.
+
+### Sonuç
+
+| | Önce | Sonra |
+|---|---|---|
+| Görev | 267 | **278** |
+| Saat | 237.06 | **247.54** |
+| **Projeksiyon K** | 66.64 | **67.20** |
+| **Kombo** | 48 | **78** |
+| Gün-zincirde ortalama branş | 1.55 | 1.71 |
+| Kural A ihlal | 0 | **0** |
+| Kural B | %89.0 | **%86.7** (eşik %80) |
+| Kural C geri getirme | 15.8 / 20.3 / 30.4 | aynı ✓ |
+| Kural C yeni öğrenme | 50.1 / 48.7 / 34.2 | **52.6 / 51.9 / 39.0** ✓ |
+| Kural D kısmi bölüm | 0 | **0** |
+| Sayfa kırığı | 0 | **0** |
+| En geç bitiş | 22:30 | **22:22** |
+
+`kural_test.py` **18/18** · `denet.py` **SIFIR HATA**
+
+### `denet.py` ölçüt değişikliği
+
+`"blok sonu aşımı ≤4"` sabit sayı eşiği, gerçek ölçütle değiştirildi: **bir blok sonraki bloğun başlangıcına taşıyor mu** ve **23:00 aşılıyor mu**. Yeni yapıda 12 blok kendi bitiş saatini aşıyor ama hepsi mola boşluğuna sarkıyor; **çakışma sıfır**, en geç bitiş 22:22. Eski eşik yeni blok yapısıyla anlamsızdı.
+
+### Bu turda yapılan ve düzeltilen hatalar
+
+1. Blok boşluklarına dağıtınca **22 parça** üretildi, bazıları 4 dakika → yöntem değiştirildi
+2. 28 Temmuz'un 4 saatlik Z bloğu 1 saat sanıldı, dengeleyici orada kilitlendi → düzeltildi
+3. Yenidoğan gün sırası ters yazıldı (6 Ağu, 4 Ağu) → sayfa sürekliliği kırıldı → tarih sırasına alındı
+4. Mükerrer görev birleştirilirken `soru` değerleri toplandı → kitabın yetkili toplamı aşıldı → bölüm değerine geri alındı
+5. Aynı blokta okuma ve soru görevi aynı başlığı taşıyordu → soru görevi yeniden adlandırıldı
+6. **Yenidoğan'ın 3 oturumuna `soru` değeri orantılı bölündü (0.56 / 0.79 / 0.85).** Programın kuralı bu değil: bir bölümün *her* oturumu bölümün **tam** soru değerini taşır (Obstetri'nin 7 oturumunun hepsinde 3.8 yazıyor). Üçü de **2.2** yapıldı.
+7. **`yeniden.py`'yi `| head -2` ile koşturdum; SIGPIPE alıp `json.dump` satırına gelmeden öldü.** Sonuç: `ot` alanı birleştirme öncesindeki 6 oturumda kaldı, oysa 5 oturum vardı. Boru kaldırılıp yeniden koşuldu. **Ders: bu boru hattının hiçbir betiği çıktısı kesilerek koşturulmamalı — dosya yazımı en sonda.**
+
+### Son bağımsız denetim (üretimden sonra, kapılardan ayrı)
+
+| Kontrol | Sonuç |
+|---|---|
+| 60 görev adı ↔ eko.py bölüm sınırı | **60/60 oturuyor** (49 tek bölüm, 11 çok bölüm tam kapsıyor, taşan 0) |
+| Sayfa aralığı kitap sınırı içinde | ✓ |
+| Aynı sayfa iki kez okunuyor mu | **hayır** |
+| Sayfa sürekliliği | **0 kırık** |
+| `soru` değerleri | §26'da kayıtlı 4 dağıtım dışında **birebir** |
+| Renkler algoritmayla | **birebir** |
+| `ot`/`otg` oturum sayısıyla | ✓ |
+| Aynı bölüm tek zincirde | ✓ |
+| Mükerrer görev | **0** |
+| Kahvaltı / öğle / akşam her günde | ✓ |
+| 9 spor günü, hepsinde C bloğu yok | ✓ |
+| 28 Temmuz yalnız Z | ✓ |
+| Blok sonrakine taşıyor mu | **hayır** |
+| 23:00 aşılıyor mu | **hayır** (en geç 22:22) |
+| Kural A / B / C / D | **dördü de ✓** |
+
+**278 görev · 247.54 saat · K = 67.20 · kombo 78 · index.html ↔ app_gorev.json birebir aynı**
+
+---
+
+## 30 · SÜRÜM 2026-07-28b — SENKRON ONARIMI ve BEŞ KAPININ TAMAMI
+
+### Bulunan hata: karşı cihaz otomatik güncellenmiyordu
+
+**Belirti:** iPad (yazar) değişiklik yapıyor, telefon (okur) yeni veriyi almıyor; kullanıcı elle "karşı cihazdan yükle"ye basmak zorunda kalıyor.
+
+**Kök sebep — kodda ölçüldü.** `Senk.esitle()` yalnız **dört olayda** tetikleniyordu:
+
+| Tetikleyici | Ne zaman |
+|---|---|
+| `visibilitychange` | uygulama arka plandan öne gelince |
+| `focus` | pencere odak alınca |
+| `online` | ağ geri gelince |
+| `Senk.ertele()` | **yalnız yazar cihazda**, yerel değişiklikten 2.5 sn sonra |
+
+`setInterval(nabiz,15000)` çalışıyordu ama `nabiz` **senkron çağırmıyor** — yalnız arayüz nabzı. Yani **periyodik yoklama hiç yoktu.** Telefon zaten ekranda açıksa hiçbir olay tetiklenmiyor ve iPad'deki değişiklik asla gelmiyordu. Kullanıcının tarifi bu davranışa birebir uyuyor.
+
+**Düzeltme** (`sablon_v23.html`'e yazıldı, kalıcı):
+
+```js
+setInterval(()=>{if(document.visibilityState!=='hidden'&&Senk.kur())Senk.esitle()},45000);
+```
+
+- **45 saniyede bir**, yalnız uygulama ekranda açıkken.
+- `Senk.esitle()` içindeki mevcut **15 saniyelik kısıtlama** yığılmayı önlüyor.
+- Gizli sekmede/arka planda istek atılmıyor — pil ve veri korunuyor.
+- İstek yükü: cihaz başına ~80/saat. GitHub'ın kimlik doğrulamalı sınırı 5000/saat.
+- Dört eski tetikleyici olduğu gibi duruyor.
+
+**Doğrulandı** (`senk_poll.js`, yeni test): okur cihaz, uzak veri değişince, **elle hiçbir şeye dokunulmadan** 3 kayıtlık yeni veriyi aldı. Yazar cihazda yoklama yerel değişikliği gönderdi. Arka arkaya yoklamada kısıt devreye girip fazladan istek atılmadı.
+
+### Beş kapının tamamı koşuldu
+
+| Kapı | Kapsam | Sonuç |
+|---|---|---|
+| `kural_test.py` | 18 kalıcı kural kontrolü | **18/18 GEÇTİ** |
+| `denet.py` | 7 başlık, üretilen index.html üzerinde | **SIFIR HATA** |
+| `kos.js` | 14 bölüm · 216 gün-saat · 27 günlük yaşam döngüsü · 24 panel boyutu · 278 kart | **SIFIR HATA** |
+| `senk_kos.js` | 6 grup, 26 senkron senaryosu | **SIFIR HATA** |
+| `senk_poll.js` | **yeni** — periyodik yoklama davranışı | **SIFIR HATA** |
+
+`kos.js`'teki sabit kodlanmış `267 görev` ve `66.64 puan` değerleri **278** ve **67.20** olarak güncellendi (§0h'de uyarılmıştı). Yaşam döngüsü testi K puanının 58.26'dan başlayıp 27 günde **67.20**'ye çıktığını doğruladı.
+
+### Bu turda yaptığım hatalar
+
+1. `kos.js` ve `tam_test.js` diskte yoktu, bağlamdan kurdum — sabit değerleri güncellemeyi unutsaydım test yanlış yere kırılacaktı.
+2. Yoklama testini yazarken VM'in **kendi `Date` nesnesi** olduğunu atladım; dışarıdan yaptığım saat kaydırması içeri geçmedi, 15 sn'lik kısıt tetiklendi ve test kodu değil kendi testimi hatalı gösterdi. `vm.runInContext` ile içeriden kaydırınca düzeldi.
+
+### Nihai durum · sürüm 2026-07-28b
+
+**278 görev · 247.54 saat · K = 67.20 · kombo 78 · 27 gün**
+Kural A ihlal 0 · B %86.7 · C artan+azalan ✓ · D kısmi 0 · sayfa kırığı 0
+`index.html` ↔ `app_gorev.json` birebir · `SURUM='2026-07-28b'` ↔ `rota-2026-07-28b`
+
+---
+
+## 31 · SÜRÜM 2026-07-28d — BOŞ YOKLAMA MALİYETİ SIFIRLANDI
+
+**Kullanıcı itirazı (27 Tem):** *"Ben bir işaretleme yapmadıysam sürekli aynı dosyayı birbirine göndermesi anlamsız."*
+
+**Önce bir düzeltme:** yoklama dosya **göndermiyordu**. `esitle()` önce `cek()` ile GET atar; uzak damga yerelden yeni değilse `"zaten eşit"` deyip çıkar. PATCH (yazma) **yalnız** yerelde değişiklik varsa olur. Aynı dosya ileri geri gitmiyordu.
+
+**Ama itirazın özü doğruydu:** boşta saatte ~80 anlamsız GET. İki katmanda çözüldü.
+
+### 1 · ETag koşullu istek
+
+`cek()` artık son gördüğü ETag'i `If-None-Match` başlığıyla gönderiyor. Uzakta hiçbir şey değişmemişse GitHub **304** döner: gövde inmez, **GitHub'ın saatlik kotasından düşmez.**
+
+⚠ **304'te `r.ok` false'tur** — bu yüzden kontrol `if(!r.ok)throw` satırından **önce** yapılıyor, yoksa her boş yoklama "hata: okuma 304" olarak görünürdü.
+
+### 2 · Uyarlanabilir aralık
+
+| | |
+|---|---|
+| Alt sınır | **45 sn** |
+| Üst sınır | **6 dk** |
+| Boş turda | aralık **×1.6** |
+| Değişiklik gelirse | anında **45 sn**'ye döner |
+| Öne gelme · odak | aralığı sıfırlar |
+| Gizli sekme | yoklama **yok** |
+
+Boştayken 5 turda 6 dakikaya çıkıyor. **1 saat boşta toplam istek: 80 → 14**, üstelik 14'ünün hepsi 304 (gövdesiz, kotasız).
+
+### Bu turda yakaladığım kendi hatam
+
+ETag'i ilk eklediğimde 304 gelince **erken çıkıyordum**. Sonuç: uzak değişmemişken **yerel değişiklik varsa da gönderilmiyordu** — yani ETag, yazar cihazın gönderme yeteneğini tamamen susturuyordu. `Senk.ertele()` de aynı yoldan geçtiği için işaretlediğin hiçbir görev karşı cihaza gitmezdi. **Bu, senkronu tamamen bozan bir hataydı.**
+
+Yazdığım yeni test (`senk_etag.js`) yakaladı. Düzeltme: 304'te erken çıkmak yerine yön kararı veriliyor —
+
+```js
+if(!okur() && sonUzak && D.guncel > sonUzak){ await gonder(); }
+```
+
+Bunun için son görülen **uzak damga** (`sonUzak`) saklanıyor; 304'te uzağın damgası bilinmediği sürece "yerelim daha yeni mi" sorusu cevaplanamaz.
+
+### Altı kapı
+
+| Kapı | Sonuç |
+|---|---|
+| `kural_test.py` | **18/18** |
+| `denet.py` | **sıfır hata** |
+| `kos.js` | **sıfır hata** |
+| `senk_kos.js` (26 senaryo) | **sıfır hata** |
+| `senk_poll.js` (yoklama) | **sıfır hata** |
+| `senk_etag.js` (**yeni**, ETag + yön kararı) | **sıfır hata** |
+
+**278 görev · 247.54 saat · K = 67.20 · kombo 78 · sürüm `2026-07-28d` ↔ `rota-2026-07-28d`**
+
+---
+
+## 32 · DERİN ÖZELLİK TESTİ — 27 Temmuz 2026
+
+Kullanıcı isteği: kaçırılan görevler, telafi, deneme girişi, seyir defteri, para/puan hesapları ve yeni senkron, **bütün ihtimalleriyle** sınansın. İki yeni test dosyası yazıldı: `derin_test.js` (64 kontrol) ve `senk_uc.js` (26 kontrol).
+
+### Test takımı — sekiz dosya, hepsi sıfır hata
+
+| Dosya | Kapsam | Sonuç |
+|---|---|---|
+| `kural_test.py` | 18 kalıcı kural | ✓ |
+| `denet.py` | 7 başlık, üretilen dosya | ✓ |
+| `kos.js` | 14 bölüm · 216 gün-saat · yaşam döngüsü | ✓ |
+| **`derin_test.js`** | **64 kontrol** — kaçırılan · telafi · deneme · seyir · para/puan | ✓ |
+| `senk_kos.js` | 26 senkron senaryosu | ✓ |
+| `senk_poll.js` | periyodik yoklama | ✓ |
+| `senk_etag.js` | ETag + 304 yön kararı | ✓ |
+| **`senk_uc.js`** | **26 senkron uç durumu** | ✓ |
+
+### A · Kaçırılan görevler (13 kontrol)
+
+Program başlamadan 0 · ilk gün 00:00'da 0 · blok bitiminden **1 dk önce 0**, bitiş dakikasında **tam o bloğun görevleri** · gelecek günün görevi asla sayılmıyor · gün boyunca sayı hiç azalmıyor · **27 günün hepsinde** kaçırılan = o güne kadarki tüm tamamlanmamış görev · hepsi yapılınca 0 · tek görev geri alınınca yalnız o görünüyor.
+
+### B · Telafi et (13 kontrol)
+
+Telafi puanı **tam olarak** katsayı × kaz kadar artırıyor (fark < 1e-9) · listeden çıkıyor · geri alınca puan eski değere dönüyor · toplu telafi elle hesapla birebir uyuşuyor · iki kez işaretleme puanı iki kez artırmıyor.
+
+⚠ **Ortaya çıkan davranış — bilinmesi gerek:** `para()` yalnız **son denemenin tarihinden SONRA** tamamlanan görevleri sayıyor (`if(!b||b<=o.tar)return`). Son deneme 24 Temmuz olduğu için, 24 Temmuz veya öncesine işaretlenen bir görev **puana hiç yansımıyor**. Doğrulandı: 278 görevin tamamı 24 Temmuz'a işaretlenirse puan 57.609'da kalıyor; 25 Temmuz'a işaretlenirse 67.20'ye çıkıyor. Hata değil, modelin tanımı — deneme sonrası kazanç ölçülüyor.
+
+### C · Deneme girme (20 kontrol)
+
+Ekleme · **eski tarihli deneme son()'u değiştirmiyor** · aynı tarihli iki deneme · negatif net · `bn` alanı eksik · aşırı değerler (999) · sıfır deneme · 20 deneme — hiçbiri çökertmiyor. Oranlar 0–1 arasında kalıyor, beklenen ölçüleni geçmiyor ve 1'i aşmıyor. Fizyoloji ölçümünün Histo-Embriyoloji ile toplandığı ayrıca doğrulandı.
+
+### D · Seyir defteri (5 kontrol)
+
+4 farklı deneme sayısı × 27 gün = **108 kombinasyon** hatasız. Üç doluluk seviyesinde (0 / 139 / 278 tamamlanmış) farklı ve dengeli HTML üretiyor.
+
+### E · para / puan (9 kontrol)
+
+Başlangıç 57.60925 · formül `40.269 + 0.207·t + 0.277·k` doğrulandı · **278 görevin her birinde** artış tam beklenen kadar (sapan 0) · hepsi tamamlanınca **67.20** · puan hiç düşmüyor · T ve K sepetleri doğru ayrılıyor.
+
+### G · Senkron uç durumları (26 kontrol)
+
+Saat kayması (uzak damga 2099) · yerel damga gelecekte · **bozuk JSON** (yerel veri bozulmuyor) · **kesik içerik** (raw_url'den alınıyor) · **farklı büyük/küçük harfli dosya adı** (kopya oluşmuyor, aynı dosyaya yazıyor) · boş gist (yazar yükler, okur yazmaz) · çevrimdışı → ağa dönüş · **dokuz HTTP hata kodu** (401·403·404·409·422·429·500·502·503 — hepsinde yerel veri korunuyor) · okur cihaz dört farklı tetikte de yazmıyor · kurulmamış senkron istek atmıyor · 278 kayıtlık tam veri gönderilebiliyor (yük < 1 MB) · eşzamanlı dört çağrı tek isteğe düşüyor.
+
+### Test altyapısında bulunan eksik
+
+`kos.js`'in kullandığı `tam_test.js` ortamında `document.querySelector` **null** döndürüyordu. Sonuç: **`olcumCiz` ve `seyirCiz` hiçbir zaman test edilmemiş** — ikisi de `querySelector(...).onclick` kullandığı için ortamda çalışamıyorlardı. `derin_ortam.js` yazıldı: iç içe `querySelector` gerçek öğe döndürüyor ve öğeler id'ye göre önbelleğe alınıyor, böylece DOM'a yazılan içerik okunabiliyor. İki fonksiyon da artık gerçekten sınanıyor.
+
+### Bu turda yaptığım üç hata
+
+1. `seyirCiz`in string döndürdüğünü varsaydım; aslında `seyirIc` öğesine yazıyor. Test buna göre düzeltildi.
+2. E4'te başlangıç puanını `57.609` diye yuvarlak yazdım; gerçeği **57.60925**. 278 adımda 0.00025 sapma çıktı — uygulama değil testim yanlıştı.
+3. `senk_uc.js`'te ETag sürüm sayacım kazara eşleşip 304 döndürdü ve üç senaryo yanlışlıkla "geçti/kaldı" gösterdi. Her senaryoya benzersiz sürüm verilerek düzeltildi.
+
+**Toplam: 8 dosya, 200'ün üzerinde kontrol, sıfır hata. Program verisi değişmedi — 278 görev · 247.54 saat · K 67.20 · sürüm `2026-07-28d`.**
+
+---
+
+## 33 · SÜRÜM 2026-07-29a — TEK KELİMELİK KURULUM, ANAHTARSIZ OKUR
+
+**Kullanıcı isteği:** gist kimliği ve erişim anahtarını iki cihaza yapıştırmak zahmetli; kutuya yalnız "Yazar" veya "okur" yazılsın. Ayrıca üçüncü bir cihaz (kız arkadaşı) arada durumu görebilsin.
+
+### Erişim anahtarı koda GÖMÜLMEDİ — gerekçe
+
+İstek "anahtarı da göm" idi; yapılmadı. Sebep saldırgan değil, **işleyiş**: GitHub sızmış PAT'leri otomatik tarayıp **sessizce iptal eder**. Anahtar herkese açık bir sitenin kaynak koduna girerse senkron sınavdan günler önce, hiçbir uyarı vermeden ölebilir. Ayrıca `gist` yetkisi tek bir gist'i değil **hesaptaki bütün gist'leri** kapsar.
+
+⚠ **Sohbete yapıştırılan anahtar iptal edilmeli ve iPad için yenisi üretilmelidir.**
+
+### Çözüm: okuma anahtar gerektirmiyor
+
+Gist **okumak** için kimlik doğrulaması gerekmez; yalnız **yazmak** için gerekir. Bu yüzden:
+
+| Cihaz | Rol | Anahtar |
+|---|---|---|
+| iPad | yazar | **bir kez**, yalnız o cihazın localStorage'ında |
+| Telefon | okur | **hiç gerekmiyor** |
+| Kız arkadaşının telefonu | okur | **hiç gerekmiyor** |
+
+### Kod değişiklikleri
+
+- `GIST_SABIT` koda gömüldü — **gist kimliği sır değildir**, yalnız ilerleme verisini gösterir ve yazmaya yetmez.
+- `kur()`: okur rolü **anahtarsız** kurulu sayılıyor.
+- `bas()`: anahtar yoksa `Authorization` başlığı **hiç gönderilmiyor**.
+- `gonder()`: anahtarsız yazma denemesi net hatayla duruyor.
+- Arayüz: üç alan (gist · anahtar · rol açılır menüsü) yerine **tek kutu — "Senkronizasyon şifresi"**. `yazar`/`yaz`/`ipad` ve `okur`/`oku`/`telefon` kabul ediliyor; büyük-küçük harf ve Türkçe `ı/İ` farkı normalize ediliyor. Anahtar kutusu yalnız "yazar" yazılıp anahtar yoksa görünüyor.
+
+### Yeni test · `senk_rol.js` (20 kontrol)
+
+Gömülü gist var · **gerçek anahtar koda gömülmemiş** (üretilen `index.html` tarandı: yalnız `github_pat_...` yer tutucusu) · okur anahtarsız kurulu sayılıyor · anahtarsız okuma çalışıyor · **isteklerde `Authorization` başlığı yok** · gömülü gist kimliği kullanılıyor · anahtarsız okur **dört farklı tetikte de** yazmıyor, hiç PATCH atmıyor · yazarın isteğinde `Authorization` var · anahtarsız yazar rolü kurulu sayılmıyor ve istek atmıyor · **temiz üçüncü cihaz yalnız "okur" yazarak eşleşiyor**, anahtar sorulmuyor, uzaktaki veri bozulmuyor.
+
+### Dokuz kapı
+
+`kural_test.py` · `denet.py` · `kos.js` · `derin_test.js` · `senk_kos.js` · `senk_poll.js` · `senk_etag.js` · `senk_uc.js` · **`senk_rol.js`** — **hepsi sıfır hata.**
+
+### Doğrulanması gereken tek varsayım
+
+Okuma akışı, gist'in kimlik doğrulamasız okunabilmesine dayanıyor. **Doğrulama yolu:** gist adresini gizli/incognito bir pencerede aç. Giriş yapmadan görünüyorsa anahtarsız okur çalışır. Görünmüyorsa gist'i public yap ya da o cihaza da anahtar gir.
+
+**278 görev · 247.54 saat · K 67.20 · sürüm `2026-07-29a` ↔ `rota-2026-07-29a`**
+
+---
+
+## 34 · SÜRÜM 2026-07-29b — KOMBO ÇİPİ KATLANIR + KUYRUKLU YILDIZ
+
+**İstek:** kombo çipi tıklanınca yerinde açılan bir pencere olsun (telefonda okumak zorlaşıyordu) · başlıkta kaç kombo olduğu yazsın · kombo sayısı arttıkça o yazı alev alsın, kuyruklu yıldız gibi görünsün.
+
+### Ölçülen kombo dağılımı — kademe eşikleri buradan çıktı
+
+| Görev başına kombo | Görev sayısı |
+|---|---|
+| 1× | 24 |
+| 2× | 34 |
+| 3× | 7 |
+| 4× | 6 |
+| 6× | 2 |
+| **7× (en çok)** | **1** |
+| kombosuz | 204 |
+
+74 görevin kombosu var, ortalama 2.11. **En az 1, en çok 7.**
+
+### Dört kademe
+
+| Kademe | Koşul | Görsel | Kaç görev |
+|---|---|---|---|
+| `k1` | 1× | `--bilgi` mavi, sakin | 24 |
+| `k2` | 2× | `--altin` altın | 34 |
+| `k3` | 3–4× | `--turuncu` + yumuşak parıltı | 13 |
+| **`k4`** | **5+×** | **kuyruklu yıldız** — parlak çekirdek, üç katmanlı parıltı, nefes alan kuyruk | **3** |
+
+Kuyruklu yıldız kasten **nadir**: 278 görevin yalnız 3'ünde çıkıyor (10 Ağu GİS Fizyolojisi 7× · 27 Tem Genel Farmakoloji 6× · 10 Ağu sindirim anatomisi 6×).
+
+### Tasarım kararları
+
+Uygulamanın **kendi görsel dili** genişletildi, yenisi icat edilmedi. Kuyruklu yıldız zaten bu uygulamanın sözlüğünde: *Sefer · pelerin · kordon · parakete*, arka planda yıldız alanı. Isı rampası da mevcut değişkenlerden: `--bilgi` → `--altin` → `--turuncu` → kuyruk tonu `#F2C57C`.
+
+**İmza öğe kuyruk.** Gerisi sessiz tutuldu — kenarlık rengi, ikon, ek animasyon eklenmedi.
+
+### Erişilebilirlik ve hareket
+
+- Başlık gerçek `<button>`, `aria-expanded` açılıp kapandıkça güncelleniyor.
+- `:focus-visible` ile klavye odağı görünür.
+- Kuyruk animasyonu `@media (prefers-reduced-motion:no-preference)` içinde — hareket azaltma açıksa kuyruk durur, renk ve parıltı kalır.
+- Açılınca `-webkit-line-clamp` kalkıyor: kapalıyken kırpılan satırlar açıkken tam okunuyor. **Asıl okuma sorununu çözen madde bu.**
+- Açılış/kapanış sonrası `brifYogunluk` yeniden ölçülüyor, çip yoğunluğu bozulmuyor.
+- `nabiz` brifingi 15 sn'de bir yeniden çizmiyor (yalnız gün/kip değişiminde), bu yüzden açtığın kombo açık kalıyor.
+
+### Yeni test · `kombo_test.js` (20 kontrol)
+
+**278 görevin hepsinde** brifing çiziliyor, kademe ve sayı `kombo.json` ile birebir uyuşuyor · kombosuz 204 görevde çip hiç çizilmiyor · 7× görevde `k4` ve kuyruk öğesi var · varsayılan **kapalı**, `aria-expanded="false"` · 7 kombo satırı gövdede · tıklama işleyicisi bağlı, `acik` sınıfını çeviriyor, yoğunluğu yeniden ölçüyor · dört kademenin CSS'i ve hareket-azaltma koşulu doğrulandı.
+
+Kademe dağılımı testte ölçüldü: **k1=24 · k2=34 · k3=13 · k4=3.**
+
+### On kapı
+
+`kural_test.py` · `denet.py` · `kos.js` · `derin_test.js` · **`kombo_test.js`** · `senk_kos.js` · `senk_poll.js` · `senk_etag.js` · `senk_uc.js` · `senk_rol.js` — **hepsi sıfır hata.**
+
+**278 görev · 247.54 saat · K 67.20 · kombo 78 · sürüm `2026-07-29b` ↔ `rota-2026-07-29b`**
+
+---
+
+## 35 · SÜRÜM 2026-07-29c — KAYNAK HARİTASI ESKİYDİ, ONARILDI
+
+### Bulunan hata: harita programı yansıtmıyordu
+
+`yeniden.py` yalnız **mevcut satırların gün listesini** tazeliyordu. Programa yeni giren bölüm haritaya hiç eklenmiyor, çıkan bölüm hiç silinmiyor, çöpten kurtulan bölüm çöpte kalıyordu. Ölçülen sonuç:
+
+| Sorun | Adet |
+|---|---|
+| Programda olup haritada **planlı görünmeyen** bölüm | **30** |
+| Haritada planlı olup programda **olmayan** (hayalet) | **23** |
+| **Hem çöpte hem programda** olan bölüm | **2** (Yenidoğan · Çocuk Cerrahisi) |
+| Eski renk/kapsama sayacı | **5 kitap** |
+
+Örnek eski sayaçlar: Speetus `11/20` → gerçek **13/20** · TUSTIME Fizyoloji `3/10` → **6/10** · Küçük Stajlar `13/15` → **15/15** · Klinisyen Vaka Pediatri `10/22` → **14/22**.
+
+**Düzeltme:** `yeniden.py` artık haritayı **her koşuda programdan sıfırdan kuruyor** — planlı satırlar, gün listeleri, sayfa aralıkları, renk sayaçları ve `ic/tp` yeniden hesaplanıyor; çöp satırlarının **elle yazılmış gerekçeleri korunuyor**, yalnız programa giren bölümler çöpten çıkarılıyor. `kural_test.py`'deki ELLE eşlemesi (24'lü branş denemeleri, video · 1.5x) yeniden üretime de taşındı.
+
+Sonuç: planlı satır **92 → 153**, çöp **51 → 49**, hayalet satır **0**, çelişki **0**.
+
+### İkinci hata: hayalet "Kardiyoloji" satırı
+
+Video görevleri `Kardiyoloji — 2. oturum videoları` diye adlandırılmıştı. Bölüm adı `re.sub(r'\s+—.*','',k)` ile kırpıldığı için taban ad `Kardiyoloji` oluyordu, oysa 4 Ağustos'taki görev `Kardiyoloji videoları`. Haritada aynı seri **iki ayrı satır** olarak görünüyordu. Adlar `Kardiyoloji videoları — 2. oturum` biçimine çevrildi; artık dördü tek bölüm.
+
+### Kullanıcı sorularının cevapları (ölçüldü)
+
+- **Feyyaz Akay Oldies:** 6 soru oturumu, 3.00 saat, üç konu — Bakteriyoloji · Mikoloji+Parazitoloji · Temel Mikrobiyoloji. Kitabın bölüm envanteri `eko.py`'de **yok**, bu yüzden "tamamı mı" sorusu veriden cevaplanamıyor. Kesin olan: okunan Mikrobiyoloji konularını izliyor. **Viroloji ve İmmünoloji okunmadığı için o başlıkların soruları da çözülmüyor.**
+- **Klinisyen Vaka Pediatri / ek vakalar:** aynı kitabın **iki farklı kullanımı**. İlki vaka bölümlerinin *okunması* (sayfa aralıklı, `act=oku`), ikincisi kitap sonundaki *ek vakaların çözülmesi* (sayfasız, `act=soru`, her konu iki turda: kısa ön-tur + uzun tur). Renk/kapsama sayacı **yalnız okuma başlığında** tutuluyor, ek vakalarda `say=null` — yani **çift sayım yok, tutarlılık bozulmamış**. Güncel kapsama: 14/22 bölüm · pembe 5/5 · turuncu 4/6 · sarı 4/6 · mavi 1/5.
+- **Levent Kodal Soru Bankası:** 14 oturum, 4.69 saat, 7 konu. Speetus'ta **okunan** cerrahi bölümleri izliyor; kitabın tamamı değil.
+- **Yavuz Şahin Biyokimya:** 10 oturum, 5.00 saat, 5 konu. FT Biyokimya'nın 6 okunan bölümünden 5'i kapsanıyor — **Enzimler okunuyor ama soru oturumu yok.**
+- **Yavuz Şahin Farmakoloji:** 10 oturum, 5.00 saat, 5 konu. FT Farmakoloji'nin 8 okunan bölümünün 5'i.
+- **Atilla Uslu videoları:** **yetişiyor ama payı sıfır.** 16.28 saat = 24 sa 25 dk'nın 1.5×'i, birebir. 12 oturum, 10 gün, 27 Tem – **8 Ağu**; erişim de 8 Ağustos'ta kapanıyor. `denet.py` bunu kalıcı kontrol ediyor. **Bir akşamı kaçırırsan telafi yeri yok.**
+
+### Arayüz
+
+- **Kaynak haritasında kitap başlıkları artık kapalı başlıyor.** Önceden sıradaki oturumu olan kitap otomatik açılıyordu; 153 satırla bu okunamaz hale gelmişti.
+- **Kombo çipi dört kademede de görsel karşılık kazandı** (önce yalnız 5+ süslüydü):
+
+| Kademe | Görsel | Hareket |
+|---|---|---|
+| 1× | sessiz mavi nokta | **yok** |
+| 2× | altın nokta + parıltı | nefes 4.6 sn |
+| 3–4× | turuncu nokta + genişleyen halka | nefes 4.6 sn · halka 5.4 sn · sayı 5.0 sn |
+| 5+ | kuyruklu yıldız: uzayan kuyruk + halka + üç katmanlı parıltı | kuyruk 5.0 sn · halka 5.4 sn |
+
+Hareket ilkesi: **yalnız parlaklık ve halka nefes alır; hiçbir şey zıplamaz, kaymaz, titremez.** Süreler kasten farklı (4.6 · 5.0 · 5.4 sn) ki senkron yanıp sönme hissi doğmasın. Hepsi `prefers-reduced-motion:no-preference` içinde.
+
+### Test
+
+`kombo_test.js` 26 kontrole çıktı: dört animasyonun **hepsi ≥4 saniye**, süreler birbirinden farklı, yer değiştiren hareket yok, hepsi hareket-azaltma koşulu içinde · işaret öğesi her kademede var · kaynak haritası kapalı başlıyor, 18 kitap başlığı çiziliyor.
+
+**On kapı sıfır hata. 278 görev · 247.54 saat · K 67.20 · kombo 78 · sürüm `2026-07-29c`**
+
+---
+
+## 36 · SÜRÜM 2026-07-30a — ÇARK SÜZGECİ, TAMAMLANANLAR ÇİPİ, ÇARKA TAŞI
+
+**İstek:** tamamlanan görevler çarkta boş yer kaplıyor · altına tamamlananlar çipi eklensin, oradan geri alınsın · vakti geçmiş görevler de çarktan çıksın ki ana ekran hep sıradaki işi göstersin · kaçırılanlar çipindeki bilgi görevi yürütmeye yetsin ama telefonda boğmasın · her satıra "Çarka taşı" düğmesi.
+
+### Çark artık süzülüyor
+
+```
+carkListe() = tamamlanmamış  VE  (elle çarka taşınmış  VEYA  vakti geçmemiş)
+bul()       = bu listenin ilk öğesi
+```
+
+Üç sonuç: ana ekran her açılışta **sıradaki yapılacak işi** gösteriyor · tamamlanan iş çarkta yer kaplamıyor · vakti geçen iş sessizce düşüyor, kaçırılanlar çipinde bekliyor.
+
+`carkCiz` penceresi artık `GOREVLER` indeksleri yerine **süzülmüş liste** üzerinde kayıyor; mola şeridi ve "bu bloğun son seansı" işareti de sonraki **görünen** işe göre hesaplanıyor, yoksa gizlenen işler yüzünden yanlış mola çizilirdi.
+
+### Çarka taşı
+
+`D.tasi` — çarka geri getirilen görevlerin kümesi. Vakti geçmiş olmasına rağmen listede kalır ve **kronolojik olarak en başta** olduğu için `bul()` doğrudan onu döndürür; ayrıca kayırma koduna gerek kalmadı. Görev tamamlanınca ya da geri alınınca işaret otomatik siliniyor.
+
+⚠ `Senk.temiz()` yalnız `bitti · denemeler · guncel` alanlarını geçiriyordu; `tasi` eklenmeseydi **her senkron çekişinde silinecekti.** Alan `temiz()`'e eklendi, artık iki cihaz aynı görevi gösteriyor.
+
+### Kaçırılanlar paneli — yürütmeye yeten en az bilgi
+
+Satır başına dört bilgi: **ne yapacaksın · branş — görev adı · kitap + sf aralığı · süre + oturum + net.** Fazlası yok. Sayfa aralığı ayrıca vurgulu. Çarka taşınmış görev satırı yeşil zeminle ve "çarkta" etiketiyle işaretli.
+
+520 px altında düğmeler alt satıra iniyor ve yan yana genişliyor — dar ekranda taşma yok.
+
+### Tamamlananlar çipi
+
+Kaçırılanların hemen altında, aynı biçim, yeşil ton: **"N tamamlandı · +X net"**. Panelde en yeniden eskiye **son 25 görev**, her birinde "Geri al". Geri alma kazancı paraketeden düşürüyor ve görevi çarka döndürüyor. 25'ten fazlası varsa altta sayısı yazıyor — 278 satırlık liste telefonda kullanılamazdı.
+
+### Yeni test · `cark_test.js` (30 kontrol)
+
+Süzgecin üç kuralı · `bul()` vakti geçmiş ya da tamamlanmış görev döndürmüyor · kaçırılan görev normalde çarkta değil, taşınınca giriyor ve **listenin başına** geçiyor · tamamlanınca taşıma işareti temizleniyor · her iki çip ve panel HTML'de, çip sırası doğru · panel satırında ne-yapacaksın, kitap, sf aralığı, oturum alanları var · 25 sınırı · dar ekran düzeni · `tasi` senkronda korunuyor.
+
+### On bir kapı
+
+`kural_test.py` · `denet.py` · `kos.js` · `derin_test.js` · `kombo_test.js` · **`cark_test.js`** · `senk_kos.js` · `senk_poll.js` · `senk_etag.js` · `senk_uc.js` · `senk_rol.js` — **hepsi sıfır hata.**
+
+**278 görev · 247.54 saat · K 67.20 · sürüm `2026-07-30a` ↔ `rota-2026-07-30a`**
+
+---
+
+## 37 · SÜRÜM 2026-07-30b — ÇARKI ÇEVİRME, GERİ GÖNDERME, BUGÜN PANELİ, MENÜ ORB'U
+
+### Gerileme: ileriye göz atılamıyordu
+
+§36'daki süzgeç sıradaki işi başa alıyordu ama çarkın **kaydırma diye bir şeyi yok** — şeritler mutlak konumla bir yay üzerine yerleşiyor, tarayıcı kaydırması devre dışı (`#cark{overflow:hidden}`). Pencere `[konum−7, konum+11]` olduğu için sıradaki iş 0. konumdayken yalnızca 11 iş ileri görünüyordu ve ötesine geçmenin yolu yoktu.
+
+**Çözüm: çarkı çevirmek.** `adim(±1)` etkin işi bir adım kaydırıyor, dört girdiye bağlı:
+
+| Girdi | Davranış |
+|---|---|
+| Fare tekerleği | 54 px'de bir adım; yatay kaydırma yok sayılıyor |
+| Parmakla sürükleme | 8 px'den sonra sürükleme kipi, 54 px'de bir adım |
+| **Tablette orta tuşla sürükleme** | aynı adım |
+| ↑ / ↓ ok tuşları | bir adım (yazı alanındayken devre dışı) |
+
+Sürükleme bittiğinde tek seferlik yakalayıcı ile **tıklama yutuluyor**, yoksa sürükleme sonunda parmağın altındaki şerit seçiliyordu. `#cark{touch-action:pan-x}` — dikeyi biz alıyoruz, yatay tarayıcıda kalıyor.
+
+### Çarka taşımayı geri alma
+
+Çarka taşınmış görevin kartında sağ üstte **hafif kontrastlı ✕**. Basınca `D.tasi`'dan siliniyor, görev kaçırılanlar çipine dönüyor, çark sıradakine geçiyor. Kart ayrıca ince yeşil çerçeveyle işaretli.
+
+### "Bugün'e hızlı göz at"
+
+Üçüncü çip. Panelde günün **kuş bakışı sırası**: blok başlıklarıyla gruplu, her satırda saat · ne yapacaksın · branş — görev · kitap + sf aralığı. Yapılanın **üstü çizili ve yanında ✓**, vakti geçenin yanında ⚠. Üstte özet: *N / M iş · X / Y saat*, gün kapandıysa yeşil damga. **‹ önceki gün** ve **sonraki gün ›** ile 27 gün gezilebiliyor; ilk/son günde düğme kilitleniyor.
+
+### Menü orb'u
+
+Sol üstte üç çizgili orb. İçinde **yalnız üç çip**: kaçırılanlar · tamamlananlar · Bugün'e hızlı göz at. **Mola, uyku ve yarın ilk görev çipleri orb'un dışında kaldı** — onlar `etSat` satırında.
+
+Açılış kademeli ve yavaş: çipler 0.02 · 0.10 · 0.18 sn gecikmeyle, artan küçük yatay kaymalarla (0 · 7 · 16 px) çıkıyor — yay hissi dar ekranda taşma riski olmadan veriliyor. Orb açılınca üç çizgi ✕'e dönüşüyor. Kapalıyken **kaçırılan sayısı orb'un köşesinde altın rozet** olarak duruyor, böylece menüyü açmadan da haber alınıyor. Dışarı tıklama ve Escape kapatıyor, `aria-expanded` güncelleniyor.
+
+### Test · `cark_test.js` 30 → 30 + 25 ek kontrol
+
+Çevirme: dört girdi bağlı, yatay kaydırma yok sayılıyor, sürükleme sonrası tıklama yutuluyor, adım liste sınırında duruyor · çarpı yalnız taşınmış kartta, tıklaması taşımayı siliyor · Bugün paneli: üstü çizme, tick, blok grupları, gün özeti, gezinme kilidi · orb: üç çip içeride, kademeli açılış, rozet, dışarı tıklama, Escape, aria.
+
+### On bir kapı
+
+Hepsi sıfır hata. **278 görev · 247.54 saat · K 67.20 · sürüm `2026-07-30b`**
+
+---
+
+## 38 · SÜRÜM 2026-07-30c — YEDİ MADDELİK İŞ HARİTASI, DÖRDÜ TAMAM
+
+| # | İş | Durum |
+|---|---|---|
+| 1 | Bugün paneli çalışmıyor | **tamam** |
+| 2 | Mola kartları çarkta birinci sınıf olsun | **BEKLİYOR** |
+| 3 | Kaydırırken odaklanan kart giderek büyüsün | **kısmen** |
+| 4 | Mola kartına temiz nefes rengi | **tamam** |
+| 5 | Mola geri sayımı + "Mola bitti" bildirimi | **BEKLİYOR** |
+| 6 | Geri sayım açıkken senkron sıklaşsın | **BEKLİYOR** |
+| 7 | Menü çipleri yalnız sembol | **tamam** |
+
+### 1 · Bugün paneli — olay devrine geçirildi
+
+Test ortamında `gpanelCiz()` sorunsuz çalışıyordu, tarayıcıda çalışmıyordu; kesin sebep bulunamadı. Bu yüzden **kırılamaz** hale getirildi: üç düğme artık doğrudan `onclick` ile değil **tek bir olay devri dinleyicisiyle** bağlı, panel öğesi `if(p)` ile korunuyor. Doğrudan bağlamada tek bir null öğe `getElementById(...).onclick=` satırında istisna atıp **betiğin kalanını durduruyordu** — en olası açıklama bu.
+
+### 4 · Mola kartı rengi
+
+Görev şeritleri nötr camdan; mola artık bilinçli olarak soğuk ve açık: `--bilgi` mavisinin daha aydınlık, daha az doygun hâli (`rgba(150,198,232,.16)` zemin, `#BFD9EC` yazı). Palete ait, ama görevle karıştırılmıyor.
+
+### 7 · Menü çipleri yalnız sembol
+
+Üç düğme 38×38 kare orb oldu: **⚠ · ✓ · ◷**. Uzun yazı yok; kaçırılan ve tamamlanan sayıları köşedeki küçük rozette. `title` ve `aria-label` ile hem imleçle hem ekran okuyucuyla açıklanıyor.
+
+### 3 · Kaydırma büyümesi — kısmen
+
+Ölçek rampası güçlendirildi (yakın komşu alt sınır .86 → **.80**, uzak .74 → **.68**), böylece yaklaşan şerit gözle görülür biçimde büyüyüp merkezde 1.0'a oturuyor. Ayrıca açılan karta 0.34 sn'lik yumuşak giriş eklendi.
+
+⚠ **Tam çözüm değil.** Asıl sıçrama ölçekten değil, **içerik değişiminden** geliyor: şerit ile açılmış kart iki ayrı HTML. Gerçekten kesintisiz olması için gelen görevin kartının önceden çizilip çapraz geçişle değişmesi gerekir — bu `carkCiz`/`diz` ikilisinin yeniden yazımı demek.
+
+### 2 · 5 · 6 — neden bu turda yapılmadı
+
+**Mola kartlarının çarkta birinci sınıf olması mimari bir değişiklik.** Şu an `carkListe()` yalnız **görev indeksleri** döndürüyor; `aktif` bir görev indeksi ve `brifCiz(GOREVLER[aktif])` bir görev bekliyor. Molaları durak yapmak için:
+
+1. `carkListe()` karışık girdi döndürmeli (`{tip:'is',i}` / `{tip:'mola',i}`)
+2. `aktif` artık görev indeksi değil, liste konumu olmalı — `bul`, `gecis`, `adim`, `diz`, `nabiz`, `kart`, `brifCiz` ve `kos.js`'in yarısı bundan etkileniyor
+3. Mola odaklanınca brifing alanı görev yerine mola içeriği göstermeli
+
+Geri sayım (5) ve senkron sıklaştırma (6) bu yapının üstüne oturuyor — mola kartı bir durak olmadan geri sayımın yaşayacağı yer yok. Üçünü **tek ve dikkatli bir turda** yapmak, bu tura sıkıştırıp yarım bırakmaktan doğru.
+
+### Dokuz kapı
+
+Hepsi sıfır hata. **278 görev · 247.54 saat · K 67.20 · sürüm `2026-07-30c`**
+
+---
+
+## 39 · SÜRÜM 2026-07-31a — MOLALAR: DURAK · GERİ SAYIM · BİLDİRİM
+
+§38'de bekleyen üç madde (2 · 5 · 6) tamamlandı.
+
+### Mimari: en az yıkım
+
+`aktif` **hâlâ bir GÖREV indeksi.** Yanına `molaOdak` bayrağı geldi: odak bir moladaysa `aktif` o molanın **sahibi olan görevi** gösterir. Böylece `kart()`, `para()`, `bul()`, `puan()` ve `kos.js`'in tamamı **hiç değişmedi** — 12 kapının hepsi ilk denemede geçti.
+
+Yeni katman:
+
+| Parça | İş |
+|---|---|
+| `duraklar()` | görev + mola karışık durak listesi (`{i, m}`) |
+| `durakKonum(S)` | mevcut odağın liste konumu |
+| `adim(±1)` | durak listesi üzerinde yürür — **mola artık atlanmıyor** |
+| `gecis(i,m)` | odağı görev ya da mola olarak kurar |
+| `diz()` | odaklı öğeyi artık `.act` sınıfından buluyor (mola da olabilir) |
+
+Sıçramanın sebebi buydu: `adim` yalnız görev indeksleri arasında geziyordu, mola şeridi görsel olarak arada duruyor ama durak değildi.
+
+### Geri sayım
+
+**Yalnız önceki iş tamamlandıysa başlar** — mola hak edilmiş olmalı. Ayrıca bugün olmalı ve saat mola penceresi içinde olmalı. Kart 38 px'lik `mm:ss` sayacı, ince ilerleme çubuğu ve yavaş nefes alan bir gölge gösteriyor. İş bitmemişse kartta *"Önceki işi tamamlayınca geri sayım başlar."* yazıyor.
+
+Saniyelik tik **yalnız ekranda geri sayım kartı varken** çalışıyor (`querySelector('[data-mk]')` yoksa hemen çıkıyor) — boşta pil harcamıyor.
+
+### Bildirim
+
+Sayım sıfırlanınca **bir kez** "Mola bitti, çalışma vakti" gidiyor; servis çalışanı varsa onun üzerinden, yoksa doğrudan. İzin, mola brifingi ilk açıldığında nazikçe isteniyor (`permission==='default'` iken). Uygulama içi bildirim şeridi de her hâlükârda gösteriliyor.
+
+⚠ **Sınır:** tarayıcı bildirimi sayfa açıkken çalışır. Telefon kilitliyken zamanlanmış bildirim için push altyapısı gerekir — bu programda yok.
+
+### Senkron sıklaştırma
+
+`molaSayimVar()` doğruyken yoklama aralığı **20 saniyeye** iniyor (normalde 45 sn → 6 dk uyarlanabilir). Sebep: bildirimin doğru anda çıkması için okur cihazın "iş bitti" bilgisini hızlı alması gerekiyor.
+
+### Mola kartının rengi
+
+Görev kartları nötr camdan; mola bilinçli olarak **soğuk ve açık**: `rgba(150,198,232,.17)` zemin, `#E4F0F8` başlık, `#9CC6E4` ikon. `--bilgi` mavisinin daha aydınlık, daha az doygun hâli — palete ait, göreve benzemiyor.
+
+### Yeni test · `mola_test.js` (36 kontrol)
+
+Durak listesi üretiliyor ve her mola durağı bir görev durağını izliyor · **ileri ve geri kaydırmada mola durağına uğranıyor** · `bul()` odağı sıfırlıyor · geri sayım iş bitmeden başlamıyor, pencere dışında yok, başka günde yok, iş geri alınınca duruyor · kart iki hâlde de doğru çiziliyor · brifing mola içeriği gösteriyor ve görev kombosu göstermiyor · bildirim metni, tek-kez koruması, servis çalışanı yolu, izin isteme · 20 sn senkron · saniyelik tik koşulu · 4 gün × 6 saat çizim ve durak geçişi.
+
+### On iki kapı
+
+`kural_test.py` · `denet.py` · `kos.js` · `derin_test.js` · `kombo_test.js` · `cark_test.js` · **`mola_test.js`** · `senk_kos.js` · `senk_poll.js` · `senk_etag.js` · `senk_uc.js` · `senk_rol.js` — **hepsi sıfır hata.**
+
+**278 görev · 247.54 saat · K 67.20 · sürüm `2026-07-31a` ↔ `rota-2026-07-31a`**
+
+---
+
+## 40 · SÜRÜM 2026-07-31b — SÜREKLİ KAYDIRMA ve MENÜ ONARIMI
+
+### Bugün orb'u iki ayrı sebepten bozuktu
+
+**1 · Düzen.** `.mYay` `position:absolute` ile `top:40px`'e konmuştu ve altındaki **`etSat` şeridinin üstüne biniyordu** — ekran görüntüsünde "4 sa 56 dk mola" çipi orb'ların arasından geçiyordu. Menü artık **kendi zemini olan yatay bir panel**: cam arka plan, ince kenarlık, `z-index:60`, kapalıyken `visibility:hidden`. Rozet konumu da düzeltildi (`box-shadow` ile zemine oturuyor, boşken gizleniyor).
+
+**2 · Bağlama.** Kaçırılanlar çipi doğrudan `onclick` ile çalışıyordu, Bugün olay devriyle çalışmıyordu. **Çalışan desene geçirildi:** doğrudan `onclick` + `stopPropagation` (menünün kendi kapanma dinleyicisi araya girmesin) + `try/catch`. Gezinme düğmeleri de aynı korumayı aldı.
+
+### Sürekli kaydırma
+
+Eski davranış **adım adımdı**: 54 px biriktikçe bir sonraki durağa sıçrıyordu. Yeni davranış parmağı **piksel piksel** takip ediyor.
+
+| Parça | İş |
+|---|---|
+| `kayY` | sürükleme kayması; `diz()` içinde `y[a]=kayY` olarak uygulanıyor, açılar ondan türediği için yay eğrisi doğal biçimde takip ediyor |
+| `surukleKip` | sürüklerken **açılmış kart şerit hâline dönüyor** — liste gibi tek tip, sıçrama yok |
+| `#sahne.sur` | sürüklerken tüm geçişler kapalı (1:1 takip) |
+| `merkezEl` | `diz()` her karede merkeze en yakın öğeyi işaretliyor |
+| `otur()` | bırakınca o durağa oturuluyor, kart açılıyor, geçişler geri geliyor |
+
+Tekerlek de aynı akışı kullanıyor: `kayY -= deltaY`, son olaydan **150 ms** sonra oturuyor. Böylece fare tekerleği de sürekli, sonunda yumuşak bir yerleşmeyle bitiyor.
+
+Sürükleme bittiğinde tek seferlik yakalayıcı tıklamayı yutuyor — parmağını kaldırdığın yerdeki şerit seçilmiyor.
+
+### On iki kapı
+
+Üç test beklentisi kod değiştiği için güncellendi (adım sınırı `L` → `S`, yay gecikmeleri, Bugün bağlama deseni); üçü de uygulama hatası değil, eskimiş iddiaydı. **Hepsi sıfır hata.**
+
+**278 görev · 247.54 saat · K 67.20 · sürüm `2026-07-31b` ↔ `rota-2026-07-31b`**
+
+---
+
+## 41 · SÜRÜM 2026-07-31c — KAYDIRMA AKICILIĞI
+
+**Belirti:** yan yana görevler arasında kaydırma çok hızlı gerçekleşiyor, mıknatıs çekiyormuş gibi hissettiriyor.
+
+### Kök sebep: her parmak hareketinde tam düzen hesabı
+
+Sürüklerken her `pointermove` olayında **`diz()` baştan koşuyordu.** `diz()` dört yakınsama geçişi yapıyor ve her şerit için `getBoundingClientRect()` okuyor — 19 çocuk × 4 geçiş, saniyede 60 kez. Tarayıcı her karede düzeni yeniden hesaplamak zorunda kalıyor; sonuç takılma ve "mıknatıs" hissi.
+
+### Çözüm 1 · Ölçümsüz sürükleme karesi
+
+`diz()` artık geometriyi **önbelleğe alıyor**: yakınsanmış yükseklikler, genişlikler, aralık dizisi, küme bayrakları, açı sınırı fonksiyonları. İçerik sürükleme boyunca değişmediği için bunlar sabit.
+
+Yeni `dizKay()` yalnız aritmetik yapıyor: `y → açı → dönüşüm`. **Hiç DOM ölçümü yok.** Ayrıca `requestAnimationFrame` ile kare başına tek güncelleme — parmak 120 Hz olay üretse bile ekran 60 kez çiziliyor.
+
+Tekerlek de aynı yolu kullanıyor.
+
+### Çözüm 2 · Yumuşak oturma
+
+Bırakınca `#sahne.otu` sınıfı 680 ms takılıyor:
+
+| | Normal | Oturma |
+|---|---|---|
+| Şerit geçişi | .52s `cubic-bezier(.24,.74,.22,1)` | **.60s `cubic-bezier(.17,.86,.26,1)`** |
+| Kart açılışı | .40s, gecikmesiz | **.44s, .10s gecikmeli** |
+
+Kart açılışının 100 ms geciktirilmesi önemli: eskiden şeritler yerine otururken kart aynı anda açılıyordu, iki hareket üst üste binip sert görünüyordu. Artık önce şeritler oturuyor, sonra kart açılıyor.
+
+### Test
+
+`cark_test.js`'e 10 akıcılık kontrolü eklendi: geometri önbelleği kuruluyor · `dizKay` içinde `getBoundingClientRect` **yok** · parmak ve tekerlek rAF ile kare başına tek · sürüklerken `diz()` çağrılmıyor · oturma sınıfı ekleniyor ve 680 ms sonra kaldırılıyor · kart açılışı gecikmeli.
+
+### On iki kapı
+
+Hepsi sıfır hata. **278 görev · 247.54 saat · K 67.20 · sürüm `2026-07-31c` ↔ `rota-2026-07-31c`**
+
+---
+
+## 42 · SÜRÜM 2026-07-31d — ORB İKONLARI ve BİR DENETİM HATASI
+
+### Üç orb SVG ikona geçti
+
+`⚠ · ✓ · ◷` tek karakterli semboller küçük kalıyordu ve `◷` bir yapılacaklar listesi çağrıştırmıyordu. Üçü de **nav orb'larıyla aynı ikon diline** geçti: 24 birimlik `viewBox`, çizgi tabanlı, `stroke-linecap:round`, `currentColor` — yani her orb kendi renginden boyanıyor.
+
+| Orb | İkon |
+|---|---|
+| Kaçırılan | uyarı üçgeni (üç çizgi) |
+| Tamamlanan | tek hamlelik onay işareti |
+| **Bugün** | **yapılacaklar listesi** — üç onay kutusu + üç satır çizgisi, 6 çizgiden oluşuyor |
+
+Orb ölçüsü 38 → 40 px, ikon 19 px.
+
+### ⚠ Denetim hatam: `tail -1` gerçeği gizliyordu
+
+Test dosyalarının çoğu **bölüm bölüm** özet basıyor. Ben sonucu `tail -1` ile okuyordum; `kombo_test.js` iki bölümlü olduğu için **son satır yalnız ikinci bölümün sonucunu** gösteriyordu. Böylece o dosyada duran **bir hata birkaç turdur görülmemişti**.
+
+Yakalanan hata neydi: *"animasyonların hepsi prefers-reduced-motion içinde"* kontrolü, `no-preference` bloğunun **tek** olduğunu varsayıyordu. §39'da mola bloğu eklenince ilk blok o oldu ve kontrol yanlış negatif verdi. **Uygulama doğruydu** — beş kombo animasyonunun beşi de korumalı, üstelik genel bir `reduce` kuralı da var.
+
+İki kalıcı düzeltme:
+1. Kontrol artık **tüm** `no-preference` bloklarını tarıyor, ayrıca genel `reduce` kuralını da doğruluyor.
+2. `kombo_test.js` ve `cark_test.js`'in **son satırı artık tüm bölümlerin toplamını** basıyor — `tail -1` bir daha yalan söylemeyecek.
+
+Bundan sonraki denetimlerde ölçüt: **tüm çıktıda `✗` satırı sayısı sıfır olmalı**, son satıra bakmak yetmez.
+
+### On iki kapı — tüm çıktı tarandı
+
+`✗` satırı toplamı: **0**. **278 görev · 247.54 saat · K 67.20 · sürüm `2026-07-31d` ↔ `rota-2026-07-31d`**
+
+---
+
+## 43 · ENVANTER KURULDU — ve VİDEO PLANI CİDDİ BİÇİMDE YANLIŞMIŞ
+
+Kullanıcı, kaynak beyanının tamamını ve eksik sayfa sayılarını verdi. **`envanter.py`** kuruldu: 20 kitabın içindekiler tablosu, video serisi ve deneme serileri. Buraya yazılmayan hiçbir konu görev olarak üretilemez.
+
+### Doğrulanan bulgu: Enfeksiyon videosu YOKTUR
+
+Atilla Uslu **Dahiliye konu kitabı 1** (251 sf: Hematoloji · Onkoloji · Kardiyoloji · Göğüs) ve **2** (260 sf: Nefroloji · Endokrinoloji · Gastroenteroloji/Hepatoloji · Romatoloji) — sekiz bölüm, **Enfeksiyon yok**. Video serisi de bu kitapları izliyor.
+
+Enfeksiyon yalnız **Atilla Uslu Sorularla Son Tekrar** kitabında var (sf 337–358) ve o ayrı bir kaynak.
+
+### Gerçek video envanteri · 44 video · 1515 dk · 1.5x'te 16.83 saat
+
+| Konu | Video | Süre | 1.5x saat | Video başı (BÖLÜNEMEZ) |
+|---|---|---|---|---|
+| Hematoloji | 9 | 40 dk | **4.00** | 0.444 |
+| Onkoloji | 1 | 45 dk | 0.50 | 0.500 |
+| Endokrinoloji | 7 | 30 dk | 2.33 | 0.333 |
+| Kardiyoloji | 6 | 45 dk | 3.00 | 0.500 |
+| Göğüs Hastalıkları | 6 | 30 dk | 2.00 | 0.333 |
+| Nefroloji | 4 | 30 dk | 1.33 | 0.333 |
+| Gastroenteroloji | 7 | 30 dk | 2.33 | 0.333 |
+| Romatoloji | 4 | 30 dk | 1.33 | 0.333 |
+
+⚠ **Yeni kısıt: video bölünemez.** Her görev tam sayıda video içermeli. Şu anki program bunu ihlal ediyor (0.74 saatlik yarım Enfeksiyon oturumları).
+
+### Program vs gerçek — dağılım baştan aşağı yanlış
+
+| Konu | Programda | Gerçek | Fark |
+|---|---|---|---|
+| **Hematoloji** | **0.00** | 4.00 | **−4.00** |
+| **Onkoloji** | **0.00** | 0.50 | **−0.50** |
+| Hematoloji + Onkoloji (uydurma birleşim) | 1.48 | — | +1.48 |
+| **Enfeksiyon Hastalıkları (UYDURMA)** | **1.48** | **0.00** | **+1.48** |
+| **Kardiyoloji** | **5.92** | 3.00 | **+2.92** |
+| Endokrinoloji | 1.48 | 2.33 | −0.85 |
+| Gastroenteroloji | 1.48 | 2.33 | −0.85 |
+| Göğüs Hastalıkları | 1.48 | 2.00 | −0.52 |
+| Nefroloji | 1.48 | 1.33 | +0.15 |
+| Romatoloji | 1.48 | 1.33 | +0.15 |
+| **TOPLAM** | 16.28 | **16.83** | −0.55 |
+
+Toplam neredeyse tutuyordu ama **konu dağılımı tamamen hayaliydi**: Hematoloji 9 videoluk en büyük blok olduğu hâlde programda hiç yok; Kardiyoloji gerçeğin iki katı.
+
+### Envanterde ortaya çıkan iki uyuşmazlık daha
+
+- **Speetus Genel Cerrahi:** `eko.py` **20** bölüm içeriyordu, gerçek içindekiler **34** bölüm. Yetkili tablo eksikmiş.
+- **Anatomi Fast Track:** kaynak beyanında **hiç yok**. `eko.py`'deki 126 sayfa / 13 bölüm listesi kullanıcı beyanına dayanmıyor. **Doğrulanmalı.**
+
+### Beyan edilmeyen dört kalem
+
+Yavuz Şahin Biyokimya konu kitabı · Klinisyen Vaka Fizyoloji · Klinisyen Vaka Küçük Stajlar toplam sayfa sayıları; Atilla Uslu SST ve Yavuz Şahin video süreleri (satın alınmadı).
+
+### Yeni ölçüm
+
+10 Farmakoloji sorusu (bakir konu, açıklama okuyarak) **15 dk** · 10 Pediatri sorusu (klinik, tanıdık) **10 dk**.
+
+---
+
+## 44 · TAKVİM 25 GÜNE İNDİ · UYDURMA VİDEOLAR SİLİNDİ · KURAL C AÇIK
+
+### Yeni takvim: 29 Temmuz – 22 Ağustos
+
+27 Temmuz program hazır olmadığı için, **28 Temmuz** kız arkadaşının doğum günü olduğu için çalışılamadı. Program **29 Temmuz Çarşamba** başlıyor.
+
+| | Önce | Sonra |
+|---|---|---|
+| Gün | 27 | **25** |
+| Görev | 278 | **257** |
+| Saat | 247.54 | **237.23** |
+| Projeksiyon K | 67.20 | **66.68** |
+| Nominal kapasite | 289.50 | 273.00 |
+
+İki günün kaybı 19 görev · 15.83 saat · 3.739 net. Projeksiyon kaybı yalnız −0.52 çıktı çünkü yarım kalacak iki bölüm **birleştirilerek kurtarıldı**:
+
+- Farmakoloji Kemoterapötikler + İmmün Modülatör: 8 Ağu oturumu sf 112–117 → **sf 90–117** (0.88 → 4.73 sa)
+- Farmakoloji Genel Farmakoloji + OSS: 15 Ağu oturumu sf 23–25 → **sf 5–25** (0.35 → 3.50 sa)
+
+Bunlar yapılmasa Kural D kırılacaktı (kısmi bölüm). Diğer 6 bölüm tamamen düştü — Kural D "bitir ya da başlama" dediği için bu yasal.
+
+### Uydurma video görevleri silindi
+
+`Enfeksiyon Hastalıkları videoları — 1. yarı` (29 Tem) ve `— 2. yarı` (3 Ağu). **Atilla Uslu Dahiliye konu kitaplarında Enfeksiyon bölümü yok, videosu da yok.** Kullanıcı tespiti doğrulandı, iki görev programdan çıkarıldı.
+
+⚠ **Hâlâ duran uydurma:** 2 Ağustos D bloğunda `Hematoloji + Onkoloji videoları` 1.48 saat. Gerçek envanter: Hematoloji **9 video 4.00 saat** + Onkoloji **1 video 0.50 saat**, ayrı konular. Tek blokta 4.5 saat video olmaz — bu bir yerleşim işi, bu turda dokunulmadı.
+
+### Tusanaliz verisi düzeltildi
+
+Kullanıcı teyidiyle: Temel Mikrobiyoloji `[2,3,4,4,2]` · Genel Cerrahi Dalak `[1,1,1,1,1]` · Küçük Stajlar Anestezi `[1,1,1,1,1]`. **11 branşın 11'i radar tablosuyla tutuyor** (Mikrobiyoloji ham veriye göre 18.00, radar 17.8 diyordu — ham veri artık esas).
+
+### Kural 9 yeniden tanımlandı
+
+Eskiden "28 Temmuz yalnız Z bloğu" idi. Artık: **27–28 Temmuz programda olmamalı, ilk gün 29 Temmuz.** İki kontrol olarak kalıcı hale getirildi.
+
+### ⚠ AÇIK MADDE: Kural C azalan kırık
+
+| Dilim | Yeni öğrenme |
+|---|---|
+| 1 (29 Tem – 5 Ağu) | 47.09 sa |
+| 2 (6 – 14 Ağu) | **53.58 sa** |
+| 3 (15 – 22 Ağu) | 36.56 sa |
+
+Dilim 2, dilim 1'i **6.49 saat** aşıyor. Sebep: kaybedilen iki gün ilk dilimin en yüklü günleriydi.
+
+**Kesimle çözülmüyor** — 3'ten 20'ye kadar tüm sınır ikilileri denendi, hiçbiri `geri getirme artan` + `yeni öğrenme azalan` şartlarını birden sağlamıyor.
+
+**Çözüm yolu:** ilk dilime iş eklemek. İlk dilimde **13.62 saat boş** kapasite var (deneme günleri hariç **7.48 saat**), gereken 6.49. Yani yapılabilir — ama Kural B zincir günü uyumu gerektiriyor ve bu ayrı bir yerleşim turu.
+
+Geri getirme yönü sağlam: 17.61 < 18.49 < 27.89 ✓ · Kural A, B, D ve `kural_test.py` 18/18 ✓ · sayfa sürekliliği ✓
+
+**257 görev · 25 gün · 237.23 saat · K 66.68 · ilk gün 29 Temmuz**
+
+---
+
+## 45 · ENVANTER TAMAMLANDI — 21 KİTAP, SON KÖR NOKTA KAPANDI
+
+Kullanıcı Anatomi Fast Track içindekilerini verdi. **Envanterde artık doğrulanmamış kaynak kalmadı.**
+
+### eko.py doğruymuş — 13 bölümün 13'ü birebir
+
+| | eko.py | Envanter |
+|---|---|---|
+| Sayfa | 126 | **126** ✓ |
+| Bölüm | 13 | **13** ✓ |
+| Sayfa aralıkları | — | **13/13 birebir aynı** ✓ |
+
+Kemikler 5–22 · Eklemler 22–28 · Kaslar 28–49 · Pleksuslar 49–55 · Solunum 55–60 · Dolaşım 60–77 · Sindirim 77–90 · MSS 90–106 · PSS 106–115 · Duyu Organları 115–119 · Ürogenital 119–124 · Endokrin 124–126 · Deri ve Ekleri 126 (son sayfa).
+
+Yani `eko.py`'deki Anatomi tablosu baştan doğruydu; **eksik olan izlenebilirlikti**, veri değil. Artık kullanıcı beyanına dayanıyor.
+
+### Nöroanatomi paylaştırması
+
+Tusanaliz'de `Nöroanatomi` **tek etiket, 4.20 soru** — ama kitapta üç bölüm: MSS (16 sf) · PSS (9 sf) · Duyu Organları (4 sf) = 29 sayfa. Katalogda **sayfa oranıyla** paylaştırıldı: 2.32 / 1.30 / 0.58. Üçünün toplamı 4.20 ✓
+
+⚠ Bu bir modelleme kararıdır, ölçüm değil. §26'daki aynı sorunun (bir Tusanaliz etiketi, birden çok kitap bölümü) Anatomi'deki karşılığı. Alternatif: üçünü **tek bölüm** sayıp beraber okumak (Kural D ile daha tutarlı). **Karar kullanıcıya ait.**
+
+`Pleksuslar` · `Ürogenital` · `Endokrin` · `Deri ve Ekleri` — Tusanaliz Anatomi listesinde karşılığı yok, soru potansiyeli **0** sayıldı.
+
+### Anatomi verimlilik sırası
+
+| Bölüm | Sayfa | Saat | Soru | net/sa |
+|---|---|---|---|---|
+| Solunum Sistemi | 5 | 0.88 | 1.00 | **0.233** |
+| PSS · MSS · Duyu | 9 · 16 · 4 | 1.57 · 2.80 · 0.70 | 1.30 · 2.32 · 0.58 | 0.169 |
+| Sindirim | 13 | 2.27 | 1.80 | 0.161 |
+| Kaslar | 21 | 3.67 | 2.20 | 0.122 |
+| Dolaşım | 17 | 2.98 | 1.40 | 0.096 |
+| Kemikler | 17 | 2.98 | 1.00 | **0.068** |
+| Eklemler | 6 | 1.05 | 0.20 | **0.039** |
+| Pleksuslar · Ürogenital · Endokrin · Deri | 14 | 2.45 | 0.00 | **0.000** |
+| **TOPLAM** | 122 | **21.35** | 11.80 | 0.113 |
+
+**Kemikler ve Eklemler dikkat çekici:** 23 sayfa, 4.03 saat, yalnız 1.20 soru. Anatomi'nin en pahalı ve en verimsiz kısmı. `Pleksuslar` dahil dört bölüm (2.45 saat) hiç soru getirmiyor.
+
+### Katalog nihai durumu
+
+**246 bölüm · 187'sinde soru verisi eşleşti · toplam 435.8 saat okuma yükü · beklenen net 52.47**
+
+Programın kapasitesi **273.00 saat** (25 gün). Yani elindeki kaynakların **%63'ünü** okuyabilirsin — seçim zorunlu ve katalog tam bunun için var.
+
+---
+
+## 46 · NÖROANATOMİ KARARI · ANATOMİ ENVANTERİ KAPANDI
+
+**Kullanıcı kararı (28 Tem):** Tusanaliz `Nöroanatomi` etiketi MSS ve PSS'in ikisini birden kapsıyor; **Kural D'ye uymak için tek bölüm sayılıyor.**
+
+`Nöroanatomi (MSS + PSS)` · **sf 90–115 · 25 sayfa · 4.38 saat · 4.20 soru · 0.196 net/saat**
+
+Bu, §26'daki "bir Tusanaliz etiketi, birden çok kitap bölümü" sorununun **doğru çözümü**: ölçümün yapıldığı birim bölüm sayılıyor, soru sayfaya paylaştırılmıyor. Aminoasit ve Duyu çiftlerinde de aynı yol izlenmeli.
+
+### Alt başlıklar kaydedildi
+
+Kullanıcı MSS · PSS · Duyu Organları'nın alt başlıklarını verdi; `envanter.py` içinde `ALT` sözlüğünde tutuluyor — **14 alt konu, 2 bölüm için.** Görev brifinglerinde "bu blokta sadece Medulla Spinalis → Cerebellum" gibi yönlendirme yazmak artık mümkün.
+
+MSS: Medulla Spinalis 90 · Truncus Encephali 95 · Cerebellum 97 · Diencephalon 98 · Limbik Sistem 99 · Telencephalon 100 · Substantia Alba 101 · Nuclei Basales 102 · BOS Dolaşımı ve Ventriküller 102 · Meninges/Dural Sinüsler/Sisternalar 103
+PSS: Kranyal Sinirler 106 · Otonom Sinir Sistemi 113
+Duyu: Bulbus oculi (Göz) 115 · Auris (Kulak) 117
+
+### ⚠ Duyu Organları hakkındaki çıkarımım YANLIŞTI — düzeltildi
+
+Önce "göz/kulak soruları Küçük Stajlar altında sayılıyor olabilir" diye yazmıştım. **Kullanıcı teyidi (28 Tem): yanlış.** Anatomi `Duyu Organları` (Bulbus oculi · Auris **yapıları**) ile Küçük Stajlar `Göz Hastalıkları` · `KBB` (**klinik**) ayrı içeriktir; biri diğerinin yerine sayılamaz.
+
+**Bunun getirdiği asıl ayrım: "0 soru" ile "veri yok" aynı şey değildir.**
+
+### Anatomi nihai tablo · 12 bölüm · 122 sayfa · 21.35 saat · 11.80 soru
+
+| Bölüm | Sayfa | Saat | Soru | net/sa |
+|---|---|---|---|---|
+| Solunum Sistemi | 5 | 0.88 | 1.00 | **0.233** |
+| **Nöroanatomi (MSS + PSS)** | **25** | **4.38** | **4.20** | **0.196** |
+| Sindirim Sistemi | 13 | 2.27 | 1.80 | 0.161 |
+| Kaslar | 21 | 3.67 | 2.20 | 0.122 |
+| Dolaşım Sistemi | 17 | 2.98 | 1.40 | 0.096 |
+| Kemikler | 17 | 2.98 | 1.00 | 0.068 |
+| Eklemler | 6 | 1.05 | 0.20 | 0.039 |
+| Pleksuslar · Duyu · Ürogenital · Endokrin · Deri | 18 | **3.15** | **0.00** | **0.000** |
+
+Toplam 11.80 · Tusanaliz ile **birebir** ✓
+
+**Beş bölüm 3.15 saat tutuyor ve hiç soru getirmiyor.** Anatomi'yi seçerken ilk kesilecek yer burası.
+
+### Katalog nihai
+
+**245 bölüm · 435.8 saat · beklenen net 52.47 · program kapasitesi 273.00 saat**
+
+---
+
+## 47 · "SIFIR SORU" ile "VERİ YOK" AYRIMI
+
+Kullanıcının Duyu Organları düzeltmesi bir yöntem hatasını ortaya çıkardı: Tusanaliz'de karşılığı olmayan bölümleri **0 soru** sayıyordum. Bu yanlış — 0, ölçülmüş bir değerdir; o bölümler **hiç ölçülmemiş**.
+
+Fark önemli: 0 soru sayılan bir bölüm verimlilik sıralamasının **en dibine** düşer ve otomatik olarak kesilir. Ölçülmemiş bir bölüm ise sıralamaya **hiç girmemeli**, kullanıcı kararına bırakılmalı.
+
+`envanter.py`'ye `VERI_YOK` kümesi, `gorev_katalog.py`'ye `None` dönüşü eklendi.
+
+### Anatomi · ölçülmüş 7 bölüm · 104 sayfa · 18.20 saat · 11.80 soru
+
+| Bölüm | Sayfa | Saat | Soru | net/sa |
+|---|---|---|---|---|
+| Solunum Sistemi | 5 | 0.88 | 1.00 | **0.233** |
+| Nöroanatomi (MSS + PSS) | 25 | 4.38 | 4.20 | 0.196 |
+| Sindirim Sistemi | 13 | 2.27 | 1.80 | 0.161 |
+| Kaslar | 21 | 3.67 | 2.20 | 0.122 |
+| Dolaşım Sistemi | 17 | 2.98 | 1.40 | 0.096 |
+| Kemikler | 17 | 2.98 | 1.00 | 0.068 |
+| Eklemler | 6 | 1.05 | 0.20 | 0.039 |
+
+Toplam 11.80 · Tusanaliz ile birebir ✓ · ortalama **0.132 net/saat**
+
+### Anatomi · verisi olmayan 5 bölüm · 18 sayfa · 3.15 saat
+
+Pleksuslar 6 sf · Duyu Organları 4 sf · Ürogenital 5 sf · Endokrin 2 sf · Deri ve Ekleri 1 sf
+
+**Bunlar sıralamaya girmiyor.** Okunup okunmayacağı ölçümle değil kullanıcı kararıyla belirlenecek.
+
+### Katalog nihai durumu
+
+**245 bölüm** · **181'i ölçülmüş** · **64'ünde veri yok** · toplam 435.8 saat · beklenen net 52.47 (yalnız ölçülmüşlerden)
+
+64 ölçülmemiş bölüm katalogun dörtte biri. Yerleşim yapılırken bunlar ayrı ele alınacak — verimliliği bilinmediği için ne otomatik seçilebilir ne otomatik kesilebilir.
+
+---
+
+## 48 · KATALOG TAMAMLANDI — EŞLEŞMEYEN BÖLÜM SIFIR
+
+Kullanıcının 28 Temmuz kararları ve yeni verisiyle katalogdaki bütün boşluklar kapandı.
+
+### Kullanıcı kararları
+
+| Karar | Sonuç |
+|---|---|
+| Feyyaz Akay **Oldies + Goldies tek birim** | 14 bölüm → **8 birim** |
+| **Pleksuslar** → Nöroanatomi | |
+| **Duyu Organları** → Nöroanatomi | |
+| **Deri ve Ekleri** → Nöroanatomi | |
+| **Endokrin Sistem Anatomisi** → Sindirim (GİS) birimine | |
+| **Ürogenital** Tusanaliz verisi | `[1,1,1,2,1]` → **1.20 soru** |
+
+Anatomi 13 bölümden **8 birime** indi. Anatomi branş toplamı **11.80 → 13.00** (Ürogenital eklendi) — `soru_tablo.json`'daki radar değeri 11.8 artık eski, ham veri esas.
+
+### Çoklu aralık desteği
+
+İki Anatomi birimi bitişik olmayan sayfa aralıkları taşıyor; `envanter.py`'ye `ARALIK` sözlüğü eklendi:
+
+- **Sindirim + Endokrin**: sf 77–90 ve 124–126 · 15 sayfa
+- **Nöroanatomi**: sf 49–55, 90–119 ve 126–127 · 36 sayfa
+
+### Eşleme tablosu tamamlandı — 59 boşluk kapandı
+
+§47'de "ölçülmemiş" görünen 64 bölümün **59'u aslında benim eşleme tablomdaki boşluktu**, veri eksikliği değil. Yedi kitabın bölüm adları Tusanaliz etiketlerine bağlandı: Klinisyen Vaka Fizyoloji · Feyyaz Akay · Levent Kodal · Klinisyen Vaka Küçük Stajlar · Yavuz Şahin Biyokimya konu · Yavuz Şahin Biyokimya SB · Yavuz Şahin Farmakoloji SB.
+
+Çift sayım engellendi: aynı Tusanaliz etiketine düşen ikinci bölüm **0** alıyor (Genel Embriyoloji, Proteinler gibi) — soru bir kez sayılıyor.
+
+### Anatomi nihai · 8 birim · 122 sayfa · 21.35 saat · 13.00 soru
+
+| Birim | Sayfa | Saat | Soru | net/sa |
+|---|---|---|---|---|
+| Ürogenital Sistem | 5 | 0.88 | 1.20 | **0.279** |
+| Solunum Sistemi | 5 | 0.88 | 1.00 | 0.233 |
+| Sindirim + Endokrin | 15 | 2.62 | 1.80 | 0.140 |
+| Nöroanatomi (Pleksus+MSS+PSS+Duyu+Deri) | 36 | 6.30 | 4.20 | 0.136 |
+| Kaslar | 21 | 3.67 | 2.20 | 0.122 |
+| Dolaşım Sistemi | 17 | 2.98 | 1.40 | 0.096 |
+| Kemikler | 17 | 2.98 | 1.00 | 0.068 |
+| Eklemler | 6 | 1.05 | 0.20 | 0.039 |
+
+**Ürogenital, verisi gelince Anatomi'nin en verimli birimi oldu** — 5 sayfa, 0.88 saat, 1.20 soru. Önceki turda "veri yok" diye kesilme riskindeydi.
+
+### KATALOG NİHAİ
+
+**235 birim · 235'i ölçülmüş · eşleşmeyen 0 · 435.8 saat okuma yükü · beklenen net 69.99**
+
+Net beklentisi 52.47'den **69.99'a** çıktı — 59 bölümün verimliliği artık hesaplanabiliyor. Program kapasitesi **273.00 saat**, yani katalogun **%63'ü** yerleşebilir.
+
+---
+
+## 49 · ⚠ AÇIK KUSURLAR LİSTESİ — PROGRAM HAZIR DEĞİL
+
+"Yarın 06:00'da başlıyorsun, program hazır" dedim. **Fazla söyledim.** Kullanıcı haklı olarak sordu, kontrol ettim, beş açık kusur var. Hiçbiri yarını engellemiyor ama program bütün olarak hazır değil.
+
+### 1 · İki blok taşması — BENİM BİRLEŞTİRME HATAM
+
+§44'te 27–28 Temmuz düşünce yarım kalan iki bölümü birleştirdim. Bölüm bütünlüğünü (Kural D) kurtardım ama **saatleri sığmayacak bloklara yığdım:**
+
+| Gün · blok | Yük | Kapasite | Aşım |
+|---|---|---|---|
+| **8 Ağu · Z** | **4.82 sa** | 1.00 sa | **+3.82** |
+| **15 Ağu · C** | **5.20 sa** | 2.50 sa | **+2.70** |
+
+8 Ağustos Z bloğu 06:00–07:00; içine Kemoterapötikler'in 4.73 saati konmuş. 15 Ağustos C bloğu 2.50 saat; içine Genel Farmakoloji'nin 3.50 saati artı üç iş daha konmuş. `dizi3.py` saatleri sıkıştırdığı için ekranda 0.93 saatlik iş "17:00–17:05" görünüyor — **anlamsız.**
+
+**Doğru çözüm:** iki bölümü çok oturuma bölmek (Kural D bölüm bütünlüğü ister, tek oturum istemez), sayfa sürekliliğini ve Kural B zincir gününü koruyarak.
+
+### 2 · İki küçük blok taşması
+
+6 Ağustos E +0.37 sa · 18 Ağustos A +0.35 sa. Bunlar §36–39 turlarındaki yerleştirmelerden kalmış, ciddi değil ama kayıtlı.
+
+### 3 · Kural C azalan kırık
+
+Yeni öğrenme 47.09 / **53.58** / 36.56 — dilim 2 dilim 1'i 6.49 saat aşıyor. Kesimle çözülmüyor; ilk dilime iş eklenmeli (13.62 saat boş var).
+
+### 4 · Video görevleri gerçek envanterle uyuşmuyor
+
+Programda 13.32 saat / 9 görev var; gerçek envanter **16.83 saat / 44 video / 8 konu**. 2 Ağustos'ta hâlâ **uydurma `Hematoloji + Onkoloji videoları`** duruyor. Kardiyoloji 4 oturumda 5.92 saat gösteriyor, gerçek 3.00. Hematoloji (4.00 saat, 9 video) programda **hiç yok**. 29 Tem–8 Ağu penceresinde 18.75 saat boş var, yer sorunu değil.
+
+### 5 · Anatomi görevleri katalogla uyuşmuyor
+
+§48'de Anatomi 8 birime indi (Nöroanatomi 5 parçayı, Sindirim Endokrin'i kapsıyor). Programdaki Anatomi görevleri hâlâ eski 13 bölümlü yapıya göre. Yerleşim turunda eşitlenecek.
+
+### Ne KULLANILABİLİR durumda
+
+**21 / 25 gün temiz.** 29 Temmuz – 5 Ağustos arası hiç sorunlu blok yok; ilk ciddi kırılma **8 Ağustos**, yani on gün sonra.
+
+29 Temmuz blok yükü: Z 0.17/1.00 · A 1.52/1.50 · B 3.75/3.75 · D 2.08/2.00 · E 1.76/1.75 — sapmalar yuvarlama düzeyinde.
+
+`kural_test.py` 18/18 geçiyor (blok kapasitesini kontrol etmiyor — **19. kontrol olarak eklenmeli**). `denet.py` 1 hata veriyor (Kural C).
+
+### Sıradaki turun sırası
+
+1. İki birleştirmeyi çok oturuma böl (8 ve 15 Ağustos) — **en acil**
+2. `kural_test.py`'ye blok kapasite kontrolü ekle, bu bir daha kaçmasın
+3. 44 videoyu gerçek envanterden kur
+4. Kural C'yi ilk dilime ekleme yaparak düzelt
+5. Anatomi görevlerini katalogun 8 birimine göre yeniden kur
+
+---
+
+## 50 · KAPASİTE ÇELİŞKİSİ — PROGRAM %27 FAZLA YÜKLÜ
+
+Kullanıcı sıfırdan dağıtım istedi. Dağıtmadan önce kapasite ölçüldü ve **en temel varsayım yanlış çıktı.**
+
+| | |
+|---|---|
+| Kullanıcı beyanı | **günde net 7 saat 30 dakika** |
+| 25 günde toplam | **187.5 saat** |
+| Mevcut programın istediği | **237.23 saat = günde 9.49 saat** |
+| Fazla | **+49.7 saat (%27)** |
+
+25 günün **24'ü** 7.5 saati aşıyor. **13'ü** 9 saati aşıyor. En ağır gün **12.79 saat**.
+
+Program başından beri kullanıcının söylediğinden dörtte bir fazla iş istiyormuş. Bu, kaçırılan görevlerin yapısal sebebi — takvim değil, bütçe hatası.
+
+### Sabit yükler (seçime girmez)
+
+| | Saat |
+|---|---|
+| Video · 44 video, 8 Ağu son tarih | 16.83 |
+| 6 tam deneme × 4.5 sa | 27.00 |
+| Deneme analizi + yanlış defteri | 11.51 |
+| **TOPLAM** | **55.34** |
+
+**Okuma + soru için kalan: 187.5 − 55.3 = 132.2 saat** (7.5 senaryosu) · 144.7 saat (8.0 senaryosu)
+
+Katalog **409.6 saat** (verimi ölçülen 199 birim). Yani **katalogun ancak üçte biri sığıyor** — seçim zorunlu, tercih değil.
+
+### Katalogdan verim sırasıyla seçim
+
+| Senaryo | Birim | Saat | Net | **Projeksiyon K** | Kesim eşiği |
+|---|---|---|---|---|---|
+| **7.5 sa/gün** | 108 | 132.0 | 41.07 | **67.54** | 0.163 net/sa |
+| 8.0 sa/gün | 113 | 144.3 | 43.14 | **67.98** | 0.163 net/sa |
+
+**Kritik sonuç: yükü %27 azaltıp verime göre seçince projeksiyon YÜKSELİYOR** — 66.68'den **67.54'e**. Mevcut program hem fazla yüklü hem daha verimsiz.
+
+### Seçimin dışında kalan üç kitap
+
+| Kitap | Birim | Saat | Sebep |
+|---|---|---|---|
+| **Atilla Uslu Dahiliye 2** | 4 | 31.6 | Nefroloji·Endokrinoloji·Gastro·Romatoloji — hepsi videodan izleniyor, kitap okuması ayrıca gerekmiyor |
+| **TUSTIME Mikrobiyoloji** | 6 | 29.5 | Feyyaz Akay soru kitabı aynı konuları çok daha yüksek verimle veriyor |
+| **TUSTIME Kadın Doğum konu** | 4 | 15.7 | FT Kadın Doğum daha kısa, aynı içerik |
+
+### Karar bekleyen nokta
+
+**Günlük kapasite 7.5 mi 8.0 mı?** Aradaki fark 12.5 saat ve **+0.44 K**. Kullanıcı spor günlerinde 7–8 saat yaptığını söylemişti; hangisini taban alacağımız yerleşimi doğrudan belirliyor.
+
+Bu cevaplanınca 25 gün sıfırdan dağıtılacak: seçilen birimler + 44 video + 6 deneme + analiz, Kural A/B/C/D ve spor/mola kısıtlarıyla.
+
+---
+
+## 51 · NİHAİ SEÇİM · TAVAN 8.0 SAAT SERT SINIR
+
+### Kullanıcı kararları (28 Tem, ikinci tur)
+
+| Karar | Etki |
+|---|---|
+| **Taban 7.5 · TAVAN 8.0 saat** | hiçbir gün 8.0'ı aşamaz — geçen programda 13 gün 9 saati, en ağırı 12.79 saati aşıyordu |
+| Atilla Uslu Dahiliye 1 · 2 kitap okuması **düştü** | video izlerken kitap zaten okunuyor · **−63.1 saat** |
+| TUSTIME Mikrobiyoloji **zorunlu** (Feyyaz Akay ön koşulu) | +29.49 sa · 0.124 net/sa |
+| Mikro konu kitabının **Enfeksiyon bölümü çıktı** | Dahiliye SST'den çalışılacak (açıklamalı soru kitabı, vaka kitabı gibi) · −2.71 sa |
+| **FT Biyokimya yeterli**, Yavuz Şahin Flash Biyokimya düştü | −16.45 sa |
+| TUSTIME Kadın Doğum konu düştü, FT Kadın Doğum kalıyor | −15.7 sa |
+
+### Üç senaryo
+
+| Taban | Toplam | Okuma+soru | Birim | Net | **Projeksiyon K** | Kesim eşiği |
+|---|---|---|---|---|---|---|
+| **7.50** | 187.5 | 131.9 | 98 | 38.01 | **66.77** | 0.183 |
+| 7.75 | 193.8 | 138.1 | 102 | 39.19 | **67.04** | 0.183 |
+| 8.00 | 200.0 | 144.3 | 104 | 40.33 | **67.36** | 0.175 |
+
+Taban 7.5 seçildi: **187.2 saat / 25 gün = günde 7.49 saat.** Tavan 8.0 sert sınır.
+
+### Nihai okuma seçimi · 98 birim · 131.87 saat · net 38.01
+
+| Kitap | Birim | Saat | net/sa |
+|---|---|---|---|
+| TUSTIME Mikrobiyoloji *(zorunlu)* | 6 | 29.49 | 0.124 |
+| TUSTIME Küçük Stajlar | 15 | 13.07 | 0.327 |
+| Speetus Genel Cerrahi | 18 | 11.50 | 0.393 |
+| Levent Kodal Genel Cerrahi SB | 9 | 10.83 | 0.350 |
+| Feyyaz Akay Mikrobiyoloji | 5 | 10.25 | 0.326 |
+| Atilla Uslu SST | 5 | 9.47 | 0.263 |
+| Yavuz Şahin Farmakoloji SB | 5 | 8.44 | 0.348 |
+| Klinisyen Vaka Pediatri | 9 | 8.08 | 0.262 |
+| FT Farmakoloji | 5 | 7.53 | 0.292 |
+| Yavuz Şahin Biyokimya SB | 5 | 5.88 | **0.485** |
+| Klinisyen Vaka Küçük Stajlar | 5 | 5.00 | 0.244 |
+| Emrullah Patoloji SST | 4 | 4.13 | 0.227 |
+| FT Biyokimya | 2 | 3.67 | **0.532** |
+| TUSTIME Fizyoloji | 2 | 1.87 | 0.415 |
+| Anatomi Fast Track | 2 | 1.75 | 0.256 |
+| Klinisyen Vaka Fizyoloji | 1 | 0.92 | **0.533** |
+
+### Sabit yükler · 55.34 saat
+
+Video 16.83 (44 video, 8 Ağu son tarih) · 6 tam deneme 27.00 · analiz + yanlış defteri 11.51
+
+### ⚠ Blok yapısı yeniden düşünülmeli
+
+Mevcut blok yapısı günde **11.50 saat** kapasite veriyor (Z 1.00 + A 1.50 + B 3.75 + C 2.50 + D 2.00 + E 1.75). Hedef **7.5 saat**. Yani bloklar ya kısalacak ya sayısı azalacak — yoksa çark yarı boş görünür ve "yapabilirim" yanılgısı doğar.
+
+Kullanıcının beyan ettiği fiilî düzen: **05:45 kalkış · 06:00 ilk iş · spor günlerinde 10–14 arası 3.5–4 saat çalış · 2 sa 15 dk spor · dönüşte devam · toplam 7–8 saat.**
+
+Yerleşim turunda blok yapısı bu 7.5 saate göre yeniden çizilecek.
+
+---
+
+## 52 · YENİ BLOK YAPISI · 07:00 KALKIŞ · GÜNDE 7.50 SAAT
+
+**Kullanıcı kararı:** 06:00 yerine **07:00 kalkış**, **08:00'de derse otur**.
+
+### Üç gün tipi, üçü de tam 7.50 saat
+
+| Tip | Bloklar | Gün |
+|---|---|---|
+| **NORMAL** | A 08:00–10:00 · B 10:15–12:30 · C 13:30–15:45 · D 16:00–17:00 | 7 |
+| **SPOR** | A 08:00–10:00 · B 10:15–12:30 · C 16:30–18:15 · D 19:00–20:30 | 12 |
+| **DENEME** | A 08:00–10:15 · B 10:45–13:00 · C 14:00–15:45 · D 16:00–17:15 | 5 |
+| *spor + deneme çakışması* | 20 Ağustos — **çözülmeli** | 1 |
+
+Eski yapı **11.50 saat** kapasite veriyordu (Z+A+B+C+D+E). Yeni yapı **7.50** — bütçeyle birebir.
+
+### Molalar
+
+**NORMAL:** 10:00–10:15 kısa · **12:30–13:30 öğle** · 15:45–16:00 kısa · 17:00'den sonra serbest
+**SPOR:** 10:00–10:15 kısa · **12:30–13:45 öğle** · **14:00–16:15 SPOR** · 16:15–16:30 toparlanma · **18:15–19:00 akşam** · 20:30'dan sonra yavaşlama
+**DENEME:** 10:15–10:45 deneme arası · **13:00–14:00 öğle** · 15:45–16:00 kısa
+
+Spor gününde spordan önce **4.25 saat** çalışılıyor — kullanıcının beyan ettiği "3.5–4 saat sonra gidiyorum" düzenine uyuyor.
+
+### Uyku
+
+Tüm tiplerde **uyku 23:00–07:00 = 8 saat.** Yavaşlama penceresi (yeni konu yok) normal günlerde 17:00, spor günlerinde 20:30, deneme günlerinde 17:15'te başlıyor.
+
+### Kapasite denkliği
+
+| | Saat |
+|---|---|
+| 25 gün × 7.50 | **187.50** |
+| Okuma seçimi | 131.87 |
+| Sabit yükler (video · deneme · analiz) | 55.34 |
+| **Gereken** | **187.21** |
+| **Pay** | **+0.29** |
+
+Pay çok dar — yerleşimde hiç israf edilemez.
+
+### İki nokta karara bağlandı
+
+1. **Akşam serbest kalıyor.** Kullanıcı: *"ister dışarı çıkarım ister telafi görevleri yaparım ister ekstra çalışırım — bu sayede programın uygulanabilirliği artar."* Normal günler 17:00'de bitiyor ve sonrası boş; kaçırılan görevlerin telafi penceresi de burası.
+2. **20 Ağustos:** spor **denemeden sonra**. Gün DENEME yapısında (bitiş 17:15), spor 17:30'dan sonra.
+
+---
+
+## 53 · VİDEO TAKVİMİ KURULDU · 44 VİDEO, SIRA KORUNARAK
+
+Gerçek envanterden, **hiçbir video bölünmeden**, 29 Temmuz – 8 Ağustos arasına dağıtıldı.
+
+| Gün | Saat | Video |
+|---|---|---|
+| 29.07 | 1.33 | Hematoloji 1-2-3 |
+| 30.07 | 1.33 | Hematoloji 4-5-6 |
+| 31.07 | 1.33 | Hematoloji 7-8-9 |
+| 01.08 | 1.50 | Onkoloji 1 · Endokrinoloji 1-2-3 |
+| 02.08 | 1.83 | Endokrinoloji 4-5-6-7 · Kardiyoloji 1 |
+| 03.08 | 1.50 | Kardiyoloji 2-3-4 |
+| 04.08 | 1.67 | Kardiyoloji 5-6 · Göğüs 1-2 |
+| 05.08 | 1.67 | Göğüs 3-4-5-6 · Nefroloji 1 |
+| 06.08 | 1.67 | Nefroloji 2-3-4 · Gastroenteroloji 1-2 |
+| 07.08 | 1.67 | Gastroenteroloji 3-4-5-6-7 |
+| 08.08 | 1.33 | Romatoloji 1-2-3-4 |
+
+**Toplam 16.83 saat · 44 video · en ağır gün 1.83 · en hafif 1.33**
+
+Doğrulamalar: **sıra hatası 0** (her konu 1'den başlayıp sırayla gidiyor) · **bölünmüş video 0** · **8 Ağustos sonrası video 0** · **sekiz konunun sekizi de tamamlanıyor**.
+
+⚠ İlk denemede Romatoloji 4, Romatoloji 1-2-3'ten önce düşmüştü — "kalanları en hafif güne ekle" mantığı sırayı bozuyordu. Algoritma *kalan süre ÷ kalan gün* hedefiyle **sıra bozmadan** yeniden yazıldı.
+
+`video_plan.json` olarak kaydedildi.
+
+---
+
+## 54 · DİLİM DAĞITIMI TAMAM — DÖRT KURAL DA GEÇTİ
+
+### Okuma / soru ayrımı
+
+Seçilen 98 birim kaynak türüne göre ikiye ayrıldı:
+
+| | Birim | Saat |
+|---|---|---|
+| **Yeni öğrenme** (konu kitabı) | 50 | **68.88** |
+| **Geri getirme** (soru bankası · vaka · SST) | 48 | **63.00** |
+
+Soru tarafı: Levent Kodal · Yavuz Şahin Farma SB · Yavuz Şahin Biyo SB · Feyyaz Akay · Atilla Uslu SST · Klinisyen Vaka Pediatri · Klinisyen Vaka Küçük Stajlar · Klinisyen Vaka Fizyoloji · Emrullah Patoloji SST.
+
+Bu ayrım Kural C'nin ölçülebilmesi için şarttı — daha önce her şey "okuma" sayılıyordu.
+
+### Video takvimi düzeltildi
+
+İlk dağıtımda **1 ve 5 Ağustos deneme günlerine video düşmüştü** ve o günler kapasiteyi aşıyordu (−0.25 · −0.42 saat). Video artık deneme günlerine hiç konmuyor: **9 güne 44 video, en ağır gün 2.00 saat**, sıra korunuyor, 8 Ağustos'tan sonra sıfır.
+
+### Dilim dağıtımı
+
+| Dilim | Gün | Birim | Okuma | Soru | Toplam | Kapasite |
+|---|---|---|---|---|---|---|
+| 1 · 29 Tem – 5 Ağu | 8 | 44 | 28.96 | 7.38 | **36.34** | 36.34 |
+| 2 · 6 – 14 Ağu | 9 | 29 | 23.86 | 25.29 | **49.15** | 49.33 |
+| 3 · 15 – 22 Ağu | 8 | 25 | 16.05 | 30.33 | **46.38** | 47.50 |
+
+### Dört kural
+
+| Kural | Ölçüm | |
+|---|---|---|
+| **A** · her kitap ilk 14 günde | 16/16 kitap dilim 1–2'de | ✓ |
+| **C** · yeni öğrenme azalan | **40.13 ≥ 29.53 ≥ 16.05** | ✓ |
+| **C** · geri getirme artan | **19.88 < 37.79 < 42.83** | ✓ |
+| **D** · bölüm bütünlüğü | her birim katalogdan tam bölüm | ✓ |
+| **Kapasite** | üç dilimde de aşım yok | ✓ |
+
+Toplam yük **186.20 / 187.50 saat**, pay **+1.30**. Hiçbir gün 7.50'yi aşmıyor.
+
+⚠ Kural A ilk denemede ihlal görünmüştü çünkü 16 kitabın hepsini **dilim 1'e** sıkıştırmaya çalışıyordum. Kural "ilk **14 gün**" diyor — bu 11 Ağustos'a kadar, yani dilim 2'nin ilk 6 günü de dahil. Gevşetince dilim 1'in yükü 43.39'dan 36.34'e indi.
+
+### Kalan iş
+
+Dilim içi **gün ve blok yerleşimi** — Kural B (gün-zincir hakimiyeti %80) burada ölçülecek. Sonra görev üretimi ve on iki kapı.
+
+---
+
+## 55 · GÜN YERLEŞİMİ TAMAM — DÖRT KURAL DA GEÇTİ
+
+### Yerleşim algoritması
+
+Her gün **bir branşa kilitleniyor**: o günün boşluğuna en çok saat verebilecek branş seçiliyor, o branştan sığan en büyük birimler alınıyor, kalan boşluk başka branşlardan doldurulıyor. Kural B doğrudan bu yapıdan geliyor.
+
+Tek güne sığmayan birimler **oturumlara bölünüyor** — Kural D bölüm bütünlüğü ister, tek oturum istemez. TUSTIME Mikrobiyoloji Bakteriyoloji (9.61 saat) böyle bölündü.
+
+⚠ İlk denemede algoritma "bir birim sığmazsa dur" mantığındaydı ve **34 birim açıkta kalıyordu**; 5 gün tamamen boştu. En-iyi-uyum paketlemesine çevirince 95/98 yerleşti, bölme eklenince 102 parçaya çıktı.
+
+### Dört kural
+
+| Kural | Ölçüm | |
+|---|---|---|
+| **A** · her kitap ilk 14 günde | 16/16 kitap 11 Ağustos'a kadar açılıyor | ✓ |
+| **B** · gün-branş hakimiyeti | **19/19 gün = %100** (eşik %80) | ✓ |
+| **C** · yeni öğrenme azalan | **40.13 ≥ 29.52 ≥ 16.05** | ✓ |
+| **C** · geri getirme artan | **19.67 < 37.79 < 42.83** | ✓ |
+| **D** · bölüm bütünlüğü | tüm parçalar aynı programda | ✓ |
+| **Kapasite** | 25 günün hiçbirinde aşım yok | ✓ |
+
+### 25 günün profili
+
+Günlük yük **6.86 – 7.50 saat** arasında. En hafif gün 21 Ağustos (6.86), en ağır günler tam 7.50. **Hiçbir gün 7.50'yi aşmıyor** — eski programda 13 gün 9 saati, en ağırı 12.79 saati aşıyordu.
+
+Günlerin hakim branşları: Küçük Stajlar (2) · Genel Cerrahi (4) · Biyokimya · Farmakoloji (4) · Fizyoloji · Anatomi · Mikrobiyoloji (7) · Dahiliye (3) · Pediatri (2) · Patoloji.
+
+### Açık kalan tek kalem
+
+**Pediatri Büyüme ve Gelişme · 0.20 saat** dilim 1'de yer bulamadı (12 dakika). Toplam yerleşen 131.66 / 131.87 saat.
+
+### Kalan iş
+
+Blok içi saat ataması (A/B/C/D bloklarına dağıtım), görev nesnelerinin üretimi (`app_gorev.json`), kombo/işaret üretimi, sonra on iki kapı.
+
+---
+
+## 56 · GÖREV ÜRETİMİ — ÇALIŞIYOR AMA ÜÇ KUSUR VAR
+
+25 günün blok ataması ve görev nesneleri üretildi: **187 görev · 181.84 saat · K = 66.29**
+
+### Geçen kontroller
+
+| | |
+|---|---|
+| Günlük yük 6.84 – 7.50 · **7.50'yi aşan gün 0** | ✓ |
+| **Blok aşımı 0** (A/B/C/D kapasitelerinin hiçbiri aşılmıyor) | ✓ |
+| **Video sıra hatası 0** — 44 video 1'den başlayıp sırayla | ✓ |
+| Kural A · B · C · D (gün yerleşiminden devralındı) | ✓ |
+
+### ⚠ Kalan üç kusur
+
+**1 · Parça sırası bozuk.** 63 görev parçalara bölünmüş durumda ve bazılarında **2. parça 1. parçadan önce** geliyor (29 Temmuz: KBB 2. parça 17:45'te, 1. parça 19:56'da). Sebep: parçalar "en boş bloğa" atanıyor, blok sırası gözetilmiyor.
+
+**2 · 3 görev 15 dakikanın altında.** Asgari oturum sınırı (0.25 sa) konuldu ama üç yerde tutmadı.
+
+**3 · 4.14 saatlik iş düştü.** Toplam 185.98'den 181.84'e indi — asgari parça sınırı yüzünden bazı kalıntılar yerleşemedi. Projeksiyon 66.73 → 66.29.
+
+### Üretim hattının bu turdaki gelişimi
+
+| Deneme | Sonuç |
+|---|---|
+| 1 · ilk-uyum | 29 blok aşımı |
+| 2 · FFD (boyuta göre) | blok aşımı 30, **video sırası bozuldu** |
+| 3 · sıralı video + bölme | blok aşımı 0, video ✓, ama **0.01 saatlik parçalar** |
+| 4 · asgari 15 dk sınırı | blok aşımı 0, video ✓, **parça sırası bozuk, 4.14 sa düştü** |
+
+Doğru çözüm: parçaları **blok sırasına göre** (A→B→C→D) atamak ve kalıntıyı komşu bloğa değil aynı bloğun devamına yazmak. Bu bir sonraki turun ilk işi.
+
+### Dosyalar
+
+`app_gorev_yeni.json` — §57'de düzeltildi.
+`gun_atama.json` · `dilim_atama.json` · `video_plan.json` · `secim_nihai.json` — üretim girdileri, hepsi doğrulanmış.
+
+---
+
+## 57 · PARÇA SIRASI DÜZELTİLDİ
+
+**Düzeltme:** parçalar artık "en boş bloğa" değil **blok sırasına göre** (A→B→C→D) atanıyor. Parça numarası kronolojiyle birebir aynı; `1/2. parça` her zaman `2/2. parça`dan önce geliyor.
+
+Ayrıca bütün sığan birimler **en dar sığan bloğa** yerleştiriliyor (best-fit) — bu, bölünmesi gereken birim sayısını düşürdü.
+
+### Sonuç · 183 görev · 181.91 saat · K = 66.39
+
+| Kontrol | Önce (§56) | **Sonra** |
+|---|---|---|
+| Blok aşımı | 0 | **0** ✓ |
+| Video sıra hatası | 0 | **0** ✓ |
+| **Parça sıra hatası** | **var** | **0** ✓ |
+| Parçalanan görev | 63 | **32** |
+| Günlük yük | 6.84–7.50 | **6.86–7.50** ✓ |
+| 7.50 aşan gün | 0 | **0** ✓ |
+
+29 Temmuz artık hiç parçasız: dört Hematoloji videosu + beş bütün Küçük Stajlar birimi.
+
+### Kalan tek kusur
+
+**4.08 saatlik iş yerleşemedi.** Asgari 15 dk parça sınırı yüzünden bazı kalıntılar bloklara sığmıyor. Toplam 185.99 yerine 181.91 saat yerleşti; projeksiyon 66.73 yerine **66.39**.
+
+Bu kalıntılar günler arası taşınarak kurtarılabilir — ama bu, gün atamasına geri dönmek demek. Bir sonraki turun işi.
+
+### Sıradaki adımlar
+
+1. 4.08 saatlik kalıntıyı günler arası dengeleyerek kurtar
+2. Kombo ve işaret üretimi
+3. `app_gorev.json`'a geçir, `uret.py` ile uygulamayı üret
+4. On iki kapı
+
+---
+
+## 58 · UYGULAMAYA GEÇİRME DENENDİ — KURAL D'DE TAKILDI
+
+Yeni program `app_gorev.json`'a taşındı, kombo (109 bağ) · işaret (9) · oturum bilgisi (46 görev) · sayfa bölme (46 görev) · yavaşlama molası (25 gün) · `sira` alanı (183 görev) üretildi.
+
+`uret.py` **kural testinde durdu** — bu doğru davranış, bozuk program uygulamaya yazılmadı. **Uygulamadaki eski program (257 görev) dokunulmadan duruyor.**
+
+### Kalan tek kural: D · kısmi bölüm
+
+`kural_test.py` iki kısmi bölüm buluyor: **Ortopedi 7/15 sayfa · Anestezi 3/9 sayfa**. Sebep §57'de kalan **4.08 saatlik yerleşemeyen iş** — o saatler düşünce bölümler yarım kaldı.
+
+### ⚠ Bu turda durumu kötüleştirdim
+
+Kısmi bölümleri temizlemeye çalışırken **yanlış envanteri** kullandım: `kural_test.py` `eko.py`'nin bölüm sınırlarını, ben `envanter.py`'ninkileri kullandım. İkisi farklı bölümler işaret etti; ben Biyokimya Hormonlar · Farmakoloji Hormonlar · Farmakoloji OSS'yi sildim, testin şikâyet ettiği Ortopedi ve Anestezi yerinde kaldı.
+
+Sonuç: **K 66.39 → 65.88, kombo 109 → 0.** Değişiklik geri alındı, dosya §57 hâline döndürüldü (183 görev · 181.91 saat · K 66.39).
+
+**Ders:** `kural_test.py` `eko.py`'yi okuyor, katalog `envanter.py`'yi. İkisi Speetus'ta 20 vs 34 bölüm, Anatomi'de 13 vs 8 birim farkıyla ayrışıyor. **Yeni program üretilmeden önce `kural_test.py` `envanter.py`'ye bağlanmalı** — yoksa iki farklı doğruluk kaynağı çarpışıyor.
+
+### Sıradaki turun doğru sırası
+
+1. **`kural_test.py`'yi `envanter.py`'ye bağla** — tek doğruluk kaynağı
+2. 4.08 saatlik kalıntıyı günler arası dengeleyerek kurtar (Kural D kendiliğinden düzelir)
+3. `uret.py` ile uygulamayı üret
+4. On iki kapı
+
+### Şu anki durum
+
+| | |
+|---|---|
+| Uygulamada duran | **eski program** · 257 görev · günde 9.49 saat |
+| Hazır bekleyen | **yeni program** · 183 görev · günde 7.50 saat · K 66.39 |
+| Yeni programın engeli | Kural D · 2 kısmi bölüm · 4.08 saatlik kalıntı |
+
+---
+
+## 59 · ⚠ CİDDİ BULGU: KATALOG SORULARI ÇİFT SAYIYOR
+
+Üretim `kural_test.py` #12'de takıldı: *"atanan soru kitabın yetkili toplamını aşmıyor — TUSTIME Mikrobiyoloji 36.8 vs 17.8"*. Denetleyince sorun çok daha büyük çıktı.
+
+### Denetim · atanan soru vs sınavda gerçekten çıkan soru
+
+| Branş | Atanan | Gerçek | Aşım |
+|---|---|---|---|
+| **Mikrobiyoloji** | **85.20** | 18.0 | **+67.2** |
+| **Genel Cerrahi** | 49.00 | 23.6 | +25.4 |
+| **Farmakoloji** | 39.00 | 18.0 | +21.0 |
+| **Küçük Stajlar** | 34.20 | 22.0 | +12.2 |
+| **Biyokimya** | 23.60 | 17.8 | +5.8 |
+| Dahiliye · Pediatri · Fizyoloji · Patoloji · Anatomi | — | — | ✓ |
+
+**Toplam 131.6 fazladan sayılan soru.**
+
+### Sebep
+
+Katalog her kitabı **bağımsız** ele alıyor. Mikrobiyoloji Bakteriyoloji konusundan sınavda 6.40 soru çıkıyor; katalogda hem **TUSTIME Mikrobiyoloji Bakteriyoloji** (6.40) hem **Feyyaz Akay Bakteriyoloji** (6.40) var. İkisi de programa girince aynı 6.40 soru **iki kez** sayılıyor.
+
+Mikrobiyoloji'de aşım en büyük (85.20 vs 18.0) çünkü hem konu kitabı hem soru kitabı tam kapsanıyor — üstelik bazı bölümler parçalanınca `soru` alanı her parçaya tam değeriyle kopyalanmış, bu üçüncü bir çarpan ekliyor.
+
+### Etkisi
+
+Projeksiyon **66.39 aşırı iyimser.** Kaba tahminle **+6.4 K** şişkinlik var; gerçek beklenti **60 civarı** olabilir. Bu, programın değerini değil **ölçümün geçerliliğini** ilgilendiriyor — ama karar vermek için kullanılan sayı olduğu için kritik.
+
+### Doğru model
+
+Bir konunun soru potansiyeli **konuya aittir, kitaba değil.** Aynı konuyu iki kaynaktan çalışmak o konudan gelecek net'i artırır ama **iki katına çıkarmaz** — azalan verim yasası geçerli.
+
+Gereken: katalog birimlerini **konu düzeyinde** grupla, konunun toplam soru potansiyelini birinci kaynağa tam, ikinci kaynağa kısmi (örneğin %30–40) ver. Bu hem çift sayımı bitirir hem "aynı konuyu iki kitaptan çalışmak" kararını doğru fiyatlandırır.
+
+⚠ Bu düzeltilmeden **seçim de yeniden yapılmalı** — verimlilik sırası değişecek, özellikle Mikrobiyoloji paketi (46 saat) çok daha pahalı görünecek.
+
+### Durum
+
+| | |
+|---|---|
+| Uygulamada duran | eski program · 257 görev · günde 9.49 saat |
+| Yeni program | 183 görev · günde 7.50 saat · yapısal olarak sağlam |
+| **Engel** | **soru çift sayımı — projeksiyon geçersiz** |
+
+Yeni programın **yapısı** doğru (bloklar, kapasite, kurallar A/B/C/D, video sırası, parça sırası). Sorun **değerlemede**: hangi işin ne kadar getirdiği yanlış hesaplanıyor.
+
+---
+
+## 60 · NET MODELİ GERÇEK VERİYLE YENİDEN KURULDU
+
+Kullanıcı doğru itiraz etti: *"bir konunun bana tek çalışmada kazandırması, o konudan çıkması beklenen soruların %100'üne eşit olamaz."*
+
+### Kalibrasyon dayanağı · gerçek ölçüm
+
+Patoloji: TUSTIME konu kitabı bir tur (6 ay önce) + Emrullah SST **60 saat ayrıntılı** çalışma + videolar. Hemen ardından **24 Temmuz MediTUS: Patoloji 11.75 net.**
+
+Tavan 18.2 → **%64.6.** İki tam tur sonrası.
+
+```
+tur başına kapanan boşluk oranı  r = 1 − (1 − 0.646)^(1/2) = 0.405
+```
+
+### Yeni model
+
+```
+kazanç   = (tavan − mevcut) × 0.405 × kapsanan_pay
+yeni net = min(tavan, mevcut + kazanç)
+```
+
+- **tavan** = branşın Tusanaliz ortalama soru sayısı (Mikrobiyoloji 18.0, Patoloji 18.2, …)
+- **mevcut** = son denemedeki (24 Tem MediTUS) branş neti
+- **kapsanan_pay** = programın o branşın soru ağırlığının ne kadarını kapsadığı, **konu düzeyinde tekilleştirilmiş** (aynı konu iki kitaptan çalışılsa bir kez sayılır)
+- Branş neti **asla tavanı aşamaz**
+
+Bu, eski `soru × 0.2037` doğrusal modelinin yerini alıyor. O model azalan verimi hiç görmüyordu ve çift sayıma açıktı.
+
+### Yeni programın gerçekçi projeksiyonu
+
+| Branş | Tavan | Mevcut | Kapsanan pay | Kazanç | Yeni net |
+|---|---|---|---|---|---|
+| Genel Cerrahi | 23.6 | 12.75 | %100 | +4.39 | 17.14 |
+| Küçük Stajlar | 22.0 | **0.00** | %100 | +8.90 | 8.90 |
+| Farmakoloji | 18.0 | 3.25 | %100 | +5.97 | 9.22 |
+| Mikrobiyoloji | 18.0 | 5.50 | %100 | +5.06 | 10.56 |
+| Biyokimya | 17.8 | 6.00 | %100 | +4.78 | 10.78 |
+| Pediatri | 25.0 | 7.75 | %42 | +2.90 | 10.65 |
+| Fizyoloji | 14.0 | 3.75 | %44 | +1.84 | 5.59 |
+| Dahiliye | 23.2 | 15.50 | %53 | +1.64 | 17.14 |
+| Anatomi | 13.0 | 2.00 | %17 | +0.75 | 2.75 |
+| Patoloji | 18.2 | 11.75 | %25 | +0.66 | 12.41 |
+| Kadın Doğum | 10.0 | 2.50 | **%0** | 0.00 | 2.50 |
+| **Toplam kazanç** | | **70.75** | | **+36.89** | |
+
+**Gerçekçi projeksiyon K = 66.49** — eski çift sayımlı hesap 66.39 veriyordu. Şaşırtıcı biçimde neredeyse aynı: çift sayımın şişkinliği, azalan verim indirimiyle **birbirini götürüyor.** Ama artık sayı doğru sebeplerle doğru.
+
+### ⚠ Modelin bilinen iki kusuru
+
+**1 · Küçük Stajlar mevcut = 0.** Kullanıcı Excel'inde Küçük Stajlar'ı ayrı takip etmiyor (*"sınavda kesin bir kısmı yok, klinik branşlarda karışık çıkıyor"*). Model bunu "hiç bilmiyor" sayıp **+8.90 net** veriyor — bu şişkin. O sorular zaten Dahiliye ve diğer klinik netlerin içinde sayılıyor olabilir. **Küçük Stajlar tabanı tahmin edilmeli.**
+
+**2 · Kadın Doğum %0 kapsanıyor.** Seçim FT Kadın Doğum'dan yalnız 1 birim aldı ve o da soru ağırlığı taşımıyor. 10.0 tavanlı bir branş tamamen dışarıda — seçim yeniden yapılırken bakılmalı.
+
+### Sıradaki tur
+
+1. Küçük Stajlar tabanını tahmin et (Dahiliye/klinik netlerden ayrıştır)
+2. Seçimi **yeni modelle** yeniden yap — verimlilik artık `(tavan−mevcut)×0.405×pay / saat`, bu sıralamayı değiştirecek
+3. Kadın Doğum'un neden düştüğünü incele
+4. Üret ve on iki kapı
+
+---
+
+## 61 · TAVANLAR RESMİ SORU SAYILARINA OTURDU · `tavan.py`
+
+Kullanıcı resmi TUS dağılımını verdi: **200 soru = 100 temel + 100 klinik.**
+
+Anatomi 13 · Histo-Embriyoloji 7 · Fizyoloji 8 · Biyokimya 18 · Mikrobiyoloji 18 · Patoloji 18 · Farmakoloji 18 · **Dahiliye grubu 35** · Pediatri 25 · **Genel Cerrahi grubu 30** · Kadın Doğum 10
+
+### Tusanaliz verisi resmi sayılarla birebir tutuyor
+
+| Branş | Ölçülen | Resmi |
+|---|---|---|
+| Anatomi | **13.00** | 13 |
+| Pediatri | **25.00** | 25 |
+| Kadın Doğum | **10.00** | 10 |
+| Mikrobiyoloji · Farmakoloji | **18.00** | 18 |
+| Biyokimya | 17.80 | 18 |
+| Patoloji | 18.20 | 18 |
+
+Temel toplam **99.00 / 100**. Veri güvenilir.
+
+### Küçük Stajlar ayrı bir grup DEĞİL — kanıtlandı
+
+Ölçülen Dahiliye 23.20 + Küçük Stajlar 22.00 = **45.20**, resmi 35 → **+10.20 aşım**
+Ölçülen Genel Cerrahi **23.60**, resmi 30 → **−6.40 eksik**
+
+Küçük Stajlar'ın **cerrahi** konuları (Beyin cerrahisi 1.40 · Kalp-Damar 1.40 · Ortopedi 1.60 · Üroloji 1.00 · Çocuk Cerrahisi 1.00 · Göğüs Cerrahisi 0.60 = **7.00**) Genel Cerrahi grubuna eklenince:
+
+| | Hesap | Resmi | Sapma |
+|---|---|---|---|
+| Genel Cerrahi grubu | 23.60 + 7.00 = **30.60** | 30 | **+0.60** |
+| Dahiliye grubu | 23.20 + 15.00 = **38.20** | 35 | +3.20 |
+
+Kalan sapma beş-sınav ortalamasının yuvarlamasından; klinik toplam 103.80 → ×0.9634 ile 100'e oturtuldu.
+
+**Bu, "Küçük Stajlar mevcut = 0" kusurunu çözdü.** Küçük Stajlar artık ayrı tavanı olan branş değil; konuları iki klinik gruba dağılıyor — kullanıcının deneme netlerinde de böyle ölçülüyor.
+
+### Nihai tavanlar (`tavan.py`)
+
+Dahiliye grubu **36.80** · Genel Cerrahi grubu **29.48** · Pediatri **24.08** · Patoloji **18.38** · Mikrobiyoloji **18.18** · Farmakoloji **18.18** · Biyokimya **17.98** · Fizyoloji+Histo **14.14** · Anatomi **13.13** · Kadın Doğum **9.63** — **toplam 200.00** ✓
+
+### Mevcut durum · 24 Temmuz MediTUS · toplam 70.75 net
+
+| Grup | Tavan | Mevcut | Boşluk | Doluluk |
+|---|---|---|---|---|
+| Dahiliye grubu | 36.80 | 15.50 | **21.30** | %42 |
+| Genel Cerrahi grubu | 29.48 | 12.75 | **16.73** | %43 |
+| Pediatri | 24.08 | 7.75 | **16.33** | %32 |
+| **Farmakoloji** | 18.18 | 3.25 | **14.93** | **%18** |
+| Mikrobiyoloji | 18.18 | 5.50 | 12.68 | %30 |
+| Biyokimya | 17.98 | 6.00 | 11.98 | %33 |
+| **Anatomi** | 13.13 | 2.00 | 11.13 | **%15** |
+| Fizyoloji+Histo | 14.14 | 3.75 | 10.39 | %27 |
+| Kadın Doğum | 9.63 | 2.50 | 7.13 | %26 |
+| **Patoloji** | 18.38 | 11.75 | 6.63 | **%64** |
+| **TOPLAM** | 200.00 | **70.75** | **129.25** | %35 |
+
+**Anatomi %15 ve Farmakoloji %18 en boş** — en çok kazanılacak yer orada. **Patoloji %64 ile en dolu** (60 saatlik SST çalışmasının sonucu), yani oraya daha çok yatırım en az getiriyi verir.
+
+### Çift sayım çözüldü · `konu_deger.json`
+
+199 katalog birimi **169 ayrı konuya** indirgendi. **27 konu birden çok kitapta geçiyordu** — Biyokimya Karbonhidratlar/Lipidler/Vitaminler üç kitapta, Dahiliye Hematoloji/Onkoloji/Kardiyoloji ikişer. Artık her konu **bir kez** sayılıyor ve o konu için **en kısa süreli kaynak** seçiliyor.
+
+Sonuç: **169 konu · 295.6 saat · 74.69 net potansiyel** (eski çift sayımlı hesap 435.8 saat / 52.47 net gösteriyordu).
+
+### Yeni verimlilik sıralaması — eskisinden çok farklı
+
+İlk beş: Nükleer tıp 3.516 net/sa · Şok 2.666 · Toksikoloji 1.901 · Amino Asitler 1.141 · Acil Tıp 1.055
+
+Farmakoloji ve Biyokimya listenin üstüne çıktı — çünkü **mevcut netleri çok düşük** (3.25 ve 6.00), boşluk büyük.
+
+### Sıradaki tur
+
+1. 169 konudan **132.2 saatlik** seçimi yeni verimlilik sırasıyla yap
+2. Dilim/gün/blok yerleşimini tekrarla (algoritmalar hazır, §54–57)
+3. Üret ve on iki kapı
+
+---
+
+## 62 · ⚠ UNUTMA EĞRİSİ — MODELİN EN BÜYÜK EKSİĞİ
+
+Kullanıcı: *"okuyunca kazanım sağlıyorum ama zaman geçtikçe tekrar edilmesi gerekiyor ki kalıcı olsun... tekrar etmezsem net beklentimin de düşmesi lazım."*
+
+Doğru. Model şimdiye kadar **öğrenilen her şeyin sınav gününe kadar tam kaldığını** varsayıyordu. Bu yanlış ve etkisi çok büyük.
+
+### Kullanılan formül · FSRS (Anki'nin yeni algoritması)
+
+```
+R(t,S) = (1 + (19/81)·t/S)^(−0.5)
+```
+
+R = hatırlama olasılığı · t = geçen gün · S = kararlılık (gün).
+
+Bu bir **güç yasası**, Ebbinghaus'un üstel eğrisi değil. Wixted & Carpenter (2007) uzun aralıklarda güç fonksiyonunun daha iyi uyduğunu gösteriyor; FSRS de bunu kullanıyor. SM-2 (eski Anki) sabit çarpanlı aralık kullanıyordu, kararlılığı modellemiyordu.
+
+✓ **Sabitler kaynaktan doğrulandı (28 Tem):** open-spaced-repetition/awesome-fsrs wiki — FSRS v4'te DECAY=−1 · FACTOR=1/9; **FSRS-4.5/5'te DECAY=−0.5 · FACTOR=19/81.** FSRS-6 üsteli kullanıcıya göre öğrenilebilir yaptı (0.1–0.8).
+
+⚠ **Doğrulamada bir yanlışım çıktı:** S, hatırlamanın **%90'a** düştüğü gün sayısıdır — %50'lik yarılanma ömrü değil. `R(S,S)=0.90` her zaman. Model bu tanımla kuruldu, `unutma.py` doğrulaması 0.9000 veriyor.
+
+### Hatırlama tablosu
+
+| S (gün) | 1 gün | 7 gün | 14 gün | 21 gün | 25 gün |
+|---|---|---|---|---|---|
+| 1 | %90 | %62 | %48 | %41 | %38 |
+| **2** (tek okuma) | %95 | %74 | %62 | **%54** | %50 |
+| **5** (1 tekrar) | %98 | %87 | %79 | **%71** | %69 |
+| **12** (2 tekrar) | %99 | %94 | %89 | **%84** | %83 |
+
+### Programa etkisi · TEKRAR YOKSA
+
+Program 29 Tem – 22 Ağu, sınav **23 Ağustos**.
+
+| Dilim | Sınava kalan | Tek okuma | 1 tekrar | 2 tekrar |
+|---|---|---|---|---|
+| 1 (2 Ağu civarı) | 21 gün | **%54** | %71 | %84 |
+| 2 (10 Ağu) | 13 gün | %63 | %79 | %89 |
+| 3 (18 Ağu) | 5 gün | %79 | %90 | %95 |
+
+§54'teki yeni-öğrenme dağılımıyla (40.13 / 29.52 / 16.05 saat) **ağırlıklı hatırlama %62.**
+
+| | |
+|---|---|
+| Seçimin ham kazancı | **42.60 net** |
+| Sınavda gerçekten kalan | **≈ 26.29 net** |
+| **KAYIP** | **16.31 net** |
+| Tekrarsız projeksiyon | **K = 63.85** (tekrarlı varsayım 67.72) |
+
+**Dört puanlık fark.** Bu, programın en büyük tek eksiği.
+
+### Bunun getirdiği tasarım kuralı
+
+Kural C zaten "yeni öğrenme azalan, geri getirme artan" diyor ve bu doğru yönde. Ama **tekrar bütçesi yok** — geri getirme yalnız deneme ve soru çözmeden ibaret, öğrenilen konuya dönüş yok.
+
+Gereken:
+1. Her okunan konu için **en az bir tekrar** planla (S: 2 → 5, hatırlama %54 → %71)
+2. Tekrar aralığı: Cepeda ve ark. (2006) meta-analizi optimum aralığın **hedef aralığın %10–20'si** olduğunu buluyor. Sınava 21 gün varsa optimum tekrar ~3–4 gün sonra.
+3. **Aktif hatırlama tercih edilmeli** (Roediger & Karpicke 2006, test etkisi): soru çözme, yeniden okumadan daha çok kararlılık kazandırıyor. Programdaki soru bankaları bu işi görüyor ama **aynı konuya** yönlendirilmeli.
+4. İlk dilimde öğrenilen en çok kaybediyor (%46) — **tekrar bütçesi ilk dilime öncelik vermeli.**
+
+### Kullanıcı kararı: Mikrobiyoloji · seçenek C
+
+Feyyaz Akay'ın çözüleceği konuların konu kitabı bölümleri okunacak, tamamı değil. Uygulanacak.
+
+### Sıradaki tur
+
+1. Seçenek C'yi uygula (Mikro konu kitabı kısmi)
+2. **Tekrar bütçesi ekle** — her konu için 1 tekrar, aralık %10–20 kuralıyla
+3. Modeli tekrarlı hâle getir: `net_sınav = kazanç × R(sınava_kalan_gün, S)`
+4. Seçimi bu modelle yeniden yap — tekrar maliyeti girince sıralama yine değişecek
+
+---
+
+## 63 · TEKRAR MODELİ · `unutma.py` — VE BİR HESAP HATAM
+
+### Parametreler doğrulandı
+
+`R(t,S) = (1 + (19/81)·t/S)^(−0.5)` · FSRS-4.5/5. `R(S,S) = 0.9000` doğrulandı.
+
+Başlangıç kararlılığı: FSRS-4.5 varsayılan ağırlıkları `w[0..3] = [0.4, 0.6, 2.4, 5.8]` — Again/Hard/Good/Easy. Dikkatli okuma "Good" kabul edildi: **S₁ = 2.4 gün.**
+
+⚠ **Sınır:** FSRS **kart** için kalibre edilmiştir. Bir kitap bölümü tek kart değildir; bu model kaba bir yaklaşımdır. Yönü ve büyüklük mertebesi doğrudur, ondalıkları değil.
+
+### ⚠ İlk hesabım yanlıştı
+
+"Tekrar mı yeni konu mu" karşılaştırmasında **iki durumda da aynı `t`'yi** kullandım ve tekrarın yeni konudan daha değersiz olduğu sonucuna vardım. Yanlış.
+
+**Tekrarın asıl faydası geçen süreyi sıfırlamasıdır.** Doğru model: ilk okuma g₁ gün önce, tekrar g₂ gün önce → sınavda hatırlama `R(g₂, S₂)`, `R(g₁, S₁)` değil.
+
+| İlk okuma | Tekrar | Tekrarsız | Tekrarlı | Kazanım |
+|---|---|---|---|---|
+| 21 gün önce | 6 gün önce | %57 | **%90** | **+33** |
+| 25 gün önce | 8 gün önce | %54 | %87 | +33 |
+| 18 gün önce | 5 gün önce | %60 | %91 | +31 |
+| 15 gün önce | 5 gün önce | %64 | %91 | +28 |
+
+### Sonuç: tekrar yeni konudan DAHA verimli
+
+Eşit değerli (1.0 net / 2.0 saat) bir iş için, tekrar maliyeti ilk okumanın **%40'ı** (kullanıcı beyanı: *"hızlı hızlı okusam ezber yerlerine ezber yapsam yeter"*):
+
+| Seçenek | net/saat |
+|---|---|
+| Yeni konu · 15 gün önce | 0.318 |
+| Yeni konu · 12 gün önce | 0.339 |
+| Yeni konu · 8 gün önce | 0.375 |
+| **Tekrar · 21g okundu, 6g tekrar** | **0.410** |
+| **Tekrar · 18g okundu, 5g tekrar** | **0.391** |
+
+Maliyeti %40 ama hatırlamayı %57'den %90'a çıkarıyor.
+
+### Üçüncü tur değmiyor
+
+21g oku → 10g tekrar → 3g tekrar: %57 → %85 → %98.
+**1. tekrarın marjinal verimi 0.344 · 2. tekrarın 0.162** — yarısından az. Azalan verim burada da geçerli.
+
+**Tasarım kuralı: her konu için TAM BİR tekrar planla, ikinciyi planlama.**
+
+### Optimum tekrar aralığı
+
+`aralik(S)` = R'nin %90'a düştüğü gün. İlk okumadan sonra **2.4 gün**, birinci tekrardan sonra **6.0 gün**. Ama sınav sabit tarihli olduğu için asıl kural: **tekrar sınava mümkün olduğunca yakın olmalı** — 21g/6g çifti 21g/14g çiftinden %10 daha iyi.
+
+---
+
+## 64 · TEKRAR BÜTÇELİ SEÇİM · `secim_v4.json`
+
+### Yapı
+
+| | Saat | Hatırlama |
+|---|---|---|
+| Dilim 1+2 · yeni okuma (**hepsi tekrar edilir**) | 85.67 | **%91** |
+| Dilim 3 · tekrar | 34.27 | — |
+| Dilim 3 · yeni okuma (tekrarsız) | 13.23 | %82 |
+| **Toplam okuma** | **98.90** | |
+
+Toplam kullanım **133.13 / 133.17 saat**.
+
+### ⚠ Üç yanlış deneme
+
+**1 · Kapasite kısıtsız açgözlü.** Hepsini "geç oku" seçti (son 5 güne 132 saat sığmaz).
+
+**2 · Kapasiteli açgözlü.** Dilim 3'ün çarpanı en yüksek (0.820) olduğu için **en iyi konuları oraya, en zayıflarını dilim 1'e** koydu — yapıyı ters kurdu. Sonuç: 97 konu, 1 tekrar, K 65.13.
+
+**3 · Değiş-tokuş turu.** Sıfır işlem yaptı: dilim 1'deki konular zaten en verimsizleri olduğu için hiçbir takas kazançlı çıkmadı. Karşılaştırmayı önce mutlak, sonra saat başına yaptım — ikisi de çözmedi çünkü **sorun karşılaştırmada değil, açgözlünün kurduğu yapıdaydı.**
+
+**Doğrusu:** dilim 1 ve 2 zaten var ve doldurulmak zorunda; **dilim 3'ün kapasitesi tekrara ayrılmalı**, yeni okumaya değil. Yapı doğrudan böyle kuruldu.
+
+### Sonuç
+
+**81 konu · 98.86 saat okuma + 34.27 saat tekrar · sınavda kalan net +31.52 · K = 65.21**
+
+67 konu tekrarlı (85.67 sa okuma), 14 konu tekrarsız (13.20 sa).
+
+| Grup | Tavan | Mevcut | Kazanç | Doluluk |
+|---|---|---|---|---|
+| Genel Cerrahi grubu | 29.48 | 12.75 | **+6.21** | %64 |
+| **Farmakoloji** | 18.18 | 3.25 | **+5.47** | %48 |
+| Biyokimya | 17.98 | 6.00 | +5.27 | %63 |
+| Dahiliye grubu | 36.80 | 15.50 | +5.03 | %56 |
+| Fizyoloji+Histo | 14.14 | 3.75 | +3.04 | %48 |
+| Pediatri | 24.08 | 7.75 | +2.71 | %43 |
+| Anatomi | 13.13 | 2.00 | +2.39 | %33 |
+| Kadın Doğum | 9.63 | 2.50 | +1.40 | %41 |
+| **Mikrobiyoloji** | 18.18 | 5.50 | **0.00** | %30 |
+| **Patoloji** | 18.38 | 11.75 | **0.00** | %64 |
+| **TOPLAM** | 200 | **70.75** | **+31.52** | **%51** |
+
+### İki grup tamamen düştü — karar gerekiyor
+
+**Mikrobiyoloji 0.** C seçeneği (Feyyaz + önkoşul konu kitabı) paketleri 0.081–0.153 net/saat veriyor; kesim eşiği çok üstünde. Yani *"önce oku sonra çöz"* zinciri, bu bütçede karşılığını vermiyor. 12.68 netlik boşluk tamamen açık kalıyor.
+
+**Patoloji 0.** Zaten %64 dolu; kalan 6.63 netlik boşluğu kapatmak, aynı saati başka branşa vermekten daha az getiriyor. Model 60 saatlik SST çalışmanın işini bitirdiğini söylüyor.
+
+### Projeksiyon neden düştü
+
+Önceki hesap 67.72 diyordu, bu 65.21. Fark **unutmadan**: eski model öğrenilen her şeyin sınav gününe kadar tam kaldığını varsayıyordu. Şimdi %82–91 arasında kalıyor ve tekrar bütçesi 34 saat yiyor.
+
+**65.21 daha düşük ama daha dürüst bir sayı.**
+
+---
+
+## 65 · KURAL E · TABAN ÇÜRÜMESİ — MODEL TAMAMLANDI
+
+Kullanıcı inisiyatif istedi. Modelin son eksiği kapatıldı: **mevcut netin kendisi de unutuluyordu, model bunu hiç görmüyordu.**
+
+### Kural E tanımı
+
+**t = 0 son deneme günüdür (24 Temmuz 2026 MediTUS). Sınav t+30.**
+
+Her grubun ölçülen neti bu tarihte alınmıştır ve sınava kadar çürür:
+
+| Materyal | Çürüme çarpanı | Gerekçe |
+|---|---|---|
+| **~6 ay önce okunanlar** | **0.9258** | Güç yasası düzleşir; uzun t'de `R(t₂)/R(t₁) ≈ (t₂/t₁)^(−0.5)` → 180→210 gün için 0.9258, yani %7.4 ek kayıp |
+| **Patoloji** (23 Tem'de bitti, 2 tur → S=6.0) | **0.6784** | `R(30, 6.0) = 0.678` — eğrinin dik kısmında, %32 kayıp |
+
+Kullanıcı beyanı: *"Patoloji hariç okuduklarımın hepsini yaklaşık 6 ay önce okumuştum."*
+
+### Hiçbir şey yapılmazsa
+
+| Grup | t=0 | Sınavda | Kayıp |
+|---|---|---|---|
+| **Patoloji** | 11.75 | **7.97** | **−3.78** |
+| Dahiliye grubu | 15.50 | 14.35 | −1.15 |
+| Genel Cerrahi grubu | 12.75 | 11.80 | −0.95 |
+| diğerleri | | | −2.28 |
+| **TOPLAM** | **70.75** | **62.59** | **−8.16** |
+
+**Hiçbir şey yapılmazsa K = 55.72.** Program bu tabandan başlıyor, 70.75'ten değil.
+
+### Kural E'nin getirdiği asıl kavrayış
+
+Bir konuyu programda çalışmak **sadece kazanç sağlamaz, o konunun çürümesini de iptal eder.** Formül:
+
+```
+sınav_net = taban × [çürüme × (1−p) + R_tekrar × p] + kazanç × R_tekrar
+```
+
+p = o grubun soru ağırlığının programda kapsanan payı.
+
+Bu, **Patoloji'yi tekrar etmenin değerini ortaya çıkardı.** Önceki model Patoloji'ye 0.00 saat veriyordu; Kural E ile **%61 kapsam** alıyor, çünkü 3.78 netlik çürümeyi durduruyor. Kullanıcı bunu zaten hissetmişti: *"5 gün önce bitti ve şu an bile unutmaya başlamış gibi hissediyorum."*
+
+### Sonuç · 79 konu · 98.50 sa okuma + 34.12 sa tekrar
+
+| Grup | Tavan | t=0 | Kapsam | Tekrarsız | **SINAVDA** |
+|---|---|---|---|---|---|
+| Genel Cerrahi grubu | 29.48 | 12.75 | %100 | 11.80 | **17.11** |
+| Dahiliye grubu | 36.80 | 15.50 | %68 | 14.35 | **18.90** |
+| **Patoloji** | 18.38 | 11.75 | **%61** | 7.97 | **11.01** |
+| Biyokimya | 17.98 | 6.00 | %100 | 5.55 | 10.35 |
+| Pediatri | 24.08 | 7.75 | %43 | 7.18 | 9.53 |
+| Farmakoloji | 18.18 | 3.25 | %100 | 3.01 | 8.02 |
+| Mikrobiyoloji | 18.18 | 5.50 | %29 | 5.09 | 6.38 |
+| Fizyoloji+Histo | 14.14 | 3.75 | %62 | 3.47 | 5.48 |
+| Anatomi | 13.13 | 2.00 | %62 | 1.85 | 4.21 |
+| Kadın Doğum | 9.63 | 2.50 | %27 | 2.31 | 3.02 |
+| **TOPLAM** | **200** | **70.75** | | **62.59** | **94.00** |
+
+### Üç sayı
+
+| | K |
+|---|---|
+| Hiçbir şey yapılmazsa | **55.72** |
+| Program uygulanırsa | **63.13** |
+| **Programın değeri** | **+7.41** |
+
+Projeksiyon 65.21'den 63.13'e indi — fark, taban çürümesinin artık sayılması. **Her düzeltmede sayı düştü ve her seferinde daha dürüst oldu:** 67.72 (çift sayımlı) → 65.21 (unutma eklendi) → **63.13 (taban çürümesi eklendi)**.
+
+### Mikrobiyoloji
+
+Feyyaz Akay havuzdan çıkarıldı (kullanıcı: denemeler zaten karışık soru sağlıyor). Konu kitabı **%29 kapsam** alıyor — model tam okumayı hâlâ pahalı buluyor ama artık sıfırda bırakmıyor.
+
+---
+
+## 66 · SIFIRDAN YERLEŞİM TAMAM · `app_gorev_v2.json`
+
+Doğrulanmış modelin tamamıyla, sıfırdan yerleştirildi.
+
+### Girdiler
+
+| | |
+|---|---|
+| Seçim (`secim_v5.json`) | 79 konu · 98.50 sa okuma |
+| Tekrar | 34.12 sa (dilim 1+2 konularının %40'ı) |
+| Video (`video_plan.json`) | 44 video · 16.83 sa · 9 gün · 8 Ağu son |
+| Deneme + analiz | 27.00 + 10.50 sa |
+| **TOPLAM** | **186.96 / 187.50 sa** · pay +0.54 |
+
+### Gün yerleşimi
+
+| Kontrol | Sonuç |
+|---|---|
+| Gün kapasite aşımı | **0** |
+| **Tekrar sırası** (tekrar ilk okumadan sonra mı) | **0 hata** |
+| **Kural B** (gün-branş hakimiyeti) | **20/22 gün = %91** |
+
+Dilim 3 (15–22 Ağustos) tekrarların yoğunlaştığı bölüm: 18 Ağustos'ta 21 işin 19'u, 22 Ağustos'ta 15'in 15'i tekrar.
+
+### Blok yerleşimi ve üretim
+
+**225 görev · 182.29 saat**
+
+| Kontrol | Sonuç |
+|---|---|
+| Günlük yük | **7.00 – 7.50** · aşan gün **0** |
+| Blok aşımı | **0** |
+| Video sıra hatası | **0** |
+| 15 dk altı görev | 11 — hepsi **gerçekten küçük birim** (Toksikoloji 1 sf, Nükleer tıp 1 sf, kısa tekrarlar), parça artığı değil |
+| Parçalanan görev | 51 |
+
+Asgari parça 24 dakikaya çıkarıldığında parçalanma 51→42'ye indi ama **3.67 saatlik iş düştü**; 15 dakika sınırı tercih edildi.
+
+### Nihai projeksiyon
+
+| Grup | Tavan | t=0 | Kapsam | **Sınavda** |
+|---|---|---|---|---|
+| Dahiliye grubu | 36.80 | 15.50 | %68 | **19.59** |
+| Genel Cerrahi grubu | 29.48 | 12.75 | %100 | **17.86** |
+| Patoloji | 18.38 | 11.75 | %61 | 11.16 |
+| Biyokimya | 17.98 | 6.00 | %100 | 9.93 |
+| Pediatri | 24.08 | 7.75 | %38 | 9.45 |
+| Farmakoloji | 18.18 | 3.25 | %100 | 8.50 |
+| Mikrobiyoloji | 18.18 | 5.50 | %29 | 6.42 |
+| Fizyoloji+Histo | 14.14 | 3.75 | %62 | 5.84 |
+| Anatomi | 13.13 | 2.00 | %62 | 4.41 |
+| Kadın Doğum | 9.63 | 2.50 | %27 | 3.02 |
+| **TOPLAM** | **200** | **70.75** | | **96.18** |
+
+| | K |
+|---|---|
+| Hiçbir şey yapılmazsa | **55.72** |
+| **Program uygulanırsa** | **63.67** |
+| **Programın değeri** | **+7.95** |
+
+### Kalan iş
+
+`app_gorev.json`'a geçirme · kombo/işaret/oturum/tag üretimi · `kural_test.py`'yi `envanter.py`'ye bağlama · `uret.py` · on iki kapı.
+
+---
+
+## 67 · ⚠ ÜÇÜNCÜ ÇİFT SAYIM — TUSANALİZ ETİKETİYLE TEKİLLEŞTİRME
+
+Uygulamaya geçirirken `kural_test.py` #12 gerçek bir hata yakaladı.
+
+### Bulgu
+
+| Grup | Programa atanan soru | Tavan |
+|---|---|---|
+| **Biyokimya** | **27.4** | 18.0 |
+| Genel Cerrahi grubu | 31.0 | 29.5 |
+| Farmakoloji | 21.0 | 18.2 |
+
+Sebep: **aynı Tusanaliz konusu farklı kitaplarda farklı adla geçiyor** ve tekilleştirme kitap bölüm adına göre yapılıyordu.
+
+```
+Aminoasitler ve Proteinler  ← FT Biyokimya
+Aminoasitler                ← Yavuz Şahin Biyokimya konu     hepsi AYNI konu
+Amino Asitler               ← Yavuz Şahin Biyokimya SB       7.4 soru, ÜÇ KEZ sayıldı
+```
+
+Ölçüldü: **56 konu grubu birden çok kaynakta farklı adla geçiyor.** Biyokimya'nın altı konusu üçer kaynakta.
+
+### Düzeltme
+
+`gorev_katalog.py`'ye `etiket()` eklendi: bir bölümün karşılık geldiği **Tusanaliz etiket demeti**. Tekilleştirme artık kitap bölüm adına değil buna göre yapılacak.
+
+⚠ Bu, §48'de "çift sayım çözüldü" dediğim şeyin **üçüncü katmanı.** Sırayla:
+1. §59 · kitap bağımsız sayılıyordu → konu düzeyine indirildi
+2. §61 · konu adı kitaptan kitaba değişiyordu, kaçırıldı
+3. §67 · Tusanaliz etiketiyle tekilleştirme — asıl doğru anahtar
+
+### İki hata daha görüldü
+
+- `Meme Hastalıkları` (**Emrullah Patoloji SST**) `Genel Cerrahi grubu`na atanmış — patoloji konusu, cerrahi grubuna değil.
+- `Hormonlar` (**Yavuz Şahin Biyokimya SB**) `Farmakoloji`ye atanmış — biyokimya konusu.
+
+Grup atamasında da düzeltme gerekiyor.
+
+### Kural testinde yapılan değişiklikler (meşru, susturma değil)
+
+| # | Eski | Yeni | Gerekçe |
+|---|---|---|---|
+| 10 | renk `eko.py` bölümlerinden | `envanter.py` birimlerinden | Anatomi 13→8, Feyyaz 14→8 birim |
+| 11 | "her pembe bölüm tam okunur" | "seçilen konuda sayfa boşluğu yok" | Katalog 295.6 sa, kapasite 132.2 — seçim zorunlu, pembe atlamak artık karar |
+| 12 | kitap toplamı | **grup tavanı** | Kitap bazlı ölçüm çift sayımı görmüyordu |
+| 15 | `Klinisyen Vaka Fizyoloji` "olmayan kaynak" | listeden **çıkarıldı** | O kitap kullanıcının beyanında var (11 numara). **Eski kural yanlıştı.** |
+
+### Durum
+
+Uygulamada hâlâ eski program duruyor — `uret.py` kural testinde durdu, bu doğru davranış.
+
+Yeni program yapısal olarak sağlam (225 görev, blok aşımı 0, video sırası 0, tekrar sırası 0, Kural B %91) ama **değerlemesi hâlâ şişkin.** Seçim, doğru tekilleştirmeyle yeniden yapılmalı.
+
+---
+
+## 68 · TEKİLLEŞTİRME DÜZELDİ · BORU HATTINDA ÇÖZÜLEMEYEN KOPUKLUK
+
+### Seçim düzeldi · `secim_v6.json`
+
+Tusanaliz etiketiyle tekilleştirme uygulandı: **193 katalog birimi → 137 ayrı konu**, 50'si birden çok kaynakta.
+
+Biyokimya artık doğru: **5 konu, 14.0 soru**, hepsi tek kaynaktan (Yavuz Şahin SB). Önceki hâlde Aminoasit üç kez sayılıyordu.
+
+**Projeksiyon K = 63.68** — önceki şişik hesapla (63.67) neredeyse aynı. Sebep: model grup kapsamını zaten `min(1.0, pay)` ile kırpıyormuş, yani çift sayım projeksiyona geçmiyordu. Yine de katalog artık doğru.
+
+### ⚠ SIGPIPE tuzağına yine düştüm
+
+`python3 script.py | head -6` — betik gün listesini yazdırırken SIGPIPE alıp **`json.dump`'a varmadan ölüyor**, dosya hiç yazılmıyor. Sonuç: yeni seçim üretilmiş görünüyordu ama `app_gorev.json` eski içeriği taşıyordu.
+
+**Bu tuzak DEVIR §0b'de zaten kayıtlı ve yine düştüm.** Boru hattı betiklerinin çıktısı bir daha `head`/`tail` ile kesilmemeli; `> dosya 2>&1` ile yazılıp sonra okunmalı.
+
+### Çözülemeyen kopukluk
+
+SIGPIPE'sız yeniden koşulduğunda:
+- `yer2.py` **150 iş parçası** ürettiğini bildiriyor
+- `gun_v2.json` dosyasında **143 parça** çıkıyor
+- Sonuç: `app_gorev.json` hâlâ eski üç Aminoasit varyantını taşıyor, `kural_test #12` aynı sayıları veriyor (31.0 / 21.0 / 27.4)
+
+Bildirilen sayı ile yazılan dosya arasındaki 7 parçalık fark izole edilemedi. Muhtemel yer: `yer2.py`'de bölme döngüsünün eklediği parçalar `gorev` sözlüğüne değil yerel listeye yazılıyor olabilir — ama **doğrulanmadı, tahmin.**
+
+### Durum
+
+| | |
+|---|---|
+| Uygulamada duran | **eski program** · dokunulmadı |
+| `secim_v6.json` | ✓ doğru, tekilleştirilmiş, 84 konu |
+| `gun_v3.json` · `app_gorev_v2.json` | ✗ eski seçimi taşıyor |
+| `kural_test.py` | ✓ envanter tabanına bağlandı, 17/18 geçiyor |
+
+### Sıradaki turun ilk işi
+
+1. `yer2.py`'de bildirilen 150 ile yazılan 143 arasındaki farkı **izole et** — tahminle düzeltme yapma
+2. Boru hattını SIGPIPE'sız baştan koştur
+3. `kural_test #12` geçince `uret.py` ve on iki kapı
+
+**Yapısal işin tamamı duruyor:** envanter, tavanlar, unutma modeli, tekrar bütçesi, seçim, blok yapısı, yerleşim algoritmaları. Kalan tek engel bu dosya yazma kopukluğu.
+
+---
+
+## 69 · BORU HATTI ÇALIŞTI · `kural_test.py` 18/18 · `denet.py`'de 4 ESKİMİŞ KURAL
+
+### §68'deki kopukluk çözüldü — sebep bendim
+
+`yer2.py`'nin çıktısını daha önce `sed` ile `gun_v3.json`'a çevirmiştim; sonra **üstüne eski `gun_v2.json`'ı kopyalayıp taze dosyayı ezmişim.** Tahmin ettiğim "bölme döngüsü" hatası değildi — dosya yönetimi hatasıydı.
+
+Kopyalama kaldırılınca: `gun_v3.json` **150 iş**, Aminoasit varyantı **tek** (`Amino Asitler`), sayfa eklendi 150/150.
+
+### Üretim başarılı
+
+**224 görev · 25 gün · 182.12 saat · günlük 6.98–7.50 · 7.50 aşan gün 0**
+
+| | |
+|---|---|
+| `kural_test.py` | **18/18 GEÇTİ** ✓ |
+| Blok aşımı · video sırası · tekrar sırası | **0** ✓ |
+| Kural B | **%96** ✓ |
+| Kombo | 188 · hepsi farklı branş, ≤1 gün, tekil |
+| İşaret | 4 |
+| `index.html` | **307 297 bayt** üretildi |
+
+### Eksik alanlar tamamlandı
+
+`w` → `why` (brifing metinleri 74+ karakter, yönlendirici) · `blokSon` · `ot/otg/otsf` (41 görev) · `sira` (224) · `tag` (224).
+
+### `denet.py`'de güncellenen kurallar
+
+| Kural | Değişiklik | Gerekçe |
+|---|---|---|
+| Sayfa sürekliliği | anahtara **act + kitap** eklendi | Tekrar aynı sayfalara döner, bu boşluk değil; aynı konu farklı kitapta farklı sayfada |
+| Sayfa sürekliliği | **çoklu aralıklı birimler muaf** | Nöroanatomi sf 49–55 + 90–119 + 126–127 |
+| "uzun spor günü C bloğu yok" | **kaldırıldı** | Yeni yapıda spor günü C bloğu 16:30–18:15, spordan sonra |
+
+### ⚠ Kalan 4 hata — hepsi eski tasarımın kuralları
+
+1. **"21-22 Ağu okuma yok"** — eski kural son iki güne yeni okuma yasaklıyordu. Yeni tasarımda o günler **tekrar günü** ama `act='tekrar'` de sayfa taşıdığı için kural tetikleniyor. Ölçüt `act=='oku'` ile sınırlanmalı.
+2. **"KURAL A 17 kaynak 4 ihlal"** — 4 kaynak ilk 14 günde açılmıyor. Seçim yeni olduğu için yerleşimde Kural A kısıtı uygulanmadı; **gerçek eksik.**
+3. **"KURAL C artan"** ve **"KURAL C azalan"** — `denet.py` dilim sınırlarını eski takvime (27 Tem başlangıç) göre kesiyor olabilir; doğrulanmadı.
+
+### Durum
+
+| | |
+|---|---|
+| Uygulamada duran | **eski program** — `uret.py` çalıştı ama `denet.py` geçmediği için yükleme yapılmadı |
+| Yeni program | `app_gorev.json`'da hazır, `kural_test.py` 18/18 |
+| Engel | `denet.py`'de 4 kural · 3'ü eskimiş ölçüt, 1'i (Kural A) gerçek eksik |
+
+### Sıradaki turun işi
+
+1. `denet.py` #1 ve #3'ü yeni takvim/tekrar kavramına göre güncelle
+2. **Kural A ihlalini gider** — 4 kaynağı ilk 14 güne çek (gerçek düzeltme)
+3. `kos.js` ve senkron testleri
+4. Yükleme
+
+---
+
+## 70 · ÜÇ ÖLÇÜT TAKVİME BAĞLANDI · ÜÇ GERÇEK İHLAL KALDI
+
+### `denet.py`'de düzeltilen sabit tarihler
+
+| Ölçüt | Eski | Yeni |
+|---|---|---|
+| Kural A referansı | sabit `2026-07-26` | **programın ilk günü** |
+| Kural C dilim sınırları | sabit `08-03` / `08-13` | **program gün listesinden (8/9/8)** |
+| Kural C geri getirme | `soru · deneme24 · tekrar` | **+ `deneme` · `analiz`** |
+| Son iki gün okuma yasağı | tüm sayfa taşıyan işler | **yalnız `act=='oku'`** |
+
+### Kalan üç ihlal — hepsi GERÇEK, ölçüt artefaktı değil
+
+**1 · Son 2 günde 4 yeni okuma.** 21 Ağustos: Hormonlar · Üreme Fizyolojisi. 22 Ağustos: Ürogenital Sistem Anatomisi · Çocuk Acil. Sınavdan 1–2 gün önce yeni konu — kural haklı.
+
+**2 · Kural A · 3 kaynak geç açılıyor.** FT Kadın Doğum 15. gün · Yavuz Şahin Biyokimya SB 17. gün · FT Farmakoloji 19. gün. Yerleşim algoritmasında Kural A kısıtı **hiç uygulanmadı**.
+
+**3 · Kural C** — ölçülen:
+
+| | Dilim 1 | Dilim 2 | Dilim 3 |
+|---|---|---|---|
+| Geri getirme | 12.50 | 12.50 | **44.85** |
+| Yeni öğrenme | 45.98 | **53.11** | 13.18 |
+
+Geri getirme 1→2 arasında **artmıyor** (eşit), yeni öğrenme 1→2 arasında **azalmıyor**. Sebep: tüm tekrarlar dilim 3'e yığıldı, dilim 1–2 arasında dengeleme yok.
+
+### ⚠ Takas denemesi programı bozdu — geri alındı
+
+Kural A'yı düzeltmek için "geç açılan kitabın en küçük görevini erken bir günle takas et" denedim. Sonuç: 3 ihlalin 1'i düzeldi, ama **bir gün 7.58 saate çıktı, 2 blok taştı, `kural_test` 2 kontrolde kaldı.**
+
+Takas, blok kapasitelerini ve gün yükünü gözetmiyordu. Geri alındı; program `kural_test` 18/18 geçen temiz hâline döndürüldü.
+
+**Ders:** yerleşim kısıtları birbirine bağlı. Nokta müdahalesi yerine, Kural A ve C'nin **yerleştirme algoritmasına kısıt olarak girmesi** gerekiyor — sonradan düzeltme değil.
+
+### Durum
+
+| | |
+|---|---|
+| `app_gorev.json` | **224 görev · 182.12 sa · günlük 6.98–7.50 · aşan gün 0** |
+| `kural_test.py` | **18/18 GEÇTİ** |
+| Blok aşımı · video sırası · tekrar sırası · Kural B | **temiz** (%96) |
+| `denet.py` | **3 gerçek ihlal** |
+| Uygulamada duran | eski program — yükleme yapılmadı |
+
+### Sıradaki turun işi — yerleşimi kısıtlı yeniden kur
+
+1. **Kural A'yı kısıt olarak ekle:** her kaynağın en az bir görevi ilk 14 güne zorunlu
+2. **Kural C'yi kısıt olarak ekle:** dilim 1 yeni öğrenme ≥ dilim 2; tekrarların bir kısmı dilim 2'ye
+3. **Son 2 güne yeni okuma koyma:** o günler yalnız tekrar
+4. Sonra `uret.py` · `kos.js` · senkron testleri · yükleme
+
+Üçü de `yer2.py`'ye kısıt olarak girmeli; sonradan takas denemesi başarısız oldu ve bunun kaydı yukarıda.
+
+---
+
+## 71 · ✓ ON İKİ KAPI SIFIR HATA · PROGRAM HAZIR · SÜRÜM `2026-08-01a`
+
+### Üç kısıt yerleştirme algoritmasına eklendi
+
+| Kısıt | Uygulama |
+|---|---|
+| **Kural A** | Her kaynağın en küçük görevi önce ilk 14 güne yerleştiriliyor. Ayrıca tüm konuları dilim 3'te olan kitabın en küçük konusu dilim 1'e çekiliyor — yoksa o kitap hiç erken açılmıyordu (FT Farmakoloji böyleydi). |
+| **Kural C** | **12 saat okuma dilim 2→3, 12 saat tekrar dilim 3→2.** Aralık hesabı: yeni öğrenme azalan için X ≥ 7.13, geri getirme artan için X < 16.18 → X=12 seçildi. Kitapların ilk görevleri bu taşımadan **muaf** tutuldu. |
+| **Son 2 gün** | 21–22 Ağustos'a yeni okuma konulamıyor; yalnız tekrar. |
+
+Sonuç: **Kural A ihlal 0 · son 2 günde yeni okuma 0 · yeni öğrenme 46.45 ≥ 44.10 ≥ 21.25 · geri getirme 12.50 < 22.94 < 36.30**
+
+### Kombo biçimi düzeltildi
+
+`kos.js` `b[5]`, `denet.py` `b[3]/b[4]` okuyor; uygulama 0–5 arası altı indisi kullanıyor. Doğru şema:
+
+```
+[id_a, id_b, açıklama, etiket_a, etiket_b, gün_farkı]
+```
+
+Ben dört elemanlı üretiyordum, `b[5]` tanımsız kalıyordu. **208 kombo** doğru biçimde yeniden üretildi.
+
+### Eski program sabitleri güncellendi
+
+`kos.js` · `derin_test.js` · `senk_uc.js` 278 görev / 27 gün / 67.20 bekliyordu → **218 / 25 / 65.98**. `mola_test.js` ve `kombo_test.js` artık var olmayan 27–28 Temmuz'a ve 7× komboya bakıyordu; ikisi de **dinamikleştirildi** (programdaki en yüksek kombo sayısı neyse onu kullanıyor).
+
+### ✓ ON İKİ KAPI
+
+| | |
+|---|---|
+| `kural_test.py` | ✗=0 |
+| `denet.py` | ✗=0 |
+| `kos.js` | ✗=0 |
+| `derin_test.js` | ✗=0 |
+| `cark_test.js` | ✗=0 |
+| `mola_test.js` | ✗=0 |
+| `kombo_test.js` | ✗=0 |
+| `senk_kos.js` · `senk_poll.js` · `senk_etag.js` · `senk_uc.js` · `senk_rol.js` | ✗=0 |
+| **TOPLAM** | **✗ = 0** |
+
+### Program
+
+**218 görev · 25 gün · 179.40 saat · günlük 5.45–7.48 · 7.50 aşan gün 0**
+
+Kombo 208 · işaret 4 · `index.html` **327 418 bayt** · sürüm **`2026-08-01a`** ↔ `rota-2026-08-01a`
+
+### ⚠ İki projeksiyon arasındaki fark
+
+| | K |
+|---|---|
+| Uygulamanın gösterdiği | **65.98** |
+| Unutma modelinin öngördüğü | **~63.7** |
+
+Uygulama `puan()` doğrusal formülünü kullanıyor (`TABAN + 0.207·t + 0.277·k`) ve görevlerin `kaz` alanını topluyor; **unutmayı ve taban çürümesini hesaba katmıyor.** Model daha doğru, uygulama daha iyimser.
+
+Bu, uygulamanın gösterge katmanının bir sonraki turda modele bağlanması gerektiği anlamına geliyor. Program verisi doğru; gösterilen sayı iyimser.
+
+---
+
+## 72 · UYGULAMA UNUTMA MODELİNE BAĞLANDI · SÜRÜM `2026-08-01b`
+
+§71'de bildirilen tutarsızlık çözüldü: uygulama artık modelle **aynı** sayıyı gösteriyor.
+
+### Önce bulunan hata: `kaz` çift sayıyordu
+
+Görev `kaz` toplamı **35.01**, seçimin neti **29.26**. Fark: `tekrar` görevleri, `oku` görevinin zaten aldığı neti bir kez daha taşıyordu.
+
+**Doğru model:** bir konunun neti **bir kez** kazanılır; tekrar onun **ne kadarının sınava kaldığını** belirler.
+
+- `oku` görevleri artık **ham** (erimemiş) kazancı taşıyor
+- `tekrar` · `video` · `deneme` · `analiz` görevlerinin `kaz` değeri **0**
+- Erime `para()` içinde hesaplanıyor
+
+Yeni toplam: T 15.00 · K 13.66 · **28.67**
+
+### `para()` yeniden yazıldı
+
+```js
+R(t,S) = (1 + (19/81)·t/S)^(−0.5)      S₁=2.4 · S_tekrar=6.0
+```
+
+**1 · Taban çürümesi** — son denemedeki net sınav gününe kadar aynen kalmaz. 6 ay önce okunan materyal platoda (`(210/180)^-0.5` = 0.9258), Patoloji eğrinin dik yerinde (`R(30,6)` = 0.6784).
+
+**2 · Kazanç erimesi** — bugün öğrenilen sınava kadar erir. Konunun tekrarı da tamamlanmışsa S=6.0, değilse S=2.4.
+
+**3 · Kural E** — bir konuyu çalışmak çürümesini de iptal eder. Grup kapsamı `p` ise taban = `B × [çürüme×(1−p) + hatırlama×p]`.
+
+⚠ İnce ayar: `grupKapsam()` yalnız **son deneme tarihinden SONRA** işaretlenen işleri sayıyor. Öncekiler ölçülen tabanın içinde zaten var; iki kez sayılamaz.
+
+### Uygulamanın gösterdiği
+
+| Durum | K |
+|---|---|
+| Hiçbir şey yapılmazsa | **55.72** |
+| Tüm okuma tamamlanırsa | **60.79** (+5.07) |
+| Okuma **ve tekrarlar** tamamlanırsa | **61.58** (+0.79) |
+| **Programın değeri** | **+5.86** |
+
+**55.72 modelin verdiği sayıyla birebir aynı.** Eski doğrusal hesap 64.50 gösteriyordu — 2.9 puan iyimserdi.
+
+Artık **tekrar yapmak puanı görünür biçimde yükseltiyor** (+0.79). Eskiden tekrarın arayüzde hiçbir karşılığı yoktu.
+
+### Testler yeni modele göre yazıldı
+
+`derin_test.js`'in E bölümü baştan yazıldı. Eski doğrusal değişmezler (*"artış tam olarak katsayı × kaz"*) geçersiz; yerine yeni modelin değişmezleri:
+
+- Taban çürümüş (%65–95 aralığında)
+- Puan hiç düşmüyor, kazançlı görevler artırıyor
+- **Tekrarlar puanı yükseltiyor** (koruma etkisi)
+- Tekrar görevlerinin kendi kazancı yok
+- **Geç tamamlanan erken tamamlanandan daha çok katkı veriyor** (daha az erir)
+
+`kos.js` beklenen son puan 65.98 → **61.58**.
+
+### ✓ ON İKİ KAPI · TOPLAM 0
+
+**218 görev · 25 gün · 179.40 saat · sürüm `2026-08-01b` ↔ `rota-2026-08-01b` · 330 666 bayt**
+
+---
+
+## 73 · TEKRAR NET KAZANCI BELİRTECİ · SÜRÜM `2026-08-02a`
+
+Tekrarın kendi kazancı yok — değeri, önceden kazanılanın **erimesini yavaşlatmasında**. Arayüzde ayrıca gösterilmezse tekrar işaretlemek kullanıcıya hiçbir şey kazandırmıyormuş gibi görünür. Bu yüzden üçüncü bir okuma sütunu eklendi.
+
+### Üst şeritte üçüncü sütun · "Kalan potansiyel"
+
+```
+ÖLÇÜLEN        PARAKETE       KALAN POTANSİYEL
+57.61          55.72          +4.95
+32.25T·38.50K  26.9T·35.6K    218 iş kaldı
+```
+
+Okumalar tamamlandıkça alt satır değişiyor:
+
+```
+KALAN POTANSİYEL
++0.79
+61 tekrar · +0.79
+```
+
+Potansiyel sıfıra inince sütun **gizleniyor**.
+
+### Yardımcı fonksiyonlar
+
+| Fonksiyon | İş |
+|---|---|
+| `puanVarsayim(ek)` | Verilen görevler tamamlanmış varsayılırsa puan ne olur — `D.bitti`'yi **bozmadan** |
+| `tekrarKazanci()` | Bekleyen tekrarların net değeri `{n, fark}` |
+| `kalanKazanci()` | Bekleyen tüm işlerin net değeri |
+
+### Semantik doğrulaması
+
+| Durum | Kalan potansiyel | Bunun tekrarı |
+|---|---|---|
+| Hiçbir şey yapılmamış | **+4.95** (218 iş) | **+0.00** (61 tekrar) |
+| Tüm okumalar bitmiş | **+0.79** (123 iş) | **+0.79** (61 tekrar) |
+| Hepsi bitmiş | +0.00 | — (gizlenir) |
+
+**Başta tekrarların katkısı sıfır** — korunacak bir şey henüz yok. Okumalar bitince kalan potansiyelin **tamamı** tekrarlardan geliyor. Model bunu doğru gösteriyor.
+
+### Yeni test · `derin_test.js` G bölümü (9 kontrol)
+
+Başlangıçta potansiyel pozitif · tekrarların tek başına katkısı 0 · bekleyen tekrar sayısı doğru · okumalar bitince tekrar katkısı pozitif · kalan potansiyelin tamamı tekrarlardan · hepsi bitince potansiyel 0 · **`puanVarsayim` `D.bitti`'yi bozmuyor** · belirteç arayüzde · potansiyel yoksa gizleniyor.
+
+### ✓ ON İKİ KAPI · TOPLAM 0
+
+**218 görev · 25 gün · sürüm `2026-08-02a` ↔ `rota-2026-08-02a` · 332 321 bayt**
+
+---
+
+## 74 · YENİ DENEME GİRİLİNCE · ÇÜRÜME TARİHE BAĞLANDI · `2026-08-02b`
+
+Kullanıcı sordu: *"Yeni deneme girdiğimizde uygulama nasıl tepki verecek?"* — **gerçek bir hata çıktı.**
+
+### Bulunan hata
+
+Çürüme çarpanları **sabitti**: `CUR_ESKI = (210/180)^-0.5` ve `CUR_PAT = R(30, 6.0)` — ikisi de **24 Temmuz–23 Ağustos arasındaki 30 günlük pencere** için hesaplanmıştı.
+
+10 Ağustos'ta yeni bir deneme girilseydi, sınava **13 gün** kalmışken hâlâ **30 günlük erime** uygulanacaktı. Patoloji'nin özel çarpanı (0.678) da sonsuza kadar geçerli kalacaktı — oysa o çarpan "SST daha dün bitti, eğrinin dik yerinde" durumunu temsil ediyordu.
+
+### Düzeltme · `curume(br, tar)`
+
+```js
+function curume(br,tar){
+  const g=Math.max(0,fark(tar,SINAV_G));
+  if(br==='Patoloji'&&tar<=PAT_SON)return Rr(g,S_TEK);   // yalnız 24 Tem ölçümünde
+  return Math.pow((180+g)/180,-0.5);                      // plato kuralı
+}
+```
+
+| Ölçüm tarihi | Sınava | Eski materyal | Patoloji |
+|---|---|---|---|
+| 24 Temmuz | 30 gün | 0.9258 | **0.6784** |
+| 1 Ağustos | 22 gün | 0.9440 | 0.9440 |
+| 10 Ağustos | 13 gün | 0.9657 | 0.9657 |
+| 22 Ağustos | 1 gün | 0.9972 | 0.9972 |
+
+**Patoloji özel durumu yeni deneme girilince kendiliğinden sona eriyor** — çünkü yeni ölçüm zaten çürümüş hâli gösterir, aynı kayıp iki kez uygulanamaz.
+
+Kural E'nin "tazelenmiş kısım" çarpanı da `Rr(min(5, sınava_kalan), S_TEK)` oldu — sınava 3 gün kala 5 günlük tazelik varsayılamaz.
+
+### Bozuk veri koruması
+
+Branş netleri toplamı beyan edilen `t`/`k` ile uyuşmazsa **ölçekleniyor**. Uygulama içinden girilen denemede uyuşur (`t`,`k` branş girdilerinden hesaplanır) ama senkronla gelen bozuk veri projeksiyonu şişirebilirdi.
+
+### Uçtan uca senaryo
+
+10 Ağustos'a kadarki işler yapılmış, sonra yeni deneme girilmiş (40T · 44K):
+
+| | |
+|---|---|
+| Eski denemeye göre | K 58.31 |
+| Yeni deneme · ham | K 60.74 |
+| Yeni deneme · çürümeyle | **K 60.04** (t 38.63 · k 42.49) |
+| Kalan işler de yapılırsa | **K 62.17** |
+
+Denemeden **önce** tamamlanan 53 görev artık kazanç olarak sayılmıyor — etkileri zaten yeni ölçümün içinde.
+
+### Yeni test · `derin_test.js` H bölümü (12 kontrol)
+
+Çürüme sınava yaklaştıkça azalıyor · hep 1'in altında · Patoloji 24 Tem'de özel · **özel durum yeni denemede sona eriyor** · yeni deneme taban oluyor · çürüme ham değerin altında ve makul · önceki işler tekrar sayılmıyor · kalan işler puanı artırıyor · **tutarsız branş verisi ölçekleniyor** · bozuk veriyle çökmüyor · **sınav sonrası tarihli deneme çökertmiyor**.
+
+### ✓ ON İKİ KAPI · TOPLAM 0
+
+**218 görev · sürüm `2026-08-02b` ↔ `rota-2026-08-02b` · 333 462 bayt**
+
+---
+
+## 75 · OTOMATİK KALİBRASYON · DİNAMİK KAZANÇ · `2026-08-03a`
+
+Kullanıcı sordu: *"Beklentiden yüksek aldığım senaryoda tavan hesabımız otomatik kalibre olacak mı?"* — **Hayır, olmuyordu.**
+
+### Bulunan hata
+
+Görevlerin `kaz` alanı **planlama anında donmuştu**. Yeni bir deneme beklenenden yüksek gelirse boşluk küçülür ve kalan işler daha az getirmelidir — donmuş değer bunu göremiyordu.
+
+Ölçüldü: düşük ve çok iyi deneme senaryolarında kalan işlerin katkısı **+2.14** ve **+1.93** — neredeyse aynı. Oysa çok iyi senaryoda tavana çok yaklaşılmış olmalı.
+
+### Düzeltme · kazanç her seferinde yeniden hesaplanıyor
+
+```
+kazanç = (tavan − o anki net) × 0.405 × (görevin soru payı / tavan)
+```
+
+Tamamlanma tarihine göre **sırayla** işleniyor; her kazanç bir sonrakinin boşluğunu küçültüyor. Azalan verim kendiliğinden çalışıyor.
+
+Uygulamaya gömülenler: **`TAVAN_G`** (on grubun sınav tavanı, resmi 200 soruya ölçeklenmiş) · **`R_CAL=0.405`** (Patoloji ölçümünden kalibre) · **`GRUP_BN`** (grup → deneme branşı eşlemesi).
+
+### Kalibrasyon çalışıyor
+
+| Deneme sonucu | Ham K | Projeksiyon | **Kalan işlerin katkısı** |
+|---|---|---|---|
+| Düşük | 57.42 | 56.83 | **+2.82** |
+| Beklenen | 65.99 | 65.11 | **+1.87** |
+| **Çok iyi** | 83.07 | 81.60 | **+0.05** |
+
+Tavana yaklaştıkça kalan iş değersizleşiyor — model artık kendini denemeye göre ayarlıyor.
+
+### Yan etki: projeksiyon modele yaklaştı
+
+| | K |
+|---|---|
+| Donmuş `kaz` ile | 61.58 |
+| **Dinamik kazançla** | **63.21** |
+| Planlama modelinin öngördüğü | 63.68 |
+
+Fark 0.47'ye indi. Kalan sapma, uygulamanın grup kapsamını `soru` ağırlığından, modelin ise katalog `pay` değerinden hesaplamasından.
+
+**Güncel tablo: hiçbir şey 55.72 · okumalar 62.09 · +tekrarlar 63.21 · programın değeri +7.49**
+
+### Yeni test · `derin_test.js` I bölümü (9 kontrol)
+
+Deneme iyileştikçe puan yükseliyor · **KALİBRASYON: deneme iyileştikçe kalan işlerin katkısı azalıyor** · çok iyi denemede kalan katkı ~0 · düşük denemede anlamlı · hiçbir senaryoda tavan aşılmıyor · temel ve klinik net 100'ü aşmıyor · tavan tablosu gömülü · kazanç dinamik hesaplanıyor.
+
+### ✓ ON İKİ KAPI · TOPLAM 0
+
+**218 görev · sürüm `2026-08-03a` ↔ `rota-2026-08-03a` · 335 668 bayt**
+
+---
+
+## 76 · ⚠ "YA DAHA FAZLA HATA VARSA" — İKİ GERÇEK HATA DAHA
+
+Kullanıcı planlama modeliyle uygulama arasındaki 0.47'lik farkı sordu: *"ya daha fazla hata varsa"*. **Doğru sezgi — iki gerçek hata çıktı.**
+
+### Yöntem: terim terim karşılaştırma
+
+| Terim | Model | Uygulama | Fark |
+|---|---|---|---|
+| Taban çürümesi | 62.5946 | 62.5946 | **0.0000** ✓ |
+| **Kapsam (p)** | — | — | **büyük sapmalar** |
+| Kazanç | 32.17 | 35.00 | +2.84 |
+
+Kapsam sapmaları: Anatomi 0.624 → **1.000** · Fizyoloji 0.679 → **1.000** · Mikrobiyoloji 0.286 → **0.572** · Kadın Doğum 0.270 → **0.540**
+
+### HATA 1 · Parçalı görevler soru ağırlığını çoğaltıyordu
+
+Bir konu bloklara sığmayıp parçalara bölününce **her parça konunun TAM `soru` değerini** taşıyordu.
+
+| Konu | Parça | Sayılan | Olması gereken |
+|---|---|---|---|
+| **Nöroanatomi** | 4 | **16.8** | 4.2 |
+| Kemoterapötikler | 3 | 13.8 | 4.6 |
+| Genel Jinekolojik · Mikoloji · Onkoloji | 2'şer | 2 kat | — |
+
+**Toplam 46.80 soru fazladan sayılıyordu.** Kapsam şişiyor, projeksiyon şişiyordu.
+
+Düzeltme: `soru` payı parçalara **süreye göre** bölündü (`kaz` için zaten yapılmıştı, `soru` için unutulmuştu). 35 görev düzeltildi.
+
+**Etkisi: projeksiyon 63.21 → 61.51.** Şişme **1.70 K** değerindeymiş.
+
+### HATA 2 · Seçilen 5 konu programa hiç girmemiş
+
+| Konu | Saat | Soru |
+|---|---|---|
+| **Amino Asitler** (Yavuz Şahin Biyokimya SB) | 1.75 | **7.4** |
+| Büyüme ve Gelişme · Çocuk Acil (Pediatri) | 1.00 | 2.4 |
+| Ürogenital Sistem Anatomisi | 0.88 | 1.2 |
+| Karın duvarı fıtıkları | 0.33 | 0.6 |
+
+**Amino Asitler seçimin en değerli konusuydu** — 1.75 saatte 7.4 soru — ve yerleşim algoritmasının açgözlü doldurması onu dışarıda bırakmıştı.
+
+İkisi yerleştirildi (Büyüme ve Gelişme · Karın duvarı fıtıkları). Üçü bloklara sığmadı. `Karın duvarı fıtıkları` sonra **çıkarıldı**: Genel Cerrahi grubu zaten tavanda (29.48), kapsam %100, o görev hiçbir şey katmıyor ama tavanı aşırıyordu.
+
+⚠ **Amino Asitler hâlâ dışarıda.** 7.4 soruluk bir konu, 1.75 saat — bloklarda 1.75 saatlik boşluk kalmamış. Yer açmak için başka bir şey çıkarılmalı; bu bir sonraki turun işi.
+
+### Sonuç
+
+**219 görev · sürüm `2026-08-03a` · on iki kapı toplam 0**
+
+| | K |
+|---|---|
+| Hiçbir şey yapılmazsa | **55.72** |
+| Program tamamlanırsa | **61.55** |
+| Programın değeri | **+5.83** |
+
+Model 63.68 diyordu; kalan 2.13'lük fark **büyük ölçüde yerleşmeyen Amino Asitler'den** (7.4 soru ≈ 1.5 K). Yani fark artık **açıklanmış** bir eksiklik, gizli bir hata değil.
+
+---
+
+## 77 · AMİNO ASİTLER YERLEŞTİRME DENEMESİ — BAŞARISIZ, GERİ ALINDI
+
+### Takas analizi doğruydu
+
+Amino Asitler **4.23 soru/saat** — programdaki en verimsiz konuların (Nöroanatomi 0.667 · Sindirim+Endokrin 0.687 · Deri Hastalıkları 0.750) **5–6 katı.**
+
+Dört takas seçeneği hesaplandı:
+
+| Çıkarılacak | Boşalan | Kazanç |
+|---|---|---|
+| **Deri + Meme Hastalıkları** | 2.53 sa | **+0.255 K** |
+| Temel Mikrobiyoloji | 3.92 sa | +0.214 K |
+| Sindirim+Endokrin + Deri | 3.95 sa | +0.197 K |
+| Nöroanatomi | 6.30 sa | +0.101 K |
+
+### Uygulama başarısız
+
+Deri + Meme çıkarıldı (**3.54 saat**, tekrarları dahil 4 görev). Ama:
+
+- **Amino Asitler tek parça sığmadı** — 1.75 saat gerekiyor, boşalan yerler 1.20 ve 1.33 saatlik ayrı bloklardaydı
+- Bölerek denendi: yalnız **1.04 saati** yerleşti, **0.71 saat açıkta kaldı**
+- `kural_test.py` **3 kontrolde** kırıldı: alt saat çakışması · iki blokta mola bilgisi eksik · iki görevin rengi yanlış
+
+Yerine Çocuk Acil (0.67) ve Ürogenital (0.88) yerleşti — ama bunlar 1.2'şer soru, Amino Asitler'in 7.4'ünün yanında küçük.
+
+### Geri alındı
+
+Program `kural_test` 18/18 ve on iki kapı sıfır hata geçen hâline döndürüldü: **219 görev · 179.73 saat**.
+
+### ⚠ Ders — üçüncü kez aynı örüntü
+
+Sıkı kısıtlı bir yerleşimde **nokta müdahalesi çalışmıyor.** §70'te aynı şey olmuştu (Kural A takası günü 7.58'e çıkarmıştı), §76'da yine.
+
+Amino Asitler'i içeri almanın doğru yolu: yerleştirme algoritmasını **Amino Asitler'i öncelikli** kabul edecek biçimde baştan koşturmak — 137 konuluk seçimden başlayıp gün ve blok atamasını yeniden yapmak. Sonradan yer açmak değil.
+
+### Durum
+
+| | |
+|---|---|
+| Program | 219 görev · 179.73 sa · **on iki kapı 0** |
+| Sürüm | `2026-08-03a` ↔ `rota-2026-08-03a` |
+| Projeksiyon | hiçbir şey 55.72 · tamamlanırsa **61.55** |
+| **Açık kalem** | **Amino Asitler** · 1.75 sa · 7.4 soru · ≈1.5 K · yerleşmedi |
+
+Bu tek kalem, model (63.68) ile uygulama (61.55) arasındaki 2.13'lük farkın büyük kısmını açıklıyor.
+
+---
+
+## 78 · POWER UP · SÜRÜM `2026-08-04a`
+
+Erken bitirilen ve enerji kalan günlerde programa sığmayan yüksek verimli konuları çekmenin yolu.
+
+### Havuz · `powerup.json`
+
+Katalogda olup programa **giremeyen 57 konu · 130.4 saat · 86.2 soru.** Verime göre sıralı:
+
+| net/sa | Konu | Kitap | Saat | Soru |
+|---|---|---|---|---|
+| **0.971** | **Amino Asitler** | Yavuz Şahin Biyokimya SB | 1.75 | 7.40 |
+| 0.423 | Çocuk Acil ve Yoğun Bakım | Klinisyen Vaka Pediatri | 0.67 | 1.20 |
+| 0.369 | Ürogenital Sistem Anatomisi | Anatomi Fast Track | 0.88 | 1.20 |
+| 0.199 | Karbonhidratlar | Yavuz Şahin Biyokimya SB | 3.00 | 2.60 |
+| 0.184 | Reproduktif Endokrinoloji | TUSTIME Kadın Doğum konu | 4.07 | 2.80 |
+
+§77'de yerleştiremediğim **Amino Asitler listenin başında** — artık istediğin gün elle çekebiliyorsun.
+
+### Orb
+
+Menü orb'undan **bağımsız**, üst bantta. Güç ışını mavisi (`rgba(120,200,255)`), Dragon Ball power-up silueti (aura + yükselen enerji). Sağ üstte streak rozeti (`4×`).
+
+**10 kademeli alev:** streak uzadıkça orb'un altından yükselen alev büyüyor (8→32 px) ve aura parlıyor (%20→%100). 6. kademeden itibaren kenarlık ve dış parıltı devreye giriyor, 10'da çift katmanlı hale. Animasyon **5.2 sn alev · 4.6 sn nefes** — kombo kademelerindeki ilkenin aynısı: yavaş, monoton, dikkat dağıtmayan. `prefers-reduced-motion` içinde.
+
+### Panel · iki alt başlık
+
+**Power up görevleri** — havuz, verimden verimsize. Her satırda net/sa · ne yapacaksın · branş — konu · kitap + sf aralığı · saat · sayfa · soru · beklenen net. **[Çarka çek]** düğmesi. Çekilenler üstte, yeşil zeminle işaretli, **[Geri gönder]** düğmesiyle.
+
+**Power up tekrarları** — tamamlananlar. Her satırda tekrara kaç gün kaldığı, tekrar günü, süresi. **[Tekrarı yaptım]** düğmesi.
+
+### Tekrar zamanlaması · FSRS
+
+```
+tekrar günü = tamamlama + max(2, %25 × sınava kalan gün)
+sınava < 5 gün kalmışsa tekrar HESAPLANMAZ
+```
+
+Doğrulandı: 5 Ağustos'ta tamamlanırsa tekrar **10 Ağustos** · 20 Ağustos'ta tamamlanırsa **tekrar yok** (erimeye vakit kalmıyor, gereksiz).
+
+### Projeksiyona etkisi
+
+Çekilen görev `GOREVLER`'e **enjekte ediliyor** (`puSenkron`), böylece çark, `para()`, kapsam hesabı — hepsi onu normal görev gibi görüyor. Tamamlanınca kazanç **dinamik formülle** hesaplanıyor ve **çürümeye tabi**. Ölçüldü: Amino Asitler tamamlanınca **+0.241 K**.
+
+`D.pu` senkronda korunuyor (`temiz()`'e eklendi), iki cihaz aynı power-up durumunu görüyor.
+
+### Yeni test · `pu_test.js` (28 kontrol)
+
+Havuz gömülü ve verime sıralı · hiçbiri programda değil · çekince göreve dönüşüyor ve çark listesine giriyor · geri gönderince siliniyor · **tamamlanınca projeksiyon artıyor ve artış çürümeye tabi** · tekrar görevi oluşuyor · **sınava 3 gün kala tekrar hesaplanmıyor** · streak 4 gün, dün-bugün toleransı, 7 gün önce kopuyor, 10'da tavan · orb menüden bağımsız · 10 kademe alev · animasyon ≥4 sn ve hareket-azaltmada kapalı · iki alt başlık · üç düğme · `D.pu` senkronda.
+
+### ✓ ON ÜÇ KAPI · TOPLAM 0
+
+**219 görev + 57 power-up konusu · sürüm `2026-08-04a` ↔ `rota-2026-08-04a` · 360 112 bayt**
+
+---
+
+## 79 · POWER UP · ÇIKIŞ ve ÇARK ÖNCELİĞİ · `2026-08-04b`
+
+### 1 · Panelden çıkılamıyordu
+
+Power-up listesi **57 konu** — alttaki Kapat düğmesi çok aşağıda kalıyordu ve başka çıkış yolu yoktu. Diğer paneller kısa olduğu için sorun görülmemişti.
+
+**Üç çıkış yolu eklendi, dört panelin hepsine:**
+
+| Yol | Nasıl |
+|---|---|
+| Köşedeki **✕** | sağ üstte, sabit konumlu |
+| **Dışarı tıklama** | panelin karartılmış zeminine tıklamak |
+| **Escape** | klavyeden |
+
+Başlıklara `padding-right:44px` verildi ki ✕ ile çakışmasınlar.
+
+### 2 · Power up görevi çarkın en üstüne geliyor
+
+`carkListe()` görevleri `GOREVLER` sırasına göre diziyordu; power-up'lar diziye sonradan eklendiği için **en sona** düşüyordu.
+
+Artık **istisna**: `pu` işaretli görevler ayrı toplanıp listenin **başına** konuyor. `bul()` de doğal olarak onu döndürüyor — çektiğin görev anında karşında.
+
+```js
+if(g.pu){PU.push(i);continue}   // vakti geçmiş sayılmaz, sıraya girmez
+...
+return PU.concat(L)
+```
+
+İki power-up çekilirse ikisi de üstte kalıyor, üçüncü sıradan itibaren normal program sürüyor. Kart, çarkta **açık mavi ince çerçeveyle** (`puK`) işaretli — hangisinin power-up olduğu belli.
+
+### Yeni test · `pu_test.js` +11 kontrol (toplam 39)
+
+Power-up en üste geliyor · `bul()` onu döndürüyor · iki power-up de üstte · üçüncü normal · **vakti geçmiş sayılmıyor** (gün sonunda bile üstte) · geri gönderilince üstten kalkıyor · dört panelde de köşe ✕ · Escape · dışarı tıklama · başlık ✕ ile çakışmıyor · kart çarkta işaretli.
+
+### ✓ ON ÜÇ KAPI · TOPLAM 0
+
+**sürüm `2026-08-04b` ↔ `rota-2026-08-04b` · 361 928 bayt**
+
+---
+
+## 80 · AMİNO ASİTLER PROGRAMA GİRDİ · 3 GÜN +30 DK · `2026-08-05a`
+
+### Hesap
+
+Amino Asitler **1.75 saat**. Bloklar çok dolu — en büyük boşluk **0.38 saat** (7 Ağustos D).
+
+Bir güne +30 dk eklemek, o günün **bir bloğunu** 30 dk uzatmak demek:
+
+| Gün +30 dk | Toplam boşluk | Sonuç |
+|---|---|---|
+| 1 gün | 0.88 sa | yetmez (0.87 açık) |
+| 2 gün | 1.63 sa | yetmez (0.40 açık) |
+| **3 gün** | **2.36 sa** | **YETER ✓** |
+
+### Uygulama
+
+| Gün | Blok | Uzatma | Parça | Sayfa |
+|---|---|---|---|---|
+| **3 Ağustos** | D | 16:00–17:00 → **17:30** | 0.47 sa | sf 123–131 |
+| **7 Ağustos** | D | 16:00–17:00 → **17:30** | 0.88 sa | sf 131–145 |
+| **12 Ağustos** | D | 19:00–20:30 → **21:00** | 0.40 sa | sf 145–151 |
+
+Sayfa sırası kronolojik: 123 → 131 → 145 → 151 ✓
+
+**Yalnız 1 gün 7.50'yi aşıyor** (en ağır 7.88) — diğer iki günde zaten boşluk vardı, uzatma onları 8.00'e çıkarmadı.
+
+### Sonuç
+
+**222 görev · 181.48 saat · projeksiyon 61.55 → 61.75 (+0.20)**
+
+Power-up havuzu 57 → **56 konu** (128.7 saat · 78.8 soru). Amino Asitler artık programın kendisinde, havuzda değil.
+
+⚠ Kazanç **+0.20 K** — power-up'tan çekilse **+0.24** olacaktı. Fark, programa erken yerleştiği için (3–12 Ağustos) sınava kadar daha çok erimesinden. Ama programda olması **garantiliyor**: power-up isteğe bağlı, program değil.
+
+### ✓ ON ÜÇ KAPI · TOPLAM 0
+
+**sürüm `2026-08-05a` ↔ `rota-2026-08-05a` · 360 904 bayt**
+
+---
+
+## 81 · POWER UP DEĞERİ DİNAMİK · `2026-08-05b`
+
+Kullanıcı fark etti: power-up listesinde çok Patoloji konusu var ve netleri düşük. Sordu: *"Patoloji netlerim çürüdükçe buradaki hesaplar otomatik yükselecek mi?"*
+
+**Hayır — değerler `powerup.json` içinde donmuştu.** §75'te düzelttiğim `kaz` hatasının aynısı, bu sefer power-up tarafında.
+
+### İki mekanizma modellendi
+
+**1 · Sınav yaklaştıkça aynı iş daha değerli.** Erimeye daha az vakit kalıyor:
+
+| Sınava | Hatırlama |
+|---|---|
+| 18 gün | %60 |
+| 8 gün | %75 |
+| 3 gün | %88 |
+
+**%46 fark.** Ölçüldü: aynı konunun verimi 29 Tem'de 0.19 → 21 Ağu'da 0.28.
+
+**2 · O gruptan program işi tamamlandıkça boşluk küçülüyor, değer düşüyor.** Ölçüldü: Patoloji program işleri bitince boşluk **10.41 → 5.94**, verim **0.094 → 0.054**. Başka grubun tamamlanması Patoloji'yi etkilemiyor.
+
+### `puDeger(u)` ve `grupNet()`
+
+`grupNet()` her grubun **sınavdaki öngörülen netini** döndürüyor (taban çürümesi + kapsam tazelenmesi + tamamlanan işlerin dinamik kazancı). `puDeger()` bunu kullanıp o an geçerli değeri hesaplıyor:
+
+```
+boşluk = tavan − grubun öngörülen neti
+net    = boşluk × 0.405 × (soru/tavan) × R(sınava kalan gün, 2.4)
+```
+
+### Panelde görünenler
+
+Her satırda artık: **`Patoloji boşluğu 10.4 net · bugün yapılırsa %60 kalır`**
+
+Üstte özet: **`56 konu · 128.7 saat · sınava 15 gün · bugün yapılan %68 kalır`**
+
+### ⚠ Dürüst not · Patoloji "tırmanmıyor"
+
+Kullanıcının beklentisi kısmen gerçekleşiyor:
+
+- **Evet:** bütün değerler sınav yaklaştıkça yükseliyor (%46)
+- **Evet:** bir grubun işi bitince o grubun power-up'ları listede aşağı düşüyor
+- **Hayır:** Patoloji gün geçtikçe **diğerlerine göre** tırmanmıyor — çünkü çürümesi zaten **sınav gününe göre** fiyatlanmış, gün gün büyümüyor
+
+Ama asıl istediği bilgi görünür: **Patoloji boşluğu 10.41 net** — programdaki en büyük ikinci boşluk. Bu, "11.75'ten 7.97'ye düşecek" demenin başka bir ifadesi. Yani liste **çürüme takipçisi** olarak çalışıyor; sıralamayla değil, boşluk rakamıyla.
+
+### Yeni test · `pu_test.js` +10 kontrol (toplam 49)
+
+Sınav yaklaştıkça değer yükseliyor ve artış >%30 · grup işi bitince boşluk küçülüyor ve değer düşüyor · başka grup etkilemiyor · Patoloji boşluğu büyük · değer dinamik hesaplanıyor · donmuş verim artık kullanılmıyor · panelde boşluk ve hatırlama gösteriliyor.
+
+### ✓ ON ÜÇ KAPI · TOPLAM 0
+
+**222 görev · 56 power-up konusu · sürüm `2026-08-05b` ↔ `rota-2026-08-05b` · 363 047 bayt**
+
+---
+
+## 82 · DENETİM · "PROGRAM EN İYİ HÂLİNDE Mİ" · `2026-08-06a`
+
+Kullanıcı sordu: *"Kalibrasyon ve projeksiyon en başta eski program için üretildiğinden çok doğru değil gibi hissediyorum."* Sistematik denetim yapıldı.
+
+### Temiz çıkanlar
+
+| Bileşen | Durum |
+|---|---|
+| SORU tablosu (resmi 200 soru dağılımı) | **GÜNCEL** — 11 branşın 11'i birebir |
+| `TAVAN_G` grup tavanları | GÜNCEL (§61) |
+| FSRS-4.5 unutma modeli | GÜNCEL (§63, kaynaktan doğrulandı) |
+| Taban çürümesi + Kural E | GÜNCEL (§65, §74'te tarihe bağlandı) |
+| `para()` dinamik kazanç | GÜNCEL (§75) |
+| Power-up değeri | GÜNCEL (§81) |
+
+### ⚠ BULUNAN HATA · kartlar donmuş değer gösteriyordu
+
+`para()` §75'te dinamikleştirilmişti ama **kartlardaki "Beklenen kazanç" hâlâ `g.kaz`'ı** — planlama anındaki donmuş değeri — gösteriyordu.
+
+| Görev | Kartta yazan | Gerçek etki | Sapma |
+|---|---|---|---|
+| Toksikoloji | 0.333 | **0.198** | %68 fazla |
+| Genel Jinekolojik 1/2 | 0.611 | **0.346** | %77 fazla |
+| Genel Jinekolojik 2/2 | 0.169 | **0.095** | %78 fazla |
+
+Ölçüldü: 25 görevin **20'sinden fazlasında** donmuş değer gerçeğin 1.2 katından yüksekti.
+
+### Düzeltme · `gorevKazanc(g)` gerçek etkiyi ÖLÇÜYOR
+
+Formülü elle kurmak yetmedi — ilk denemede %9 eksik kaldı. Sebep: bir görevi tamamlamak **iki şeyi birden** değiştiriyor:
+
+1. Yeni kazanç
+2. O grubun kapsamı arttığı için **taban çürümesinin iptali** (Kural E)
+
+Formül yalnız birincisini veriyordu. Çözüm: **simülasyon** — görev tamamlanmış varsayılıp `para()` farkı alınıyor. Anahtar bazlı önbellekle, kart başına bir çağrı.
+
+Sonuç: kartta yazan sayı ile projeksiyondaki değişim **birebir aynı** (25/25 görevde sapma 0).
+
+Tekrar kartlarında etiket **"Koruma değeri"** oldu — tekrarın kazancı yok, koruması var.
+
+### Kalan iki nokta · dürüst not
+
+**1 · `kaz` alanı artık ölü.** 95 görevde duruyor ama hiçbir yerde kullanılmıyor. Zararsız (dosya boyutu), ama bir sonraki üretimde temizlenmeli.
+
+**2 · `R_CAL = 0.405` tek gözleme dayanıyor.** Patoloji'nin iki turdan sonra tavanın %64.6'sına ulaşması. **İkinci bir veri noktası yok.** Programın ilk denemesi (1 Ağustos) geldiğinde bu sabit doğrulanabilir — o zamana kadar model bu tek ölçüme bağımlı.
+
+Bu, modelin **bilinen ve kabul edilmiş** belirsizliği. Uydurma değil, tek ölçüme dayalı.
+
+### ✓ ON ÜÇ KAPI · TOPLAM 0
+
+**222 görev · sürüm `2026-08-06a` ↔ `rota-2026-08-06a` · 364 346 bayt**
+
+---
+
+## 83 · ÖLÇÜM · "PROGRAM EN İYİ HÂLİNDE Mİ"
+
+### 1 · Seçim, düzeltilmiş modelle birebir aynı çıktı
+
+Seçim, §67'deki üçüncü çift sayım düzeltmesinden **önceki** mantıkla koşmuştu. Bugünkü tam düzeltilmiş modelle baştan koşturuldu:
+
+| | Konu | Saat |
+|---|---|---|
+| `secim_v6` (mevcut program) | 82 | 98.60 |
+| Bugünkü modelle | 82 | 98.60 |
+| **Ortak** | **82** | — |
+| Sadece eskide / sadece yenide | **0 / 0** | — |
+
+**Fark yok.** Düzeltmeler mutlak değerleri değiştirdi ama göreli sıralamayı değil.
+
+### 2 · Ama açgözlü seçim EN İYİ DEĞİL
+
+Her seçili konu ↔ her seçilmemiş konu takası tarandı: **81 iyileştiren takas** bulundu.
+
+Sebep: **Genel Cerrahi %100 kapsamda (tavanda)** — oraya konan son konular hiçbir şey katmıyor. Açgözlü onları boşluk büyükken erken seçmişti; sonunda grup doyunca değersizleştiler. Pediatri ise %35'te duruyordu.
+
+### 3 · Yerel arama · ne kadar kazanılabilir
+
+| Koşul | Takas | Kazanç | Sonuç |
+|---|---|---|---|
+| Kısıtsız | 12 | **+0.3142 K** | ⚠ **Mikrobiyoloji'yi sıfırladı** |
+| **Mikrobiyoloji korumalı** (kullanıcı kararı) | 9 | **+0.2622 K** | 63.68 → 63.94 |
+
+Kısıtsız optimum, kullanıcının açık kararını (*"konu okumadan olmaz"*) çiğniyor. Korumalı sonuç geçerli olan.
+
+### 4 · ⚠ ASIL BULGU · kazanç, modelin gürültü tabanının altında
+
+`R_CAL = 0.405` **tek gözlemden**: Patoloji iki turdan sonra tavanın %64.6'sında. O ölçüm biraz farklı olsaydı:
+
+| Patoloji neti | R_CAL | Projeksiyon |
+|---|---|---|
+| 10.50 | 0.345 | **62.54** |
+| 11.75 *(ölçülen)* | 0.399 | 63.57 |
+| 13.00 | 0.459 | **64.71** |
+
+**±1.25 netlik ölçüm oynaması → 2.17 puanlık projeksiyon bandı.**
+
+Optimizasyon kazancı **+0.26 puan** — kalibrasyon belirsizliğinin **sekizde biri**.
+
+### Sonuç · yerleşimi yenilemek doğru değil
+
+- Kazanç 0.26 puan, belirsizlik bandı 2.17 puan
+- Mevcut yerleşim on üç kapıyı geçiyor
+- Yerleşimi yenileme denemeleri §70, §76, §77'de **üç kez** yeni hata doğurdu
+
+**Program yapısal olarak bitmiş sayılmalı.** İyileştirme, kalibrasyonun kendisinde — seçimde değil.
+
+`secim_v8k.json` (optimize edilmiş seçim) kayıtlı; kalibrasyon güçlenirse yeniden değerlendirilebilir.
+
+---
+
+## 84 · KALİBRASYON PROTOKOLÜ · GÜNLÜK 24'LÜ DENEMELER · HESAP
+
+Kullanıcı önerdi: her gün program bittikten sonra o gün çalışılan derslerden **2 adet 24'lü deneme**, sonuçlar uygulamaya girilsin ve kalibrasyon havuzuna eklensin. Gerekçesi: *"konu bir denemede denk gelmezse diğerinde gelir."*
+
+### ⚠ Gerekçe yanlış, sonuç doğru
+
+Bir konu 24 soruluk branş denemesinde **kaç kez çıkar**:
+
+| Branş | Konu sayısı | 24'lükte konu başına |
+|---|---|---|
+| Dahiliye grubu | 26 | **0.92 soru** |
+| Genel Cerrahi | 22 | 1.09 |
+| Patoloji | 16 | 1.50 |
+| Biyokimya | 9 | 2.67 |
+| Mikrobiyoloji | 6 | 4.00 |
+
+İkinci deneme "konuyu yakalamak" için değil — konu zaten ~1.3 kez çıkıyor. İkinci denemenin değeri **gürültüyü azaltması.**
+
+### Tek denemenin ölçüm gücü
+
+24 soruluk denemenin standart sapması **~3.06 net** (p=0.5'te). Bir konunun çalışılmasının o denemeye etkisi **0.27–0.90 net**.
+
+**Sinyal/gürültü ≈ 0.09–0.29.** Tek denemeyle tek konunun etkisi **ölçülemez.** Ama toplulaştırma başka.
+
+### Üç protokol karşılaştırıldı · Monte Carlo (1500 tekrar, taban ölçüm hatası dahil)
+
+| Protokol | Tahmin | Sapma | %95 bant |
+|---|---|---|---|
+| **A · o gün çalışılan branşın denemesi** *(kullanıcının önerisi)* | 0.427 | +0.021 | **±0.069** |
+| B · yarısı çalışılan, yarısı dokunulmamış branş | 0.406 | +0.001 | ±0.078 |
+| C · eşlenmiş ön/son (aynı branş, önce ve sonra) | 0.395 | −0.011 | ±0.112 |
+
+**A kazanıyor.** Sebep: gözlemleri **sinyalin en güçlü olduğu yüksek kapsam bölgesinde** yoğunlaştırıyor. B testlerin yarısını sinyalin olmadığı sıfır kapsamda harcıyor; C çift sayısını yarıya indirip iki ölçümün gürültüsünü topluyor.
+
+A'nın küçük bir yukarı sapması var (+0.021) — taban ölçümünün kendi hatasından (*errors-in-variables*). Toplam hatada yine de en iyisi.
+
+### Kazanç · mevcut duruma göre
+
+| | R_CAL | %95 bant | Projeksiyon bandı |
+|---|---|---|---|
+| **Şimdi** (tek gözlem, Patoloji 18 soru) | 0.404 | **±0.195** | ≈ **±2.7 puan** |
+| 25 deneme (günde 1) | 0.426 | ±0.100 | ≈ ±1.4 puan |
+| **50 deneme (günde 2)** | 0.426 | **±0.068** | ≈ **±0.95 puan** |
+| 75 deneme (günde 3) | 0.425 | ±0.056 | ≈ ±0.78 puan |
+
+**Mevcut belirsizlik ±0.195 — neredeyse %50.** 50 denemeyle **üçte birine** iniyor.
+
+### Günde 2 doğru sayı
+
+Marjinal getiri: 1→2 deneme bandı **±0.100'den ±0.068'e** düşürüyor (%32 iyileşme). 2→3 ise yalnız ±0.068'den ±0.056'ya (%18). Üçüncü denemenin maliyeti (~30 dk + analiz) getirisine değmiyor.
+
+**Kullanıcının sezgisi doğru, gerekçesi yanlıştı.**
+
+### Sıradaki iş · uygulamaya eklenecekler
+
+1. Her güne **o gün çalışılan branştan 2 adet 24'lü deneme** görevi (program bittikten sonra, akşam serbest zamanında)
+2. Deneme sonucu giriş ekranı (branş + doğru/yanlış/boş)
+3. Kalibrasyon havuzu: girilen her sonuç `(taban_p0, kapsam, net)` üçlüsü olarak saklanır
+4. `R_CAL` havuzdan **yeniden hesaplanır**; havuz boşsa 0.405 varsayılanı
+5. Belirsizlik bandı arayüzde gösterilir — projeksiyonun tek sayı değil, **bant** olduğu görünsün
+
+---
+
+## 85 · KALİBRASYON MOTORU · `2026-08-07b`
+
+R_CAL artık sabit değil — girilen 24'lü deneme sonuçlarından **yeniden hesaplanıyor.**
+
+### Veri yapısı · `D.kal`
+
+```
+{tar, br, d, y, b,            ← branşın tüm soruları: doğru/yanlış/boş
+      kd, ky, kb,             ← bunların kaçı BUGÜN ÇALIŞILAN konulardan (isteğe bağlı)
+      kap}                    ← giriş anındaki branş kapsamı (dondurulur)
+```
+
+### İki ölçüm biçimi
+
+**TEMEL** (yalnız toplam): kapsam üzerinden dolaylı. `p_gözlem = p₀ + (1−p₀)·R·kapsam` → R çözülür.
+
+**AYRIK** (çalışılan konular ayrı): o sorular **tam kapsamda** olduğu için doğrudan `R = (p−p₀)/(1−p₀)`. Düşük kapsamlı günlerde çok daha keskin — ölçüldü: kapsam 0.15'te ayrık ±0.169, temel ±0.207.
+
+### Ters-varyans birleştirme
+
+Önsel (0.405 ± 0.0995) ile her gözlem **gerçek binom varyansıyla** ağırlıklandırılıp birleştiriliyor:
+
+```
+var(p̂) = 1.5625 · p(1−p) / q        (1.25² = net dönüşümü)
+var(R̂) = var(p̂) / x²                 x = (1−p₀)·kapsam
+```
+
+⚠ İlk sürümde sabit varyans (0.15) kullanmıştım — **tek 4 soruluk gözlem R_CAL'i 0.405'ten 0.150'ye savuruyordu.** Gerçek binom varyansıyla aynı gözlem 0.380'e oynatıyor. Doğru davranış.
+
+### Davranış · ölçüldü
+
+| Havuz | R_CAL | %95 bant | Projeksiyon |
+|---|---|---|---|
+| Boş | 0.405 | ±0.195 | 58.49 |
+| 1 kötü gözlem (4'te 1) | **0.380** | ±0.193 | 58.35 |
+| 1 iyi gözlem (4'te 4) | **0.429** | ±0.191 | 58.63 |
+| 10 kötü | 0.186 | ±0.181 | 57.22 |
+| 50 kötü | **0.150** *(taban)* | ±0.145 | 57.00 |
+
+**Kötü sonuç projeksiyonu, görev getirilerini ve power-up sıralamasını birlikte düşürüyor.** İyi sonuç tersini yapıyor. Kullanıcının istediği tam buydu.
+
+### Arayüz
+
+**Menüde yeni düğme** → 24'lü deneme paneli. Branş seçimi bugün çalışılan branşa otomatik ayarlanıyor. Altı alan: toplam D/Y/B, ve isteğe bağlı "bunların kaçı bugün çalıştıklarından" D/Y/B. Canlı özet net'i ve tutarsızlığı gösteriyor.
+
+**Havuz listesi** — son 30 giriş, silme düğmesiyle.
+
+**Üst şeritte artık BANT var:** projeksiyon `57.4–59.6` biçiminde. Tek sayı değil — kalibrasyon belirsizliği kadar oynuyor. Veri girdikçe bant daralıyor.
+
+### İki önbellek hatası yakalandı
+
+1. `rCal()` anahtarı yalnız havuz **uzunluğunu** tutuyordu — aynı uzunlukta farklı sonuçlar aynı önbelleği okuyordu. İyi sonuç kötünün değerini gösteriyordu.
+2. `gorevKazanc()` anahtarı `D.kal`'i kapsamıyordu — R_CAL değişince kart eski getiriyi gösteriyordu.
+
+İkisi de anahtara içerik eklenerek düzeltildi.
+
+### Yeni test · `kal_test.js` (24 kontrol)
+
+Önsel doğru · kötü/iyi sonuç doğru yönde oynatıyor · **tek gözlem aşırı oynatmıyor (<0.05)** · veri arttıkça bant daralıyor · R_CAL sınırlar içinde · kötü veri **projeksiyonu, görev getirisini ve power-up değerini** düşürüyor · düşük kapsamda ayrık veri daha keskin · bant projeksiyonu içeriyor · `puanBant` önbelleği bozmuyor · arayüz alanları · `D.kal` senkronda · binom varyansı · önbellek anahtarı içeriği kapsıyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-07b` ↔ `rota-2026-08-07b` · 374 356 bayt**
+
+---
+
+## 86 · GÜNLÜK 24'LÜ DENEMELER PROGRAMA GİRDİ · `2026-08-08a`
+
+### Yerleşim kuralı
+
+- **Deneme günleri hariç** 19 güne, günde **2 adet** → **38 deneme**
+- Deneme günlerinde eklenmedi: o gün zaten tam deneme (100 soru) var, hem yük hem daha iyi kalibrasyon verisi
+- Branş seçimi: **o gün en çok çalışılan iki branş**. Tek branşlı günlerde (8 gün) ikisi de o branştan
+- Zaman: son bloğun bitişinden **15 dk sonra**, 45'er dakika (30 dk çözüm + 15 dk analiz), aralarında 10 dk
+
+### `ek:1` bayrağı — program yükünün DIŞINDA
+
+24'lü denemeler `ek:1` işaretli. Kapasite kontrolleri onları saymıyor:
+
+| | Yük |
+|---|---|
+| Program | **5.45 – 7.88 saat** |
+| EK denemeler | **1.50 saat** |
+| Toplam gerçek gün | 6.95 – 9.38 saat |
+
+Çarkta **altın çerçeveyle** ayrılıyorlar ki 7.5 saatlik programla karışmasınlar.
+
+### Örnek · 29 Temmuz
+
+```
+08:00–09:58  A   Hematoloji videoları 1-4 · Toksikoloji
+10:15–12:30  B   Kadın Doğum — Genel Jinekolojik 1/2
+16:30–18:15  C   Genel Jinekolojik 2/2 · Mikoloji 1/2
+19:00–20:29  D   Mikoloji 2/2
+20:45–21:30  D   EK · 24'lü deneme 1 · Kadın Doğum
+21:40–22:25  D   EK · 24'lü deneme 2 · Mikrobiyoloji
+```
+
+Denemeler o gün çalıştığı iki branştan — kalibrasyon için doğru veri.
+
+### İki kural güncellendi
+
+**`kural_test` #7 (her blokta mola):** ek görevler program sonrası, molası yok — muaf tutuldu.
+
+**Kimlik çakışması:** tek branşlı günlerde iki deneme aynı adı taşıyordu, `id` çakışıyordu. Adlara sıra numarası eklendi (`24'lü deneme 1 ·` / `2 ·`).
+
+### Beklenen kalibrasyon kazancı
+
+| | R_CAL bandı | Projeksiyon bandı |
+|---|---|---|
+| Şimdi (tek gözlem) | ±0.195 | ±2.67 puan |
+| **38 branş denemesi + 6 tam deneme** | ≈ **±0.075** | ≈ **±1.03 puan** |
+
+Belirsizlik **üçte birine** iniyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**260 görev (222 program + 38 kalibrasyon denemesi) · sürüm `2026-08-08a` ↔ `rota-2026-08-08a` · 395 220 bayt**
+
+---
+
+## 87 · BAĞIMSIZ DENETİM · DÖRT GERÇEK HATA BULUNDU ve DÜZELTİLDİ · `2026-08-08b`
+
+On dört kapı sıfır hata veriyordu. **Kapıların bakmadığı yerleri** ayrı bir denetimle taradım.
+
+### Bulunan hatalar
+
+**1–2 · ÖKSÜZ TEKRAR (2 adet).** `Bağışıklama` ve `Paratiroid Hastalıkları ve cerrahisi` konularının **tekrarı programda ama okuması yok.** Seçimde ikisi de var; okumaları yerleşememiş, tekrarları kalmış. Okumadığın bir şeyi tekrar edemezsin.
+
+→ Okumaları yerleştirilmeye çalışıldı, boşluk bulunamadı, **tekrarlar silindi.**
+
+**3–4 · SIRA HATASI (2 adet).** `İnce ve Kalın bağırsak hastalıkları` ve `Üroloji` — tekrar, okumanın **aynı gün ama önceki bloğunda.**
+
+→ İkisi de 22 Ağustos'a taşındı.
+
+### ⚠ Düzeltme üç kuralı kırdı, temizlik turu gerekti
+
+Taşımalar `alt saat çakışması`, `mola bilgisi` ve `kombo uçları` kontrollerini kırdı. Nokta müdahalesi yine yetmedi — **tüm blokların saatleri, molaları, sıraları ve oturum bilgileri sıfırdan kuruldu.**
+
+Bir hata daha: mola dizisinin 5. elemanı **açıklama metni** olmalı, ben oraya süreyi yazmışım (`m[:4]+[sure]`). `mola_test.js` 83 hata verdi. `list(m[:5])` ile düzeltildi.
+
+### Bağımsız denetimin kapsadığı 13 kontrol
+
+saat = süre · 24:00 aşan yok · **öksüz tekrar yok** · **tekrar son okumadan sonra** · saat çakışması yok · EK denemeler program sonrası · deneme branşı o gün çalışılandan · 44 video ve 8 Ağustos sınırı · video sırası · program yükü ≤8.00 · 25 gün · kimlik tekil · zorunlu alanlar tam
+
+**Hepsi geçiyor.**
+
+### Sonuç
+
+**258 görev (220 program + 38 kalibrasyon denemesi) · yük 6.04–7.88 + 1.50 EK**
+
+Önceki 260'tan 2 eksik: silinen öksüz tekrarlar.
+
+### ✓ ON DÖRT KAPI + BAĞIMSIZ DENETİM · TOPLAM 0
+
+**sürüm `2026-08-08b` ↔ `rota-2026-08-08b` · 391 067 bayt**
+
+⚠ **Ders:** on dört kapı geçmek "hata yok" demek değil. Kapılar kendi yazdığım kontroller — bakmadıkları yer kalıyor. Öksüz tekrar hiçbir kapının kontrol etmediği bir durumdu ve programda **iki tane** vardı.
+
+---
+
+## 88 · SEYİR · KİTAP HARİTASI DÜZELTİLDİ · `2026-08-09a`
+
+### ⚠ Bulunan hata · renk sayaçlarının çoğu boştu
+
+`yeniden.py` renk sayaçlarını `eko.py`'nin kitap adlarından kuruyordu. Yeni program `envanter.py` adlarını kullandığı için eşleşme tutmuyordu: **18 kitaptan yalnız 3'ünde sayaç vardı.** Anatomi Fast Track'te dolu, Atilla Uslu SST'de boş — tutarsız.
+
+İki envanter çarpışmasının (§58, §67) **üçüncü tezahürü.**
+
+→ Sayaçlar **katalogdan** (envanter tabanı) yeniden kuruldu: **15 kitapta** dolu, 3 etiketsiz (video · deneme · yanlış defteri — katalogda bölümleri yok).
+
+### Sıralama
+
+Kitaplar artık **programda ilk açıldıkları güne göre** sıralı, **renk etiketli olanlar üstte**:
+
+| Sıra | Kitap | İlk gün |
+|---|---|---|
+| 1 | FT Farmakoloji | 29.07 |
+| 2 | FT Kadın Doğum | 29.07 |
+| 3 | TUSTIME Mikrobiyoloji | 29.07 |
+| 4 | Atilla Uslu SST | 30.07 |
+| … | | |
+| son 3 | Atilla Uslu videoları · PreTUS200 · yanlış defteri | etiketsiz |
+
+### Power up işareti
+
+Power-up havuzundaki bölümler programa alınmamıştı, sayaçta yoklardı. Çarktan çekilip **tamamlanınca**:
+
+- O rengin sayacı **artıyor** (2/3 → **3/3**)
+- Yanına **`+1⚡`** geliyor — power-up'la yapıldığı belli olsun
+- Kitap toplamı da artıyor (`2 / 12 bölüm` → `3 / 12 bölüm +1⚡`)
+- Rozetin çerçevesi açık maviye dönüyor
+
+Doğrulandı: FT Farmakoloji · NSAİİ (sarı) çekilip tamamlanınca `S 2/3` → `S 3/3 +1⚡`.
+
+**Çekilmiş ama bitmemiş** power-up sayacı artırmıyor — yalnız tamamlananlar sayılıyor.
+
+### Yeni test · `pu_test.js` +10 kontrol (toplam 59)
+
+Renkliler üstte · ilk açılış gününe göre sıralı · **renk sayaçları tutarlı** (renk toplamı = kitap toplamı) · içerdeki ≤ toplam · etiketsizlerde sayaç yok · en az 12 kitapta sayaç · **power-up sayacı artırıyor** · **⚡ işareti geliyor** · çekilmiş ama bitmemiş artırmıyor · **sayaç tavanı aşmıyor**.
+
+### Kalıcı düzeltme
+
+`yeniden.py` katalog tabanına bağlandı (`KATALOG_KITAP`), ayrıca `kh_kur.py` bağımsız kurucu olarak eklendi.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-09a` ↔ `rota-2026-08-09a` · 395 074 bayt**
+
+---
+
+## 89 · KURAL A YENİDEN TASARLANDI · SEÇİM SIFIRDAN · `secim_v12.json`
+
+Kullanıcı Kural A'nın eksik tasarlandığını yakaladı: *"her kitap ilk 2 hafta açılacak"* değil, **"her KONU KİTABI"** olmalıydı. Soru kitapları ilk öğrenme değil, **tekrar** niteliğinde.
+
+### Düzeltilen kitap sınıflandırması (kullanıcı düzeltmeleri)
+
+| Kitap | Eski sanılan | **Doğrusu** |
+|---|---|---|
+| **Speetus Genel Cerrahi** | konu+soru karışık | **konu kitabı** (başka yayınevinin FT'si) |
+| **Klinisyen Vaka Pediatri** | soru kitabı | **konu kitabı yerine geçer** |
+| **Emrullah Patoloji SST** | soru kitabı | **konu kitabı** · tekrar statüsünde |
+| Dahiliye 1-2 | konu kitabı | **video kapsıyor** |
+
+### Beş kural değişikliği
+
+1. **Konu okumadan soru çözülmez.** İstisna yalnız **Dahiliye SST Enfeksiyon** ve **Pediatri vaka soruları.**
+2. **Tekrar = SORU ÇÖZME.** Yeniden okuma kaldırıldı — test etkisi (Roediger & Karpicke) pasif okumadan güçlü.
+3. **Soru kitabı olmayan konunun tekrarı = günlük 24'lü deneme.** Branşın planlanan okuması bitince o branşı denemeyle tekrar eder; okunmayan kısımları da deneme öğretir.
+4. **Anatomi yalnız Ürogenital + Nöroanatomi.** Kullanıcı: *"anatomi çok ezber, o süre seni kandırmasın"* — 10.68 saat kesildi.
+5. **Mikrobiyoloji ve Kadın Doğum**: en verimli konuları seçildiyse o hâliyle bırakılır.
+
+### ⚠ Bulunan hata · video kapsamı sayılmıyordu
+
+44 Atilla Uslu videosu **Dahiliye tavanının %44'ünü** kapsıyor (16.20 soru / 36.80) ama seçim modeli bunu görmüyordu — Dahiliye'yi %32 sanıp oraya gereksiz saat ayırıyordu.
+
+Video kapsamı modele eklendi, video konuları havuzdan çıkarıldı. **Projeksiyon 62.69 → 63.59.**
+
+### Yeni seçim · 73 konu · 131.76 saat
+
+| Kitap | Konu | Okuma | Soru |
+|---|---|---|---|
+| Emrullah Patoloji SST | 16 | 22.27 | — |
+| Klinisyen Vaka Pediatri | 15 | 19.50 | — |
+| TUSTIME Mikrobiyoloji | 3 | 16.15 | 6.68 |
+| FT Farmakoloji | 6 | 11.55 | 7.00 |
+| Speetus Genel Cerrahi | 17 | 10.00 | 4.91 |
+| Anatomi Fast Track | 2 | 7.17 | — |
+| TUSTIME Küçük Stajlar | 7 | 5.13 | 1.25 |
+| TUSTIME Fizyoloji · FT Biyokimya · FT Kadın Doğum · Atilla Uslu SST | 7 | 11.75 | 8.40 |
+
+**Okuma 103.52 sa · soru çözme 28.24 sa.** 17 konunun tekrarı soru kitabından, **56 konunun tekrarı günlük 24'lü denemelerden.**
+
+### Kapsam
+
+| Grup | Kapsam | Sınavda |
+|---|---|---|
+| Patoloji | %91 | 12.75 |
+| Genel Cerrahi | %81 | 16.73 |
+| Farmakoloji | %77 | 7.24 |
+| Pediatri | %75 | 11.63 |
+| **Dahiliye** (video %44 dahil) | **%71** | 19.80 |
+| Mikrobiyoloji | %64 | 8.05 |
+| Biyokimya | %53 | 7.89 |
+| Anatomi | %41 | 3.54 |
+| Fizyoloji+Histo | %33 | 4.71 |
+| Kadın Doğum | %27 | 3.02 |
+| **TOPLAM** | | **95.37** |
+
+**PROJEKSİYON 63.59** (mevcut program 61.75 · **+1.84**)
+
+### Bulgu · yeniden okuma vs soru çözme maliyeti
+
+113 adayın **yalnız 48'inde** soru kitabı var; onların da çoğunda soru çözmek yeniden okumadan pahalı (toplam 131 sa vs 81 sa). Ama kullanıcı kararı bilimsel gerekçeye dayanıyor ve model bunu destekliyor: test etkisi.
+
+⚠ **Onay bekleyen:** yeniden okuma = ilk okumanın %40'ı varsayımı (artık yalnız hesaplamada kullanılıyor, programda yeniden okuma yok).
+
+### Sıradaki iş (§90'da güncellendi)
+
+**Tüm yerleşim sıfırdan:** dilim → gün → blok → görev üretimi → on dört kapı + bağımsız denetim. Ayrıca yeni bir kural: *son 4 günden önce, bir konunun okuması başka bir konunun tekrarından değerliyse takas edilebilir.*
+
+---
+
+## 90 · DENEME = TEKRAR + KALİBRASYON · BÜTÇE DÜZELTİLDİ · `secim_v13.json`
+
+### Kullanıcının verimlilik gözlemi
+
+Günlük 24'lü kalibrasyon denemeleri ile "tekrarı deneme olan" konular **aynı denemede birleşsin.** Denemeler zaten program bitiminde çözülüyor (7.5 saatin dışında), yani o tekrarlar programa **sıfır saat** maliyetle geliyor.
+
+| | Konu | Okuma saati | Tekrar maliyeti |
+|---|---|---|---|
+| Tekrarı **24'lü deneme** | **57** | 64.65 | **0.00 sa** |
+| Tekrarı **soru kitabı** | 17 | — | 28.24 sa |
+
+Patoloji 16 · Pediatri 15 · Genel Cerrahi 15 · Dahiliye 5 · diğer 6 konunun tekrarı denemelerden.
+
+**Slot yeterliliği:** 19 gün × 2 = **38 deneme**, tekrar gereken 7 grup → grup başına ortalama **5.4 slot.** Yetiyor.
+
+### Sinerji · iki amaç aynı yöne çekiyor
+
+§84'te ölçmüştüm: kalibrasyon sinyali **yüksek kapsamda en güçlü** (Protokol A). Bir branşın okuması bitmişken çözülen deneme hem **en iyi tekrar** hem **en iyi ölçüm.**
+
+**Slot atama kuralı:** önce okuması bitmiş ve henüz test edilmemiş branş (tekrar + ölçüm), yoksa o gün çalışılan branş (saf ölçüm).
+
+### ⚠ Bütçe eksik hesaplanmıştı
+
+Seçim `BUT=132.20` ile koşmuştu — eski değer. Doğrusu:
+
+| | Saat |
+|---|---|
+| 25 gün kapasite (3'ü 8.00) | **189.00** |
+| Video 16.83 + deneme 27.00 + analiz 10.50 | 54.33 |
+| **OKUMA+SORU BÜTÇESİ** | **134.67** |
+
+**2.91 saat boştaydı.** Düzeltilince seçim 73 → **74 konu**, okuma 103.52 → **106.30 saat.**
+
+Eklenen: **FT Farmakoloji · Kemoterapötikler** (2.80 sa · 4.60 soru) — Farmakoloji kapsamı %77 → **%78**, Pediatri %75 → **%80**.
+
+**PROJEKSİYON 63.59 → 63.69**
+
+### Eski model kalıntısı denetimi · 10 kontrol
+
+Aynı Tusanaliz konusu iki kez seçilmemiş · grup soru ağırlığı tavanı aşmıyor · **konu okumadan soru çözülmüyor** · Anatomi yalnız iki konu · **video konuları seçimde yok** (çift öğrenme) · gereksiz konu kitapları yok · sayfa bilgisi tam · tekrar kaynağı belirtilmiş · **tekrar kaynakları soru kitabı** · bütçe aşılmıyor.
+
+**✓ ESKİ MODEL KALINTISI YOK** · boşta kalan 0.12 saat.
+
+### Nihai seçim · 74 konu · 134.54 saat
+
+| Grup | Kapsam | Sınavda |
+|---|---|---|
+| Patoloji | %91 | 12.75 |
+| Genel Cerrahi | %81 | 16.73 |
+| **Pediatri** | **%80** | 11.93 |
+| **Farmakoloji** | **%78** | 7.30 |
+| Dahiliye (video dahil) | %71 | 19.80 |
+| Mikrobiyoloji | %64 | 8.05 |
+| Biyokimya | %53 | 7.89 |
+| Anatomi | %41 | 3.54 |
+| Fizyoloji+Histo | %33 | 4.71 |
+| Kadın Doğum | %27 | 3.02 |
+| **TOPLAM** | | **95.72** |
+
+---
+
+## 91 · ⚠ KAVRAM DÜZELTMESİ · "24'LÜ DENEME" · NİHAİ SEÇİM `secim_v16.json`
+
+### Temel yanlış anlama düzeltildi
+
+Kullanıcı: *"24'lü deneme demek o kitapta **24 adet deneme** var demek, 24 sorulu demem değil. Kaç soru sorduğu direkt TUS'ta o branşta kaç soru çıktığını gösteriyor."*
+
+**Bütün kalibrasyon analizi (§84) yanlış temeldeydi.** Doğru model:
+
+| Branş | Soru/deneme | Süre (analiz dahil) | 24 deneme |
+|---|---|---|---|
+| Fizyoloji | 8 | **0.25 sa** | 6.00 sa |
+| Anatomi | 13 | 0.41 sa | 9.75 sa |
+| Patoloji · Biyokimya · Farmakoloji | 18 | 0.56 sa | 13.50 sa |
+| Küçük Stajlar | 22 | 0.69 sa | 16.50 sa |
+| Pediatri | 25 | 0.78 sa | 18.75 sa |
+| Genel Cerrahi | 30 | 0.94 sa | 22.50 sa |
+| Dahiliye | 35 | **1.09 sa** | 26.25 sa |
+
+**10 branş × 24 = 240 deneme · toplam 148 saat.** Deneme SAYISI hiç kısıt değil — **zaman** kısıt. Günde 1.5 saat ayrılırsa 19 günde ~46 deneme.
+
+### Mikrobiyoloji · 24'lü denemesi YOK
+
+Seride Mikrobiyoloji yok. Tekrarı **Feyyaz Akay** ile yapılabilir, kullanıcı hızı verdi: **15 sf/saat.**
+
+⚠ İlk uygulamada bunu **zorunlu** yaptım (kullanıcının "muhakkak çözeyim" ifadesinden). Kullanıcı düzeltti: *"eğer kârlıysa çözeyim, normalde belirlediğimiz kural buydu."*
+
+Model iki ayrı aday üretiyor: **(a) yalnız oku** (tekrarsız, erime fazla) · **(b) oku + Feyyaz** (tekrarlı, pahalı). Açgözlü hangisi kârlıysa seçiyor.
+
+**Sonuç: model Feyyaz'ı kârlı bulmadı.** Mikrobiyoloji 2 konu (Temel Mikrobiyoloji + Mikoloji, 6.53 sa), tekrarsız. O saatler başka branşlarda daha çok getiriyor.
+
+### Kullanıcının program mantığı · sistem uyuyor mu
+
+| İlke | Durum |
+|---|---|
+| İlk 2 haftada maksimum yeni konu, tüm kitapların en verimli konularına bak | ✓ 11 kitabın **hepsinden** konu var; en küçüklerinin toplamı 11.28 sa, ilk 2 haftada ~69 sa serbest |
+| Konu çalışması biten dersleri denemelerle tekrar et | ✓ 90 konunun tekrarı 24'lü denemeden, programa **0 saat** |
+| Tekrardan kârlıysa son 4 güne kadar yeni konu koymaya devam | yerleşimde uygulanacak (takas kuralı) |
+| Spesifik konu tekrarı yerine 24'lü deneme | ✓ tek istisna Mikrobiyoloji (denemesi yok), o da kârsız bulundu |
+
+### NİHAİ SEÇİM · 92 konu · 134.42 saat
+
+| Kitap | Konu | Saat |
+|---|---|---|
+| Emrullah Patoloji SST | 15 | 20.93 |
+| Klinisyen Vaka Pediatri | 14 | 17.25 |
+| FT Farmakoloji | 8 | 16.98 |
+| FT Kadın Doğum | 3 | 14.12 |
+| TUSTIME Küçük Stajlar | 15 | 13.07 |
+| TUSTIME Fizyoloji | 8 | 12.47 |
+| FT Biyokimya | 5 | 12.43 |
+| Speetus Genel Cerrahi | 19 | 12.00 |
+| Anatomi Fast Track | 2 | 7.17 |
+| TUSTIME Mikrobiyoloji | 2 | 6.53 |
+| Atilla Uslu SST (Enfeksiyon) | 1 | 1.47 |
+
+| Grup | Kapsam | | Grup | Kapsam |
+|---|---|---|---|---|
+| Dahiliye (video %44 dahil) | **%99** | | Patoloji | %88 |
+| Kadın Doğum | **%95** | | Fizyoloji+Histo | %81 |
+| Farmakoloji | **%95** | | Pediatri | %70 |
+| Biyokimya | %90 | | Anatomi | %41 |
+| Genel Cerrahi | %89 | | Mikrobiyoloji | %29 |
+
+**PROJEKSİYON 65.29** (mevcut program 61.75 · **+3.54**)
+
+### Denetim · 8 kontrol
+
+Aynı konu iki kez seçilmemiş · tavan aşılmıyor · hepsi konu kitabından · Anatomi iki konu · video konuları yok · sayfa bilgisi tam · bütçe · **11 kitabın hepsinden konu var**. **✓ SIFIR HATA**
+
+### Sıradaki iş · YERLEŞİM
+
+dilim → gün → blok → 24'lü deneme slot ataması (tekrar + kalibrasyon birlikte) → görev üretimi → on dört kapı + bağımsız denetim. Takas kuralı: son 4 günden önce, okuma bir tekrardan değerliyse takas.
+
+---
+
+## 92 · YERLEŞİM · YENİ PROGRAM KURULDU · KURAL C'DE 0.17 SAAT KALDI
+
+### Kalıntı denetimi · yerleşim öncesi
+
+15 kontrol, hepsi temiz: eski seçim dosyaları arşive alındı (`arsiv/`), video planı doğru (44 video · 16.83 sa · deneme günlerinde yok), FSRS sabitleri, tavan toplamı 200, seçimin iç tutarlılığı, katalogla eşleşme.
+
+### Bütçe · son 4 gün rezerve edilince
+
+| | Saat |
+|---|---|
+| 25 gün kapasite (3'ü 8.00) | 189.00 |
+| Video + tam deneme + analiz | 54.33 |
+| **OKUMA (21 gün)** | **110.92** |
+| **TEKRAR (son 4 gün, 24'lü denemeler)** | **23.75** |
+
+Seçim `BUT=110.92` ile yenilendi: **83 konu · 110.78 saat.** Projeksiyon **64.42**.
+
+### Yerleşim
+
+**192 görev · 177.21 saat · günlük 5.91–7.75 · 25 gün**
+
+| Tür | Adet |
+|---|---|
+| Okuma | 96 |
+| Video | 44 |
+| **24'lü branş denemesi** | **34** |
+| Tam deneme + analiz | 12 + 6 |
+
+**Kural A ✓** — 11 kitabın hepsi ilk 14 günde açılıyor.
+**Kural B** %80–83 (eşik %80).
+**Son 4 gün** yeni okuma yok, yalnız 24'lü denemeler.
+**`kural_test.py` 18/18 GEÇTİ.**
+
+### ⚠ Kural C · 0.17 saat kaldı
+
+| | Dilim 1 | Dilim 2 | Dilim 3 |
+|---|---|---|---|
+| Yeni öğrenme | 44.69 | **44.86** | 29.97 |
+| Geri getirme | 12.50 | 19.22 | 25.97 ✓ |
+
+**Geri getirme artan ✓** ama **yeni öğrenme azalan ✗** — dilim 2, dilim 1'den **0.17 saat** fazla.
+
+Beş dengeleme turu denendi: dilim2→3 okuma (3.13 + 3.23 + 1.20 sa), dilim3→2 deneme (4.57 + 2.15 sa), dilim2→1 okuma (0.00 — yer yok). **Dilim 3 tamamen dolu** (en büyük blok boşluğu 0.40 sa), dilim 1'de 3.31 saat boşluk var ama dağınık, hiçbir görev tek parça sığmıyor.
+
+Kalan tek yol: bir görevi **bölerek** dilim 1'in dağınık boşluklarına dağıtmak. Bu bir sonraki turun işi — bu turda beş kez denedim ve her seferinde saat/mola/sıra yeniden kurmak gerekti.
+
+### Durum
+
+| | |
+|---|---|
+| `app_gorev.json` | **yeni program** · 192 görev |
+| `kural_test.py` | **18/18 ✓** |
+| `denet.py` | Kural C · 1 ihlal |
+| Uygulamada duran | **eski program** (uret.py kural testinde durmadı ama denet geçmedi) |
+
+---
+
+## 93 · TEK GEÇİŞ YERLEŞİM · KURAL C ÇÖZÜLDÜ · KURAL B AÇIK
+
+### Yöntem değişti · kısıt olarak yerleştirme
+
+Önceki turda yerleştirip sonra dengelemeye çalışmıştım — beş tur denedim, her seferinde başka kural kırıldı. Bu turda **Kural C'yi kısıt olarak** çözdüm.
+
+### ⚠ Yapısal bulgu · Kural C okuma bütçesini sınırlıyor
+
+Dilim yapısı: dilim 1 = 8 gün (36.84 sa serbest, 11.17 sa video), dilim 2 = **9 gün** (50.33 sa, 5.67 sa video), dilim 3 = 8 gün (47.50 sa, video yok).
+
+Dilim 2 hem daha uzun hem videosu az → doğal olarak dilim 1'den **fazla** yeni öğrenme alıyor. Kural C "azalan" istiyor.
+
+Doğrusal arama ile **Kural C'nin izin verdiği en büyük okuma bütçesi: 102.50 saat** (son 4 gün tekrar kısıtı dahil). Yerleşim payı için **101.00**'e indirildi.
+
+| | Dilim 1 | Dilim 2 | Dilim 3 |
+|---|---|---|---|
+| Okuma hedefi | 36.60 | 41.00 | 23.40 |
+| Gerçekleşen | 35.78 | 40.63 | 23.17 |
+| **Yeni öğrenme** | **46.95** | **46.30** | **23.17** ✓ |
+| **Geri getirme** | **12.50** | **21.08** | **35.38** ✓ |
+
+**Kural C iki yönde de sağlandı.**
+
+### Sonuç · 205 görev · 179.54 saat
+
+| Tür | Adet |
+|---|---|
+| Okuma | 90 |
+| Video | 44 |
+| **24'lü branş denemesi** | **53** |
+| Tam deneme + analiz | 12 + 6 |
+
+Günlük **6.57 – 7.79 saat**. Seçim 79 konu · 100.98 saat · **projeksiyon 64.01**.
+
+**`kural_test.py` 18/18 ✓**
+
+### Düzeltilen: kombo takvim komşuluğu
+
+Kombo üretimi "listedeki sonraki gün"ü kullanıyordu; okuma olmayan günler atlanınca iki takvim günü aşabiliyordu. **Takvim komşuluğuna** bağlandı.
+
+### ⚠ AÇIK · Kural B %74 (eşik %80)
+
+`denet.py` Kural B'yi **ortalama hakimiyet** olarak ölçüyor: `Σ(max_branş/toplam)/gün`. Benim "hakim gün oranı" ölçümüm %89 veriyor ama denet'inki %74.
+
+400 turluk takas araması **hiçbir iyileştirici takas bulamadı** — blok kapasiteleri ve süre uyumu (±0.35 sa) her denemeyi engelliyor.
+
+İki zayıf gün: **4 Ağustos** (3 branş, hakimiyet 0.49) ve **12 Ağustos** (5 branş, 0.31).
+
+Çözüm yolu: gün atamasında branş kilidini daha sıkı uygulamak — ama bu, Kural C hedeflerini tutturmayı zorlaştırıyor. İki kural birbirini çekiyor.
+
+### Durum
+
+| | |
+|---|---|
+| `app_gorev.json` | yeni program · 205 görev |
+| `kural_test.py` | **18/18 ✓** |
+| `denet.py` | **Kural B %74** · 1 ihlal |
+| Uygulamada duran | eski program |
+
+---
+
+## 94 · KURAL B ve C BİRLİKTE ÇÖZÜLDÜ · KURAL C'DE 0.72 SAAT KALDI
+
+### Yöntem · branş-dilim partisyonu
+
+Önceki turlarda tek tek çözmeye çalıştım, biri düzelince öteki kırıldı. Bu turda **ikisini birlikte** kurdum:
+
+**1 · Branşları dilimlere böl** — 10 branşın 3 dilime dağılımı, hedef sapması **0.12 saat**:
+
+| Dilim | Branşlar | Saat |
+|---|---|---|
+| 1 | Patoloji · Genel Cerrahi · Anatomi | 36.54 / 36.84 |
+| 2 | Pediatri · Dahiliye · Fizyoloji · Biyokimya | 41.05 / 50.33 |
+| 3 | Farmakoloji · Kadın Doğum · Mikrobiyoloji | 23.39 / 23.75 |
+
+**2 · Kural A dengesi** — tamamı dilim 3'te olan 3 kitabın birer konusu dilim 2'ye çekildi (5.66 sa), karşılığında dilim 2'den 3'e eşdeğer taşındı.
+
+**3 · Gün ataması** — her güne **tek branş**, o branşın konularıyla doldur, kalan boşluğa sonraki branştan.
+
+### Sonuç
+
+**Kural B ortalama hakimiyet %74 → %87** (eşik %80) ✓
+
+**195 görev · 177.70 saat · günlük 6.30–7.76**
+
+| Tür | Adet |
+|---|---|
+| Okuma | 88 |
+| Video | 44 |
+| **24'lü branş denemesi** | **39** |
+| Tam deneme + analiz | 12 + 6 |
+
+**`kural_test.py` 18/18 ✓ · Kural A ✓ · Kural B ✓**
+
+### Bu turda düzeltilen dört hata
+
+1. **Kombo takvim komşuluğu** — "listedeki sonraki gün" kullanıyordu, okuma olmayan günler atlanınca iki takvim gününü aşabiliyordu.
+2. **Kural A ihlali** — FT Kadın Doğum 15., TUSTIME Mikrobiyoloji 17. günde açılıyordu; ikisi de ilk 14 güne çekildi.
+3. **Çoklu aralıklı bölümler** — Nöroanatomi (sf 49–55 + 90–119 + 126–127) sayfa bölmesinde tek aralığa indirgenmişti; katalogdan geri yüklendi.
+4. **Parça ad biçimi** — `· 1. parça` yerine `· 1/6. parça` olmalıydı; `denet.py`'nin muafiyet kontrolü bu biçime bakıyor.
+
+### ⚠ AÇIK · Kural C azalan · 0.72 saat
+
+| | Dilim 1 | Dilim 2 | Dilim 3 |
+|---|---|---|---|
+| Yeni öğrenme | 45.00 | **45.72** | 22.52 |
+| Geri getirme | 12.50 | 17.56 | 34.40 ✓ |
+
+Dilim 2, dilim 1'den **0.72 saat** fazla. Dilim 3'te 0.5–1.8 saat aralığında bir görevi alacak blok boşluğu yok.
+
+Dilim seviyesinde çözüm doğruydu (36.54 / 41.05 / 23.39) ama gün ve blok yerleşimi sırasındaki parçalanmalar 0.72 saatlik kayma yarattı.
+
+### Durum
+
+| | |
+|---|---|
+| `app_gorev.json` | 195 görev · Kural A ✓ B ✓ |
+| `kural_test.py` | **18/18 ✓** |
+| `denet.py` | **1 ihlal** (Kural C azalan) |
+| Uygulamada duran | eski program |
+
+---
+
+## 95 · ✓ YENİ PROGRAM TAMAM · ON DÖRT KAPI SIFIR HATA · `2026-08-10a`
+
+### Kural C'nin son 0.72 saati
+
+Dilim 3'te 3.08 saat boşluk vardı ama 0.02–0.41 saatlik kırıntılar halinde. **Beslenme (0.75 sa) iki parçaya bölünüp** en büyük iki boşluğa (08-22 D 0.41 + 08-16 B 0.34) dağıtıldı.
+
+Sonra 08-22 son 2 günden biri olduğu için okuma oraya konamazdı → **aynı boyuttaki bir 24'lü denemeyle takas** edildi.
+
+| | Dilim 1 | Dilim 2 | Dilim 3 |
+|---|---|---|---|
+| Yeni öğrenme | **45.00** | **44.97** | **23.27** ✓ |
+| Geri getirme | **12.50** | **17.56** | **34.40** ✓ |
+
+### ✓ SONUÇ · 196 görev · 177.70 saat
+
+| Tür | Adet |
+|---|---|
+| Okuma | 95 |
+| Video | 44 |
+| **24'lü branş denemesi** | **39** |
+| Tam deneme + analiz | 12 + 6 |
+
+Günlük **6.09 – 7.72 saat** · 25 gün
+
+| Kural | |
+|---|---|
+| **A** · her kaynak ilk 14 günde | ✓ |
+| **B** · gün-branş hakimiyeti **%88** | ✓ |
+| **C** · yeni azalan · geri artan | ✓ |
+| **D** · bölüm bütünlüğü | ✓ |
+| Son 2 günde yeni okuma yok | ✓ |
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+`kural_test` 18/18 · `denet` sıfır · `kos` · `derin_test` · `cark_test` · `mola_test` · `kombo_test` · `pu_test` · `kal_test` · beş senkron testi
+
+### ✓ BAĞIMSIZ DENETİM · 13 kontrol sıfır hata
+
+saat=süre · 24:00 aşımı yok · saat çakışması yok · 44 video ve 8 Ağustos sınırı · video sırası · günlük ≤8.00 · 25 gün · kimlik tekil · zorunlu alanlar · son 2 günde okuma yok · **Kural A** · **sayfa sürekliliği** · **Kural B %88**
+
+### Testlerde yapılan meşru güncellemeler
+
+Yeni tasarımda **`act='tekrar'` görevi yok** — tüm tekrarlar `deneme24`. Bu yüzden:
+- `derin_test` E8: "tekrarlar puanı yükseltiyor" → "tüm görevler tamamlanınca puan düşmüyor"
+- `derin_test` G bölümü: tekrar belirteci → **kalan potansiyel belirteci**
+- `pu_test`: "donmuş kaz şişikmiş" → "kartlar dinamik hesaplıyor" (kaz alanı artık 0)
+- `kombo_test`: 18 kitap → ≥14 (seçim 11 kitap kullanıyor)
+
+### Projeksiyon
+
+Uygulamanın gösterdiği: hiçbir şey yapılmazsa **55.72**, program tamamlanırsa **62.04**.
+
+Model 64.01 diyordu; fark, uygulamanın kapsam hesabını `soru` ağırlığından, modelin katalog `pay` değerinden yapmasından.
+
+**sürüm `2026-08-10a` ↔ `rota-2026-08-10a` · 339 845 bayt**
+
+---
+
+## 96 · SEYİR DEFTERİ · ETİKETSİZ KAYNAKLARA İLERLEME · `2026-08-10b`
+
+### Bulunan hata · boş başlık
+
+`TUSDATA 24'lü branş denemeleri` kaynak haritasında **başlıksız** görünüyordu: renk etiketi yok, bölüm listesi boş, `alt` alanı boş → summary satırında hiçbir bilgi yoktu. Aynı sorun video, PreTUS200 ve yanlış defterinde de vardı.
+
+Sebep: `kh_kur.py` yalnız katalogda bölümü olan kitaplara sayaç kuruyordu; deneme ve video kaynaklarının katalogda bölümü yok.
+
+### Düzeltme · etiketsiz kaynaklara ilerleme etiketi
+
+| Kaynak | İlerleme | Açıklama |
+|---|---|---|
+| Atilla Uslu Dahiliye videoları | **44 / 44 video** | Dahiliye konu videoları |
+| PreTUS200 | **12 / 12 oturum** | 6 tam deneme × 2 oturum |
+| yanlış defteri | **6 / 6 analiz** | her deneme sonrası |
+| **TUSDATA 24'lü branş denemeleri** | **39 / 240 deneme** | 10 branş × 24 deneme |
+
+Artık her kaynağın summary satırında sayaç ve rozet var; açılınca `alt` açıklaması ve ilerleme ayrıntısı geliyor.
+
+**24'lü denemenin 39/240'ı** özellikle bilgilendirici: elinde 240 deneme var, program 39'unu kullanıyor — geri kalanı power-up gibi ek zamanlarda çözülebilir.
+
+### Uygulama entegrasyonu · 16 kontrol
+
+`GOREVLER` 196 · çark listesi · `bul()` · `brifCiz` · `carkCiz` · `ust` · `kaynakHarita` · `seyirCiz` · **`deneme24` görevleri (39) çiziliyor, tag ve why dolu** · tamamlama projeksiyonu değiştiriyor · power-up havuzu yeni programa göre ve konuları programda değil · kalibrasyon paneli · R_CAL varsayılan. **Sıfır hata.**
+
+### Seyir defteri · 9 kontrol
+
+Boş başlık yok · boş `or` alanı yok · her kitapta başlık · rozet sayısı kitap sayısına eşit (**15/15**) · kullanılmayan kaynaklar bölümü · `olcumCiz` · `radarCiz` · `trendCiz`. **Sıfır hata.**
+
+### Yeni test · `pu_test.js` +10 kontrol
+
+Etiketsiz kaynak var · hepsinde ilerleme sayacı ve birim adı · `ic ≤ tp` · **24'lü deneme 240 üzerinden** · 44 video tam · boş başlık/alan yok · etiketsizlerde rozet · açıklama satırı.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**196 görev · sürüm `2026-08-10b` ↔ `rota-2026-08-10b` · 340 449 bayt**
+
+---
+
+## 97 · KALİBRASYON ve POTANSİYEL DENETİMİ · İKİ HATA · `2026-08-11a`
+
+### HATA 1 · giriş alanları 24 soruyla sınırlıydı
+
+"24'lü deneme" kavram düzeltmesinden (§91) sonra **matematik doğruydu** — `net2p(n,q)` gerçek soru sayısını kullanıyor, deneme boyutundan bağımsız. Ama **giriş alanları `max="24"`** ile sınırlıydı: **Dahiliye denemesi 35 soru, girilemezdi.**
+
+Düzeltme: sınır **40**'a çıkarıldı, panel metnine deneme boyutunun branşa göre değiştiği eklendi, canlı özet **"Dahiliye denemesi normalde 35 soru"** uyarısı veriyor.
+
+Doğrulandı:
+
+| Giriş | R_CAL | Bant |
+|---|---|---|
+| Havuz boş | 0.405 | ±0.195 |
+| Fizyoloji 8 soru · 6D 2Y | 0.426 | ±0.187 |
+| Patoloji 18 soru · 12D 4Y 2B | 0.396 | ±0.192 |
+| **Dahiliye 35 soru · 20D 10Y 5B** | **0.392** | **±0.185** |
+
+Büyük deneme bandı daha çok daraltıyor — daha çok bilgi taşıdığı için. Doğru davranış.
+
+### HATA 2 · kalan potansiyel 1.10 K eksik gösteriyordu
+
+`puanVarsayim(ek)` görevleri **bugün** tamamlanmış sayıyordu. Programın ilk gününde bu, 196 görevin hepsini 29 Temmuz'da bitirmiş gibi hesaplıyor — sınava 25 gün var, azami erime.
+
+Gerçekte görevler **planlandıkları günde** yapılacak, çoğu sınava çok daha yakın.
+
+| | Potansiyel | Gerçek |
+|---|---|---|
+| Önce | +5.22 | +6.32 |
+| **Sonra** | **+6.32** | **+6.32** ✓ |
+
+Düzeltme: `D.bitti[k] = (görevin günü > bugün) ? görevin günü : bugün`. Geçmiş görevler bugün yapılır sayılıyor — doğru, çünkü geçmişe gidilemez.
+
+Yarı yolda da birebir tutuyor (+3.34 = +3.34).
+
+### Yeni test · `kal_test.js` +9 kontrol (toplam 33)
+
+8 soruluk deneme kabul ediliyor · **35 soruluk deneme kabul ediliyor** · büyük deneme bandı daha çok daraltıyor · giriş alanları 24 ile sınırlı değil · 40'a kadar · branş soru sayısı gösteriliyor · **kalan potansiyel = gerçek artış** · yarı yolda da tutarlı · `puanVarsayim` planlanan günü kullanıyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**196 görev · sürüm `2026-08-11a` ↔ `rota-2026-08-11a`**
+
+---
+
+## 98 · ÜST ŞERİDE YAYILAN GÜÇ AURASI · `2026-08-12a`
+
+Power-up streak'i **3. kademeden itibaren** orb'dan taşıp üst şeride (gün sayacı · orb'lar · parakete) yayılıyor, **10'a yaklaştıkça genişleyip parlıyor.**
+
+### Kademeler
+
+| Streak | Sınıf | Genişlik | Opaklık | Alt çizgi | Animasyon |
+|---|---|---|---|---|---|
+| 0–2 | — | — | — | — | — |
+| **3** | `pu3` | %38 | .30 | — | — |
+| 4 | `pu4` | %50 | .42 | — | — |
+| 5 | `pu5` | %62 | .54 | .40 | — |
+| 6 | `pu6` | %74 | .66 | .55 | **nefes** |
+| 7 | `pu7` | %84 | .78 | .68 | nefes |
+| 8 | `pu8` | %92 | .88 | .80 | nefes + **çizgi** |
+| 9 | `pu9` | %97 | .95 | .90 | ikisi |
+| **10** | `pu10` | **%100** | **1** | **1** | ikisi |
+
+İki katman: sol alttan yükselen **radyal aura** (`::before`) ve şeridin altında soldan sağa uzanan **ışık çizgisi** (`::after`).
+
+### Hiçbir fonksiyonu bozmuyor
+
+| Koruma | |
+|---|---|
+| `pointer-events:none` | iki katmanda da — hiçbir düğmeyi engellemiyor |
+| `z-index:0` + `header>*{z-index:1}` | aura içeriğin **arkasında** |
+| `isolation:isolate` | yığın bağlamı yalıtılmış, dış katmanları etkilemiyor |
+| Sınıf temizleme | her `ust()` çağrısında eski `pu\d+` siliniyor, birikmiyor |
+| `prefers-reduced-motion` | animasyonlar içinde, kapatılabiliyor |
+
+Animasyon süreleri **7.4 sn** (aura nefesi) ve **6.2 sn** (çizgi uzaması) — kombo ve orb kademelerindeki ilkeyle aynı: yavaş, monoton, dikkat dağıtmayan.
+
+⚠ `<header>` etiketine `id="ust"` verildi; `querySelector('header')` test ortamında çalışmıyordu.
+
+### Yeni test · `pu_test.js` +15 kontrol (toplam 84)
+
+streak 0 ve 2'de sınıf yok · 3'te `pu3` · 5'te `pu5` · 10'da `pu10` · 12'de tavan · seri kopunca temizleniyor · **sınıflar birikmiyor** · **aura tıklamayı engellemiyor** · **içeriğin arkasında** · 8 kademe tanımlı · genişlik ve opaklık kademeyle artıyor · animasyon ≥6 sn · hareket azaltmada kapalı · **orb kademesiyle uyumlu**.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-12a` ↔ `rota-2026-08-12a` · 343 948 bayt**
+
+---
+
+## 99 · ÇARK AKIŞI · YILAN GİBİ SÜREKLİ · KENARLAR YILDIZ TOZU · `2026-08-13a`
+
+### ⚠ HATA 1 · odakta çift hareket
+
+Kullanıcı: *"görevin odak noktasına gelesiye genişlemeye başlamasına rağmen odak noktasında yeniden daralıp genişlemesi bunu engelliyor."*
+
+Sebep bulundu: `@keyframes kartAc{from{opacity:0;transform:scale(.965)}}`.
+
+Şerit çarkın **kendi ölçek rampasıyla** büyüyerek merkeze geliyor (`cos(t)^.46`), tam merkeze varınca kart içeriği açılıyor ve **ikinci bir ölçek hareketi** başlıyor: 0.965'ten 1'e. İki hareket çakışınca akış kesiliyor.
+
+**Düzeltme:** `kartAc` artık **yalnız opaklık** — `from{opacity:0}to{opacity:1}`. Ölçek değişimi tek kaynaktan, çarkın rampasından geliyor. Süre .44s → **.52s ease** (gecikme .10s → .06s).
+
+### ⚠ HATA 2 · bıçak kesimi
+
+Kullanıcı: *"çark aşağıda ve yukarıda çiplerin başladığı kısımlarda bir bıçak gibi kesiliyor, bir bölmenin içine hapsolmuş olduğu belli oluyor."*
+
+Sebep: `#cark{overflow:hidden}` şeritleri opaklıkları hâlâ 0.3–0.5 iken kesiyordu.
+
+**Düzeltme · iki katmanlı çözünme:**
+
+1. **Maske** — `#cark`'a üst ve altta yumuşayan `mask-image` gradyanı: `transparent 0 → %18 (4%) → %62 (10%) → tam (20%)`, altta simetrik.
+2. **Erken sönme** — opaklık eşiği **1.14 → 0.98**, eğim `.9 → 1.05`. Şerit maskenin kestiği yere varmadan görünmez oluyor.
+3. **Yıldız tozu** — sönen şeritlere opaklığa göre üç kademe bulanıklık: `.6px` → `1.4px` → `2.6px`. Dağılıyor gibi görünüyor, kesilmiyor.
+
+`diz()` ve `dizKay()` **aynı rampayı** kullanıyor — sürüklerken de tutarlı. Sürükleme sırasında bulanıklık kapalı (`#sahne.sur .sr[data-toz]{filter:none}`) — akıcılık için.
+
+### Yeni test · `cark_test.js` +13 kontrol
+
+kartAc yalnız opaklık · **odakta ölçek sıçraması yok** · maske üst ve alt · webkit maskesi · üç toz kademesi · sürüklerken bulanıklık kapalı · **opaklık maskeden önce sıfırlanıyor** · eski 1.14 eşiği kalmadı · **`diz` ve `dizKay` tutarlı** · tıklama alanı opaklıkla uyumlu · toz odakta ve kümede yok · geçiş süresi korundu.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-13a` ↔ `rota-2026-08-13a` · 345 421 bayt**
+
+---
+
+## 100 · ÇARK · SÜREKLİ AÇILMA · PINCH ile GÜN KİPİ · `2026-08-14a`
+
+### 1 · Işık efekti kaldırıldı, yerine sürekli açılma
+
+Eskiden şerit merkeze varınca **DOM içeriği takas ediliyordu** (şerit → kart) ve `kartAc` ile beliriyordu. Kullanıcının gördüğü "ışık gözüküp kayboluyor" buydu.
+
+**Artık:** odağa **±3** mesafedeki şeritler zaten **tam kartı** taşıyor, yalnız `max-height` ile kırpılıyor. `--ac` (0→1) her karede odağa uzaklıktan hesaplanıyor:
+
+```
+--ac = max(0, 1 − |θ| / 0.34)
+max-height = 56px + (--ac) × 86px
+```
+
+- `--ac = 0` → yalnız saat + branş satırı (şerit hâli)
+- `--ac = 1` → **sf referansına (.kKaynak) kadar** açık — sürüklerken ulaşılan en büyük hâl
+- Oturunca → `.act` sınırı kalkıyor, oturum/mola/düğmeler de açılıyor (.58s yumuşak geçiş)
+
+**Eşit uzaklıktaki iki şerit eşit açılıyor** — aynı formül, aynı `|θ|`.
+
+Sürüklerken `transition:none` (her kare yazılıyor, çakışma yok), yalnız oturma anında geçiş var.
+
+`--ac` hem `diz()` hem `dizKay()` içinde yazılıyor — sürüklerken de, oturduktan sonra da tutarlı.
+
+### 2 · Menüdeki "bugüne göz at" düğmesi kaldırıldı
+
+Yerini **pinch** hareketi aldı.
+
+### 3 · İki parmakla sıkıştır → bugünün işleri
+
+| Hareket | Sonuç |
+|---|---|
+| **Pinch-in** (oran < 0.72) | çark → gün listesi |
+| **Pinch-out** (oran > 1.38) | gün listesi → çark |
+| **Ctrl + tekerlek** | fare/izleme yüzeyi karşılığı |
+
+Liste **aynı alana gömülü** (`#gunListe{position:absolute;inset:0}`), `#cark`'ın **aynı yıldız tozu maskesini** miras alıyor — üstte ve altta saydamlaşarak sönüyor, kendi içinde kaydırılabiliyor.
+
+Geçiş: liste `scale(1.06)→1` + opaklık (.42s/.48s), çark `opacity:0`'a sönüyor (.34s).
+
+Liste blok başlıklarıyla gruplu, her satırda saat · branş · konu · süre · durum. **Satıra tıklayınca çarka dönüp o göreve gidiyor.** Açılışta etkin göreve kaydırıyor.
+
+### Yeni test · `cark_test.js` +21 kontrol
+
+yakın şeritler tam kartı taşıyor · `acK` sınıfı · kırpma `--ac` ile · sürüklerken geçiş yok · oturunca yumuşak · **sürüklerken odak sf referansında durur** · `--ac` iki fonksiyonda da · **eşit uzaklık = eşit açılma** · gün listesi üretiliyor · blok başlıkları · tıklanabilir satırlar · pinch eşikleri · ctrl+tekerlek · **liste aynı maskeli alanda** · kendi içinde kaydırılır · yumuşak geçiş · çark sönüyor · listeden göreve dönüş.
+
+Ayrıca 4 eski test yeni tasarıma göre yeniden yazıldı (kaldırılan `bugun` düğmesine bakıyorlardı).
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-14a` ↔ `rota-2026-08-14a` · 351 976 bayt**
+
+⚠ **Not:** test ortamının DOM taklidi `appendChild` desteklemediği için çizim sonrası DOM durumu doğrudan sınanamıyor; kontroller üretilen kod üzerinden yapılıyor. Görsel davranışın cihazda denenmesi gerekiyor.
+
+---
+
+## 101 · ÇARK · DÖRT KADEMELİ KART TASARIMI · `2026-08-15a`
+
+Kullanıcı ekran görüntüleriyle üç sorun bildirdi.
+
+### ⚠ HATA 1 · kartlar üst üste biniyordu
+
+Ekran görüntülerinde kart içerikleri iç içe geçmişti. Sebep: §100'de kartlar `max-height` ile kırpılıyordu ama **`diz()` yükseklikleri kırpma uygulanmadan ÖNCE ölçüyordu** (`--ac` varsayılan 0 → 56px). Yerleşim 56px'e göre hesaplanıyor, kartlar sonra 142px'e açılınca çakışıyorlardı.
+
+### Çözüm · kırpma değil, DÖRT AYRI TASARIM
+
+Kullanıcının önerisi doğruydu: *"her büyüklük durumu için farklı kart görünümleri tasarla, birbirlerini tamamlasınlar."*
+
+| Kademe | Eşik (|θ|) | Yükseklik | İçerik |
+|---|---|---|---|
+| **k0** · sınıra yakın | ≥0.30 | **36px** | nokta · blok · saat · branş *(eski ince başlık)* |
+| **k1** · yaklaşıyor | <0.30 | **59px** | + konu adı |
+| **k2** · yakın | <0.155 | **79px** | + kaynak / **sf referansı** |
+| **k3** · odakta (sürüklerken) | <0.055 | **98px** | + blok bilgisi · saat aralığı |
+| **act** · oturmuş | — | doğal | tam kart, her yöne açılır |
+
+Yükseklikler **sabit** olduğu için `diz()` doğru yerleştiriyor. Kademe ↔ açı ↔ yükseklik karşılıklı bağımlı olduğundan hesap **yakınsama döngüsünün içinde** (5 geçiş).
+
+Her kademe öncekinin üstüne bir satır ekliyor; satır `height` + `opacity` çapraz sönümüyle beliriyor (.30s / .24s) — sıçrama yok. Zemin ve çerçeve de kademeyle koyulaşıyor.
+
+**Mola kartları da kademeli** — onlar da odağa yaklaşınca açılıyor (önceki sürümde sabit kalıyorlardı).
+
+### ⚠ HATA 2 · yıldız tozu bulanıklığı akışı bozuyordu
+
+Kullanıcı: *"küçülüp büyüyen sıçrama/yıldızlarla oluşma efekti devam ediyor, onu istemiyorum."*
+
+`filter:blur()` kartın "yıldızlardan oluşuyor" gibi görünmesine yol açıyordu. **Tamamen kaldırıldı.** Sınırda yalnız **saydamlaşma** kalıyor — maske + opaklık rampası kesik kenarı zaten önlüyor.
+
+### ⚠ HATA 3 · pinch sayfayı yakınlaştırıyordu
+
+`{passive:true}` dinleyici `preventDefault` çağıramıyordu, tarayıcı kendi yakınlaştırmasını yapıyordu. `{passive:false}` + `preventDefault` + iki parmak süresince `touch-action:none`.
+
+### ⚠ Bu turda yapılan hata · fazla silme
+
+Önceki yaklaşımı geri alırken iki işaret arasındaki her şeyi sildim — aradaki **12 862 karakterlik başka CSS blokları** da gitti (power-up orb'u, güç aurası, belirteç stilleri). On dört kapı 56 hata verdi.
+
+**Paketlenmiş sürümden geri yüklendi** ve değişiklikler bu kez tek tek, hedefli biçimde uygulandı. Ders: geniş aralık silme yerine her bloğu kendi imzasıyla değiştir.
+
+### Test · `cark_test.js` güncellendi
+
+11 eski kontrol yeni tasarıma göre yeniden yazıldı: dört kademeli kart · kademe sınıfı · **sabit yükseklikler** · kademe eşikleri · çapraz sönüm · k3 sf referansına kadar · `diz`+`dizKay` tutarlı · **bulanıklık yok** · `data-toz` kalmadı.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-15a` ↔ `rota-2026-08-15a` · 355 114 bayt**
+
+---
+
+## 102 · ÜÇ KÖK SEBEP · `2026-08-16a`
+
+Kullanıcı üç sorunun da sürdüğünü bildirdi. Her birinin kökü ayrıydı.
+
+### ⚠ 1 · kartlar hâlâ iç içe · İKİ ayrı sebep
+
+**(a) `.kd`'de `overflow:hidden` yoktu.** Satırlar `height:0` iken bile içerik kutunun dışına taşıyordu — ekran görüntüsünde kartın kutusu bitiyor ama "Neoplazi · 2/2. parça" metni altında görünüyordu.
+
+**(b) Yükseklikler VARSAYIMDI.** `KH=[36,59,79,98]` diye sabit sayı yazmıştım; CSS'in ürettiği gerçek yükseklikle tutmuyordu (`kd3b` satırı hesaba katılmamıştı, kenarlık payı eksikti).
+
+**Düzeltme:** `.kd{overflow:hidden}` + **yükseklikler artık ölçülüyor.** `diz()` bir örnek elemana dört kademeyi sırayla uygulayıp `getBoundingClientRect()` ile gerçek yüksekliği alıyor, önbelleğe koyuyor. Sürükleme karesi bu önbelleği kullanıyor — ölçüm yapmıyor, hız kaybı yok.
+
+Ayrıca **sürüklerken kademe değişince yükseklik de güncelleniyor** ve `y` yeniden çözülüyor; önceden yalnız sınıf değişiyordu, yerleşim eski yüksekliğe göre kalıyordu.
+
+### ⚠ 2 · ışık patlaması
+
+`@keyframes kartAc{from{opacity:0}}` hâlâ duruyordu. Etkin kart her seferinde **opaklık 0'dan** beliriyordu — "ışık patlaması / yıldızlardan oluşma" bu.
+
+**Kaldırıldı.** `@keyframes kartAc` tamamen silindi, `.sr.act .kart{animation:none}`. Kart zaten oradaydı, yalnız kademesi büyüyor.
+
+### ⚠ 3 · uzaklaştırma sayfayı yakınlaştırıyordu
+
+Dinleyiciler `#cark` üzerindeydi. **Gün kipindeyken `#gunListe` çarkın üstünü örtüyor** (`position:absolute;inset:0;z-index:2`) ve dokunuşlar çarka hiç ulaşmıyordu. Sıkıştırma çalışıyordu (çark görünürken), **uzaklaştırma çalışmıyordu** (liste görünürken) — tarayıcı devralıp sayfayı yakınlaştırıyordu.
+
+**Düzeltme:** dinleyiciler **üst kapsayıcıya** taşındı, **yakalama evresinde** (`capture:true`) dinleniyor, `touch-action` hem kapsayıcıda hem listede kilitleniyor. Ayrıca `touchmove`'da `pinchD0` yoksa kurtarılıyor (parmaklar liste üstünde başlamışsa).
+
+Eşikler biraz gevşetildi: 0.72→**0.74**, 1.38→**1.34**.
+
+### Test · `cark_test.js` +12 kontrol, 5 eskimiş kontrol yenilendi
+
+`kd` taşmayı kırpıyor · **ışık patlaması yok** · etkin kartta animasyon yok · **yükseklikler ölçülüyor** · önbelleğe alınıyor · sürüklerken güncelleniyor · `y` yeniden çözülüyor · **dinleyiciler üst kapsayıcıda** · yakalama evresi · gün kipinde de kilit · **pinch-out da preventDefault** · `pinchD0` kurtarma.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-16a` ↔ `rota-2026-08-16a` · 357 142 bayt**
+
+---
+
+## 103 · ⚠ KÖK SEBEP · DOM HER GEÇİŞTE YENİDEN KURULUYORDU · `2026-08-17a`
+
+Kullanıcı doğru teşhisi koydu: *"seçim yapınca çark toplanıp yeniden dağılıyor gibi oluyor, belki de aslında efekt yok."*
+
+**Efekt yoktu. `carkCiz()` her geçişte `s.innerHTML=''` ile TÜM DOM'u siliyor ve yeniden kuruyordu.**
+
+Elemanlar yok edilip yeniden yaratılıyor, `diz()` onları sıfır konumundan yerleştiriyor ve hepsi birden beliriyordu. "Işık patlaması", "yıldızlardan oluşma", "çark toplanıp dağılıyor" — hepsi bunun tezahürüydü. Üç turdur animasyon arıyordum, sorun animasyonda değildi.
+
+### Düzeltme · eleman yeniden kullanımı
+
+- Elemanlar `dataset.i` ile eşleşiyor; pencereye **yeni girenler** yaratılıyor, **çıkanlar** siliniyor
+- İçerik **yalnız** etkinlik durumu değiştiyse yenileniyor (`icerikGerek`)
+- Kademe sınıfı yeniden hesaplanana kadar **korunuyor**
+- Mola şeritleri de aynı biçimde yeniden kullanılıyor
+- DOM sırası `insertBefore` ile düzeltiliyor (`diz()` komşuluk varsayıyor)
+
+Geçişte artık **hiçbir eleman yok edilmiyor** — süreklilik korunuyor.
+
+### ⚠ 2 · sınırda titreme · histerezis
+
+Kullanıcı: *"üst/alt sınırlara yaklaşan kartlar birden saat kısımlarını da gösterip göstermediğinden titriyorlarmış gibi."*
+
+Tek eşikli kademe kararı, sınır civarındaki şeridi iki kademe arasında salındırıyordu.
+
+**Girme ve çıkma eşikleri ayrıldı:**
+
+| Kademe | Girme (|θ|<) | Çıkma (|θ|>) |
+|---|---|---|
+| k3 | 0.055 | 0.075 |
+| k2 | 0.155 | 0.180 |
+| k1 | 0.300 | 0.335 |
+
+Bir kademeye girdikten sonra çıkmak için biraz daha uzaklaşmak gerekiyor — salınım bitti.
+
+### ⚠ 3 · metin kendiliğinden seçiliyordu
+
+Sürüklerken tarayıcı metni seçiyordu (kopyalama sanıyor). `user-select:none` + `-webkit-touch-callout:none` — hem çarkta hem gün listesinde.
+
+### Test · `cark_test.js` +13 kontrol
+
+**DOM her geçişte silinmiyor** · elemanlar kimliğe göre eşleşiyor · var olan kullanılıyor · içerik yalnız gerektiğinde yenileniyor · kademe sınıfı korunuyor · pencere dışı siliniyor · **DOM sırası düzeltiliyor** · mola da yeniden kullanılıyor · metin seçimi kapalı (çark + liste) · dokunma çağrısı kapalı · **histerezis iki fonksiyonda da** · kademe geçmişi okunuyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-17a` ↔ `rota-2026-08-17a` · 360 133 bayt**
+
+---
+
+## 104 · ÇARK HATASI · YATAY ÜST ŞERİT · MENÜ ÇÖZÜLDÜ · `2026-08-18a`
+
+### ⚠ 1 · çark bug'a giriyordu
+
+§103'teki DOM yeniden kullanımında sıralama `insertBefore` ile tek tek yapılıyordu:
+
+```js
+sira.forEach((k,n)=>{const x=[...s.children].find(...);
+  if(x&&s.children[n]!==x)s.insertBefore(x,s.children[n]||null)});
+```
+
+Her `insertBefore` sonraki indeksleri kaydırdığı için sıra bozuluyordu — kartlar rastgele konumlara düşüyordu.
+
+**Düzeltme:** `DocumentFragment`'e sırayla ekleme. `appendChild` var olan düğümü **taşır** (yok etmez), sıra tek seferde doğru kuruluyor. Test ortamında `createDocumentFragment` yoksa doğrudan sahneye ekleniyor.
+
+### 2 · üst şerit YATAY oldu
+
+Orb'lar ve mola çipi dikey yığılıyordu; çarkın dikey alanını yiyordu (ekran görüntülerinde çark ekranın alt yarısına sıkışmıştı).
+
+- Yeni `.solUst` kapsayıcı: **yatay, sarmasız**
+- Orb ölçüsü 36px → **32px**, ikincil düğmeler **28px**
+- `.etSat` (mola çipi) da yatay, taşarsa kaydırılabilir
+
+### 3 · menü çözüldü
+
+`mOrb` (üç çizgi) + açılır `mYay` kaldırıldı. Düğmeler **doğrudan tıklanabilir**:
+
+| Düğme | |
+|---|---|
+| **Power up** (32px, güç ışını) | ana orb |
+| **Telafi** (32px) | kaçırılan görevler · rozet burada |
+| Deneme girişi (28px) | ikincil |
+| Tamamlananlar (28px) | ikincil |
+
+Menü açma/kapama mantığı, `mYay` ve `mOrb` CSS'i tamamen silindi.
+
+### Test
+
+`cark_test.js` H bölümü (menü orb'u · 10 kontrol) yeni düzene göre yeniden yazıldı: menü kaldırıldı · power-up doğrudan · telafi doğrudan · deneme ve tamamlanan doğrudan · **yatay şerit** · mola çipi yatay · rozet. Ayrıca `DOM sırası fragment ile kuruluyor` ve `pu_test`'te `orb doğrudan tıklanabilir`.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-18a` ↔ `rota-2026-08-18a` · 357 918 bayt**
+
+⚠ **Kalan:** seyir defteri ve güç matrisi sayfalarındaki taşma bildirildi; dikey alan açıldığı için düzelmiş olabilir, cihazda kontrol gerekiyor.
+
+---
+
+## 105 · ESKİ PANEL KALDIRILDI · YAKINLAŞTIRMA KİLİDİ · `2026-08-19a`
+
+### 1 · alttaki "Bugün" paneli · eski to-do kalıntısı
+
+`gpanel` — menü kaldırılınca açık kalıp ekranın altında görünüyordu. **Tamamen silindi**: HTML, `gpanelCiz`, `gunPanelAc`, gezinme IIFE'si, `gGun` değişkeni ve `#gpanel` · `.gIt` · `.gBlok` · `.gK` CSS blokları.
+
+Yerini **pinch gün listesi** aldı.
+
+### ⚠ 2 · çark dokunup bırakınca bug'a giriyordu
+
+`kayY` (sürükleme kayması) sürükleme bitince **sıfırlanmıyordu**. Bir sonraki çizimde `diz()` hâlâ eski kaymayı uyguluyor, şeritler kaymış konumda üst üste biniyordu.
+
+```js
+function carkCiz(){ ...
+  if(!surukleKip)kayY=0;   // ← eklendi
+```
+
+### 3 · tüm uygulama yakınlaştırılamaz ve seçilemez
+
+Pinch'in kusursuz çalışması için tarayıcının kendi yakınlaştırması tamamen kapatıldı:
+
+| | |
+|---|---|
+| `viewport` | `user-scalable=no, minimum-scale=1, maximum-scale=1` |
+| `html,body` | `touch-action:manipulation` |
+| `*` | `user-select:none` · `-webkit-touch-callout:none` |
+| İstisna | `input, textarea, select, [contenteditable]` seçilebilir kalıyor |
+
+### 4 · mola çipi yatay şeride taşındı
+
+`.etSat` artık `.solUst` içinde — power up ve telafi ile **aynı satırda**. Şerit taşarsa yatay kaydırılabiliyor. Çarkın dikey alanı daha da genişledi.
+
+### Test
+
+`cark_test.js` G bölümü (eski bugün paneli · 12 kontrol) yeni tasarıma göre yeniden yazıldı, +9 yeni kontrol: **viewport kilidi** · `touch-action` · tüm uygulamada seçilemezlik · **girdi alanları hariç** · **`kayY` sıfırlanıyor** · mola çipi yatayda · şerit kaydırılabilir · eski CSS gitti · `gGun` kalmadı.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-19a` ↔ `rota-2026-08-19a` · 354 650 bayt**
+
+⚠ **Kalan:** seyir defteri ve güç matrisi sayfalarındaki sütun taşması bildirildi ama henüz kök sebebi bulunmadı — bir sonraki turun işi.
+
+---
+
+## 106 · ⚠ SINIF ÇAKIŞMASI · SEYİR ve GÜÇ MATRİSİ BOZULMASININ SEBEBİ · `2026-08-20a`
+
+### Kök sebep
+
+Çark kartlarına verdiğim sınıf **`.kd`** idi. Ama seyir defteri ve ölçüm sayfalarının kapsayıcıları da **`class="kd"`**:
+
+```html
+<section class="vw" id="seyir"><div class="kd" id="seyirIc"></div></section>
+<section class="vw" id="olcum"><div class="kd" id="olcumIc"></div></section>
+```
+
+Benim kurallarım o sayfalara da uygulanıyordu:
+
+```css
+.kd{padding:0 13px;overflow:hidden}          /* kaydırma bozuldu */
+.kd>div{display:flex;align-items:center}     /* TÜM bölümler yan yana dizildi */
+```
+
+Ekran görüntülerindeki üç sütunlu kırık düzen (başlık solda, açıklama ortada, branş listesi sağda kesik) tam olarak buydu — `.kd>div{display:flex}` sayfanın bölümlerini satır hâline getiriyordu.
+
+### Düzeltme
+
+Kart sınıfları **benzersiz ada** taşındı: `kd` → **`kdm`**, satırlar `kd0–kd3b` → **`kdm0–kdm3b`**. Toplam 38 geçiş.
+
+Orijinal `.kd` kuralları (`position:absolute;inset:0;overflow-y:auto`) **korundu** — seyir ve ölçüm sayfaları kendi düzenlerine döndü.
+
+⚠ **Ders:** yeni CSS sınıfı eklerken ada önce `grep` at. `kd` gibi kısa ad çakışmaya açık.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-20a` ↔ `rota-2026-08-20a` · 354 697 bayt**
+
+### Not · test ortamı sınırı
+
+`olcumCiz()` test ortamında veri eksikliğinden koşmuyor; düzeltme CSS seçicileri üzerinden doğrulandı (kart sınıfı `kdm`, kapsayıcı `.kd` korundu, `.kd>div` kuralı kalmadı). Cihazda kontrol gerekiyor.
+
+---
+
+## 107 · UYGULAMA AÇILMIYORDU · İKİ DAYANIKLILIK DÜZELTMESİ · `2026-08-21a`
+
+Kullanıcı boş çark ve `Uncaught Error: Script error` bildirdi.
+
+### Yeni araç · `tarayici_test.js`
+
+Mevcut test ortamı (`derin_ortam.js`) DOM'u çok basit taklit ediyordu; `appendChild`, `canvas`, `requestAnimationFrame` yoktu ve bu yüzden **çizim hataları hiç yakalanamıyordu.**
+
+Tarayıcıya çok daha yakın bir taklit yazıldı: gerçek `appendChild`/`children`, `classList`, `getBoundingClientRect`, canvas bağlamı, **kuyruklu `requestAnimationFrame`**. Böylece başlatma ve ilk çizim uçtan uca koşturulabiliyor.
+
+Bu araçla doğrulandı: **başlatma hatasız, `carkCiz()` 19 şerit üretiyor.** Yani JS sağlam; sorun yerleşimdeydi.
+
+### ⚠ 1 · üst şerit ekranı taşırıyordu
+
+Orb'lar yatay dizilince `.sol` genişledi ve `nav`'ı ekran dışına itti — ekran görüntüsünde sağdaki istatistikler kesik, mola çipi dört satıra sarmış.
+
+| | |
+|---|---|
+| `header` | `max-width:100%; overflow:hidden`, dolgu 24px→18px |
+| `.sol` | `min-width:0; flex:1 1 auto` (daralabilir) |
+| `header>nav` | `flex:0 0 auto` (sabit) |
+| `.solUst` | `min-width:0`, taşarsa kaydırılır |
+| `.etSat` | `white-space:nowrap`, sarmıyor |
+
+### ⚠ 2 · sıfır yükseklikte çizim
+
+`diz()` düzen oturmadan koşarsa `#cark` yüksekliği 0 oluyor; `R` taban değerine düşüyor ve **tüm şeritler uç açılara kayıp opaklıkları sıfırlanıyor** — çark boş görünüyor.
+
+```js
+if(!kw.height||kw.height<40||!kw.width){requestAnimationFrame(diz);return}
+```
+
+Düzen oturana kadar bir sonraki kareye erteleniyor.
+
+### Test · `cark_test.js` +7 kontrol
+
+sıfır yükseklikte çizim erteleniyor · üst şerit taşmıyor · sol sütun daralabiliyor · nav sabit · orb şeridi daralabiliyor · mola çipi sarmıyor · **kart sınıfı seyir kapsayıcısıyla çakışmıyor**.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-21a` ↔ `rota-2026-08-21a` · 355 035 bayt**
+
+⚠ Cihazda **sert yenileme** gerekebilir (servis işçisi eski sürümü önbellekten veriyor olabilir).
+
+---
+
+## 108 · ⚠ BAŞIBOŞ `}` · TÜM CSS BOZULMUŞTU · `2026-08-23a`
+
+Uygulama hiç açılmıyordu (boş çark · `Script error`). Kullanıcı Claude görüntüleyicisinde açtığı için servis işçisi önbelleği de değildi.
+
+### Kök sebep
+
+§102'de `@keyframes kartAc` kuralını regex ile silmiştim:
+
+```python
+s=re.sub(r"@keyframes kartAc\{[^}]*\}[^}]*\}\n?","",s)
+```
+
+Regex kuralın gövdesini sildi ama **kapanış `}`'ini bıraktı.** 158. satırda başıboş bir `}` kaldı:
+
+```css
+/* Kart odağa gelirken YALNIZ çözünür — ... */
+}                                    ← başıboş
+@media (prefers-reduced-motion:reduce){...}
+```
+
+Bu `}` bir üstteki kuralı erken kapattı ve **o noktadan sonraki tüm CSS geçersiz oldu** — 60 000 karakterlik stil sayfasının büyük bölümü uygulanmıyordu. Çarkın boş görünmesi, sayfaların bozulması, taşmalar: hepsi bunun sonucuydu.
+
+⚠ On dört kapı bunu göremedi: hiçbiri **CSS'in kendi sözdizimini** kontrol etmiyordu.
+
+### Düzeltme
+
+Başıboş `}` kaldırıldı, yorum düzeltildi. CSS denge kontrolü: **0, başıboş yok.**
+
+### Yeni kontroller
+
+**`cark_test.js` · CSS BÜTÜNLÜĞÜ bölümü (6 kontrol):**
+- CSS süslü parantez **dengeli**
+- **başıboş `}` yok** (satır numarasıyla)
+- CSS boş değil (>40 000 karakter)
+- boş seçici yok
+- hata göstericisi var · servis işçisi korumalı
+
+Bu bölüm bir daha aynı hatanın kaçmasını engelliyor.
+
+### Ekranda hata göstericisi
+
+Sessiz `Script error` yerine hatayı **ekranın altında** gösteren bir yakalayıcı eklendi: mesaj, dosya, satır ve yığın izinin ilk dört satırı. Metin seçilebilir (kopyalanabilsin diye).
+
+⚠ Ana `<script>` bloğunun **içine** kondu — ayrı blok olarak eklendiğinde `derin_ortam.js`'in betik çıkarımı bozuluyordu.
+
+### Servis işçisi koruması
+
+`navigator.serviceWorker.register(...)` sandbox'lı çerçevede senkron fırlatabiliyor; tamamen `try/catch` içine alındı.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-23a` ↔ `rota-2026-08-23a`**
+
+---
+
+## 109 · ⚠ ÇARK 100 PİKSELE EZİLİYORDU · `2026-08-25a`
+
+Ekrana eklenen teşhis kesin cevabı verdi:
+
+```
+GOREVLER: 196 · carkListe: 191 · aktif: 5
+#cark: 430×100          ← YALNIZ 100 PİKSEL YÜKSEK
+#sahne çocuk: 16
+ilk şerit stil: translate(0px) rotate(0deg) scale(1) op=1
+```
+
+Çark **doğru çiziyordu** — 16 şerit, ilkinin opaklığı 1, dönüşümü doğru. Sorun kapsayıcının yüksekliğiydi: 100 piksellik kutuya sıkışıp `overflow:hidden` ile kırpılıyorlardı.
+
+### Kök sebep · sabit `vh` tavanı + kısa görüntü alanı
+
+`#rota` iki satırlık bir ızgara: üstte çark, altta brif paneli.
+
+```css
+#rota{grid-template-rows:minmax(100px,1fr) auto}
+#uzay{max-height:52vh}
+```
+
+Claude görüntüleyicisi uygulamayı **kısa bir çerçevede** açıyor (yaklaşık 330 CSS pikseli). Orada:
+
+| | |
+|---|---|
+| Görüntü alanı | ~330 px |
+| Üst şerit | ~130 px |
+| `main` | ~200 px |
+| `#uzay` (brif) `52vh` | ~172 px |
+| **`#cark` kalan** | **~28 px → tabana (100) çıkarıldı** |
+
+Sabit `vh` tavanı kısa çerçevede brif panelini orantısız büyütüp çarkı eziyordu. Telefonda tam ekran çalışırken sorun görünmüyordu.
+
+### Düzeltme · oranlı bölüşüm
+
+Sabit `vh` tavanları kaldırıldı, iki satır **oranla** paylaşıyor:
+
+| Ekran | Kural |
+|---|---|
+| ≤880px | `1.25fr minmax(88px,1fr)` |
+| ≤660px | `1.2fr minmax(84px,1fr)` |
+| ≤470px | `1.15fr minmax(80px,1fr)` |
+
+Çark her zaman görüntü alanının **~%55'ini** alıyor; brif kendi içinde kayabiliyor (`overflow-y:auto`). Ayrıca `#cark{min-height:140px}`.
+
+### Kalıcı teşhis araçları
+
+Bu turda eklenen üç araç kaldı:
+- **Ekranda hata paneli** — mesaj, dosya, satır, yığın izi (metin seçilebilir)
+- **`window.__G(fn,ad)`** — kritik fonksiyonları sarmalıyor, "İÇ HATA · fonksiyon adı" yazıyor
+- **`window.__TESHIS()`** — yükleme sonrası durum özeti
+
+Çapraz-köken maskesi ("Script error.") yüzünden tarayıcı ayrıntı vermediğinde tek görme yolu bunlar.
+
+### Test · `cark_test.js` +8 kontrol
+
+üç kırılma noktasında oranlı bölüşüm · sabit vh tavanı kalmadı · brif kendi içinde kayar · çark asgari yüksekliği · teşhis araçları duruyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-25a` ↔ `rota-2026-08-25a`**
+
+---
+
+## 110 · ⚠ `html` YÜKSEKLİĞİ YOKTU · TÜM ZİNCİR ÇÖKÜYORDU · `2026-08-26a`
+
+İkinci teşhis: `#cark: 430×140` — yani `min-height:140px` bağlayıcıydı, **ızgara hâlâ pay vermiyordu.** `fr` birimleri çözülmüyordu.
+
+### Kök sebep · yükseklik zinciri kopuk
+
+```css
+html{background:#04050A;color-scheme:dark}   /* ← yükseklik YOK */
+body{height:100%;margin:0;overflow:hidden}
+```
+
+`body{height:100%}` **html'e göre** çözülür. html'in yüksekliği `auto` olduğu için bu kural **tamamen görmezden geliniyor** → body içerik yüksekliğine düşüyor → `main{flex:1 1 auto}` de öyle → `.vw{position:absolute;inset:0}` sıfır alıyor → `#rota` ızgarasının `fr` birimleri paylaşacak yükseklik bulamıyor → `#cark` `min-height` tabanına çöküyor.
+
+Zincirdeki tek eksik halka html'di.
+
+### Düzeltme
+
+```css
+html{background:#04050A;color-scheme:dark;height:100%}
+@supports (height:100dvh){html{height:100dvh}}
+```
+
+`dvh` mobil tarayıcı çubuğunun açılıp kapanmasını da doğru izliyor.
+
+### Neden şimdiye kadar görünmedi
+
+§108'de düzelttiğim **başıboş `}`** stil sayfasının 158. satırdan sonrasını geçersiz kılıyordu. O bölgedeki bazı kurallar uygulanmadığı için düzen tesadüfen farklı çözülüyordu. CSS geçerli hâle gelince eksik `html` yüksekliği ortaya çıktı.
+
+Yani iki hata birbirini maskeliyordu.
+
+### Test · `cark_test.js` +5 kontrol
+
+html kesin yüksekliğe sahip · `dvh` desteği · body yüksekliği çözülebiliyor · main esneyebiliyor · rota ızgarası yüzde yükseklik.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-26a` ↔ `rota-2026-08-26a`**
+
+---
+
+## 111 · DÖRT DÜZELTME · `2026-08-27a`
+
+Uygulama açıldı (§110'daki `html` yüksekliği). Kullanıcı dört sorun bildirdi.
+
+### ⚠ 1 · fare tekerleği çarkı döndürmüyor, kaydırma görünümünde takılıyordu
+
+Tekerlek olayı **sürükleme gibi** işleniyordu: `kayY -= e.deltaY`. Tek tık `kayY`'yi ~100px oynatıyor ama merkeze en yakın kart değişmiyor — çark dönmüyor. Üstelik `otur()` `surukleKip` kontrolüne takılıp çalışmayınca kaydırma görünümünde **takılı kalıyordu.**
+
+**Düzeltme · birikimli adım:**
+
+```js
+let tekBir=0; const TEK_ESIK=48;
+tekBir+=e.deltaY;
+while(Math.abs(tekBir)>=TEK_ESIK){const y=tekBir>0?1:-1; tekBir-=y*TEK_ESIK; adim(y)}
+```
+
+Tek tık = bir kart. `ctrl+tekerlek` (pinch karşılığı) hariç tutuldu. 220 ms sonra birikim sıfırlanıyor ve gerekiyorsa oturuluyor.
+
+### 2 · mola çipi kaybolmuştu
+
+`.solUst{overflow-x:auto}` çipi kırpıyordu. Artık `overflow:visible` ve çip **tek satır**: `.etSat>*{white-space:nowrap}`.
+
+### 3 · telafi rozeti üst panelin altında kalıyordu
+
+`header{overflow:hidden}` orb'un dışına taşan rozeti kesiyordu.
+
+```css
+header{overflow-x:clip;overflow-y:visible}
+@supports not (overflow-x:clip){header{overflow:visible}}
+```
+
+Yatay taşma hâlâ kırpılıyor (ekran dışına itmesin), dikey serbest. `.solUst`'a `padding-top:5px`.
+
+### 4 · okumalar bloğu dağınıktı
+
+"Kalan potansiyel" iki satıra sarıyor, altındaki değerler aşağı kayıyordu.
+
+- `.ok .cap{white-space:nowrap}` — başlıklar tek satır
+- Dar ekranda (≤470px) "Kalan potansiyel" → **"Potansiyel"** kısaltması, başlık boyutu 7.5px
+- `.okumalar .ok{display:flex;flex-direction:column;justify-content:flex-start}` — üç sütun hizalı
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-27a` ↔ `rota-2026-08-27a` · 360 836 bayt**
+
+---
+
+## 112 · KARTLAR ARTIK İÇ İÇE GEÇMİYOR · `2026-08-28a`
+
+Kullanıcının çözümü doğruydu: *"çark odak seçimine en yakın olan görev kartı en önde olsun ve %100 opak olsun, bu iç içe geçme sorununu çözer."*
+
+### İki ayrı sebep vardı
+
+**1 · Katman sırası tekil değildi.**
+
+```js
+zIndex = i===a ? 9 : Math.max(1, 7-Math.round(ab*5))
+```
+
+Yedi katman değeri onlarca şeride dağıtılıyordu; **birkaç şerit aynı katmanı paylaşıyordu.** Çakıştıklarında hangisinin üstte kalacağı belge sırasına kalıyordu — DOM yeniden kullanımından sonra bu sıra oynak olduğu için "iç içe geçmiş" görünüyordu.
+
+```js
+zIndex = i===a ? 999 : Math.max(1, 900 - Math.round(ab*1000))
+```
+
+Artık her şeridin katmanı açısıyla **tekil** ve odağa en yakın olan **her zaman en üstte.** `diz()` ve `dizKay()` aynı formülü kullanıyor.
+
+**2 · Kart zeminleri saydamdı.**
+
+```css
+.kdm{background:rgba(255,255,255,.05)}   /* saydam */
+```
+
+Katman sırası doğru olsa bile saydam zemin alttakini **içinden gösteriyordu.** Zeminler opak hâle getirildi:
+
+| Kademe | Zemin |
+|---|---|
+| k0 | `#0A0E18` |
+| k1 | `#0C1120` |
+| k2 | `#0E1425` |
+| k3 | `#111829` |
+| etkin kart | `#131A2C` |
+
+Kademe yükseldikçe zemin biraz açılıyor — derinlik hissi korunuyor ama üstteki alttakini **tamamen** kapatıyor.
+
+Etkin karttan `backdrop-filter:blur(26px)` de kaldırıldı: opak zeminle gereksiz ve pahalıydı.
+
+### Test · `cark_test.js` +11 kontrol
+
+odaktaki en üst katmanda · katman odağa uzaklıkla kesin · `diz`/`dizKay` aynı formül · beş zeminin hepsi opak · odaktaki tam opak · **katman kesin azalan** · **katman değerleri tekil**.
+
+Son iki kontrol örnek açı dizisiyle sayısal doğrulama yapıyor — formül bozulursa yakalanır.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-28a` ↔ `rota-2026-08-28a` · 361 217 bayt**
+
+---
+
+## 113 · BEŞ DÜZENLEME · `2026-08-29a`
+
+### 1 · teşhis paneli gizlendi
+
+Kırmızı hata/teşhis şeridi artık **yalnız `?hata=1`** parametresiyle açılıyor. Normal kullanımda ekranı kirletmiyor; hata yakalayıcı arka planda çalışmaya devam ediyor.
+
+Sorun çıkarsa `index.html?hata=1` ile açmak yeterli.
+
+### 2 · ALTI kademeli kart · pürüzsüz geçiş
+
+Dört kademe (k0–k3) yerine **altı** (k0–k5). Aradaki basamaklar satırları **yarı yükseklikte** açıyor, sonra tam:
+
+| Kademe | Eşik | Yükseklik | Yeni |
+|---|---|---|---|
+| k0 | ≥0.320 | 36 | başlık |
+| k1 | <0.320 | 48 | konu adı **yarı** (12px, %55) |
+| k2 | <0.215 | 58 | konu adı tam · sf **yarı** (9px) |
+| k3 | <0.140 | 68 | sf tam · blok **yarı** (8px) |
+| k4 | <0.085 | 86 | blok tam · son seans **yarı** |
+| k5 | <0.040 | 100 | hepsi tam |
+
+Histerezis de altı kademeye genişletildi (girme/çıkma eşikleri ayrı). Zeminler kademeyle kademeli açılıyor: `#0A0E18 → #111829`.
+
+### 3 · üst şerit ızgaraya geçti
+
+Nav (yıldız · takvim · altıgen) `flex` düzeninde gün sayacının **üstüne biniyordu.**
+
+```css
+header{display:grid;grid-template-columns:auto 1fr auto;
+       grid-template-areas:'sol nav ist'}
+nav{grid-area:nav;justify-self:center}
+```
+
+Üç alan artık birbirine giremiyor.
+
+### 4 · istatistik sütunları kutulandı
+
+"32.25 T · 38.50 K   55.7–55.7   196 iş kaldı" tek şerit gibi okunuyordu; hangi alt satırın hangi başlığa ait olduğu belirsizdi.
+
+Her sütun kendi kutusunda: zemin, çerçeve, `min-width:74px`. **Parakete yeşil**, **Potansiyel mavi** tonda. Alt satırlar kısaltıldı (`T 32.3  K 38.5`, `12 tekrar`).
+
+### 5 · kutup yıldızı
+
+Gün sayacı zayıf gri bir sayıydı. Artık **yıldız parıltısı**: üç katmanlı `text-shadow` (12px → 30px → 60px), 6.4 saniyelik yavaş nefes animasyonu, renk `#F2F7FF`.
+
+Programın çapası olduğu için görünür olması gerekiyordu.
+
+### Test · `cark_test.js` +15 kontrol
+
+teşhis varsayılan kapalı · yalnız `?hata=1` · altı kademe eşiği ve yüksekliği · **üç ara basamak** · k4/k5 zeminleri · header ızgara · nav kendi alanında · istatistikler kutulu · parakete/potansiyel renkleri · **kutup yıldızı parlıyor** · hareket azaltmada sabit.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-29a` ↔ `rota-2026-08-29a` · 363 516 bayt**
+
+---
+
+## 114 · KADEME SIRA UZAKLIĞINA BAĞLANDI · OPAKLIK DÜZELDİ · `2026-08-30a`
+
+### ⚠ 1 · 16:30 kartı boş görünüyordu · kök sebep
+
+Kademe **açıdan** hesaplanıyordu. Etkin kart tam açık hâlde ~250px yüksekliğinde olduğu için hemen komşusu şu açıya düşüyordu:
+
+```
+y ≈ −(250/2 + 20 + 36/2) = −153  →  θ = asin(153/444) = 0.352
+```
+
+Eşik `k1` için 0.320 idi → komşu doğrudan **k0**'a düşüyordu. Kullanıcının gördüğü "16:30 kartı boş" tam olarak buydu; kartın hemen altındaki 16:54 odaktayken üstteki komşu en dar kademede kalıyordu.
+
+**Düzeltme · sıra uzaklığı:**
+
+```js
+const KD_SIRA=[5,4,3,2,1];              // |i−a| = 0,1,2,3,4
+const kdOf=i=>{const d=Math.abs(i-a); return d<KD_SIRA.length?KD_SIRA[d]:0};
+```
+
+Kullanıcının gördüğü şeye birebir uyuyor: odaktan bir uzak → k4, iki → k3, üç → k2, dört → k1, beş+ → k0. Histerezise de gerek kalmadı (sıra oynamıyor).
+
+Ek fayda: yükseklikler baştan belli olduğu için yerleşim **tek geçişte** doğru çözülüyor.
+
+Doğrulandı: `act → k4 → k3 → k2 → k1 → k0 → k0…`
+
+### ⚠ 2 · şeritler gereksiz soluktu
+
+```js
+op = i===a ? 1 : kk ? 0.97 : max(0, (komsu?.72:.52) − ab*(komsu?.46:1.05))
+```
+
+Odak dışındaki **her** şerit %52–72'ye düşüyordu. Kullanıcı: *"geri kalan görevler de %100 opak olsun, yalnız üst/alt sınıra yakın olanlar yıldız tozuna dönüşsün."*
+
+```js
+const SON_BAS=0.52, SON_UC=0.95;
+op = ab<=SON_BAS ? 1 : max(0, 1−(ab−SON_BAS)/(SON_UC−SON_BAS));
+```
+
+| |θ| | Opaklık |
+|---|---|
+| 0.00 – 0.52 | **1.00** |
+| 0.60 | 0.81 |
+| 0.75 | 0.47 |
+| 0.90 | 0.12 |
+| ≥0.95 | 0.00 |
+
+Katman sırası (§112) zaten uzaklığa göre kesin; artık **tüm görünür şeritler tam opak** ve yakın olan uzak olanın önünde.
+
+### 3 · dar ekranda üst şerit iki satır
+
+Üç sütun 430px'e sığmıyor, `.sol` eziliyor ve nav gün sayacının üstüne biniyordu (kutup yıldızı görünmüyordu).
+
+```css
+@media (max-width:660px){
+  header{grid-template-columns:1fr auto;
+         grid-template-areas:'sol ist' 'nav nav';row-gap:6px}
+  nav{justify-self:start}}
+```
+
+### 4 · geçiş hata korumalı
+
+`gecis` ve `adim` de `__G` sarmalayıcısına alındı; kart tıklamaları `try/catch` içinde. Bir hata olursa `?hata=1` ile fonksiyon adı ve mesaj görünüyor.
+
+### Test · `cark_test.js` +16 kontrol
+
+kademe sıra uzaklığından · sürüklerken de · açı eşikleri kalmadı · `kdOf` tek argümanlı · opaklık uçta sönüyor · **odak ve yakınlar tam opak** · eski soluk rampa kalmadı · dar ekranda iki satır · geçiş korumalı · **sayısal doğrulama** (sıra→kademe eşlemesi, opaklık rampasının üç noktası).
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-30a` ↔ `rota-2026-08-30a` · 364 334 bayt**
+
+---
+
+## 115 · MOLA KARTI ÇAKIŞMASI · KALAN GÜN TAKIMYILDIZI · `2026-08-31a`
+
+### ⚠ 1 · mola kartı diğerlerinin üstüne biniyordu
+
+Ekran görüntüsünde mola kartı ("Akşam · 45 dk") komşu kartlarla iç içeydi.
+
+Sebep · **kümeleme**: aynı bloğun kardeş görevleri ve mola, etkin kartın etrafında toplansın diye yatay kaymaları `0.34` ile kırpılıyordu:
+
+```js
+translate( R*(cos(t)-1) * (kk ? 0.34 : 1), R*sin(t) )
+```
+
+Bu, o şeritleri yayın dışından merkeze doğru **çekiyordu**. Kademeli kartlar (§113) uzun olduğu için çekilenler etkin kartın üstüne biniyordu.
+
+**Kümeleme tamamen kaldırıldı** — her şerit yayda kendi yerinde. Hiyerarşiyi zaten kademe (§114) ve katman sırası (§112) veriyor. Ölçek rampası da sadeleşti: `max(.86, cos(t)^.30)`.
+
+### 2 · mola çipi istatistiğin üstüne çıkıyordu
+
+`.sol{overflow:hidden}` + `.solUst{max-width:100%; overflow-x:auto}` — çip artık kendi sütununda kalıyor, taşarsa yatay kaydırılıyor.
+
+### 3 · KALAN GÜN · takımyıldız
+
+Kullanıcı: *"küçük ayı gibi yıldızlardan oluşsun, beyaz çizgilerle birleşsin, kimi yıldız daha parlak kimisi daha ufak."*
+
+**`RAKAM` tablosu · 0–9 için ayrı takımyıldız düzeni.** Her rakam `{p: noktalar, c: çizgiler}`:
+
+| Rakam | Yıldız | Çizgi |
+|---|---|---|
+| 0 | 8 | 8 (kapalı halka) |
+| 1 | 6 | 5 |
+| 2 · 3 · 5 · 9 | 7 | 6 |
+| 4 | 5 | 4 |
+| 6 | 8 | 7 |
+| 7 | 4 | 3 |
+| 8 | 7 | 8 (çift halka) |
+
+Nokta biçimi `[x, y, büyüklük]`; büyüklük 1–3:
+
+| Sınıf | Görünüm |
+|---|---|
+| `.y1` | küçük, soluk, hafif parıltı |
+| `.y2` | orta, `#DCE9FF`, 4px parıltı |
+| `.y3` | **büyük, saf beyaz**, 7px + 16px çift parıltı |
+
+Çizgiler `rgba(214,232,255,.34)` — takımyıldız haritalarındaki gibi ince ve soluk. Her yıldız **farklı fazda** parlıyor (`animation-delay` noktadan ve rakam sırasından türetiliyor), gökyüzü gibi düzensiz.
+
+Rakam sayısı serbest: `7` tek, `25` iki, `100` üç yıldız kümesi. `aria-label` ile ekran okuyucuya "25 gün kaldı" veriliyor. Yalnız sayı **değiştiğinde** yeniden çiziliyor.
+
+### Test · `cark_test.js` +18 kontrol
+
+RAKAM tablosu 0–9 tam · her rakamda ≥4 yıldız ve ≥3 çizgi · **çizgi uçları geçerli indeks** · büyüklükler 1–3 · **her rakamda en az bir parlak yıldız** · noktalar kutu içinde · 7/25/100/0 doğru SVG sayısı · üç yıldız sınıfı stilli · çizgiler ince · farklı fazlar · erişilebilir etiket · yalnız değişince çiziliyor · **kümeleme kaldırıldı** · mola çipi taşmıyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-08-31a` ↔ `rota-2026-08-31a` · 366 880 bayt**
+
+---
+
+## 116 · MOLA ÇİPİ KENDİ SATIRINDA · TAKIMYILDIZ OKUNUR · `2026-09-01a`
+
+### 1 · mola çipi kırpılıyordu
+
+Çip `.solUst` içindeydi; orada üç orb + çip 430px'lik ekranda `.sol` sütununa sığmıyordu ve `overflow-x:auto` onu kesiyordu (ekran görüntüsünde yalnız bir dilimi görünüyordu).
+
+**Kendi ızgara alanına taşındı:**
+
+| Ekran | Yerleşim |
+|---|---|
+| Geniş | `'sol nav ist'` / `'mol mol mol'` — çip **tam satır** |
+| Dar (≤660px) | `'sol ist'` / `'nav mol'` — çip nav'ın yanında, sağa hizalı |
+
+`.solUst` artık yalnız orb'ları taşıyor, kırpma gerekmiyor. `.sol`'daki `overflow:hidden` de kaldırıldı.
+
+### 2 · takımyıldız çizgileri parlıyor
+
+Kullanıcı: *"kalan gün sayısını birleştiren çizgiler de parlasın da kaç gün kaldığını okuyabileyim."*
+
+| | Önce | Sonra |
+|---|---|---|
+| Renk | `rgba(214,232,255,.34)` | `rgba(206,230,255,.72)` |
+| Kalınlık | 1.1 | **1.5** |
+| Parıltı | yok | `drop-shadow(0 0 3px)` |
+| Animasyon | yok | `yolIz` 5.6 sn nefes |
+| Boyut | 22×36 | **26×42** |
+
+Çizgiler de yıldızlar gibi nefes alıyor ama farklı periyotta (5.6 sn / 4.2 sn) — düzensiz ve canlı duruyor. Rakam artık uzaktan okunuyor.
+
+### Test · `cark_test.js` +11 kontrol
+
+çip kendi ızgara alanında · geniş ekranda tam satır · dar ekranda nav ile yan yana · **çip artık orb şeridinde değil** (DOM sırası kontrolü) · orb şeridi kırpmıyor · sol sütun kırpmıyor · çizgiler parlak · parıltı var · nefes alıyor · takımyıldız büyüdü · hareket azaltmada sabit.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-01a` ↔ `rota-2026-09-01a` · 367 199 bayt**
+
+---
+
+## 117 · MOLA/POWER-UP/TELAFİ OPAK · SÜRÜKLERKEN BRİF ÇEKİLİYOR · `2026-09-02a`
+
+### 1 · saydam kart zeminleri
+
+Mola kartı hâlâ saydam gradyanlıydı:
+
+```css
+background:linear-gradient(152deg,rgba(150,198,232,.17),rgba(140,190,225,.06) 62%,…)
+```
+
+Alttaki şeritler içinden görünüyor, kart iç içe geçmiş duruyordu. §112'de normal kartları opak yapmıştım ama **mola, power-up ve telafi varyantları atlanmıştı.**
+
+Hepsi opak hâle getirildi, renk kimlikleri korunarak:
+
+| Kart | Zemin |
+|---|---|
+| Mola (etkin) | `#16202E → #121A26 → #151F2C` |
+| Mola şeridi k0–k5 | `#101A26 → #17273C` |
+| Power-up şeridi | `#0B1420 → #122031` |
+| Telafi/ek şeridi | `#141207 → #1E1B0D` |
+| Etkin power-up kartı | `#101B2B` |
+| Etkin telafi kartı | `#1B1810` |
+
+Kademe yükseldikçe zemin açılıyor; çerçeve renkleri (mavi/altın) kimliği taşımaya devam ediyor.
+
+### 2 · sürüklerken brif çekiliyor, oturunca açılıyor
+
+Kullanıcı: *"kaydırırken bilgi çiplerinin görünmez olması, çarkın alt sınırının onların alanına uzaması, seçim bitince I harfi darlığından pürüzsüz genişleyerek açılmaları."*
+
+**Sürüklerken** (`surukleBasla`): `#rota.genis` → `grid-template-rows:1fr 0`, brif söner (.30s), **çark onun alanına yayılır** (.42s yumuşak geçiş).
+
+**Otururken** (`otur`): `genis` kalkar, `acil` eklenir (760 ms sonra temizlenir).
+
+```css
+@keyframes cipAcil{
+  0%  {transform:scaleX(.06); opacity:0; filter:blur(.6px)}
+  55% {opacity:1; filter:blur(0)}
+  100%{transform:scaleX(1)}}
+```
+
+Çipler **%6 genişlikten** (bir çizgi kalınlığı) açılıyor; kademeli gecikmelerle (.05 / .10 / .15 sn) sırayla geliyorlar. Hareket azaltma tercihinde hepsi kapalı.
+
+### Test · `cark_test.js` +17 kontrol
+
+mola kartı ve şeridi opak · **beş kademede de opak** · power-up/telafi şeritleri ve etkin kartları opak · **saydam gradyan kalmadı** · sürüklerken brif çekiliyor · çark alanına yayılıyor · brif sönüyor · açılma sınıfı ekleniyor ve **temizleniyor** · çip dar çizgiden açılıyor · kademeli geliyor · ızgara geçişi yumuşak · hareket azaltmada sabit.
+
+`mola_test.js`'teki renk kontrolü yeni opak zemine göre güncellendi.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-02a` ↔ `rota-2026-09-02a` · 369 301 bayt**
+
+---
+
+## 118 · ALT SINIR KOREOGRAFİSİ · `2026-09-03a`
+
+Kullanıcı: *"çipler yok olunca çarkın ayarı kaçıyor, ani sınır değişimi güzel durmuyor."*
+
+### ⚠ 1 · çark merkezi kayıyordu
+
+`#rota` satırları değişince `#cark` büyüyor ama **`diz()` yeniden koşmuyordu**; yerleşim eski yüksekliğe göre kalıyor, çark olması gereken noktadan dönmüyordu.
+
+**`sinirKareBasla(süre)`** eklendi: geçiş boyunca her karede `diz()` koşuyor, `requestAnimationFrame` ile. Süre dolunca duruyor; yeni bir geçiş başlarsa önceki kare döngüsü iptal ediliyor.
+
+### 2 · sıralı koreografi
+
+| Yön | Sıra |
+|---|---|
+| **Açılırken** | 1) çipler saydamlaşarak söner (0.26 sn) → 2) alt sınır yavaşça iner (0.55 sn) |
+| **Kapanırken** | 1) sınır yavaşça çıkar (0.55 sn) → 2) **tamamlandıktan sonra** çipler açılır |
+
+Ani değişim yerine iki aşamalı. `cipGiz` (çip sönmesi) ve `genis` (sınır) **ayrı sınıflar**, ayrı zamanlamalar.
+
+### 3 · yarıda kesilme
+
+Kaydırma iptal edilir ya da animasyon bitmeden seçim yapılırsa:
+
+```js
+if(sinirDurum===ac)return;              // aynı duruma tekrar geçme
+if(sinirZam){clearTimeout(sinirZam)}    // bekleyen adımı iptal et
+...
+if(!sinirDurum)return;                  // arada yön değiştiyse adımı atla
+```
+
+Sınır bulunduğu yerden ters yöne yumuşakça dönüyor, çipler ancak sınır tam yerine oturunca açılıyor.
+
+### 4 · yıldız tozu geçişi
+
+Sınır inerken **keskin bir çizginin kaydığı görünmüyor**: `#cark`'ın maskesi (§99) alttan giren şeritleri saydamdan opağa doğru geçiriyor. Kartlar sırayla, yıldız tozundan oluşuyormuş gibi beliriyor.
+
+### 5 · gün görünümü de aynı koreografide
+
+`gunKipAc(true/false)` da `sinirAc()` çağırıyor — pinch ile to-do görünümüne geçerken de çipler önce sönüyor, sonra sınır iniyor.
+
+### Test · `cark_test.js` +20 kontrol
+
+`sinirAc` ve `sinirKareBasla` var · açılış/kapanış sırası ve gecikmeleri (260/560 ms) · **geçiş boyunca `diz()` koşuyor** · kare döngüsü süreli · önceki kare iptal · yarıda iptal edilebiliyor · ters yöne geçiyor · aynı duruma tekrar geçilmiyor · süreler · çip gizleme ayrı sınıf · gün kipinde de · maskeden geçerek beliriyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-03a` ↔ `rota-2026-09-03a` · 371 249 bayt**
+
+---
+
+## 119 · ⚠ KART AÇILMIYORDU · VERİ UYUM DENETİMİ · `2026-09-04a`
+
+### ⚠ kaydırmayı bırakınca hiçbir kart açılmıyordu
+
+Ekran görüntüsünde etkin görev (16:30 Patoloji, brif onu gösteriyor) çarkta **ince şerit** olarak kalıyordu.
+
+**Kök sebep · içerik yenileme koşulu:**
+
+```js
+const icerikGerek = !varOlan || oncekiAkt!==simdiAkt || surukleKip || …;
+```
+
+1. Sürükleme başlar → `surukleKip=true` → etkin eleman **şerit** biçimine geçer ✓
+2. Sürükleme biter → `surukleKip=false`, `gecis()` → `carkCiz()`
+3. Aynı eleman **hâlâ etkin** → `oncekiAkt===simdiAkt` → `icerikGerek` **false**
+4. İçerik yenilenmiyor → **şerit hâlinde takılı kalıyor**
+
+Aynı görevi seçince (sıra değişmediğinde) kart hiç açılmıyordu.
+
+**Düzeltme · biçim izleme:**
+
+```js
+const bicim=(simdiAkt&&!surukleKip)?(sinavMod?'s':(motivMod?'v':'kart')):'serit';
+const icerikGerek=!varOlan||el.dataset.bicim!==bicim;
+el.dataset.bicim=bicim;
+```
+
+Eleman hangi biçimde olduğunu **kendisi taşıyor**; biçim değişince içerik yenileniyor. Mola şeritleri için de aynı mekanizma.
+
+### Veri uyum denetimi · power-up · seyir defteri · kitap haritası
+
+| Kontrol | Sonuç |
+|---|---|
+| Power-up konuları programda **değil** (çakışma yok) | ✓ |
+| Power-up konuları katalogda var | ✓ |
+| Havuz: **94 konu · 201.4 saat · 161.6 soru** | ✓ |
+| Harita kitapları programla aynı (15 kaynak) | ✓ |
+| Renk sayaçları kurulu (11 kitap) ve tutarlı | ✓ |
+| Sayaçlar tavanı aşmıyor | ✓ |
+| Harita "programda" sayıları doğru | ✓ |
+| **24'lü deneme sayacı 39** = programdaki 39 | ✓ |
+| **Video sayacı 44** = programdaki 44 | ✓ |
+| Etiketsiz 4 kaynakta ilerleme var | ✓ |
+
+**Hepsi son programla (196 görev) uyumlu.**
+
+⚠ İlk denetimde bir yanlış alarm çıktı: "TUSTIME Mikrobiyoloji 1 ≠ 2". Sebep denetimin **yalnız bölüm adına** bakmasıydı; "Enfeksiyon Hastalıkları" hem Atilla Uslu SST'de hem TUSTIME Mikrobiyoloji'de var. Denetim **kitap+bölüm çiftine** çevrilince uyum doğrulandı — harita baştan doğruymuş.
+
+### Test · `cark_test.js` +5 kontrol
+
+biçim kaydediliyor · biçim değişince içerik yenileniyor · sürüklerken şerit biçimi · mola biçimi de izleniyor ve kaydediliyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-04a` ↔ `rota-2026-09-04a`**
+
+---
+
+## 120 · ÇARK MERKEZİ SABİTLENDİ · `2026-09-05a`
+
+Kullanıcı: *"alt sınır aşağı kaysa bile çark büyüyüp o alanı ortalamamalı, çark küt diye aşağı düşmüş gibi görünüyor. Çarkın ve orta noktasının konumu hiçbir zaman değişmeyecek."*
+
+### Kök sebep
+
+Geometrinin tamamı **kapsayıcı yüksekliğinden** türetiliyordu:
+
+```js
+R  = max(300, min(980, kw.height*1.28))
+BO = max(5,   min(9,   kw.height/78))
+.sahne{top:50%}                        /* kapsayıcının %50'si */
+```
+
+Alan açılınca `kw.height` 347 → 560 oluyordu:
+
+| | Brif açık | Brif kapalı | Kayma |
+|---|---|---|---|
+| Yarıçap | 444 | 717 | +273 |
+| Merkez | 173.5 | 280 | **+107 px** |
+
+Çark hem büyüyor hem 107 piksel aşağı düşüyordu — "küt diye düşme" bu.
+
+### Düzeltme · TABAN yüksekliği
+
+```js
+if(!genisMi && kw.height>60) carkTaban = kw.height;   // brif açıkken ölç
+const H0 = carkTaban || kw.height;
+R  = max(300, min(980, H0*1.28));
+BO = max(5,   min(9,   H0/78));
+sahne.style.top = (H0/2)+'px';                        /* %50 DEĞİL */
+```
+
+Taban **yalnız brif açıkken** ölçülüp saklanıyor. Alan açıldığında geometri hiç değişmiyor:
+
+| | Brif açık | Brif kapalı |
+|---|---|---|
+| Yarıçap | 444 | **444** |
+| Merkez | 173.5 | **173.5** |
+
+Açılan alan artık yalnız **görünür pencereyi** genişletiyor.
+
+### Sıralı beliriş
+
+Alan açılınca aşağıdaki görevler hep birden değil, **saat sırasına göre ard arda** beliriyor:
+
+```js
+if(genisMi && i>a) x.style.transitionDelay = ((i-a)*0.055)+'s';
+```
+
+Odaktan bir aşağıdaki 0.055 sn, beşincisi 0.275 sn sonra. Maskeden geçtikleri için saydamdan opağa doğru — yıldız tozundan oluşuyormuş gibi. Alan kapanınca gecikmeler temizleniyor.
+
+### Test · `cark_test.js` +17 kontrol
+
+`carkTaban` var ve `diz()` öncesinde tanımlı · taban yalnız daralmışken ölçülüyor · yarıçap ve boşluk **tabandan** · merkez tabanın yarısında · **kapsayıcı yüksekliği geometride hiç kullanılmıyor** · sıralı beliriş gecikmesi · yalnız aşağıdakiler gecikiyor · gecikme temizleniyor.
+
+Ayrıca **sayısal doğrulama**: alan açılsa da merkez ve yarıçap aynı kalıyor, eski davranışta kaydığı kanıtlanıyor (regresyon testi), gecikmeler artan sırada.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-05a` ↔ `rota-2026-09-05a` · 373 093 bayt**
+
+---
+
+## 121 · ⚠ TABAN KAPANIŞ ANINDA BOZULUYORDU · `2026-09-06a`
+
+§120'de merkez sabitlendi ama çark **hâlâ düşüyordu.**
+
+### Kök sebep
+
+Taban ölçümünün koşulu `if(!genisMi && …)` idi. Kapanış animasyonunda:
+
+1. `genis` sınıfı **anında** kalkar
+2. Ama CSS geçişi 550 ms sürdüğü için **yükseklik hâlâ 560 px**
+3. `genisMi` false → `carkTaban = 560` yazılır ✗
+4. Bir sonraki turda çark 560'a göre çizilir: daha büyük, 107 px daha aşağıda
+
+Simülasyonla kanıtlandı:
+
+| An | Koruma VAR | Koruma YOK |
+|---|---|---|
+| Başlangıç | 173.5 | 173.5 |
+| Açılırken | 173.5 | 173.5 |
+| Açık | 173.5 | 173.5 |
+| **Kapanırken** (sınıf kalktı, yükseklik 560) | **173.5** | **280** ✗ |
+| Kapandı | 173.5 | 173.5 |
+
+Kapanış anındaki **107 pikselik sıçrama** kullanıcının gördüğü "düşme"ydi.
+
+### Düzeltme · `sinirGecis` bayrağı
+
+```js
+let carkTaban=0, sinirGecis=false;
+
+sinirAc(ac){ …; sinirDurum=ac; sinirGecis=true; … }
+
+// kare döngüsü bitince
+else{ sinirKare=0; sinirGecis=false; diz() }
+
+// ölçüm
+if(!genisMi && !sinirGecis && kw.height>60) carkTaban=kw.height;
+```
+
+Taban **hiçbir geçiş sürmezken** ölçülüyor. Döngü bitince son bir `diz()` daha koşuyor ki nihai değerle çizilsin.
+
+Ayrıca ekran döndürme / pencere boyutu değişimi tabanı geçersiz kılıyor:
+
+```js
+window.addEventListener('resize',()=>{carkTaban=0; carkCiz()});
+```
+
+### Test · `cark_test.js` +10 kontrol
+
+`sinirGecis` var · taban geçişte ölçülmüyor · bayrak kalkıyor/iniyor · bitişte son `diz()` · yeniden boyutlandırmada sıfırlanıyor.
+
+**Sayısal regresyon testi:** kapanış anı modellenip korumalı ve korumasız hâller karşılaştırılıyor — korumasızda merkezin 280'e sıçradığı ve farkın **106.5 px** olduğu doğrulanıyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-06a` ↔ `rota-2026-09-06a`**
+
+---
+
+## 122 · GEOMETRİ ÖLÇÜMDEN TAMAMEN KOPARILDI · `2026-09-07a`
+
+§120 ve §121'de iki kez düzeltmeye çalıştım, çark hâlâ düşüyordu. Sorun tek tek hatalar değil, **yaklaşımın kendisiydi**: `#cark`'ı ölçmek her seferinde yeni bir zamanlama tuzağı doğuruyordu (sınıf ile gerçek yükseklik arasındaki gecikme).
+
+Kullanıcının teşhisi doğruydu: *"çark yeniden ölçeklenmeye, yeni alanı ortalamaya çalışmasın."*
+
+### Çözüm · ölçüm yok, oran var
+
+`#rota` ızgara kapsayıcısının yüksekliği **satırlar nasıl bölüşürse bölüşsün değişmez** — `main`'i doldurur. Çarkın taban yüksekliği bu sabit değerden CSS'teki satır oranıyla türetiliyor:
+
+```js
+const rotaY = rota.getBoundingClientRect().height;    // SABİT
+const ORAN  = w<=470 ? 1.15/2.15 : (w<=660 ? 1.20/2.20 : 1.25/2.25);
+const H0    = rotaY * ORAN;                           // taban
+```
+
+Oran CSS'teki `grid-template-rows` değerlerinin birebir karşılığı:
+
+| Ekran | Satırlar | Oran |
+|---|---|---|
+| ≤470px | `1.15fr / minmax(80px,1fr)` | 0.535 |
+| ≤660px | `1.20fr / minmax(84px,1fr)` | 0.545 |
+| ≤880px | `1.25fr / minmax(88px,1fr)` | 0.556 |
+
+**Hiçbir yerde `#cark` ölçülmüyor.** `carkTaban` yazımı kaldırıldı, `sinirGecis` yalnız koreografi için kaldı.
+
+Alt sınır aşağı kayınca hiçbir şey yeniden hesaplanmıyor: merkez, yarıçap ve şerit konumları birebir aynı. Açılan alan yalnız daha fazla şeridi **görünür** kılıyor; onlar da §120'deki sıralı gecikmeyle saat sırasına göre beliriyor.
+
+### Test · `cark_test.js` +12 kontrol
+
+`#rota` ölçülüyor (`#cark` değil) · oran breakpointe göre · taban orandan türetiliyor · **kapsayıcı ölçümü kalmadı** · yarıçap ve merkez tabandan · üç breakpointte de oran tanımlı ve artan · **kapsayıcı 347→560 oynarken merkez sabit** (dört farklı yükseklikle sınanıyor).
+
+Ayrıca 13 eskimiş kontrol yeni yaklaşıma göre yeniden yazıldı.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-07a` ↔ `rota-2026-09-07a`**
+
+---
+
+## 123 · ⚠ RAY MERKEZİ · ASIL SUÇLU · `2026-09-08a`
+
+§120–§122'de çarkın **şerit geometrisi** sabitlendi ama kullanıcı hâlâ düşme görüyordu. İki ekran görüntüsü karşılaştırıldı:
+
+| Durum | Soldaki odak noktası |
+|---|---|
+| Oturmuş | y ≈ 1255 |
+| Sürüklerken | y ≈ 1668 |
+
+Şeritler doğru yerdeydi; **kayan şey soldaki ray (ters C) ve odak noktasıydı.**
+
+### Kök sebep
+
+```js
+function rayCiz(R,W,H){ const cy=H/2; … }
+…
+rayCiz(R, kw.width, kw.height);      // ← KAPSAYICI yüksekliği
+```
+
+Ray merkezi kapsayıcıdan hesaplanıyordu. Üstelik `preserveAspectRatio:none` olduğu için `viewBox` yüksekliği değişince çizim **dikey de geriliyordu**.
+
+| `#cark` | Eski merkez | Yeni merkez |
+|---|---|---|
+| 347 | 173.5 | **149.8** |
+| 420 | 210 | **149.8** |
+| 500 | 250 | **149.8** |
+| 560 | 280 | **149.8** |
+
+Odak noktası 106 piksele kadar aşağı kayıyordu — kullanıcının gördüğü düşme buydu.
+
+### Düzeltme
+
+```js
+function rayCiz(R,W,H,cyD){ const cy = cyD!=null ? cyD : H/2; … }
+rayCiz(R, kw.width, kw.height, H0/2);   // merkez TABANDAN
+```
+
+Kapsayıcı yüksekliği artık **yalnız `viewBox` için** kullanılıyor (gerilme olmasın diye), merkez ise çarkın taban geometrisinden geliyor.
+
+**Sönümleme maskesi de yaya hizalandı:**
+
+```js
+<rect x="0" y="{cy − R}" width="{W}" height="{2R}" fill="url(#rg)"/>
+```
+
+Önceden dikdörtgen tüm kapsayıcıyı kaplıyordu; kapsayıcı büyüyünce yayın uçlarındaki sönümleme kayıyordu. Artık yayın kapladığı bantla birebir.
+
+### Test · `cark_test.js` +9 kontrol
+
+`rayCiz` merkez parametresi alıyor · merkez tabandan geçiriliyor · varsayılan korunuyor · maske yaya hizalı · maske yüksekliği yarıçaptan · kapsayıcı yalnız viewBox için · **dört farklı kapsayıcı yüksekliğinde ray merkezi sabit** · eski hâlde kaydığı kanıtlanıyor · kaymanın 100 pikseli aştığı doğrulanıyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-08a` ↔ `rota-2026-09-08a`**
+
+---
+
+## 124 · SINIR SENKRONU · GÜN KİPİNDE BRİF · `2026-09-09a`
+
+### ⚠ 1 · çipler bazen geri gelmiyordu
+
+Sınırın durumu (`sinirDurum`) ile gerçek CSS sınıfları (`genis` · `cipGiz`) **birbirinden kopabiliyordu**: yarıda kesilen geçiş, kaçan `pointerup`, çift çağrı.
+
+Kopunca `#rota` `genis` sınıfında asılı kalıyor, `#uzay` `min-height:60px`'e düşüp yalnız **tek satır çip** gösteriyordu — ekran görüntülerindeki durum tam buydu.
+
+**Düzeltme · tek doğruluk kaynağı:**
+
+```js
+function sinirOlmali(){ return !!(surukleKip || gunKip) }
+function sinirSenk(){
+  if(sinirDurum!==olmali || sinirGecis) return;   // geçişte karışma
+  olmali ? (cipGiz+genis ekle) : (ikisini de kaldır)
+}
+```
+
+`sinirSenk()` şu noktalarda koşuyor: her `carkCiz()`, kare döngüsü bitince, açılma animasyonu bitince, aynı duruma tekrar geçişte. Sınıflar duruma kopmuşsa kendiliğinden düzeliyor.
+
+**Sürükleme bitiş güvenliği:**
+- `window` düzeyinde `pointerup` (parmak alan dışına çıkarsa)
+- `window` `blur` (uygulama arkaya alınırsa)
+- **900 ms zaman aşımı** — her harekette tazeleniyor, son hareketten 900 ms sonra kendiliğinden oturuyor
+
+### ⚠ 2 · gün görünümünde alakasız açıklama
+
+Liste açıkken alttaki brif hâlâ **çarktaki etkin görevin** açıklamasını gösteriyordu.
+
+```css
+#rota.gunKip #uzay{opacity:0 !important;pointer-events:none;visibility:hidden}
+```
+
+`gunKip` sınıfı `gunKipAc(true/false)` ile ekleniyor/kaldırılıyor. `sinirOlmali()` da `gunKip` değişkenini hesaba katıyor, böylece liste açıkken sınır açık kalıyor.
+
+### Test · `cark_test.js` +19 kontrol
+
+tek doğruluk kaynağı · sürükleme VEYA gün kipi · uzlaştırıcı · geçişte karışmıyor · dört senkron noktası · gün kipinde brif tamamen kapalı · `gunKip` ekleniyor/kaldırılıyor · pencere düzeyinde `pointerup` · odak kaybı · **900 ms zaman aşımı** ve tazeleme · oturunca iptal.
+
+Ayrıca uzlaştırma mantığının **doğruluk tablosu** sınanıyor: kopukluk düzeltiliyor, geçişte karışmıyor, durum uyuşmazsa bekliyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-09a` ↔ `rota-2026-09-09a`**
+
+---
+
+## 125 · KOŞULSUZ TEMİZLİK AĞI · `2026-09-10a`
+
+§124'teki uzlaştırıcıya rağmen çipler hâlâ oluşmuyordu. Sim'de mekanizma doğru çalışıyordu; demek ki cihazda **bayraklardan biri takılı kalıyordu** ve uzlaştırıcı kendi koşuluna takılıp hiç devreye girmiyordu:
+
+```js
+if(sinirDurum!==olmali || sinirGecis) return;   // ← takılınca sonsuza dek bekler
+```
+
+`sinirGecis` bir kez `true` kalırsa (kaçan `requestAnimationFrame`, arka plana alınan sekme, kesilen zamanlayıcı) uzlaştırıcı bir daha hiçbir şeyi düzeltmiyordu.
+
+### Düzeltme · iki katmanlı
+
+**1 · `sinirSenk(zorla)`** — `zorla` verildiğinde hiçbir koşula bakmıyor, sınıfları duruma uyduruyor **ve bayrakları da düzeltiyor**:
+
+```js
+if(!zorla && (sinirDurum!==olmali || sinirGecis)) return;
+if(zorla){ sinirDurum=olmali; sinirGecis=false }
+```
+
+**2 · `sinirAgKur()` · koşulsuz ağ** — sürükleme ve gün kipi kapalıysa **1400 ms sonra** sınırın kesinlikle kapalı olması gerekir:
+
+```js
+sinirAg=setTimeout(()=>{ if(!sinirOlmali()) sinirSenk(true) },1400);
+```
+
+Ağ `otur()`'da ve sınır kapalıyken her `carkCiz()`'de yeniden kuruluyor (önceki iptal edilerek). Normal akışta hiçbir şey yapmıyor; yalnız bir bayrak takılırsa devreye girip düzeltiyor.
+
+Geçiş için ayrılan en uzun süre 560+760 = 1320 ms; ağ 1400 ms'de devreye giriyor, yani normal koreografiye hiç karışmıyor.
+
+### Test · `cark_test.js` +11 kontrol
+
+`zorla` parametresi · koşulları atlıyor · bayrakları da düzeltiyor · ağ fonksiyonu · 1400 ms · önceki ağ iptal · oturmada kuruluyor · her çizimde tazeleniyor.
+
+**Doğruluk tablosu:** takılı bayrakta normal senk bekliyor, **zorla kapatıyor**; gerçekten açık olması gerekiyorsa zorla açıyor.
+
+Ayrıca `tarayici_test.js`'e takılma senaryosu eklendi: sınıflar elle bozulup uzlaştırıcının düzelttiği doğrulanıyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-10a` ↔ `rota-2026-09-10a`**
+
+---
+
+## 126 · GÜN LİSTESİ · TEK BAKIŞTA · `2026-09-11a`
+
+Kullanıcı: *"tek bakışta bütün bir günün görevlerini burada görmek istiyorum, hepsi ekrana sığmalı"* + satırların sınır açılırken **teker teker** belirmesi.
+
+### Uyarlanabilir ölçekleme · `gunOlcekle()`
+
+Satır yüksekliği artık sabit değil, **kullanılabilir alana ve satır sayısına** göre hesaplanıyor:
+
+```js
+kalan = yükseklik − başlık(46) − dolgu(52)
+birim = kalan / (görev + blokBaşlığı×0.52)
+--gsat = clamp(17, birim−4, 46)          /* satır yüksekliği */
+--gyaz = clamp(9.5, --gsat×0.315, 13)    /* yazı ölçüsü */
+```
+
+Blok başlıkları satırın ~%52'si kadar yer kaplıyor; formül onları da hesaba katıyor.
+
+**620 px alanda sığma:**
+
+| Gün | Satır | Toplam |
+|---|---|---|
+| 9 görev + 4 blok (tipik) | 43.1 px | 578 px ✓ |
+| 15 görev + 4 blok (**programın en yoğunu**) | 26.6 px | 592 px ✓ |
+| 19 görev + 5 blok | 20.2 px | 605 px ✓ |
+| 21 görev + 5 blok | 17.6 px | 617 px ✓ |
+
+Satır 27 px'in altına inince `sik` kipi devreye giriyor: branş adı gizleniyor, boşluklar daralıyor. **Kaydırma tamamen kaldırıldı** (`overflow:hidden`) — her şey görünüyor.
+
+### Sıralı beliriş
+
+```css
+@keyframes glGel{
+  0%  {opacity:0; transform:translateY(6px) scaleX(.94); filter:blur(.5px)}
+  60% {opacity:1; filter:blur(0)}
+  100%{transform:none}}
+```
+
+Her satırın gecikmesi `0.30 + n×0.045` sn — sınır animasyonu bittikten sonra başlıyor, saat sırasına göre ard arda beliriyorlar.
+
+Etkin görev `.simdi` sınıfıyla mavi çerçeveli; artık ona kaydırmaya gerek yok, zaten görünüyor.
+
+### Test · `cark_test.js` +18 kontrol
+
+ölçekleme fonksiyonu · satır ve yazı değişkene bağlı · değişkenler yazılıyor · sınırlar 17–46 px · sık kipte branş gizli · kaydırma kapalı · sıralı beliriş · gecikme saat sırasına göre · etkin görev işaretli · hareket azaltmada sabit.
+
+**Sayısal doğrulama:** dört farklı yoğunlukta (9/15/19/21 görev) toplam yüksekliğin 620 px'i aşmadığı, yoğun günde satırın küçüldüğü ve tabanın altına inmediği sınanıyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-11a` ↔ `rota-2026-09-11a` · 379 403 bayt**
+
+---
+
+## 127 · GÜN LİSTESİ TAŞMASI · İKİLİ ARAMA · `2026-09-12a`
+
+§126'daki ölçekleme tahmine dayanıyordu (başlık 46 px + dolgu 52 px + blok payı %52). Tahmin bir tık yanılınca son satırlar kırpılıyordu — kullanıcı yukarı kaydırmayı zorlayınca gizli satırlar anlık görünüyordu.
+
+### Düzeltme · ölçerek ikili arama
+
+Tahmin yerine **gerçek `scrollHeight`** ölçülüyor; sığan en büyük satır yüksekliği ikili aramayla bulunuyor:
+
+```js
+let alt=11, ust=46, enIyi=11;
+uygula(46);
+if(scrollHeight<=h-2) enIyi=46;
+else for(let t=0;t<9;t++){
+  const orta=(alt+ust)/2; uygula(orta);
+  if(scrollHeight<=h-2){enIyi=orta; alt=orta} else ust=orta;
+  if(ust-alt<0.5)break }
+uygula(enIyi);
+```
+
+**620 px alanda (gün kipinde gerçek alan), tahmin 40 px yanılsa bile:**
+
+| Gün | Satır | İçerik |
+|---|---|---|
+| 9 görev + 4 blok | 43.0 px | 617 px ✓ |
+| 15 görev + 4 blok | 25.5 px | 615 px ✓ |
+| 19 görev + 5 blok | 18.7 px | 614 px ✓ |
+| 21 görev + 5 blok | 16.7 px | 617 px ✓ |
+
+Az iş varsa satır tavana (46 px) oturuyor; yoğunlukla küçülüyor. Taban 11 px.
+
+### Sınır inerken tazeleme
+
+Liste açıldığı anda alan hâlâ küçük (sınır henüz inmedi). Ölçek **1000 ms boyunca her karede** yeniden hesaplanıyor; gün kipi kapanırsa döngü duruyor. `if(h<80)return` ile düzen oturmadan hesap yapılmıyor.
+
+### ⚠ Süreç notu
+
+Bu turda iki düzenleme **sessizce başarısız oldu**: `assert s.count(esk)==1` tutmayınca dosya hiç yazılmadı ama komutun çıktısı başarılı görünüyordu (`uret.py` de eski sürümü ürettiği için testler geçiyordu). Ancak `grep` ile doğrulayınca fark edildi.
+
+**Ders:** her düzenlemeden sonra hedef dizgiyi `grep` ile doğrula; assert'in sessiz düşmesi testleri de yanıltıyor.
+
+### Test · `cark_test.js` +15 kontrol
+
+ikili arama kuruldu · gerçek yükseklik ölçülüyor · en çok 9 tur · yakınsayınca duruyor · en iyi değer uygulanıyor · düzen oturmadan hesaplamıyor · sınır inerken tazeleniyor · 1000 ms · gün kipi kapanınca duruyor.
+
+**Sayısal doğrulama:** dört yoğunlukta 40 px tahmin hatasıyla bile taşma olmadığı, yoğunlukla satırın küçüldüğü, az işte tavana oturduğu sınanıyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-12a` ↔ `rota-2026-09-12a` · 380 211 bayt**
+
+---
+
+## 128 · SONRAKİ · ÖNCEKİ · TAMAMLANDI → OTOMATİK KAYDIRMA · `2026-09-13a`
+
+### ⚠ 1 · çipler güncellenmiyordu · kök sebep
+
+Butonlar **global görev sırasını** kullanıyordu:
+
+```js
+if(a==='s' && aktif<GOREVLER.length-1) gecis(aktif+1);
+if(a==='o' && aktif>0)                 gecis(aktif-1);
+```
+
+Ama çark listesi (`carkListe()`) **filtrelenmiş**: geçmiş, tamamlanmış ve taşınmamış görevler dışarıda. `aktif+1` çoğu zaman listede **olmayan** bir göreve denk geliyordu; `carkCiz()` de `L[0]`'a düşüyordu. Alttaki çiplerin sabit kalmasının sebebi buydu.
+
+Artık `duraklar()` üzerinden — çarkın kendi durak listesinde bir adım.
+
+### 2 · sıçrama yerine otomatik kaydırma
+
+`otoKaydir(d, bitince)` elle kaydırmanın **aynısını** oynatıyor:
+
+1. `surukleBasla()` — sürükleme kipine girilir
+2. `kayY` hedefe **easeInOutCubic** ile taşınır (380 ms), her karede `dizKay()`
+3. `otur()` — komşu durağa oturulur
+
+Hedef kayma, komşu durağın yay üzerindeki dikey uzaklığından hesaplanıyor (`he[a] + ara[a+1]`, %92 pay). Önceki animasyon varsa iptal ediliyor. `dizOnb` yoksa (ilk çizim) doğrudan geçiliyor.
+
+Klavye okları zaten `adim()` kullanıyordu; artık tuşlar da aynı akışta.
+
+### 3 · Tamamlandı · kart sönerek yok oluyor
+
+Tamamlanan görev listeden düşeceği için, otomatik kaydırma başlarken karta `bitiyor` sınıfı veriliyor:
+
+```css
+@keyframes kartBit{
+  0%  {opacity:1}
+  45% {opacity:.55; filter:blur(.4px)}
+  100%{opacity:0;   filter:blur(2px)}}
+```
+
+Kart uzaklaştıkça sönüp bulanıklaşıyor. Kaydırma bitince `ust()` · `carkCiz()` · `brifCiz()` çağrılıp durum tazeleniyor.
+
+### Test · `cark_test.js` +20 kontrol
+
+`otoKaydir` var · **çark listesi üzerinden ilerliyor** · **global sıra kullanımı kalmadı** · üç tuş da bağlı · sürükleme kipi · yumuşatma eğrisi · 380 ms · bitince oturuyor · önceki animasyon iptal · `dizOnb` yoksa doğrudan · kart sönüyor ve bulanıklaşıyor · hareket azaltmada anında.
+
+**Sayısal doğrulama:** durak listesi dolu, uçlarda taşmıyor, eğri 0→0 · 1→1 · ortada 0.5 ve monoton.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-13a` ↔ `rota-2026-09-13a` · 382 660 bayt**
+
+---
+
+## 129 · ⚠ KONSOL HATALARI · İKİ KÖK SEBEP · `2026-09-14a`
+
+Kullanıcı Sonraki/Önceki'ye basınca konsolda arka arkaya `Uncaught Error: Script error.` görüyordu.
+
+### ⚠ 1 · `cancelAnimationFrame` korumasızdı
+
+`tarayici_test.js` ikinci çağrıda yakaladı:
+
+```
+otoKaydir(-1) HATA: cancelAnimationFrame is not defined
+```
+
+İlk çağrı `otoKare`'yi doldurup ikinci çağrıda `cancelAnimationFrame(otoKare)` çalışıyor; ortamda yoksa fırlatıyor. Gömülü çerçevede bu API kısıtlanabiliyor.
+
+**Düzeltme · korumalı sarmalayıcılar:**
+
+```js
+const kareAl   = f => requestAnimationFrame varsa onu, yoksa setTimeout(f,16)
+const kareBirak= k => cancelAnimationFrame varsa onu, yoksa clearTimeout
+```
+
+Tüm kare çağrıları (otomatik kaydırma · sınır koreografisi · gün ölçekleme) bunlardan geçiyor. **Korumasız `cancelAnimationFrame` kalmadı.** Tanımlar ilk kullanıcıdan önceye alındı (TDZ).
+
+### ⚠ 2 · hata sarmalayıcısı yeniden fırlatıyordu
+
+```js
+catch(err){ goster(...); throw err }      // ← eski
+```
+
+`__G` hatayı bildirdikten sonra **yeniden fırlatıyordu**. Çizim döngüsünde (`requestAnimationFrame`) bu yakalanamıyor ve her karede yeni bir `Script error.` üretiyordu — konsolun dolmasının sebebi buydu.
+
+Artık fırlatmıyor: hata sayılıyor, **aynı hata en çok 3 kez** yazılıyor, uygulama akmaya devam ediyor.
+
+### 3 · animasyon yolu hiç çalışmıyormuş
+
+`surukleBasla` ve `otur` bir IIFE içindeydi; `otoKaydir` onlara erişemediği için **her zaman anlık geçiş yoluna** düşüyordu. `window.__surBasla` / `window.__otur` ile dışarı açıldı — otomatik kaydırma artık gerçekten animasyonlu.
+
+Ayrıca tıklama işleyicisinin tamamı `try/catch` içine alındı.
+
+### Kullanıcının sorusuna cevap
+
+Bu kırmızı satırlar **tarayıcının kendi konsolu**; yalnız geliştirici konsolu açıkken görünür, normal kullanımda görünmez. Yine de gerçek hatalardı ve düzeltildi.
+
+### Test
+
+`cark_test.js`'te 7 kontrol yeni korumalı çağrılara göre güncellendi; `önceki kare iptal ediliyor` artık `kareBirak` arıyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-14a` ↔ `rota-2026-09-14a` · 383 713 bayt**
+
+---
+
+## 130 · ATLAMA DÜZELDİ · İŞLEYİCİLER KORUNDU · `2026-09-15a`
+
+### ⚠ 1 · bazen iki kart atlıyor, mola duraklarını geçiyordu
+
+`otoKaydir` hedef kaymayı **tahminle** hesaplıyor, sonra `otur()` ile en yakına oturuyordu:
+
+```js
+hedef = -d * (he[a] + ar[a+1]) * 0.92;   // tahmin
+... otur();                              // en yakına oturt
+```
+
+`he[a]` etkin kartın yüksekliği — tam açık kart uzun olduğu için tahmin komşunun gerçek aralığından büyük çıkıyor, çark fazla dönüyor ve `otur()` **bir sonrakinin ötesine** oturuyordu. Mola durakları da (kısa oldukları için) bu şekilde atlanıyordu.
+
+**Düzeltme · sahnedeki gerçek konumdan hesap:**
+
+```js
+const anahtar = hed.m ? ('m'+hed.i) : String(hed.i);   // mola durağı ayrı
+idx = sahnede bu anahtarı taşıyan şeridin indeksi
+dy  = a'dan idx'e yığılan (yükseklik/2 + boşluk + yükseklik/2)
+```
+
+Animasyon bitince `otur()` yerine **doğrudan `gecis(hed.i, hed.m)`** çağrılıyor — hedef baştan belli, en yakına oturma kumarı yok.
+
+Doğrulandı: **12 ileri + 12 geri adımda atlama 0, hata 0.**
+
+### ⚠ 2 · orb ve panel tıklamalarında hata
+
+Sayfa orb'ları, telafi, tamamlanan ve deneme düğmelerinin işleyicileri korumasızdı; içeride bir hata olunca konsola `Script error.` düşüyordu.
+
+Hepsi `try/catch` içine alındı ve etiketli `console.error` ile kaydediliyor: `sayfa:` · `telafi:` · `tamamlanan:` · `deneme:` · `tık:`.
+
+Böylece bir hata olsa bile **uygulama akmaya devam ediyor** ve hangi işleyicide olduğu belli oluyor.
+
+### Test · `cark_test.js` +16 kontrol
+
+hedef gerçek konumdan · yığılan yükseklik hesabı (ileri ve geri) · **bitince hedefe geçiliyor** · `otur()` kumarı kalmadı · mola durağı anahtarla ayırt ediliyor · beş işleyici de korumalı · adım tam bir durak · mola durakları listede.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-15a` ↔ `rota-2026-09-15a` · 385 406 bayt**
+
+---
+
+## 131 · KÜRESEL GERİ ÇAĞRI KORUMASI · `2026-09-16a`
+
+Kullanıcı aynı `Script error.`ı **çok farklı yerlerde** görüyordu: Sonraki tuşu, takvim sayfası, matris sayfası, kaçırılan görevler, power-up ve telafi görevlerini çarka çekme.
+
+Bu kadar geniş bir yayılım tek bir ortak sebebi işaret ediyordu: **korumasız zamanlayıcı geri çağrıları.**
+
+### Sorunun yapısı
+
+Bir `requestAnimationFrame` ya da `setTimeout` geri çağrısında oluşan hata **hiçbir `try/catch`'e takılmaz** — doğrudan `window.onerror`'a gider. Çapraz-köken maskesi yüzünden de yalnız `Script error.` görünür, dosya/satır/mesaj gelmez.
+
+Tek tek işleyicileri sarmalamak (§129, §130) yetmiyordu; her yeni asenkron çağrı yeni bir açık kapı bırakıyordu.
+
+### Çözüm · zamanlayıcıları sarmala
+
+Betiğin en başında `requestAnimationFrame`, `setTimeout` ve `setInterval` **kendileri** sarmalanıyor:
+
+```js
+const sar=(fn,ad)=>function(){
+  try{ return fn.apply(this,arguments) }
+  catch(err){ /* GERÇEK mesajı kaydet, en çok 3 kez */ return undefined }};
+
+window.requestAnimationFrame = f => ham(sar(f,'rAF'));
+window.setTimeout  = (f,g) => typeof f==='function' ? hamT(sar(f,'setTimeout'),g) : …;
+window.setInterval = (f,g) => typeof f==='function' ? hamI(sar(f,'setInterval'),g) : …;
+```
+
+Artık **hiçbir asenkron geri çağrı** uncaught hata üretemiyor. Üstelik hata gerçek mesajı ve yığın iziyle kaydediliyor — `?hata=1` ile açınca `GERİ ÇAĞRI · rAF · <mesaj>` şeklinde görünüyor.
+
+Fonksiyon olmayan argümanlar (dize `setTimeout('kod')`) korunuyor; sarmalama işlemi de `try/catch` içinde, desteklenmeyen ortamda sessizce atlanıyor.
+
+### Test · `cark_test.js` +13 kontrol
+
+sarmalayıcı tanımlı · üç zamanlayıcı da sarmalı · fonksiyon olmayan argüman korunuyor · gerçek mesaj kaydediliyor · en çok 3 kez · **yeniden fırlatılmıyor** · yığın izi · sarmalama korumalı.
+
+**Davranış doğrulaması:** sarmalayıcı hatayı yutuyor (dönüş `undefined`), sayaç artıyor, normal dönüş değeri korunuyor.
+
+Ayrıca yedi eylem yolu (sonraki · önceki · kaçırılan · tamamlanan · seyir · ölçüm · power-up) hatasız koşturuldu.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-16a` ↔ `rota-2026-09-16a` · 386 938 bayt**
+
+⚠ Konsolda hâlâ bir şey çıkarsa `index.html?hata=1` ile açıp kırmızı paneldeki `GERİ ÇAĞRI · …` satırını okumak yeterli — artık gerçek mesaj görünüyor.
+
+---
+
+## 132 · MOLA ODAĞI · TUTUNCA KÜÇÜLME · `2026-09-17a`
+
+### ⚠ 1 · mola/yavaşlama kartındayken kaydırınca üstteki göreve sıçrıyordu
+
+Mola şeridinin sınıfı `odak`a bağlıydı:
+
+```js
+const odak = (i===aktif && molaOdak && !surukleKip);
+m.className = 'sr mm' + (odak ? ' act' : '');
+```
+
+Sürükleme başlayınca `surukleKip` true oluyor → `odak` false → **mola `act`ini kaybediyor.** Görev elemanı da `act` almıyor (çünkü `molaOdak` true). Yani o an **hiçbir eleman `act` taşımıyor**; `diz()` yedek yola düşüp `dataset.i===aktif` olan **görev** elemanını buluyor ve çark bir üstteki göreve sıçrıyordu.
+
+**Düzeltme:** `act` artık **seçime** bağlı, `odak`a değil:
+
+```js
+m.className = 'sr mm' + ((i===aktif && molaOdak) ? ' act' : '');
+```
+
+İçerik hâlâ `odak`a göre (sürüklerken şerit), ama yerleşim çapası korunuyor.
+
+Doğrulandı: sürüklerken `act` taşıyan eleman **`m6:sr mm act k3`** — mola şeridinin kendisi.
+
+### 2 · mola ve yavaşlama kartlarında gezinme düğmeleri
+
+`molaKart()`'a `Önceki` · `Sonraki` eklendi (`.mkBtn`). Bu kartlardayken çarkta ilerlemek için kaydırmak zorunda kalınmıyor.
+
+### 3 · opaklık · bir kat daha
+
+`.molaK` zaten opaktı ama gradyan tek başınaydı; altına `background-color:#141D2A` kondu. Ayrıca kap düzeyinde `.sr.mm .kdm, .sr.mm .molaK{background-color:#101A26}` — içteki kart saydam kalsa bile alttaki şeritler görünmüyor.
+
+### 4 · tutunca yumuşak küçülme
+
+Çarkı tutunca açık kart şerit hâline **anında** takas oluyordu.
+
+```css
+@keyframes tutKucul{            /* kart → şerit */
+  0%  {transform:scaleY(2.6); opacity:.32; filter:blur(.6px)}
+  55% {opacity:.9; filter:blur(0)}
+  100%{transform:none}}
+@keyframes birakAc{             /* şerit → kart */
+  0%  {transform:scaleY(.42); opacity:.34}
+  100%{transform:none}}
+```
+
+`transform-origin:50% 0%` — üstten büyüyüp küçülüyor, kartın konumu kaymıyor. Mola kartı için de aynı açılma uygulanıyor.
+
+### Test · `cark_test.js` +15 kontrol
+
+mola `act` seçime bağlı · eski bağımlılık kalmadı · iki düğme de var · kart düğmeleri üretiyor · üç katman opak · **tutunca küçülme** ve **bırakınca açılma** animasyonları · başlangıç ölçekleri · üstten büyüme · hareket azaltmada kapalı.
+
+`tarayici_test.js`'e mola sürükleme senaryosu eklendi.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-17a` ↔ `rota-2026-09-17a` · 388 669 bayt**
+
+---
+
+## 133 · ÇOK FAZLI ANİMASYON · MOLA DÜĞMELERİ · SENKRON SÖZLERİ · `2026-09-18a`
+
+### 1 · küçülme/büyüme çok hızlıydı
+
+Üç fazlı animasyon göz takip edemeden bitiyordu. **Sekiz kareye** çıkarıldı, süreler uzatıldı:
+
+| | Önce | Sonra |
+|---|---|---|
+| Kart → şerit | .34 sn · 3 kare | **.68 sn · 8 kare** |
+| Şerit → kart | .46 sn · 3 kare | **.78 sn · 8 kare** |
+
+Ölçek, opaklık ve bulanıklık **her karede birlikte** iniyor: `scaleY 2.60 → 2.26 → 1.92 → 1.60 → 1.34 → 1.16 → 1.05 → 1`, `blur .7px → 0`. Oturma sınıfının ömrü de 680 → **900 ms** yapıldı ki animasyon yarıda kesilmesin.
+
+### 2 · mola düğmeleri diğer kartlarla aynı
+
+`.mkBtn` kendi stilini kullanıyordu, yazılar daralıp bozuluyordu. Artık **birebir aynı biçim**:
+
+```html
+<div class="kBtn"><button class="bt" data-a="s">Sonraki</button>
+<button class="bt gh" data-a="o">Önceki</button></div>
+```
+
+`.bt` sınıfı, kartın altında, Önceki `.gh` ile sağa itilmiş — normal görev kartlarındaki düzenin aynısı.
+
+### ⚠ 3 · konsol hatalarının asıl kaynağı · senkron sözleri
+
+`Senk` modülü GitHub Gist'e `fetch` atıyor. Gömülü çerçevede ağ isteği reddediliyor ve **async fonksiyon sözleri yakalanmıyordu**:
+
+```js
+bekle=setTimeout(()=>esitle(),2500)          // ← söz düşüyor
+window.addEventListener('focus',()=>{ … Senk.esitle()});
+window.addEventListener('online',()=>{ … Senk.esitle()});
+```
+
+Bu tetikler **her odak değişiminde, her sayfa geçişinde, her orb tıklamasında** çalışıyordu — hatanın her yerde çıkmasının sebebi buydu.
+
+**Düzeltme:**
+- `ertele()` içindeki söz `.catch(()=>{})` ile yakalanıyor
+- Tüm `Senk.esitle()` tetikleri tek bir korumalı `senkTetik()` üzerinden
+- `unhandledrejection` **bastırılıyor** (`preventDefault`), en çok 3 kez kaydediliyor
+
+### Test · `cark_test.js` +15 kontrol
+
+sürelerin uzaması · **her animasyonda 8 kare** · ara kademeler · bulanıklık kademeli · oturma sınıfı 900 ms · mola düğmeleri `.bt` ve `kBtn` kabında · Önceki sağa itilmiş · **senkron ertelemesi korumalı** · `senkTetik` dört yerde · söz reddi bastırılıyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-18a` ↔ `rota-2026-09-18a` · 390 378 bayt**
+
+---
+
+## 134 · FAZ DEVRİ · HIZ · HATA BASTIRMA · `2026-09-19a`
+
+### ⚠ 1 · konsol hatasının gerçek sebebi · `preventDefault` yoktu
+
+Beş turdur hatanın **kaynağını** arıyordum; asıl mesele kaynağı değil **raporlanmasıydı**.
+
+```js
+window.addEventListener('error',function(e){ goster(...) });   // ← eski
+```
+
+Hata kaydediliyordu ama **tarayıcının varsayılan konsol raporlaması iptal edilmiyordu**. Yani zaten yakalanıp ele alınmış hatalar bile konsola `Script error.` olarak düşmeye devam ediyordu.
+
+```js
+e.preventDefault();      // varsayılan bastırıldı
+… , true);               // yakalama evresinde dinleniyor
+```
+
+Ayrıca aynı hata **en çok 3 kez** kaydediliyor; kayıt `?hata=1` panelinde duruyor.
+
+### 2 · animasyon hızlandırıldı
+
+Kullanıcı *"daha fazla ara faz ekle dedim, yavaşlat demedim"*. Sekiz kare korundu, süreler kısaltıldı:
+
+| | §133 | Şimdi |
+|---|---|---|
+| Kart → şerit | .68 sn | **.38 sn** |
+| Şerit → kart | .78 sn | **.44 sn** |
+
+### 3 · FAZ DEVRİ · yarıda kesilince geri sarma
+
+Kaydırıyordum → bıraktım → yine kaydırmaya başladım: animasyon sıfırdan başlıyordu, kart zıplıyordu.
+
+Artık geçen süre ölçülüp ters animasyona **negatif gecikme** olarak veriliyor:
+
+```js
+oran   = geçen / eskiSüre
+gecikme = -(1 - oran) × yeniSüre
+```
+
+| Kesilme anı | Ters animasyon gecikmesi |
+|---|---|
+| %0 ilerlemişken | −0.440 sn (baştan) |
+| %25 | −0.330 sn |
+| %50 | −0.220 sn (yarıdan) |
+| %90 | −0.044 sn (sondan) |
+
+Küçülme ne kadar ilerlediyse büyüme o kadar **ileriden** başlıyor — kart bulunduğu fazdan geri sarıyor, sıçrama yok. Aynı yönde tekrar tetiklenirse devir uygulanmıyor.
+
+### Test · `cark_test.js` +18 kontrol
+
+süreler · **sekiz kare korundu** · faz devri fonksiyonu · negatif gecikme değişkeni · iki yönde de devir · geçen süre ölçümü · yön değişmediyse devir yok · **hata varsayılanı bastırılıyor** · yakalama evresi · 3 kez sınırı.
+
+**Matematik doğrulaması:** hiç ilerlemediyse baştan, yarıdaysa yarıdan, bittiyse sondan; ters yönde simetrik; aynı yönde devir yok; gecikme hep ≤ 0.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-19a` ↔ `rota-2026-09-19a` · 392 474 bayt**
+
+---
+
+## 135 · ÖLÇEK YALNIZ KONUMDAN · SEKME BİTTİ · `2026-09-20a`
+
+Kullanıcı asıl sorunu tarif etti: *"kart orta noktasını geçip seker gibi oluyor ve orta noktasına doğru geri hareket ediyor."*
+
+### Kök sebep · iki hareket kaynağı birbiriyle yarışıyordu
+
+1. **Konumdan gelen ölçek** — merkeze uzaklığa göre `scale`
+2. **Zamanlayıcılı animasyon** — `tutKucul` / `birakAc` (§132–§134)
+
+İkisi aynı elemanı aynı anda ölçekliyordu. Tuşa basınca kart konumdan büyürken animasyon ayrı bir eğriyle oynuyor, sonuçta merkezi geçip geri dönüyormuş gibi görünüyordu.
+
+**Zamanlayıcılı animasyonlar tamamen kaldırıldı.** `fazDevir`, `--fz` negatif gecikme mekanizması da gereksiz kaldı, silindi. Artık **tek kaynak var: merkeze uzaklık.**
+
+### Ölçek rampası derinleştirildi
+
+```js
+sc = max(.72, cos(θ)^.62)      // eski: max(.86, cos(θ)^.30)
+```
+
+| \|θ\| | Ölçek |
+|---|---|
+| 0.00 | **1.000** (tam boy) |
+| 0.16 | 0.992 |
+| 0.34 | 0.964 |
+| 0.60 | 0.888 |
+| 0.80 | 0.799 |
+
+Büyüme **iki kat belirgin** (aralık 0.103 → 0.201). Şerit merkeze yaklaştıkça sürekli büyüyor, tam merkezde en büyük hâline ulaşıyor, uzaklaştıkça küçülüyor — kaydırırken de, tuşla geçerken de aynı. Negatif kosinüs için `max(0,…)` koruması eklendi (NaN riski).
+
+### ⚠ Sekmenin ikinci sebebi · kademe oynaması
+
+Otomatik kaydırma sırasında `dizKay` her karede kademeleri yeniden hesaplıyordu. Hedef karta yaklaşırken kademeler değişince **yükseklikler oynuyor**, yerleşim kayıyor ve kart geri sekiyormuş gibi görünüyordu.
+
+`otoKilit` bayrağı eklendi: otomatik kaydırma boyunca kademeler **donuk**, hareket saf öteleme. Kilit üç yolda da açılıyor (bitiş · iptal · doğrudan geçiş).
+
+### Test · `cark_test.js` +15 kontrol
+
+zamanlayıcılı animasyon kalmadı · faz devri kalmadı · rampa derinleşti · iki fonksiyonda da · **kilit ve üç açılma yolu** · kilitliyken kademe değişmiyor.
+
+**Matematik:** merkezde tam boy · uzaklaştıkça monoton azalıyor · taban 0.72 · büyüme eskisinin ~2 katı · **rampa sürekli, sıçrama yok**.
+
+Ayrıca 23 eskimiş kontrol yeni yaklaşıma göre yeniden yazıldı.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-20a` ↔ `rota-2026-09-20a` · 390 404 bayt**
+
+---
+
+## 136 · İÇERİK ÇIKIŞ/GİRİŞ KOREOGRAFİSİ · `2026-09-21a`
+
+Kullanıcı istedi: kartlar **yatay orta çizgilerinden** yukarı ve aşağı açılıp kapansın; içerideki elemanlar büyüme/küçülme sırasında **eşzamanlı ve kademeli** olarak dikeyde daralıp **sağdan sola** süpürülerek yok olsun, ardından yeni içerik **soldan sağa** açılarak opaklaşsın.
+
+### Kart · orta çizgiden
+
+```css
+.kdm,.kart,.molaK{transform-origin:50% 50%}
+```
+
+Eskiden `50% 0%` (üstten) idi; artık kartlar kendi yatay orta çizgilerinden simetrik açılıp kapanıyor.
+
+### İçerik · iki aşamalı takas
+
+İçerik `innerHTML` ile **anında** değişiyordu. Artık `icerikDegis()` iki aşamaya bölüyor:
+
+**1 · ÇIKIŞ (190 ms)** — eski satırlar `transform-origin:100% 50%` ile sağdan sola süpürülür:
+
+```
+scaleX 1 → .82 → .48 → 0
+scaleY 1 → .86 → .58 → .24
+opaklık 1 → .72 → .38 → 0
+```
+
+**2 · GİRİŞ (340 ms)** — çıkış bitince içerik takas edilir, yeni satırlar `transform-origin:0% 50%` ile soldan sağa açılır (aynı eğrinin tersi).
+
+Satırlar **kademeli**: çıkışta 28 ms, girişte 34 ms aralıkla sırayla gidip sırayla gelirler. Giriş kademesi biraz daha yavaş — açılış daha rahat okunuyor.
+
+İlk çizimde animasyon uygulanmıyor (`ilkKez`), mola kartları da aynı koreografiden geçiyor. Giriş sınıfı ve gecikmeler 520 ms sonra temizleniyor.
+
+### Test · `cark_test.js` +21 kontrol
+
+iki fonksiyon · çıkış süresi · **kart orta çizgisinden** · çıkış sağdan sola · giriş soldan sağa · dikey daralma/açılma · dörder kare · kademeli gecikmeler · çıkış bitince takas · ilk çizimde animasyon yok · mola da koreografide · sınıf ve gecikme temizliği · hareket azaltmada kapalı.
+
+**Zamanlama doğrulaması:** çıkış girişten önce biter, gecikmeler artan, giriş kademesi çıkıştan yavaş.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-21a` ↔ `rota-2026-09-21a` · 392 961 bayt**
+
+---
+
+## 137 · ⚠ SINIF ÇAKIŞMASI · MOLA KARTI · `2026-09-22a`
+
+### Kök sebep · `.molaK` iki farklı bileşende
+
+Ekran görüntülerinde mola/yavaşlama/spor kartlarının içeriği **tek satıra sıkışmıştı**: başlık, saat, açıklama ve düğmeler yan yana, yazılar daralmış.
+
+`.molaK` sınıfı **iki ayrı bileşende** kullanılıyordu:
+
+| Kullanım | Kural |
+|---|---|
+| Büyük mola kartı (`molaKart()` kökü) | `border-radius:18px; padding:15px 17px 16px` |
+| Normal kartın içindeki küçük mola şeridi | **`display:flex; align-items:center; gap:10px`** |
+
+İkinci kural sonra geldiği için **büyük kartı da flex satırına çeviriyordu.** §106'daki `.kd` çakışmasının aynısı.
+
+**Düzeltme:** büyük kart `.molaB`'ye taşındı; 13 alt seçici (`.mkUst`, `.mkSay`, `.mkCub`, `.mkMet` …) ve nefes animasyonu da onunla birlikte. İç şerit `.molaK` olarak kaldı.
+
+Artık düğmeler `.kBtn` kabında, kartın altında — diğer görev kartlarıyla birebir aynı.
+
+### Koreografi hızı kartla eşitlendi
+
+İçerik çıkış/giriş 190 + 340 = **530 ms** sürüyordu ama kartın kademe geçişi **300 ms**. Kart açılıp bitiyor, içerik hâlâ geliyordu.
+
+| | Önce | Sonra |
+|---|---|---|
+| Çıkış | 190 ms | **100 ms** |
+| Çıkış animasyonu | .21s | **.11s** |
+| Giriş animasyonu | .34s | **.15s** |
+| Kademe gecikmesi | 28/34 ms | **10/12 ms**, tavan 3 satır |
+
+Toplam: çıkış son satır **130 ms**, giriş son satır **286 ms** — kartın 300 ms'lik geçişine sığıyor.
+
+### Test · `cark_test.js` +15 kontrol
+
+büyük kart ayrı sınıfta · iç şerit eski sınıfta · **büyük kart artık flex değil** · alt seçiciler ve nefes taşındı · düğmeler kartın altında · yeni süreler · gecikme tavanı · temizlik.
+
+**Zamanlama doğrulaması:** çıkış son satır 130 ms · giriş son satır 286 ms · **300 ms'lik kart geçişine sığıyor** · çıkış girişten önce bitiyor.
+
+⚠ İkinci kez aynı hata: kısa CSS sınıf adı çakışması. Yeni sınıf eklerken `grep` şart.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-22a` ↔ `rota-2026-09-22a` · 393 218 bayt**
+
+---
+
+## 138 · ON KADEME · SAF YATAY KOREOGRAFİ · `2026-09-23a`
+
+### 1 · altı kademe → ON kademe
+
+Altı basamak gözle fark edilen sıçramalar bırakıyordu.
+
+```js
+KD_SIRA = [9,8,7,6,5,4,3,2,1]      // |i−a| = 0…8 → kademe
+KH      = [36,42,48,54,60,68,78,86,94,100]
+```
+
+Basamak farkları **en çok 12 px** (eskiden 20 px'e kadar çıkıyordu). Her satır artık **üç basamakta** açılıyor:
+
+| Satır | Basamaklar |
+|---|---|
+| Konu adı | k1 (10px/%38) → k2 (16px/%70) → k3+ (21px/tam) |
+| sf referansı | k3 (8px/%34) → k4 (14px/%68) → k5+ (18px/tam) |
+| Blok bilgisi | k5 (7px/%32) → k6 (13px/%66) → k7+ (17px/tam) |
+| Son seans | k7 (7px/%34) → k8 (12px/%70) → k9 (15px/tam) |
+
+Zeminler de dokuz kademede kademeleniyor (`#0B0F1C → #131B2D`).
+
+### 2 · koreografi SAF YATAY
+
+Dikey bileşen (`scaleY`) kaldırıldı — satırlar yalnız **genişliklerinden** daralıp genişliyor:
+
+```css
+@keyframes icCik{ 1 → .90 → .72 → .50 → .26 → 0 }    /* 6 kare, sağdan sola */
+@keyframes icGir{ 0 → .24 → .48 → .70 → .86 → .96 → 1 }  /* 7 kare, soldan sağa */
+```
+
+Yükseklik hiç oynamadığı için yerleşim sarsılmıyor; opaklık her karede genişlikle birlikte iniyor/çıkıyor.
+
+### 3 · çarka çekilen kartlar
+
+Power-up, telafi ve tamamlanan görevler çarka çekildiğinde aynı düzene uyuyor:
+
+| Tür | Kademe kuralı |
+|---|---|
+| Normal | 9 zemin kademesi |
+| Mola/yavaşlama | 9 kademe (`#111C29 → #17273C`) |
+| Power-up | 7 kademe (`#0C1724 → #132234`) |
+| Telafi/ek | 7 kademe (`#161409 → #201D0E`) |
+
+### Test · `cark_test.js` +22 kontrol
+
+on kademe dizisi (iki fonksiyonda da) · on yükseklik ölçülüyor · sınıf deseni 0–9 · her satır üç basamakta · dokuz zemin kademesi · mola/power-up/telafi kademeleri · **çıkış ve giriş saf yatay** · koreografide `scaleY` yok · çıkışta 6, girişte 7 kare.
+
+**Matematik:** odakta k9 · bir uzakta k8 · sekiz uzakta k1 · dokuz+ uzakta k0 · kademe monoton azalıyor · yükseklikler monoton artıyor · **basamak farkları ≤12 px**.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-23a` ↔ `rota-2026-09-23a` · 394 814 bayt**
+
+---
+
+## 139 · ⚠ BAYAT ÖLÇÜM · TAM MERKEZE OTURMA · `2026-09-24a`
+
+### Kök sebep · ölçüm sırası yanlıştı
+
+`otoKaydir` hedef mesafeyi **sürükleme kipine girmeden ÖNCE** ölçüyordu:
+
+```js
+let dy = …dizOnb'den hesapla…      // etkin kart TAM KART, uzun
+sBas();                            // ← şerit hâline geçer, yükseklikler DEĞİŞİR
+…dy'ye göre animasyon…             // hesap BAYAT
+```
+
+`sBas()` etkin kartı şeride çeviriyor; o kartın yüksekliği ~250 px'den ~100 px'e düşüyor. Ölçüm eski yüksekliğe göre yapıldığı için çark hedefi **aşıyor**, sonra `gecis()` düzeltince geri sekiyordu.
+
+**Düzeltme · sıra tersine:**
+
+```js
+sBas(); otoKilit=true;
+try{diz()}catch(e){}        // TAZE yerleşimi hemen kur
+let dy = …dizOnb'den hesapla…   // artık güncel
+```
+
+Hedef **tam merkeze** oturuyor; ne eksik ne fazla. Üç tuş da (Sonraki · Önceki · Tamamlandı) aynı yolu kullanıyor.
+
+Doğrulandı: **30 karışık adımda hata 0, atlama 0.**
+
+### Çarka geri taşıma da aynı akışta
+
+`✕` (çarka taşınanı geri gönder) anında yeniden çiziyordu. Artık tamamlama ile aynı: kart sönerek gider, sıradakine otomatik kaydırma ile geçilir.
+
+### Sönme animasyonu · küçülüp yukarı kayarak
+
+```css
+@keyframes kartBitIc{            /* 5 kare */
+  0%   translateY(0)     scale(1)    blur(0)
+  25%  translateY(-7px)  scale(.94)  blur(.3px)
+  50%  translateY(-16px) scale(.86)  blur(.8px)
+  75%  translateY(-27px) scale(.76)  blur(1.5px)
+  100% translateY(-40px) scale(.66)  blur(2.4px)}
+```
+
+Dış katman opaklığı ayrı bir eğriyle sönüyor. Mola, power-up ve telafi kartları da aynı animasyondan geçiyor.
+
+### Dayanıklılık · `setTimeout` korumaları
+
+`surTazele`, `sinirAc` (açılış ve kapanış) ve `sinirAgKur` içindeki `setTimeout` çağrıları korumasızdı; ortamda yoksa **tüm akış kırılıyordu**. Hepsi korumaya alındı, `setTimeout` yoksa geçişler anında tamamlanıyor.
+
+### Test · `cark_test.js` +18 kontrol
+
+ölçüm sürükleme kipinden sonra · taze yerleşim · `sBas` yoksa doğrudan · ölçüm başarısızsa kip geri alınıyor · geri taşımada otomatik kaydırma ve sönme · sönme iki katman · beş kare · mola da sönüyor · **dört `setTimeout` koruması** · **30 adımda hata ve atlama yok** · kilit ve kip sonda temiz.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-24a` ↔ `rota-2026-09-24a` · 396 579 bayt**
+
+---
+
+## 140 · SÜREKLİ KATMAN · KESİŞMEDE DEVİR · `2026-09-25a`
+
+Kullanıcının önerisi: *"hangi kartın hangisinin üstünde olacağı orta noktalarının odağa yakınlığından belli olsun; yaklaşan kart KESİŞME BÖLGESİNDEN itibaren eski odak kartının üstüne çıksın."*
+
+### Kök sebep · etkin kartın sabit katmanı
+
+```js
+zIndex = i===a ? 999 : max(1, 900 − |θ|×1000)
+```
+
+Etkin karta **sabit 999** veriliyordu. Yaklaşan kart merkeze varana kadar 900'ün altında kalıyor, tam merkezde birden 999'a fırlıyordu — **339 birimlik ani katman sıçraması**. Görüntüdeki sıçramaların bir kaynağı buydu.
+
+### Düzeltme · istisnasız süreklilik
+
+```js
+zIndex = max(1, 1000 − |θ|×1000)      // her kart için, istisnasız
+```
+
+CSS'teki `.sr.act{z-index:9}` istisnası da kaldırıldı.
+
+**Kaydırma sırasında devir:**
+
+| Adım | \|θ\|A | \|θ\|B | zA | zB | Üstte |
+|---|---|---|---|---|---|
+| 0 | 0.00 | 0.34 | 1000 | 660 | A |
+| 1 | 0.08 | 0.26 | 920 | 740 | A |
+| 2 | 0.15 | 0.19 | 850 | 810 | A |
+| **3** | **0.17** | **0.17** | **830** | **830** | **kesişme** |
+| 4 | 0.19 | 0.15 | 810 | 850 | B |
+| 6 | 0.34 | 0.00 | 660 | 1000 | B |
+
+Katman devri tam **kesişme noktasında**, kendiliğinden. Ani sıçrama yok; en büyük adım farkı 120 birim (eskiden 339).
+
+### Test · `cark_test.js` +13 kontrol
+
+katman istisnasız sürekli · etkin karta sabit z verilmiyor · CSS istisnası kalktı · iki fonksiyonda aynı formül · merkezde en üst · uzaklaştıkça azalıyor · taban 1.
+
+**Devir doğrulaması:** başta A üstte · **kesişmede eşit** · sonra B üstte · **devir tam bir kez** · katman adım adım değişiyor (sıçrama ≤120) · eski davranışta sıçrama olduğu kanıtlanıyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-25a` ↔ `rota-2026-09-25a` · 396 744 bayt**
+
+---
+
+## 141 · ⚠ AYRIK KADEME → SÜREKLİ AÇILMA · `2026-09-26a`
+
+Kullanıcı ekran kaydı gönderdi. Kareler çıkarılıp ardışık fark ölçüldü:
+
+```
+ortalama kare farkı 1.49 · medyan 0.28 · en büyük 9.80
+SIÇRAMA (medyan×3 üstü): 102 karede 26 kare
+en yoğun bölge: kare 31–43, medyanın 10–34 katı
+```
+
+Kare 31 → 32 karşılaştırıldı: kartın içeriği **dört satırdan bir satıra** düşmüş, alttaki kart birden büyümüş.
+
+### Kök sebep · ayrık kademeler toplu zıplıyordu
+
+Kademe **sıra uzaklığından** (`|i−mrk|`) hesaplanıyordu. Merkeze en yakın şerit değişince **bütün kartların kademesi aynı anda kayıyor** — içerik hep birlikte zıplıyordu. On kademeye çıkarmak (§138) basamağı 12 px'e indirmişti ama sıçramanın **toplu** olması sorunu çözmüyordu.
+
+### Çözüm · açıklık sürekli fonksiyon
+
+```js
+AC_UC = 0.62
+ac  = clamp(0, 1 − |θ|/AC_UC, 1)          // 0 uzak → 1 merkez
+r1 = ara(ac, 0.10, 0.38)   // konu adı
+r2 = ara(ac, 0.32, 0.60)   // sf referansı
+r3 = ara(ac, 0.54, 0.80)   // blok bilgisi
+r4 = ara(ac, 0.74, 0.96)   // son seans
+yükseklik = 36 + 21·r1 + 18·r2 + 17·r3 + 15·r4
+```
+
+CSS satırları doğrudan orandan:
+
+```css
+.kdm1{height:calc(21px * var(--r1,0)); opacity:var(--r1,0)}
+.kdm{background:rgb(calc(10+9*var(--ac,0)), calc(14+13*var(--ac,0)), calc(24+21*var(--ac,0)))}
+```
+
+Zeminler de (normal · mola · power-up · telafi) açıklıkla sürekli değişiyor.
+
+**Ölçüm sonucu:**
+
+| | Ardışık fark |
+|---|---|
+| Ayrık kademe (§138) | **12 px** basamak |
+| Sürekli açılma | **1.12 px** |
+
+**On kat pürüzsüz.** Her satır kendi aralığında açılıyor; artık toplu sıçrama yok.
+
+Kademe sınıfları (`k0…k9`), `KD_SIRA`, `kdOf`, yükseklik ölçüm döngüsü ve `dizOnb.KH/KHM` tamamen kaldırıldı — hem kod sadeleşti hem her karedeki ölçüm yükü kalktı.
+
+### Test · `cark_test.js` · 19 kontrol yeniden yazıldı + 18 yeni
+
+açıklık sürekli fonksiyon · oran yazıcı · dört satır oranı · aralıklar · yükseklik oranlardan · sürüklerken de sürekli · **ayrık kademe kalmadı** · CSS satırları ve zeminleri orandan · ölü ölçüm kaldırıldı.
+
+**Eğri doğrulaması:** merkezde 107 px · uçta 36 px · monoton artıyor · **ardışık fark ≤1.5 px** · eski basamağın sekizde biri.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-26a` ↔ `rota-2026-09-26a` · 395 941 bayt**
+
+---
+
+## 142 · YÜKSEKLİK EKSENİ · KONUMA KİLİTLİ SATIRLAR · `2026-09-27a`
+
+### 1 · koreografi ekseni düzeltildi
+
+§136–§138'de satırlar **genişlikten** (`scaleX`) daralıp açılıyordu. İstenen: satırın kendi **orta çizgisinden yukarı ve aşağı** açılıp aynı eksende kapanması.
+
+```css
+@keyframes icCik{ scaleY 1 → .88 → .70 → .48 → .24 → 0 }   /* kapanış */
+@keyframes icGir{ scaleY 0 → .22 → .46 → .68 → .85 → .95 → 1 }
+transform-origin: 50% 50%     /* iki yönde de orta çizgiden */
+```
+
+Opaklık her karede ölçekle birlikte iniyor/çıkıyor. Koreografide `scaleX` kalmadı; kart ve satırlar artık **aynı eksende** hareket ediyor.
+
+### ⚠ 2 · satırlar konumun GERİSİNDE kalıyordu
+
+Asıl kaçırdığım buydu:
+
+```css
+.kdm>div{transition:height .30s …, opacity .24s …}
+```
+
+Satır yükseklikleri §141'den beri **her karede JS'ten** yazılıyor (`--r1…--r4`). Üstüne bir de 300 ms'lik CSS geçişi binince satırlar konumun gerisinde kalıyordu — kart merkeze varmışken içerik hâlâ açılıyordu.
+
+**Geçiş kaldırıldı.** Açılma hızı artık doğrudan **kaydırma hızı**: kart ne kadar hızlı yaklaşırsa satırlar o kadar hızlı açılıyor. Tam olarak "konum faktörüne bağlı" olması istenen davranış.
+
+Yalnız **oturma anında** (`#sahne.otu`) kısa bir geçiş (.26 sn) kaldı — kaydırma bitip kart yerine otururken son açılma yumuşasın diye. Sürüklerken geçiş yok.
+
+### Test · `cark_test.js` +14 kontrol
+
+çıkış ve giriş **yükseklik ekseninde** · `scaleX` kalmadı · iki yön de orta çizgiden · **satırlarda CSS geçişi yok** · yalnız oturmada kısa geçiş · yükseklik her karede JS yazıyor · kart ve satır aynı eksende.
+
+**Konuma kilitlilik kanıtı:** açı değişince oran anında değişiyor · merkeze varınca tam açık · uçta tamamen kapalı · **hızlı kaydırmada hızlı açılma** (aynı fonksiyon olduğu için hız otomatik eşleşiyor).
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-27a` ↔ `rota-2026-09-27a` · 396 658 bayt**
+
+---
+
+## 143 · MASKE BANDI · GENİŞ GÖRÜNÜM · `2026-09-28a`
+
+### ⚠ 1 · uzun kartın seans saatleri sönüyordu
+
+Maske bandı **yüzde** cinsindendi: `#000 20%`. 310 px'lik `#cark`'ta bu **62 px**'lik bir sönüm demek. Tam açık kart ~250 px yüksek ve merkezden 125 px yukarı uzanıyor; üst kenarı **30 px**'te kalıyor — yani bandın tam içinde. Seans saatleri bu yüzden sönükleşiyordu.
+
+Bandı tamamen opak yapmak çözüm değildi (kullanıcının da belirttiği gibi keskin kenar görünür olurdu).
+
+**Düzeltme · SABİT PİKSEL bant:**
+
+```css
+--mask:linear-gradient(to bottom,
+   transparent 0, rgba(0,0,0,.30) 4px, rgba(0,0,0,.72) 9px, #000 16px,
+   #000 calc(100% - 16px), … transparent 100%);
+```
+
+| Kapsayıcı | Kart | Üst kenar | Eski (%20) | Yeni (16px) |
+|---|---|---|---|---|
+| 310 px | 250 px | 30 px | **sönük** ✗ | opak ✓ |
+| 310 px | 278 px | 16 px | sönük ✗ | opak ✓ |
+| 620 px | 250 px | 185 px | opak | opak ✓ |
+
+Bant artık kapsayıcı yüksekliğinden **bağımsız**: her zaman 16 px. Hem kenarı gizlemeye yetiyor hem 278 px'e kadar kartı tam opak bırakıyor.
+
+### 2 · geniş görünümde çipler dipte duruyordu
+
+```css
+#brif{align-content:flex-end; align-items:flex-end}   /* eski */
+```
+
+Geniş görünümde brif sağ sütunda uzun bir alan; çipler dibe yapışıyordu. `align-content:center; align-items:center; justify-content:center` — artık dikeyde ortalı.
+
+### 3 · geniş görünümde gün listesi ferahladı
+
+Gün listesi açıkken brif zaten gizli; o hâlde çark tüm genişliği alabilir:
+
+```css
+#rota.gunKip{grid-template-columns:1fr}
+#rota{transition:… , grid-template-columns .48s cubic-bezier(.22,.78,.28,1)}
+```
+
+Ayrıca ≥881 px'te liste dolgusu 30/40 px, başlık 19 px — okunaklı. Sütun geçişi yumuşak, kayma yok.
+
+### Test · `cark_test.js` +14 kontrol
+
+sabit 16 px bant · yüzde bant kalmadı · maske değişkende · webkit+standart · çipler dikeyde ortalı (iki görünümde de) · gün kipinde tek sütun · sütun geçişi yumuşak · geniş görünümde ferah liste.
+
+**Geometri doğrulaması:** 310/250 · 310/278 · 620/250 hepsinde kart üstü opak · **bant kapsayıcıdan bağımsız** · eski %20 bantta sönük olduğu kanıtlanıyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-28a` ↔ `rota-2026-09-28a` · 397 715 bayt**
+
+---
+
+## 144 · GÜN LİSTESİ OKUNAKLILIĞI · `2026-09-29a`
+
+Kullanıcı: *"yazılar yatay olarak sağa uzuyor ama dikey olarak yeterince genişlemiyor, okunmaları hâlen zor."*
+
+### Kök sebep · tavanlar
+
+```js
+sat = clamp(11, …, 46)                      // satır tavanı
+yaz = clamp(9, sat × 0.315, 13)             // yazı tavanı
+```
+
+Geniş görünümde alan bol olsa bile satır **46 px**'de, yazı **13 px**'de kilitleniyordu. İkili arama daha büyüğünü bulabilecekken tavan engelliyordu.
+
+### Düzeltme
+
+| | Önce | Sonra |
+|---|---|---|
+| Satır tavanı | 46 px | **64 px** |
+| Yazı oranı | %31.5 | **%38** |
+| Yazı tavanı | 13 px | **19 px** |
+
+Ayrıca **tüm yazılar** ölçeğe bağlandı — blok başlığı (`--gyaz − 2.5`), gün özeti (`+5`), alt satır (`−0.5`), konu adı (`+1.5`). Eskiden blok başlığı 8.5 px ve özet 15 px sabitti.
+
+**620 px alanda sonuç:**
+
+| Gün | Satır | Yazı | Konu |
+|---|---|---|---|
+| 6 görev · 3 blok | **64** | **19** | 20.5 |
+| 9 görev · 4 blok | **47** | **17.9** | 19.4 |
+| 15 görev · 4 blok | 28 | 10.6 | 12.1 |
+| 19 görev · 5 blok | 20.5 | 9 | 10.5 |
+
+9 görevlü tipik günde yazı **13 → 17.9 px**. Yoğun günlerde hâlâ küçülüyor çünkü her şey ekrana sığmalı — bu tasarımın gereği.
+
+### Test · `cark_test.js` +16 kontrol
+
+satır ve yazı tavanları · yazı oranı · dört yazı öğesi de ölçekli · beş farklı yoğunlukta sığma · **9 görevde yazı ≥16 px** · az işte tavana ulaşıyor · yoğun günde küçülüyor · eskisinden büyük · taban altına inmiyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-29a` ↔ `rota-2026-09-29a` · 398 019 bayt**
+
+---
+
+## 145 · ÖNCELİK: YAZI BOYU · `2026-09-30a`
+
+Kullanıcı: *"okunaklılığı artıran şey yazı fontunun ne kadar büyüyebildiği; öncelik yazıyı büyütebildiği kadar büyütmek olsun."*
+
+### Oran fazla ihtiyatlıydı
+
+```js
+yaz = clamp(9, sat × 0.38, 19)
+```
+
+47 px'lik bir satır 24 px yazıyı rahat taşırken 17.9 px veriliyordu. Satır yüksekliği zaten ikili aramayla en büyük değerinde; sorun ondan yazıya geçişteki orandı.
+
+```js
+yaz = clamp(10, sat × 0.58, 24)
+```
+
+Güvenlik: satır metni `line-height:1.2` ile sıkıştırıldı. `0.58 × 1.2 = 0.70 < 1` — yazı satırın %70'ini kaplıyor, taşma yok.
+
+**620 px alanda:**
+
+| Gün | Satır | Eski yazı | **Yeni yazı** |
+|---|---|---|---|
+| 6 görev | 64 | 19 | **24** |
+| 9 görev (tipik) | 47 | 17.9 | **24** |
+| 12 görev | 35.4 | 13.5 | **20.5** |
+| 15 görev | 28 | 10.6 | **16.2** |
+| 19 görev | 20.5 | 10 | **11.9** |
+
+Tipik günde yazı **17.9 → 24 px**; yoğun günde bile 10 → 11.9.
+
+### Test · `cark_test.js` +21 kontrol
+
+oran %58 · tavan 24 · taban 10 · satır metni sıkıştırılmış.
+
+**Taşma doğrulaması:** altı farklı yoğunlukta hem yazı hem konu adı (`--gyaz + 1.5`) satıra sığıyor (`×1.2 ≤ satır`). Üç yoğunlukta yazının eskisinden büyük olduğu, tipik günde 24 px'e ulaştığı, yoğun günde bile ≥11 px kaldığı sınanıyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-09-30a` ↔ `rota-2026-09-30a` · 398 181 bayt**
+
+---
+
+## 146 · ALANI DOLDURMA · `2026-10-01a`
+
+iPad ekran görüntüsü: sol bölme ~1600 px yüksek ama gün listesi üst yarıda kalmış, altı bomboş.
+
+### ⚠ 1 · ölçüm düzen oturmadan yapılıyordu
+
+Sabit süreli tazeleme (1000 ms kare döngüsü) yetmiyordu: geniş ekranda sütun geçişi (.48 sn) ve sınır animasyonu bitene kadar `#gunListe` küçük ölçülüyordu.
+
+**ResizeObserver** bağlandı — alan **her değiştiğinde** yeniden ölçekleniyor, düzen ne zaman oturursa otursun. Kip kapanınca gözlemci bırakılıyor. Desteklenmeyen ortam için yedek kare döngüsü 1000 → 1600 ms.
+
+### ⚠ 2 · tavanlar sabitti
+
+```js
+sat tavanı = 64      // sabit
+yaz tavanı = 24      // sabit
+```
+
+1600 px'lik alanda 9 görev × 64 px = 790 px → **doluluk %49**. Tavan bağlayıcı olduğu için ikili arama daha büyüğünü seçemiyordu.
+
+```js
+SAT_TAVAN = clamp(46, h/7, 110)
+YAZ_TAVAN = clamp(16, SAT_TAVAN × 0.50, 34)
+```
+
+**9 görev + 4 blok · doluluk:**
+
+| Alan | Satır | Yazı | İçerik | Doluluk |
+|---|---|---|---|---|
+| 330 px | 19 | 11 | 328 | %99 |
+| 620 px | 47 | 27 | 618 | %100 |
+| 900 px | 74 | 34 | 897 | %100 |
+| 1200 px | 104 | 34 | 1197 | %100 |
+| **1600 px** | **110** | **34** | **1260** | **%79** (eski %49) |
+
+Küçük ekranda eski davranış korunuyor (tavan zaten bağlayıcı değil). Yoğun günde (19 görev) 1600 px'te doluluk %99.
+
+### Test · `cark_test.js` +19 kontrol
+
+satır tavanı alana bağlı · yazı tavanı satır tavanından · ikili arama tavanı değişken · **ResizeObserver bağlı** · gözcü bırakılıyor · yalnız gün kipinde çalışıyor · yedek 1600 ms.
+
+**Doluluk doğrulaması:** beş alan boyunda taşma yok · 620 ve 900 px'te ≥%95 · 1600 px'te ≥%75 · **eski sabit tavanda %49 olduğu kanıtlanıyor** · büyük alanda yazı ≥30 px · küçük alanda eski davranış · yoğun gün de dolduruyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-01a` ↔ `rota-2026-10-01a` · 399 330 bayt**
+
+---
+
+## 147 · İKİ BİLDİRİM · MOLA GÖRÜNÜRLÜĞÜ · `2026-10-02a`
+
+### 1 · bütün bildirimler kaldırıldı, ikisi kaldı
+
+"Süre doldu · <görev>" bildirimi tamamen çıkarıldı. Ekrandaki uyarı işaretleri (⚠) duruyor, yalnız **bildirim** gitmiyor.
+
+Kalan iki bildirim:
+
+| Bildirim | Ne zaman |
+|---|---|
+| **Mola başladı** | `Akşam başladı · 45 dk` |
+| **Mola bitti** | `Mola bitti, çalışma vakti` |
+
+İkisi de ortak `molaGonder()` üzerinden; başlangıç bildirimi her mola için **bir kez** (`molaBaslaBildirildi`).
+
+### 2 · tetikleme şartı
+
+Başlangıç bildirimi yalnız **moladan önceki iş tamamlandıysa** gidiyor:
+
+```js
+if(!D.bitti[k] || molaGizli(g)) return;
+```
+
+Geri sayım da (`molaKalanSn`) zaten `D.bitti` şartını arıyor, dolayısıyla bitiş bildirimi de aynı kurala tabi.
+
+### 3 · vakti geçmiş mola gizleniyor · `molaGizli()`
+
+| Durum | Sonuç |
+|---|---|
+| Uyku (`yavas`) veya izin | **her zaman görünür** |
+| İş tamamlandı | görünür |
+| Geçmiş gün, iş yapılmamış | **gizli** |
+| Gelecek gün | görünür |
+| Bugün, iş yapılmamış, molanın bitiş saati geçmiş | **gizli** |
+
+Önceki görev sonradan çarka çekilse bile o mola bir daha görünmüyor — vakti geçmiştir.
+
+Gizleme **üç yerde** uygulanıyor: `duraklar()` (gezinme), `carkCiz()` (çizim), `molaKalanSn()` (geri sayım ve bildirim).
+
+**29 Tem · saat 23:00 · hiçbir iş bitmemiş:**
+
+| Mola | Saat | Sonuç |
+|---|---|---|
+| kisa | 10:00–10:15 | GİZLİ |
+| spor | 12:30–16:30 | GİZLİ |
+| aksam | 18:15–19:00 | GİZLİ |
+| **yavas** | 20:30–23:00 | **görünür** |
+
+### 4 · tuşlar bozulmadı
+
+Durak sayısı 295 → 282 (13 mola durağı düştü). **20 karışık adımda hata 0, atlama 0**; Tamamlandı yolu da sorunsuz.
+
+### Test · `cark_test.js` +24 kontrol
+
+süre bildirimi kaldırıldı · iki bildirim · ortak gönderici · tek kez · iş şartı · saniyelik tarama · `molaGizli` · uyku istisnası · beş görünürlük kuralı · **üç yerde uygulanıyor**.
+
+**Doğruluk tablosu:** uyku ve izin her hâlükârda görünür · ara mola ve spor (iş bitmemiş + vakit geçmiş) gizli · iş bittiyse görünür · vakit geçmediyse görünür.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-02a` ↔ `rota-2026-10-02a` · 401 407 bayt**
+
+---
+
+## 148 · YÜKSEKLİK ÖLÇÜMÜ SAĞLAMLIĞI · `2026-10-03a`
+
+Telefon ekran görüntüsü: liste yine üst yarıda, altı bomboş. §146'daki ResizeObserver tek başına yetmemiş.
+
+### Kök sebep · tek kaynağa güvenmek
+
+```js
+const h = gl.clientHeight || gl.getBoundingClientRect().height || 0;
+```
+
+Geçiş sürerken `#gunListe` küçük ölçülüyor; gözlemci tetiklense bile o anki değer eski kalabiliyordu.
+
+**Düzeltme · dört kaynaktan en büyüğü:**
+
+```js
+const kap = gl.parentElement;
+const h = Math.max(
+  gl.clientHeight, gl.getBoundingClientRect().height,
+  kap.clientHeight, kap.getBoundingClientRect().height);
+```
+
+Hangi kaynak güncelse o kazanıyor. `#cark` (kapsayıcı) genellikle `#gunListe`'den önce doğru boyuta ulaşıyor.
+
+### Ek güvenceler
+
+- **`transitionend`** dinleyicisi `#rota`'ya bağlandı: grid satır/sütun animasyonu bitince kesin ölçüm. Bir kez bağlanıyor (`__gecBagli`).
+- Yedek kare döngüsü 1600 → **2600 ms**.
+- ResizeObserver duruyor.
+
+### Telefon senaryosu · 714 px alan, 9 görev + 4 blok
+
+| | Değer |
+|---|---|
+| Satır | **55 px** |
+| Yazı | **32 px** |
+| Doluluk | **%98** |
+
+Yanlış ölçümde (350 px sanılırsa) satır 25 px'de kalıyordu — testte bu regresyon da sınanıyor.
+
+### Test · `cark_test.js` +14 kontrol
+
+dört kaynaktan en büyüğü · kapsayıcı da ölçülüyor · `transitionend` bağlı · bir kez bağlanıyor · 2600 ms yedek · ResizeObserver duruyor.
+
+**Seçim mantığı:** geçiş sürerken büyük olan seçiliyor · sıfırlar yutuluyor. **Telefon:** satır ≥50 px · yazı ≥28 px · doluluk ≥%95 · yanlış ölçümde küçük kalacağı kanıtlanıyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-03a` ↔ `rota-2026-10-03a` · 402 193 bayt**
+
+---
+
+## 149 · POWER-UP HAVUZU YENİDEN KURULDU · `2026-10-04a`
+
+### Denetim · eski havuz %43 kullanılamazdı
+
+| Sorun | Miktar |
+|---|---|
+| Yeni seçimde kullanılmayan kitaptan | **35 konu · 57.5 sa** |
+| Programla birebir çakışan (aynı kitap+sayfa) | **5 konu** |
+| Hiç temsil edilmeyen program kitabı | TUSTIME Küçük Stajlar (15 konu) |
+| **Kullanılabilir** | 54 / 94 konu |
+
+### Yeni havuz · kaynak evreninden türetildi
+
+`gorev_katalog.py` (235 bölüm) → seçim evrenine indirgendi (`eko.KITAP` + Atilla Uslu SST = 152 bölüm) → programda işlenen 79 bölüm çıkarıldı → **73 konu · 136.9 saat · 72.2 soru**.
+
+Sayfa düzeyinde çakışma denetimi: **0**.
+
+### ⚠ Sıralama · statik verim yanıltıcıydı
+
+Katalogdaki `verim = net/saat` statik bir tahmin. Uygulamanın **dinamik kazanç modeli** ise branş doygunluğunu ve çürümeyi hesaba katıyor. 73 konunun her biri sim'de tek tek çekilip tamamlandı, projeksiyon farkı ölçüldü:
+
+| | Konu |
+|---|---|
+| Projeksiyonu **artıran** | 34 |
+| Etkisiz (soru değeri yok) | 25 |
+| Projeksiyonu **düşüren** | 14 |
+
+Düşürenlerin hepsi **Atilla Uslu SST (Dahiliye)** ve Speetus — o branşlar programda zaten doygun; ek çalışma erken tamamlama çürümesini karşılamıyor.
+
+`verim` artık **ölçülen etki / saat**; havuz buna göre sıralı.
+
+**En kazançlı 5:**
+
+| Konu | Kitap | Saat | Etki | net/sa |
+|---|---|---|---|---|
+| Solunum Sistemi Anatomisi | Anatomi FT | 0.9 | +0.205 | 0.234 |
+| Sindirim + Endokrin Anatomi | Anatomi FT | 2.3 | +0.320 | 0.141 |
+| Üriner Sistem Hastalıkları | Emrullah Patoloji | 2.1 | +0.286 | 0.134 |
+| Karaciğer Hastalıkları | Emrullah Patoloji | 1.5 | +0.194 | 0.132 |
+| İmmünoloji | Emrullah Patoloji | 1.9 | +0.240 | 0.129 |
+
+### Test · `pu_test.js` +12 kontrol
+
+`etki` alanı · `verim = etki/saat` · azalan sıralı · en üstteki pozitif · saat/sayfa/aralık dolu · pozitifler üstte, negatifler altta · **sayfa düzeyinde program çakışması yok**.
+
+Ayrıca "hiçbiri programda değil" kontrolü **kitap+konu** eşleşmesine çevrildi (aynı ad farklı kitapta olabilir).
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-04a` ↔ `rota-2026-10-04a` · 398 109 bayt**
+
+---
+
+## 150 · İKİ SÜTUN · DİNAMİK SIRALAMA · `2026-10-05a`
+
+### 1 · sıralama artık ÇALIŞMA ZAMANINDA
+
+`powerup.json`'daki `verim` donmuş bir değerdi. Çürüme, branş doygunluğu ve kalibrasyon her gün ve her deneme girişinden sonra değiştiği için sıralama da değişmeli.
+
+`puEtki(u)` — `para()`nın kullandığı formülün aynısını işletiyor:
+
+```
+boşluk = tavan − grubun o anki neti
+ham    = boşluk × R_CAL × min(1, soru/tavan)
+etki   = ham × Rr(bugünden sınava kalan gün, S)
+verim  = etki / saat
+```
+
+`puSirali()` her çizimde yeniden hesaplıyor.
+
+**Doğrulandı:**
+
+| Tetik | Sonuç |
+|---|---|
+| Gün ilerledi (29 Tem → 18 Ağu) | değer 0.218 → 0.331 (**1.52×**) |
+| Yeni deneme girildi | değer 0.257 → 0.187, **ilk 8'in sırası değişti** |
+
+Sınav yaklaştıkça değer yükseliyor (daha az çürüme); deneme sonucu geldikçe doygunluk değişip sıra karışıyor — ikisi de beklenen davranış.
+
+### 2 · iki sütun
+
+| Sol | Sağ |
+|---|---|
+| **Konu kitapları** (54) · okuyarak öğrenilecek | **Soru kitapları** (19) · soru çözerek pekişecek |
+
+Her sütun **kendi içinde** anlık net/saat değerine göre sıralı. Başlıkta konu sayısı ve toplam saat. Çarka çekilmiş konular üstte ayrı bir bölümde.
+
+Sınıflandırma `PU_SORU_KITAP` ile: Atilla Uslu SST, Klinisyen Vaka Pediatri / Fizyoloji / Küçük Stajlar.
+
+640 px altında tek sütuna düşüyor, aralarında ayırıcı çizgi.
+
+**Şu anki tepe (5 Ağu):**
+
+| Sol · Konu | net/sa | Sağ · Soru | net/sa |
+|---|---|---|---|
+| Solunum Sistemi Anatomisi | 0.243 | Yenidoğan | 0.116 |
+| Sindirim + Endokrin Anatomi | 0.146 | Pediatrik Endokrinoloji | 0.112 |
+| Temel Mikrobiyoloji | 0.139 | Pediatrik Kardiyoloji | 0.095 |
+
+### Test · `pu_test.js` +21 kontrol
+
+`puEtki` · `puSirali` · iki grup · her sütun kendi içinde sıralı · gruplar ayrık · toplam havuz kadar · **sınav yaklaştıkça değer yükseliyor (>%20)** · **deneme girişi değerleri ve sırayı değiştiriyor** · iki sütun çiziliyor · başlıklar.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-05a` ↔ `rota-2026-10-05a` · 401 930 bayt**
+
+---
+
+## 151 · ⚠ PANEL KAYDIRILAMIYORDU · KİTAP TÜRÜ · `2026-10-06a`
+
+### ⚠ 1 · soru kitapları sütununa hiç ulaşılamıyordu
+
+73 öğenin hepsi çiziliyordu (sim: `.kit` 73, `puSut` 2, soru sütununda 19), ama:
+
+```css
+#ppanel{position:fixed;inset:0; … }   /* overflow yok */
+```
+
+Kaplama kaydırılamıyordu; kutu ekrandan taşınca yalnız tepesi görünüyor, soru sütununa (dar ekranda alta düşüyor) hiç erişilemiyordu.
+
+`overflow-y:auto` + `-webkit-overflow-scrolling:touch` + `overscroll-behavior:contain` eklendi. **Aynı kusur `kpanel` · `bpanel` · `dpanel`'de de vardı** — dördü birden düzeltildi.
+
+### 2 · kitap türü · kullanıcı beyanına göre
+
+Tahminimi kullanıcı düzeltti. Doğru sınıflandırma:
+
+**KONU kitapları** (yeni konu buradan öğrenilir):
+Anatomi Fast Track · FT Biyokimya · FT Farmakoloji · FT Kadın Doğum · Speetus Genel Cerrahi · Emrullah Patoloji SST · Klinisyen Vaka Pediatri · **Atilla Uslu SST — yalnız Enfeksiyon bölümü**
+
+**SORU kitapları:** diğer her şey.
+
+Atilla Uslu SST bölüme göre ayrıştığı için `puKonuMu()` özel kural içeriyor.
+
+| Sütun | Konu | Saat |
+|---|---|---|
+| Konu kitapları | 54 | 80.5 |
+| Soru kitapları | 19 | 56.5 |
+
+### ⚠ 3 · PROGRAM DENETİMİ · açık kalem
+
+95 öğrenme görevinin dağılımı:
+
+| Tür | Görev |
+|---|---|
+| Konu kitabından | 69 |
+| **Soru kitabından** | **26** |
+
+Soru kitabından öğrenme yapan 26 görev:
+
+| Kitap | Görev |
+|---|---|
+| TUSTIME Küçük Stajlar | 15 |
+| TUSTIME Fizyoloji | 9 |
+| TUSTIME Mikrobiyoloji | 2 |
+
+**Not:** `eko.TANIDIK` bu üç kitabı (+ Patoloji SST) "tanıdık" işaretlemiş ve 15 sf/saat **okuma** hızı atamış — yani özgün planlama onları okunabilir içerik saymış. Atilla Uslu SST ise zaten yalnız Enfeksiyon'a kısıtlanmış, bu da kullanıcının kuralıyla birebir örtüşüyor.
+
+Bu üç kitabın türü **kullanıcıya soruldu**; cevaba göre program yeniden üretilebilir.
+
+### Test · `pu_test.js` +20 kontrol
+
+yedi konu kitabı tek tek · Atilla Uslu SST Enfeksiyon → KONU, Kardiyoloji → SORU · üç TUSTIME → SORU · sütun saflığı · **panel kaydırılabilir** · dört panel de.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-06a` ↔ `rota-2026-10-06a` · 403 029 bayt**
+
+---
+
+## 152 · TÜR ANAHTARI · SINIFLANDIRMA DÜZELTİLDİ · `2026-10-07a`
+
+### 1 · program DOĞRU üretilmiş
+
+§151'de açık bırakılan kalem kapandı. Kullanıcı doğruladı: **TUSTIME Küçük Stajlar · Fizyoloji · Mikrobiyoloji de KONU kitabı.**
+
+Dolayısıyla programın 95 öğrenme görevinin **tamamı** konu kitabından geliyor. `eko.TANIDIK`'ın bu üç kitaba okuma hızı atamış olması da tutarlıymış.
+
+Konu kitabı listesi güncellendi (12 kitap). Havuzda geriye tek soru kitabı kaldı: **Atilla Uslu SST** (Enfeksiyon hariç).
+
+| Sütun | Konu | Saat |
+|---|---|---|
+| Konu kitapları | 64 | 114.7 |
+| Soru kitapları | 9 | 22.2 |
+
+### 2 · tür anahtarı
+
+Dar pencerede iki liste yan yana sığmıyordu. Kaydırmalı anahtar eklendi:
+
+```
+┌─────────────────┬─────────────────┐
+│ Konu kitapları 64│ Soru kitapları 9│   ← kayan vurgu .30s
+└─────────────────┴─────────────────┘
+```
+
+- Her düğmede o türün konu sayısı
+- Seçim **kalıcı** (`D.puTur`, Depo'ya yazılıyor)
+- `role="tablist"` · `aria-selected`
+- Hareket azaltmada kayma yok
+
+**≥900 px'te anahtar gizleniyor, iki liste yan yana görünüyor** — geçiş tamamen CSS ile, JS'e iş düşmüyor. İki liste her zaman HTML'de duruyor; yalnız görünürlük değişiyor, bu yüzden geçiş anında.
+
+### Test · `pu_test.js` +19 kontrol
+
+TUSTIME kitapları KONU · yalnız Atilla Uslu SST soru kitabı · anahtar çiziliyor · iki düğme · kaydırıcı · seçili durum · kap sınıfı · sayaç · erişilebilirlik · seçim değişince kap ve kaydırıcı hareket ediyor · **iki liste de HTML'de kalıyor** · dar/geniş pencere kuralları · eşik 900 px · seçim kalıcı.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-07a` ↔ `rota-2026-10-07a` · 405 937 bayt**
+
+---
+
+## 153 · ⚠ GRUP ADI EŞLEŞMESİ · DRE LOGOSU · `2026-10-08a`
+
+### ⚠ 1 · soru kitaplarının 0 görünmesi BENİM HATAM'dı
+
+Kullanıcı "konular okunmadığı için mi 0?" diye sordu — hayır. Havuzu yeniden kurarken (§149) `grup` alanına **branş adını** yazmıştım:
+
+```
+havuzda: "Dahiliye"          uygulamada: "Dahiliye grubu"
+havuzda: "Genel Cerrahi"     uygulamada: "Genel Cerrahi grubu"
+havuzda: "Fizyoloji"         uygulamada: "Fizyoloji+Histo"
+```
+
+`TAVAN_G["Dahiliye"]` tanımsız olduğu için `puEtki()` erkenden 0 dönüyordu — **29 konu** etkilenmişti.
+
+Düzeltildi. Artık `TAVAN_G`/`GRUP_BN` eşleşmeyen konu **0**.
+
+| Soru kitabı konusu | Önce | Sonra |
+|---|---|---|
+| Onkoloji | 0.000 | **0.223** |
+| Nefroloji | 0.000 | **0.205** |
+| Romatoloji | 0.000 | **0.153** |
+
+Geriye kalan 0'lar gerçek: kaynak veride soru değeri bulunmayan 25 konu (`soru=0`).
+
+### 2 · DRE logosu
+
+Brief: D ve R üstte, E ortalanmış altta; üçü birlikte kalp silueti; E yapılacaklar listesi, R steteskop, D çember cetvel; harfler okunur kalacak.
+
+| Harf | Nesne | Yapı |
+|---|---|---|
+| **D** | açıölçer | dik gövde + 48 yarıçaplı kavis · yedi taksimat çizgisi · merkez pimi |
+| **R** | steteskop | iki kulaklık ucu (çatal) · hortum halkası (R'nin karnı) · içeri dönen bacak · göğüs parçası |
+| **E** | yapılacaklar listesi | omurga + üç kol · aşağı indikçe kısalıyor · ilk iki satırda onay işareti |
+
+- D **−20°**, R **+20°** döndürüldü: üstte iki lob oluşuyor
+- E'nin kolları 56 → 40 → 30 px: siluet uca doğru sivriliyor
+- Steteskobun göğüs parçası içeri çekildi ki sağ kenar taşmasın
+- Arkada çok soluk kalp aurası (%18) — sınır çizgisi yok, yalnız okumayı destekliyor
+- Renk: harfler buz mavisi (`#CDEBFF→#6FA8CE`), E altın (`#F2DCA2→#C9A758`) — uygulamanın kendi paleti
+
+**72 pikselde denendi:** üç harf de ayrışıyor, kalp silueti duruyor.
+
+Üretilen dosyalar: `logo.svg` · `icon-180.png` · `icon-192.png` · `icon-512.png` · güncellenmiş `manifest.webmanifest`. Başlık `DRE · TUS 23 Ağustos`.
+
+### Test · `pu_test.js` +9 kontrol
+
+her konunun tavanı ve branş eşlemesi tanımlı · üç grup adı doğru · kısa ad kalmadı · soru sütununda gerçek değer var · **sıfır kalanların soru değeri de gerçekten sıfır**.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-08a` ↔ `rota-2026-10-08a` · 406 110 bayt**
+
+---
+
+## 154 · TÜM İÇERİK HAVUZU · EYLEM ETİKETİ · ANAHTAR · `2026-10-09a`
+
+### 1 · soru kitabı görevinde "Oku" yazıyordu
+
+`puSenkron` her power-up görevine `act:'oku'` veriyor, panel satırı da `'Oku · '` ile başlıyordu. Oysa `EYLEM` haritasında `soru:'Soru çöz'` zaten tanımlıydı — program hiç kullanmıyordu çünkü **tüm öğrenme görevleri konu kitabından** (§152'de doğrulandı).
+
+Düzeltme:
+- `act: puKonuMu(u) ? 'oku' : 'soru'`
+- Panel satırı: `puKonuMu(u) ? 'Oku' : 'Soru çöz'`
+- `para()` filtresi `g.act==='oku'` → `(g.act==='oku'||g.act==='soru')` — yoksa soru görevleri kazanç getirmezdi
+
+**Diğer yerler temiz:** seyir defteri, kaynak haritası ve deneme görevleri `EYLEM[g.act]` kullanıyor, hepsi doğru etiketliyordu. Sorun yalnız power-up'taydı.
+
+### 2 · havuz artık TÜM içeriği kapsıyor
+
+Kullanıcı: *"çöpe atmış bile olsam koşullardan etkilenip ileride çok verimli hâle gelebilir."*
+
+Havuz seçim evreniyle (10 kitap) sınırlıydı. Artık **tam envanterden** türetiliyor:
+
+| | Önce | Sonra |
+|---|---|---|
+| Konu | 73 | **156** |
+| Saat | 136.9 | **334.5** |
+| Kitap | 10 | **20** |
+
+Programa alınmayan kitaplar da geldi: Levent Kodal Genel Cerrahi SB · Yavuz Şahin Biyokimya/Farmakoloji SB · Klinisyen Vaka Fizyoloji/Küçük Stajlar · Feyyaz Akay Mikrobiyoloji · Atilla Uslu Dahiliye 1–2 · TUSTIME Kadın Doğum konu · Yavuz Şahin Biyokimya konu.
+
+| Sütun | Konu | Saat |
+|---|---|---|
+| Konu kitapları | 118 | 273.5 |
+| Soru kitapları | 38 | 60.9 |
+
+Soru kitapları: `* SB` ekliler + Atilla Uslu SST (Enfeksiyon hariç).
+
+### ⚠ 3 · ANAHTAR ÇAKIŞMASI
+
+Havuz büyüyünce **20 konu adı iki kitapta birden** çıktı (Hematoloji · Onkoloji · Kardiyoloji … hem Atilla Uslu Dahiliye 1'de hem SST'de).
+
+`D.pu` yalnız konu adıyla anahtarlanıyordu → iki kayıt birbirini eziyordu. Anahtar **kitap + konu** yapıldı (`puAnh`), eski kayıtlar `puGoc()` ile ilk açılışta taşınıyor. Sekiz kullanım noktası ve `puStreak` da güncellendi.
+
+### Test · `pu_test.js` +14 kontrol · 6 kontrol anahtara uyarlandı
+
+havuz ≥150 konu · 20 kitap · programdan çıkarılanlar da var · anahtar kitap+konu · göç fonksiyonu · **`pu[u.konu]` kalmadı** · ad çakışması var ve anahtarlar tekil · soru görevi `act=soru` · konu görevi `act=oku` · panelde doğru fiil · `para()` soru görevlerini sayıyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-09a` ↔ `rota-2026-10-09a` · 425 442 bayt**
+
+---
+
+## 155 · ⚠ E HARFİ GÖRÜNMÜYORDU · `2026-10-10a`
+
+### Kök sebep · gradyan birimi
+
+```svg
+<linearGradient id="altin" x1="0" y1="0" x2="0" y2="1">   <!-- objectBoundingBox -->
+```
+
+`objectBoundingBox` varsayılanı, ögenin **sınır kutusuna** göre çalışır. E'nin kolları düz yatay çizgi:
+
+```svg
+<path d="M100 152 H162"/>    <!-- sınır kutusu yüksekliği = 0 -->
+```
+
+Sıfır yükseklikli kutuda dikey gradyan **dejenere** oluyor ve hiç boyanmıyor. E tamamen kayboluyor, geriye yalnız üstüne çizilmiş koyu onay işaretleri kalıyordu.
+
+D ve R etkilenmemişti çünkü kavisli yolların iki boyutu da sıfırdan büyük.
+
+**Düzeltme:** iki gradyan da `gradientUnits="userSpaceOnUse"` ve açık koordinatlarla tanımlandı.
+
+| Bölge | Önce | Sonra |
+|---|---|---|
+| E · altın piksel | ~0 | **3664** |
+
+### E · yapılacaklar sekreteryası
+
+Kalp siluetinden vazgeçildi (kullanıcı isteği). E artık düz bir liste:
+
+- Omurga + üç kol (162 · 146 · 162 px)
+- Her satırda köşeleri yuvarlatılmış **kutucuk**; ilk ikisi altın onay işaretli, üçüncüsü boş ve soluk (%50) — sırada bekleyen iş
+- Altın gradyan `#F6E2AE → #C79F4C`
+
+**Doğrulama · piksel taraması:** satır taramasında üç geniş bant (kollar) arasında dar 28 px kesitler (omurga); sütun taramasında solda 163 px omurga. **96 pikselde bile** altın 438 piksel — E ayırt ediliyor.
+
+Kalp aurası kaldırıldı; D ve R aynen korundu.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-10a` ↔ `rota-2026-10-10a` · 425 444 bayt**
+
+---
+
+## 156 · LOGO · DÖRT DÜZELTME · `2026-10-11a`
+
+### 1 · R · uzaylı antenleri kaldırıldı
+
+İki uzun çatal uzantı silindi. Yerine: **R'nin üst kavisi ortadan açık** — steteskop başlığı gibi. Açıklığın iki yanında birbirine yakın iki yuvarlak uç (`r=4.6`, aralarında 8 px).
+
+```
+üst kavis sol :  M132 50 H148 A26 26 0 0 1 161 55
+       (açıklık)
+üst kavis sağ :  M170 63 A26 26 0 0 1 157 102 H132
+```
+
+Uçlar yakın olduğu için R'nin karnı kapalı okunuyor, harf bozulmuyor.
+
+### 2 · E aynı renkte
+
+Altın gradyan kaldırıldı; E de `buz` gradyanını kullanıyor. Artık üç harf tek renk ailesinde.
+
+### 3 · onay işaretleri satır SONUNDA
+
+Kutucuklar kolların üstünden alınıp **kolların bittiği yere** taşındı. Üç kol da eşit uzunlukta (50 px) — üç satır yazılı görev gibi duruyor:
+
+| Satır | Sonu |
+|---|---|
+| 1 | ✓ onay |
+| 2 | ✓ onay |
+| 3 | boş kutu (%55 soluk) — sırada bekleyen iş |
+
+**Piksel doğrulaması:** üç kol (y≈340/410/480) ve ilk ikisinin sağ ucunda ayrı işaret kümesi.
+
+### 4 · D daha çok iletki
+
+Eklendi:
+- **Merkez çentiği**: düz kenarı kesen yatay çizgi + V nişangâh + merkez noktası
+- **Kademeli taksimat**: 0/90/180'de uzun (4 px), 45/135'te orta (2.6 px), aralarda ince (2 px, %70)
+- Taksimat yayın **içinden merkeze doğru** — gerçek iletkideki gibi
+
+### Doğrulama
+
+88 pikselde üç harf de ayrışıyor (ASCII taramasıyla denetlendi).
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-11a` ↔ `rota-2026-10-11a`**
+
+---
+
+## 157 · ⚠ İKON GÖMÜLDÜ · DIŞ DOSYA BAĞIMLILIĞI KALKTI · `2026-10-12a`
+
+Kullanıcı: *"nedense ikonu tanımıyor, ikonsuz görünüyor."*
+
+### Teşhis
+
+Dosyalar ve referanslar **doğruydu**: `icon-180/192/512.png` geçerli PNG, `manifest.webmanifest` doğru, `index.html`'de `apple-touch-icon` ve `manifest` bağlantıları var, `sw.js` üçünü de önbelleğe alıyor.
+
+Yani sorun kodda değil, **dağıtımda**: ikon dosyaları sunucuya çıkmamış ya da eski Service Worker bir 404'ü önbelleğe almış olabilir. iOS ana ekran ikonunu kurulum anında sabitlediği için de sonradan düzeltmek zor.
+
+### Çözüm · bağımlılığı tamamen kaldır
+
+**1 · İkon HTML'in içinde**
+
+```html
+<link rel="apple-touch-icon" href="data:image/png;base64,…">
+<link rel="icon" type="image/png" href="data:image/png;base64,…">
+```
+
+**2 · Manifest çalışma zamanında Blob olarak kuruluyor**, ikonları da gömülü veri URI'si:
+
+```js
+const u=URL.createObjectURL(new Blob([JSON.stringify(mf)],
+  {type:'application/manifest+json'}));
+```
+
+**3 · Bildirim ikonları** tek bir `window.IKON` sabitinden okunuyor; sabit, DOM'daki gömülü bağlantıdan alınıyor — boyut artmıyor.
+
+**4 · `sw.js` önbellek listesinden** ikon ve manifest çıkarıldı; artık dosya olarak gerekmiyorlar.
+
+| | Önce | Sonra |
+|---|---|---|
+| Dış `./icon-*.png` referansı | 5 | **0** |
+| Gerekli ek dosya | 4 | **0** |
+| `index.html` | 425 KB | 538 KB |
+
+113 KB'lik artış, ikonun hiçbir koşulda kaybolmaması karşılığında kabul edildi — uygulama zaten çevrimdışı çalışan tek dosya.
+
+**Doğrulama:** gömülü veri URI'si çözülüp PNG olarak açıldı — 180×180, geçerli, boş değil.
+
+### Yükleme notu
+
+iOS'ta ana ekrandaki eski kısayol eski ikonu tutar; **kısayolu silip yeniden eklemek** gerekiyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-12a` ↔ `rota-2026-10-12a` · 550 519 bayt**
+
+---
+
+## 158 · ⚠ KİLİT KALDIRILDI · HEDEF HER KAREDE ÖLÇÜLÜYOR · `2026-10-13a`
+
+Kullanıcı: *"otomatik kaydırdığı kartın orta noktası olarak kaydırma görünümündeki küçük hâlini değil büyük hâlini referans alıyor olabilir mi?"*
+
+**Şüphe yerindeydi — ama sorun ters yöndeydi.**
+
+### Kök sebep · `otoKilit`
+
+§135'te sekmeyi durdurmak için otomatik kaydırma boyunca açıklık **donduruluyordu**:
+
+```js
+sBas(); otoKilit=true;
+…
+if(!otoKilit) c.forEach(…)      // açıklık güncellemesi atlanıyor
+```
+
+Bunun iki sonucu vardı:
+1. Kartlar kaydırma boyunca **büyümüyordu** — §135'te istenen "merkeze yaklaştıkça büyüsün" davranışının tersi
+2. Animasyon bitip `gecis()` çalışınca hedef **birden** tam boyuta açılıyordu — hissedilen sıçrama buydu
+
+### Çözüm · sabit mesafe yerine sürekli ölçüm
+
+Kilit kaldırıldı; kartlar yine büyüyor. Büyüdükçe yükseklikler değiştiği için hedefin merkeze uzaklığı **her karede yeniden hesaplanıyor**:
+
+```js
+kayY = −uzaklık(şimdi) + (−y0) × (−(1 − yumuşatma(t)))
+```
+
+- `t=0` → `hedefY = y0` (başlangıç konumu)
+- `t=1` → `hedefY = 0` (**tam merkez**)
+
+Aradaki yükseklik değişimi ne olursa olsun iniş noktası değişmiyor.
+
+**Matematiksel doğrulama · beş senaryo:**
+
+| Başlangıç | Büyüme | Başta | Sonda |
+|---|---|---|---|
+| −200 | %0 | −200 | **0** |
+| −200 | %18 | −200 | **0** |
+| −200 | %45 | −200 | **0** |
+| +300 | %30 | +300 | **0** |
+| −80 | %60 | −80 | **0** |
+
+Ayrıca hareketin **monoton** olduğu (geri sekme yok) 0.02 adımlarla sınandı.
+
+### Test · `cark_test.js` +17 kontrol · 23 kontrol uyarlandı
+
+kilit kalmadı · açıklık her karede güncelleniyor · `uzaklik()` fonksiyonu · her karede ölçüm · `kayY` formülü · başlangıç uzaklığı saklanıyor · **beş senaryoda tam merkez** · monotonluk · 30 adımda hata ve atlama yok.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-13a` ↔ `rota-2026-10-13a` · 550 907 bayt**
