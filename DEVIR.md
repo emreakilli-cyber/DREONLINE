@@ -7764,3 +7764,3852 @@ kilit kalmadı · açıklık her karede güncelleniyor · `uzaklik()` fonksiyonu
 ### ✓ ON DÖRT KAPI · TOPLAM 0
 
 **sürüm `2026-10-13a` ↔ `rota-2026-10-13a` · 550 907 bayt**
+
+---
+
+## 159 · GÜN GEZİNMESİ · `2026-10-14a`
+
+Gün listesi yalnız bugünü gösteriyordu. Tarihin iki yanına ok eklendi.
+
+### Yapı
+
+```
+┌───┬──────────────────────────┬───┐
+│ ‹ │  5 Ağustos     bugün     │ › │
+└───┴──────────────────────────┴───┘
+   9 iş · 6.90 saat · tamamlanan 0.00
+```
+
+- `gunGoster` yalnız **görüntüyü** değiştirir; hiçbir hesabı, projeksiyonu ya da görev durumunu etkilemez
+- Bugünde tarihin yanında `bugün` etiketi; başka güne geçilince yerini **"bugüne dön"** düğmesi alır
+- Programın ilk gününde geri oku, son gününde ileri oku **kapalı** (%28 soluk)
+- Liste kapanınca otomatik bugüne döner
+- Ok tıklaması `stopPropagation` ile listeye sızmıyor; görev tıklamaları her yeniden kurulumda yeniden bağlanıyor (`gunBagla`)
+- Ölçekleme her gün değişiminde tazeleniyor — yoğun günde satırlar küçülüyor
+- Klavye odak halkası var
+
+Boş günler için de ayrı metin: *"Bu gün için görev yok."*
+
+### Test · `cark_test.js` +22 kontrol
+
+`gunGoster` · `gunDizi` · `gunKomsu` · `gunBagla` · **25 gün sıralı** · geri/ileri komşu · uçlarda null · bilinmeyen gün null · iki ok · erişilebilirlik etiketleri · bugün/başka gün ayrımı · uçlarda kapalı ok · kip kapanınca sıfırlanıyor · olay durduruluyor · görev tıklaması yeniden bağlanıyor · ölçek tazeleniyor · odak halkası.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-14a` ↔ `rota-2026-10-14a` · 554 116 bayt**
+
+---
+
+## 160 · METALİK GRİ LOGO · `2026-10-16a`
+
+Buz mavisi bırakıldı; Bevel uygulamasının logosundaki gibi **eğimli metal** görünümü kuruldu.
+
+### Üç katman
+
+Harfler `<defs>` içinde bir kez tanımlanıp `<use>` ile üç kez çiziliyor:
+
+| Katman | Kaçıklık | Görev |
+|---|---|---|
+| 1 · gölge | +2.2, +2.6 | derinlik · `#20252A → #0B0E12` |
+| 2 · metal gövde | 0, 0 | ana yüzey |
+| 3 · kenar parlaması | −1.1, −1.3 | ince beyaz vurgu (%55, 2.4 px) |
+
+### Metal gradyanı · dokuz durak
+
+```
+#FBFCFD → #DEE3E8 → #AEB5BC → #7E858C
+       → #EDF1F4 (ikinci parlama)
+       → #A7AEB5 → #6B7278 → #9AA1A8 → #5C6268
+```
+
+Tek yönlü gradyan yerine **iki parlama, üç gölge** — metalin yüzey kırılmasını taklit ediyor. Işık sol üstten, koyu kenar sağ altta.
+
+**Ölçüm sonuçları:**
+
+| | Değer |
+|---|---|
+| Nötr gri piksel | **%100** (mavi tonlu: 6/14 511) |
+| Ton aralığı | **40 – 246** (genişlik 206) |
+| Kesit profili | sol kenar 57 → gövde 206 → sağa 174 |
+
+### ⚠ Boyut · paletli sıkıştırma
+
+Metalik gradyan PNG'yi büyüttü: 180 px ikon 11.7 → 23.0 KB, 512 px 38.5 → 93.0 KB. Gömülü veri 272 KB'a çıkıp dosyayı 692 KB yaptı.
+
+Çözüm:
+- **Paletli PNG** (128–192 renk, `effort:10`): 180 px → **3.2 KB**, 256 px → **11.7 KB**
+- 512 px yerine **256 px** gömüldü (manifest için yeterli)
+- Yinelenen bağlantılar (`152x152`, `120x120` apple-touch-icon) **JS'te ilkinden türetiliyor** — veri bir kez duruyor
+
+| | Önce | Sonra |
+|---|---|---|
+| Gömülü veri | 272 KB (6 adet) | **19.9 KB (2 adet)** |
+| `index.html` | 692 KB | **441 KB** |
+
+Paletlemeden sonra ton aralığı 72–240 (180 px) ve 51–246 (256 px) — metalik karakter korundu, nötrlük %100.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-16a` ↔ `rota-2026-10-16a` · 451 178 bayt**
+
+---
+
+## 161 · MANİFEST · GERÇEK DOSYA ÖNCE, BLOB YEDEK · `2026-10-17a`
+
+§157'de manifest tamamen çalışma zamanı Blob'una taşınmıştı. Bu, dosya eksikliğine karşı sağlamdı ama bir bedeli vardı:
+
+**Android/Chrome kurulabilirlik ve ikon güncellemesi için KALICI bir manifest adresi istiyor.** Blob URL'i her oturumda değişiyor; Chrome onu takip edilebilir bir manifest saymıyor.
+
+### Yeni düzen
+
+```html
+<link id="mfDosya" rel="manifest" href="./manifest.webmanifest">
+```
+
+Statik dosya **önce** bağlanıyor. Açılışta `fetch` ile erişilebilirliği sınanıyor:
+
+- **Erişilebiliyorsa** → hiçbir şey yapılmıyor, normal PWA davranışı
+- **404 / erişilemiyorsa** → bağlantı kaldırılıp Blob yedeği kuruluyor
+
+Gömülü `apple-touch-icon` her iki durumda da duruyor, yani iOS ikonu hiçbir koşulda kaybolmuyor.
+
+`manifest.webmanifest` dört ikon boyutuyla (180/192/512/512-maskable) yeniden yazıldı.
+
+### Ana ekran ikonu · gerçekler
+
+| Ortam | Yeni ikon görünür mü |
+|---|---|
+| Safari sekmesi | **evet**, HTML ağdan geldiği anda |
+| Uygulama içi | **evet** |
+| iOS/iPadOS ana ekran kısayolu | **hayır** — kurulum anında sabitleniyor |
+| Android ana ekran | belirsiz — Chrome bazen günceller |
+
+Service worker HTML için **önce ağ** stratejisi kullanıyor (`cache:'no-store'`) ve `skipWaiting` + `clients.claim` var; yani uygulama içeriği ilk açılışta yenileniyor. Ama ana ekran ikonu işletim sisteminin kopyası olduğu için **kısayolu silip yeniden eklemek** gerekiyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-17a` ↔ `rota-2026-10-17a` · 451 798 bayt**
+
+---
+
+## 162 · ⚠ TAMAMLAMADA DURAK ATLAMASI · `2026-10-19a`
+
+Kullanıcı: *"Tamamlandı'ya basınca bir sonraki göreve değil ondan sonrakine geçti. Sıradaki 3-4 görev telafi görevleriydi, bu yüzden mi?"*
+
+**Hayır — görev türüyle ilgisi yok. Her tamamlamada oluyordu.**
+
+### Kök sebep · sıra hatası
+
+```js
+D.bitti[id(g)] = bgun();          // görev carkListe()'den DÜŞÜYOR
+…
+otoKaydir(1, …)                   // p = durakKonum() → −1 → p=0 kabul
+                                  // np = 0+1 = 1  ← ama sıradaki artık 0'da
+```
+
+Görev tamamlanınca listeden çıkıyor; `durakKonum()` −1 dönüyor, kod `p=0` kabul ediyor ve `p+1` alıyor. Oysa çıkan görevin yerine geçen durak **zaten 0'da**. Sonuç: her tamamlamada **tam bir durak atlanıyor**.
+
+Doğrulama: beklenen hedef "görev 6 · iş", gidilen "görev 6 · **mola**" — bir durak ileri.
+
+### Düzeltme · hedef ÖNCE seçiliyor
+
+`otoKaydir` ikiye ayrıldı:
+
+| Fonksiyon | Görev |
+|---|---|
+| `otoKaydirHedef(hed, bitince)` | verilen durağa animasyonla gider |
+| `otoKaydir(d, bitince)` | yönden hedef türetir, devreder |
+| `siradakiDurak(atlaI)` | **şu anki** listeden sıradaki durağı verir |
+
+Tamamlandı ve "çarka geri taşı" yollarında hedef, `D.bitti` / `D.tasi` değişmeden **önce** seçiliyor.
+
+### ⚠ İkinci uç durum · görevin kendi molası
+
+Bir görevin sıradaki durağı **kendi mola durağı** olabiliyor. Görev tamamlanınca ikisi birden düşüyor, seçilmiş hedef boşluğa düşüyordu (14 denemede 4 atlama).
+
+`siradakiDurak(atlaI)` artık o göreve ait **tüm** durakları atlıyor.
+
+### Doğrulama
+
+| Sınama | Sonuç |
+|---|---|
+| 14 ardışık tamamlama | **atlama 0** |
+| 20 Sonraki/Önceki | hata 0 · atlama 0 |
+
+Sorulara cevap: hata **power-up ve normal görevlerde de** oluyordu; telafi görevleri rastlantıydı.
+
+### Test · `cark_test.js` +13 kontrol
+
+hedef seçimi ayrıldı · üç fonksiyon · `atlaI` parametresi · göreve ait duraklar atlanıyor · iki yolda da hedef önce seçiliyor · **14 ardışık tamamlamada atlama yok** · Sonraki/Önceki bozulmadı · uç durumlar.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-19a` ↔ `rota-2026-10-19a` · 453 309 bayt**
+
+---
+
+## 163 · ⚠ VİDEO GÖREVLERİ SIFIR SAYILIYORDU · `2026-10-20a`
+
+Kullanıcı: *"Dahiliye videolarıyla bütün Dahiliye 1-2 konu kitaplarını tekrar etmiş oluyorum, onun tahmini net kazancını hesaplamadın mı?"*
+
+**Hesaplanmamıştı. 44 video görevinin tamamı `soru:0` idi — 16.8 saat çalışma, projeksiyona sıfır katkı.**
+
+### Eşleşme birebir
+
+| Konu | Video | Kitap sf | Okuma saati | soru |
+|---|---|---|---|---|
+| Hematoloji | 4.00 sa | 82 | 10.25 | 1.8 |
+| Onkoloji | 0.50 | 12 | 1.50 | 1.8 |
+| Kardiyoloji | 3.00 | 82 | 10.25 | 3.0 |
+| Göğüs Hastalıkları | 2.00 | 68 | 8.50 | 2.0 |
+| Nefroloji | 1.33 | 52 | 6.50 | 2.2 |
+| Endokrinoloji | 2.33 | 76 | 9.50 | 2.0 |
+| Gastroenteroloji | 2.33 | 80 | 10.00 | 3.4 |
+| Romatoloji | 1.33 | 45 | 5.62 | 2.2 |
+| **TOPLAM** | **16.8 sa** | 497 | **62.1 sa** | **18.4** |
+
+Sekiz video konusu, Atilla Uslu Dahiliye 1-2'nin sekiz bölümüne **birebir** karşılık geliyor. 16.8 saat video, 62.1 saatlik okuma içeriğini kapsıyor.
+
+### İki kök sebep
+
+**1 · `soru:0`** — video görevlerine hiç soru değeri atanmamış. Her konunun kitap değeri, alt parçalara **süreye göre** paylaştırıldı (ör. Hematoloji 1.8 → 9 parçaya 0.2'şer).
+
+**2 · geçersiz grup adı** — `z: 'Dahiliye video'`. `TAVAN_G`'de böyle anahtar yok; `para()` "tavanı bilinmeyen grup" dalına girip donmuş `kaz=0` değerine düşüyordu. `z: 'Dahiliye grubu'` yapıldı. (§153'teki power-up grup adı hatasının aynısı.)
+
+Ayrıca `para()` filtresi `oku`/`soru` ile sınırlıydı; `video` eklendi (iki yerde).
+
+### Etki
+
+| | K puanı | Klinik net |
+|---|---|---|
+| Videolar sayılmadan | 55.721 | 35.64 |
+| Videolar tamamlanmış | **56.441** | **38.24** |
+| **Katkı** | **+0.720** | **+2.60** |
+
+Programın tamamı yapılırsa: **62.03 → 62.61**
+
+`kos.js`'teki beklenen son puan 62.04 → 62.54 güncellendi.
+
+### Test · `kos.js` +19 kontrol
+
+44 görev · hepsinde soru değeri · toplam 18.4 · grup adı geçerli · `Dahiliye video` kalmadı · **sekiz konunun her biri kitap değeriyle birebir** · projeksiyonu artırıyor · katkı makul aralıkta · klinik net artıyor · temel net değişmiyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-20a` ↔ `rota-2026-10-20a` · 453 755 bayt**
+
+---
+
+## 164 · DENEME NET GETİRİSİ MODELİ · `2026-10-24a`
+
+Denemeler de projeksiyona sıfır katkı veriyordu (51 görev · 54 saat). Kullanıcının şartnamesi uygulandı.
+
+### Model · A · B · C
+
+| Madde | Kaynak | Değer |
+|---|---|---|
+| **A** · TUS'ta konudan kaç soru | `SORU.den[branş]` (TusAnaliz) | toplam 200 |
+| **B** · 1 sayfa tekrarın net getirisi | katalogdan `Σnet / Σsayfa` | grup başına 0.0086–0.0248 |
+| **C** · 1 soru = 0.25 sayfa | `SORU_ORAN = 0.25` | — |
+
+```
+kazanç = Σ (soru sayısı × 0.25 × NET_SAYFA[grup])
+```
+
+**Sayfa başına net (B):**
+
+| Grup | sayfa | net | net/sayfa |
+|---|---|---|---|
+| Biyokimya | 421 | 10.43 | 0.02477 |
+| Farmakoloji | 323 | 7.25 | 0.02245 |
+| Anatomi | 122 | 2.65 | 0.02171 |
+| Genel Cerrahi | 434 | 8.80 | 0.02028 |
+| Mikrobiyoloji | 570 | 7.33 | 0.01287 |
+| Pediatri | 378 | 4.77 | 0.01261 |
+| Dahiliye | 1366 | 15.89 | 0.01163 |
+| Kadın Doğum | 367 | 4.07 | 0.01110 |
+| Fizyoloji+Histo | 499 | 5.09 | 0.01021 |
+| Patoloji | 432 | 3.71 | 0.00858 |
+
+**Görev tipleri:**
+- **24'lü deneme** → kendi branşı, 24 soru
+- **PreTUS200 / tam deneme** → 200 soru, TusAnaliz dağılımı (11 branş)
+
+### ⚠ Azalan verim eklendi
+
+Şartnamedeki formül tavan içermiyordu ama "projeksiyon şaşmasın" koşulu gerektirdi. `derin_test.js` de yakaladı: çok iyi denemede kalan katkı 1.61 çıkıyordu (eşik 0.5).
+
+Modelin geri kalanıyla tutarlı iki katman:
+```js
+kz *= bosluk[grup] / TAVAN_G[grup];     // oransal sönüm
+kz  = min(kz, bosluk[grup]);            // sert tavan
+```
+
+**Deneme sonucuna göre bir PreTUS200'ün getirisi:**
+
+| Deneme durumu | PreTUS200 | 24'lü |
+|---|---|---|
+| düşük | 0.518 | 0.068 |
+| beklenen | 0.368 | 0.047 |
+| çok iyi | **0.090** | 0.010 |
+
+### Dondurma · projeksiyon şaşmasın
+
+| Durum | Davranış |
+|---|---|
+| Tamamlanmamış · telafide · power-up listesinde | **anlık** hesap · her görev/deneme/power-up sonrası tazelenir |
+| Tamamlanmış | değer `D.denKaz`'da **DONMUŞ** |
+| Geri al | donmuş kayıt silinir · çözülmemiş statüsüne döner |
+
+Doğrulandı: bir deneme tamamlandıktan sonra 95 okuma görevi işaretlendi — donmuş değer **bit bit aynı** kaldı.
+
+### Gösterim
+
+- Görev kartı brif çipi: `Tahmini getiri · donmuş | +0.122 net`
+- Telafi listesi: satır sonunda `+0.122 net`
+
+### Etki
+
+| | K |
+|---|---|
+| Denemeler sayılmadan | 55.721 |
+| Denemeler tamamlanmış | **57.079** |
+| **Katkı** | **+1.358** |
+
+Programın tamamı: 62.61 → **63.97**
+
+### Test · `kos.js` +21 kontrol
+
+üç fonksiyon · A/B/C maddelerinin kodda karşılığı · 24'lü 24 soru · tavan sınırı · azalan verim · **sonuç iyileşince getiri azalıyor** · PreTUS200 > 24'lü · **dondurma: sonraki çalışmalar değeri değiştirmiyor** · geri alınca çözülüyor · `denKaz` silinir · katkı makul.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-24a` ↔ `rota-2026-10-24a` · 458 909 bayt**
+
+---
+
+## 165 · ⚠ "24'LÜ" SERİ ADI · KONU BAZLI DENEME MODELİ · `2026-10-25a`
+
+### ⚠ Benim hatam · "24'lü" soru sayısı değil
+
+24'lü TUS denemesi bir **seri adı**: içinde 24 branş denemesi var ve her denemenin soru sayısı o branşın TUS'ta çıkardığı soru kadar.
+
+| 24'lü serisi | Deneme başına soru |
+|---|---|
+| Patoloji | 18 |
+| Dahiliye | 35 |
+| Genel Cerrahi | 30 |
+| Fizyoloji | 8 |
+| Küçük Stajlar | 19 (gerçek TUS'ta bölüm yok → Dahiliye/GC'ye dağıtılır) |
+
+`denemeKaz` her göreve **24 soru** kredisi veriyordu. Yanlıştı.
+
+**Program zaten doğru kurulmuş:** her 24'lü görevin süresi = TusAnaliz soru sayısı × **1.87 dk/soru** (dokuz branşta tutarlı). Yalnız hesap yanlıştı.
+
+### Konu bazlı dağılım · `KONU_DAG`
+
+Katalogdaki konu değerleri branş toplamını **%71 aşıyordu** — aynı konu birkaç kitapta birden sayılıyor (Biyokimya 3 kitap → 51.2). Üç adımda düzeltildi:
+
+1. **Tekilleştirme** — aynı konu için en büyük değer; `(Oldies+Goldies)`, `Genel/Temel/Tıbbi/Klinik` önekleri sadeleştirildi
+2. **Küçük Stajlar dağıtımı** — 22 konu Dahiliye'ye (8) ve Genel Cerrahi'ye (14)
+3. **Normalizasyon** — her branşın Σ'sı `SORU.den[branş]`a **tam** eşitlendi
+
+| Branş | Konu | Σ | TusAnaliz |
+|---|---|---|---|
+| Mikrobiyoloji | 6 | 18.00 | 18 |
+| Dahiliye | 19 | 35.00 | 35 |
+| Genel Cerrahi | 45 | 30.00 | 30 |
+| Patoloji | 19 | 18.00 | 18 |
+| Fizyoloji | 18 | 8.00 | 8 |
+
+**163 konu · 10 branş.** Örnek — Mikrobiyoloji: bakteriyoloji 6.40 · mikrobiyoloji 3.00 · viroloji 2.80 · mikoloji 2.20 · parazitoloji 2.00 · immünoloji 1.60 = **18.00**
+
+### Yeni öğrenme / tekrar ayrımı
+
+Modelde ayrı bir "tekrar sayfa getirisi" formülü yok; ayrım **kararlılık sabitinden** geliyor:
+
+```js
+const S = konuCalisildi(konu) ? S_TEK : S_ILK;   // 6.0 : 2.4
+kz = soru × SORU_ORAN × NET_SAYFA[grup] × Rr(gün, S);
+```
+
+17 gün kala: `Rr(17, S_TEK)/Rr(17, S_ILK) = 1.26×`. Tekrar daha çok tutuyor.
+
+`konuCalisildi()` tamamlanmış görev adlarını sadeleştirip konu adıyla eşleştiriyor.
+
+### Sonuçlar
+
+| Durum | 24'lü GC | PreTUS200 |
+|---|---|---|
+| Hiç çalışılmamış | 0.0519 (yeni 30 soru) | 0.3040 (yeni 193) |
+| Tüm konular çalışılmış | **0.0622** (yeni 8 · tekrar 22) | **0.3568** (yeni 67 · tekrar 126) |
+
+Çürüme artık `denemeKaz` içinde **konu konu** uygulanıyor; `para()` tekrar uygulamıyor (çift sayım giderildi).
+
+### Test · `kos.js` +25 kontrol
+
+`KONU_DAG` · 10 branş · 163 konu · **her branşın Σ'sı TusAnaliz'e tam eşit** (10 ayrı kontrol) · Küçük Stajlar ayrı branş değil · sadeleştirme · yeni/tekrar `S` seçimi · çürüme konu konu · **`para()` çürümeyi tekrar uygulamıyor** · 24'lü tek branş · PreTUS200 on branş · **kredi soru = branşın TUS sayısı** · çalışılınca tekrara geçiyor ve getiri artıyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-25a` ↔ `rota-2026-10-25a` · 465 812 bayt**
+
+---
+
+## 166 · ⚠ KARTTA GÖRÜNEN KAZANÇ EKSİKTİ · `2026-10-26a`
+
+Kullanıcı: *"izlediğim Dahiliye videoları projeksiyona katkıda bulunmuyor galiba?"*
+
+### Projeksiyon sayıyor · kart göstermiyordu
+
+Üç yol da sınandı, **hepsi doğru çalışıyor:**
+
+| Senaryo | Katkı |
+|---|---|
+| Temiz durumda 9 Hematoloji videosu | **+0.0697 K** ✓ |
+| Videolar telafiye düşmüşken (7 gün geride) | +0.0697 K ✓ |
+| Çarka taşınıp tamamlanınca | +0.0697 K ✓ |
+
+Sorun görüntülemeydi:
+
+```js
+function gorevKazanc(g){
+  if(!g||!g.soru)return 0;
+  if(g.act!=='oku'&&g.act!=='tekrar')return 0;   // ← video ve deneme dışlanıyor
+```
+
+Kartın "Beklenen kazanç" çipi bu fonksiyondan besleniyor. Video ve deneme görevleri süzgece takıldığı için **çip hiç çıkmıyordu** — katkı yok sanılıyordu.
+
+### Düzeltme
+
+```js
+const den=(g.act==='deneme'||g.act==='deneme24');
+if(!den&&!g.soru)return 0;      /* denemelerin getirisi g.soru'dan değil
+                                   denemeKaz'tan geliyor */
+if(['oku','tekrar','video','soru','deneme','deneme24'].indexOf(g.act)<0)return 0;
+```
+
+**Kartta görünen değerler:**
+
+| Görev | soru | Kazanç | Kartta |
+|---|---|---|---|
+| Hematoloji videosu 1/9 | 0.2 | 0.0282 | **+0.03 klinik** |
+| Gastrointestinal sistem (okuma) | 1.8 | 0.4488 | +0.45 temel |
+| 24'lü Genel Cerrahi | 0 | 0.0519 | **+0.05 klinik** |
+| PreTUS200 | 0 | 0.3040 | **+0.30 klinik** |
+| Deneme analizi | 0 | 0 | çip yok (doğru) |
+
+### Not · sürüm
+
+Video katkısı §163'te (`2026-10-20a`) eklenmişti. O sürümden önce gerçekten sıfırdı; eski sürüm yüklüyse katkı görünmez.
+
+### Test · `kos.js` +12 kontrol
+
+süzgeç genişletildi · deneme soru şartından muaf · dört görev türünde kazanç görünüyor · PreTUS200 > 24'lü · üç türde brif çipi çiziliyor · **telafi yoluyla yapılan video sayılıyor** · geride kalmış görev de sayılıyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-26a` ↔ `rota-2026-10-26a` · 466 234 bayt**
+
+---
+
+## 167 · ⚠ ÇİFT SAYIM · PERFORMANS · ÇİP · `2026-10-27a`
+
+Yedi ekran görüntüsü incelendi. Üç hata, iki cevap.
+
+### ⚠ 1 · PreTUS200 ÇİFT SAYILIYORDU
+
+Program PreTUS200'ü iki oturuma bölmüş (2×2.25 sa) ama `denemeKaz` **her iki oturuma da 200 sorunun tamamını** kredilendiriyordu. Ekran görüntülerinde ikisi de `+0.277 net` gösteriyor — kanıt.
+
+Gerçek TUS'ta önce **temel 100**, sonra **klinik 100** çözülür. Aynı bölüm uygulandı:
+
+```js
+const ot=/(\d+)\.\s*oturum/.exec(g.k);
+branslar = tum.filter(br => (TEMEL_BR.indexOf(br)>=0) === (n===1));
+```
+
+| | Branş | Konu | Getiri |
+|---|---|---|---|
+| 1. oturum | 6 temel | 76 | **0.1564 temel** |
+| 2. oturum | 4 klinik | 87 | **0.1197 klinik** |
+| Toplam | 10 | 163 | 0.2761 |
+
+Eskiden 2 × 0.2761 = **0.5522** sayılıyordu. Yarıya indi.
+
+### ⚠ 2 · ÇİP GECİKMESİ · 1379 ms → 4 ms
+
+`konuCalisildi` her konu için **tüm görev listesini** tarıyordu: 163 konu × 196 görev. Tek `denemeKaz` 479 ms, `gorevKazanc` iki kez `para()` çağırdığı için **1379 ms**. iPad'de saniyeler sürüyor, çip görünmüyor; kaydırıp yeniden seçince önbellekten geliyordu — kullanıcının tarif ettiği davranış tam bu.
+
+Tamamlanmış görev adları artık **bir kez** toplanıp kümede tutuluyor:
+
+| | Önce | Sonra |
+|---|---|---|
+| `denemeKaz` | 479 ms | **3 ms** |
+| `gorevKazanc` | 1379 ms | **4 ms** |
+
+**345 kat.**
+
+### 3 · çip biçimi tekleşti
+
+Ayrı "Tahmini getiri" çipi kaldırıldı. Denemeler de diğer görevler gibi yeşil **"Beklenen kazanç"** çipi kullanıyor. Etiket artık `g.tur` yerine getirinin **gerçek dağılımından**:
+
+| Görev | Çip |
+|---|---|
+| PreTUS200 1. oturum | +0.16 **temel** |
+| PreTUS200 2. oturum | +0.12 **klinik** |
+| 24'lü Genel Cerrahi | +0.05 klinik |
+| Okuma | +0.43 temel |
+| Video | +0.03 klinik |
+
+### 4 · CEVAP · 24'lü denemeler nerede
+
+Programda **13–22 Ağustos** arasına yerleşmiş (6 günde 39 deneme). 30 Temmuz'da görünmemesi doğru — son on gün deneme yoğunlaştırması.
+
+### 5 · CEVAP · 24'lü kalibrasyonu doğru kurulmuş
+
+Girdi paneli zaten doğru tanımlıyor: *"Deneme boyutu branşa göre değişir — o branşta TUS'ta çıkan soru sayısı kadar (Fizyoloji 8, Patoloji 18, Dahiliye 35…)"*.
+
+`rCalHesap` iki yolu destekliyor:
+- **AYRIK veri** (`kd/ky/kb`) → doğrudan `R=(p−p0)/(1−p0)`, gerçek binom varyansıyla
+- **TEMEL veri** (`d/y/b`) → kapsam üzerinden dolaylı
+
+Yalnız `denemeKaz` 24 soru sayıyordu; o da §165'te düzeltildi.
+
+### ⚠ 6 · AÇIK KALEM · Histo-Embriyoloji
+
+`KONU_DAG` 193/200 soruyu kapsıyor. Eksik **7 soru = Histo-Embriyoloji** — katalogda bu branşa ait hiç bölüm yok, dolayısıyla konu dağılımı da yok. Önceden var olan bir veri boşluğu; deneme getirisinin %3.5'i hesaplanamıyor.
+
+### Test · `kos.js` +18 kontrol
+
+oturum bölümü · 1. oturum yalnız temel · 2. oturum yalnız klinik · altı/dört branş · **iki oturum toplamı ~200** · çift sayım yok · `gorevKazanc` <150 ms · `denemeKaz` <80 ms · beş görev türünde çip ve doğru etiket.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-27a` ↔ `rota-2026-10-27a` · 467 565 bayt**
+
+---
+
+## 168 · ERKEN ÇÖZÜLEBİLİR DENEMELER · `2026-10-28a`
+
+Kullanıcı 24'lü denemeleri inisiyatif alıp erken çözmek istiyor.
+
+### Tasarım kararı · KOPYA YOK
+
+24'lü denemeler **zaten çarkta** (13–22 Ağustos, listede aşağıda). Power-up havuzuna kopya eklemek çift sayım riski taşıyordu. Yerine **öne çekme**:
+
+```js
+if((D.erken||{})[k]){PU.push(i);continue}   // carkListe · en üstte
+```
+
+Programdaki görevin kendisi öne alınıyor. Yeni görev nesnesi oluşmadığı için **çift sayım imkânsız**.
+
+### Panel bölümü
+
+Power-up panelinin başında ayrı bir bölüm: **"Erken çözülebilir denemeler"** — 39 deneme · 27.0 sa.
+
+Her satırda:
+- Anlık getiri (`+0.045 net`) · altın renkte
+- Branş · 24'lü numarası · programdaki tarih
+- Süre · o branşın TUS soru sayısı · net/saat
+- **Öne çek** / **Geri gönder** düğmesi
+
+Sıralama anlık `net/saat`e göre: Farmakoloji 0.081 → Patoloji 0.014.
+
+### Doğrulama · çift sayım denetimi
+
+| Sınama | Sonuç |
+|---|---|
+| Öne çekince çark listesi görev sayısı | 181 → **181** (kopya yok) |
+| Öne çekmek tek başına projeksiyon | 55.7212 → **55.7212** (değişmiyor) |
+| Çekilen çarkta en üstte | ✓ |
+| Tamamlanınca katkı | **+0.0095** |
+| Havuzdan düşüyor | ✓ |
+| Getirisi donuyor | ✓ |
+| Geri gönderilince havuza dönüyor | ✓ |
+| Geri alınca projeksiyon başa dönüyor | ✓ (fark < 1e−9) |
+
+Zamanı gelmiş denemeler havuzda görünmüyor — çarkta zaten var.
+
+### Test · `pu_test.js` +21 kontrol
+
+`denemeHavuz` · `carkListe` erken kaydı · iki düğme · kalıcı yazım · CSS · 39 deneme · hepsi ileri tarihli ve 24'lü · verime göre sıralı · getiriler pozitif · **kopya oluşmuyor** · **çekmek projeksiyonu değiştirmiyor** · en üstte · erken işaretli · tamamlanınca katkı · havuzdan düşüyor · donuyor · geri gönderme üç kontrol · son günde havuz doğru daralıyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-28a` ↔ `rota-2026-10-28a` · 470 794 bayt**
+
+---
+
+## 169 · ⚠ KAPSAM YALNIZ `oku` SAYIYORDU · `2026-10-29a`
+
+Kullanıcı: *"izlediğim Dahiliye videolarının kazançları güç matrisine yansımıyor mu? 6 video işaretledim ama parakete değişmedi."*
+
+### CEVAP 1 · parakete DEĞİŞMİŞ
+
+| | Değer |
+|---|---|
+| Temiz başlangıç | 55.7212 → ekranda **55.72** |
+| 6 video sonrası | 55.7635 → ekranda **55.76** |
+
+Ekran görüntüsündeki `PARAKETE 55.76` tam olarak altı videonun işlendiği değer. Katkı +0.042 — küçük ama görünür.
+
+Ölçek karşılaştırması: bir video 0.2 soru değeri taşıyor, bir okuma görevi 1.8. Yani bir okuma ≈ dokuz video. Katkının küçük görünmesi doğal.
+
+### ⚠ CEVAP 2 · güç matrisi gerçekten yansıtmıyordu
+
+```js
+function grupKapsam(){
+  GOREVLER.forEach(g=>{ if(g.act!=='oku'||!g.soru)return;   // ← yalnız oku
+```
+
+Güç matrisini besleyen kapsam ölçüsü **yalnız `oku`** görevlerini sayıyordu. Sonuçları:
+
+1. Dahiliye videolarının **tamamı** izlense bile matris Dahiliye'yi %0 gösteriyordu
+2. Daha kötüsü: `bransKapsam` de aynı fonksiyondan besleniyor. Kalibrasyon `kapsam<0.08` olan branşları **atlıyor** — yani Dahiliye videolarını izleyip Dahiliye denemesi girsen bile **kalibrasyon o veriyi kullanamıyordu**
+
+**Düzeltme:**
+
+```js
+const KAPSA=['oku','video','soru','tekrar'];
+```
+
+Deneme görevleri **bilerek dışarıda**: deneme çözmek ölçümdür, içerik kapsamı değil.
+
+### Etki
+
+| | Önce | Sonra |
+|---|---|---|
+| Dahiliye kapsamı (44 video izlenmiş) | **0.0000** | **0.4830** |
+| Aynı durumda Dahiliye denemesi girilince R_CAL | 0.4050 (sinyal yok) | **0.4343** |
+| R_CAL belirsizliği | ±0.1950 | **±0.1883** |
+
+### CEVAP 3 · diğer görev tipleri
+
+| Tür | Projeksiyon | Kapsam/matris | Kart çipi |
+|---|---|---|---|
+| `oku` | ✓ | ✓ | ✓ |
+| `video` | ✓ (§163) | ✓ (**bu sürüm**) | ✓ (§166) |
+| `soru` | ✓ (§154) | ✓ (**bu sürüm**) | ✓ (§166) |
+| `deneme` · `deneme24` | ✓ (§164) | bilerek hayır | ✓ (§166) |
+| `analiz` | soru değeri yok | — | — |
+
+### Test · `kal_test.js` +9 kontrol
+
+kapsam listesi · deneme dışarıda · başta sıfır · videolar kapsama giriyor · branş kapsamı artıyor · **kalibrasyon sinyal çıkarıyor** · belirsizlik daralıyor · kapsam yokken sinyal yok · denemeler kapsamı şişirmiyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-29a` ↔ `rota-2026-10-29a` · 471 222 bayt**
+
+---
+
+## 170 · DENEME KAPSAMA GİRİYOR · BİRİM SORUNU · `2026-10-30a`
+
+Kullanıcı: *"deneme aynı zamanda tekrardır, kazancını nasıl hesapladığımızı konuşmuştuk; matris dışında tutman mantıklı gelmedi. Eğer hepsi aynı net potansiyeli havuzunu paylaşmıyorsa denemenin katkısı sıfır olmalı — ama gerçek öyle değil."*
+
+**Mantık tutarsızlığı haklıydı.** §169'da denemeleri "ölçümdür, kapsam değildir" diye dışarıda bırakmıştım; oysa aynı havuzdan kazanç sayıyorsak kapsama da girmeleri gerekir.
+
+### ⚠ Ama birimler farklı
+
+| | Birim | Dahiliye örneği |
+|---|---|---|
+| İçerik `soru` | "bu bölüm TUS'ta kaç soru getirir" | 38.09 |
+| Deneme soru sayısı | "kaç soru çözdüm" | 6 × 35 = **210** |
+
+Ham sayı eklenirse kapsam şişer. Üç seçenek sayısal olarak karşılaştırıldı:
+
+| Senaryo | Tüm içerik yapılmış | Yalnız denemeler |
+|---|---|---|
+| A · deneme sayılmaz (§169) | 1.000 | **0.000** ✗ |
+| B · numaratör + payda | **0.266** ✗ | 0.734 |
+| C · yalnız numaratör | 1.000 | **1.000** ✗ |
+
+Üçü de yanlış: A denemeyi yok sayıyor, B içeriği ezip %27'ye düşürüyor, C altı denemeyi "tam kapsam" ilan ediyor.
+
+### Çözüm · modelin kendi para birimi: NET
+
+```js
+katkı(soru) = (denemenin neti / grubun tavanı) × branşın soru sayısı
+```
+
+Ölçek gerçekliği doğruluyor:
+
+| | Tavana oranı |
+|---|---|
+| Tüm Dahiliye içeriği (okuma + video) | **%109** |
+| Tüm Dahiliye denemeleri | **%1.0** |
+
+Yani denemeler sıfır değil ama içeriğin yanında küçük — kullanıcının "kazanç mı çok az?" sorusunun sayısal cevabı da bu.
+
+### Sonuçlar
+
+| Durum | Dahiliye kapsamı |
+|---|---|
+| Hiçbir şey yapılmadan | 0.0000 |
+| 44 video izlenince | 0.4830 |
+| 6 Dahiliye 24'lüsü çözülünce | **0.0084** (eskiden 0) |
+| Programın tamamı | 1.0000 |
+
+Tekrarlanan denemeler `denemeKaz`ın azalan verim sönümü sayesinde giderek daha az ekliyor — ayrıca sınandı.
+
+### Test · `kal_test.js` +11 kontrol
+
+deneme kapsam bloğu · **net oranıyla ekleniyor** · ham soru eklenmiyor · başta sıfır · denemeler kapsama giriyor · katkı küçük (<%5) · içerik katkısı 20 kat büyük · tamamında kapsam 1.0 · 1'i aşmıyor · her deneme ekliyor · **artışlar azalan verimle küçülüyor**.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-30a` ↔ `rota-2026-10-30a` · 472 275 bayt**
+
+---
+
+## 171 · DENEME → MATRİS ZİNCİRİ · ELLE GİRDİ · `2026-10-31a`
+
+Kullanıcı şartnameyi ayrıntılı yazdı ve zincirin denetlenmesini istedi.
+
+### Denetim · mevcut zincir DOĞRU çalışıyor
+
+PreTUS200 1. oturum incelendi:
+
+| | Değer |
+|---|---|
+| Konu sayısı | 76 |
+| Soru toplamı | 93.0 (temel yarısı) |
+| Net toplamı | 0.27276 |
+
+Konu konu kırılım örneği:
+
+| Branş | Konu | Soru | Net | Tür |
+|---|---|---|---|---|
+| Biyokimya | aminoasitler ve proteinler | 3.76 | 0.014820 | yeni |
+| Biyokimya | karbonhidratlar | 1.32 | 0.005200 | yeni |
+| Biyokimya | lipidler | 1.53 | 0.005998 | yeni |
+
+**Branş toplamları TusAnaliz'e tam oturuyor:** Biyokimya 18/18 · Farmakoloji 18/18 · Mikrobiyoloji 18/18 · Fizyoloji 8/8 · Patoloji 18/18 · Anatomi 13/13.
+
+Matris ataması `dv.dagilim` üzerinden branş branş yapılıyor — şartnamedeki "hangi dersin hangi konularına iliştirdiyse oraya" koşulu karşılanıyor.
+
+### ⚠ EKSİK OLAN · programda olmayan deneme
+
+Şartnamenin kritik maddesi eksikti: *"eğer bu deneme programda yazılı olmadan benim özverimle çözülüp güç matrisi ve deneme sayfasından ders ders doğru yanlışları girilerek sisteme eklendiyse yine o an bu hesabı yapıp getirisini paraketeye ve matrise eklemesi lazım."*
+
+Elle girilen denemeler yalnız **ölçülen tabanı** değiştiriyordu; çözme getirisi hiç sayılmıyordu.
+
+**Eklenenler:**
+
+| Fonksiyon | Görev |
+|---|---|
+| `denemeKazHam(branslar,tar)` | çekirdek hesap · program görevleriyle birebir aynı yol |
+| `elleDenemeKaz()` | en son elle girdinin getirisi |
+
+- **Yalnız EN SON deneme** sayılıyor; öncekilerin etkisi ölçülen tabanın içinde zaten var
+- **Çift sayım koruması:** aynı gün tamamlanmış bir program denemesi varsa elle getiri `null` döner
+- Tek branş girdisi (`o.bl`) destekli — 24'lü için de çalışır
+- `para()` ve `grupKapsam()` ikisi de ekliyor
+
+**Doğrulama:**
+
+| | Değer |
+|---|---|
+| Elle tam deneme getirisi | 0.25973 net (temel 0.14439 · klinik 0.11533) |
+| Konu sayısı | 163 · 193 soru |
+| Parakete | değişiyor ✓ |
+| Matris | yansıyor ✓ |
+| Aynı gün program denemesi tamamlanınca | `null` ✓ **çift sayım yok** |
+
+### ⚠ İki test invariant'ı gevşetildi · gerekçeli
+
+`derin_test.js` B6/B7: "son deneme tarihinde/öncesinde tamamlanan iş puana yansımaz". Artık **0.0002 mertebesinde** yansıyor — çünkü sınav öncesi çalışma, elle girilen denemenin **yeni öğrenme / tekrar** sınıflandırmasını değiştiriyor. İşin kendisi çift sayılmıyor; yalnız denemenin tekrar niteliği güncelleniyor. Tolerans `1e-6` → `0.001`.
+
+`kal_test.js` "başta kapsam sıfır" → "ihmal edilebilir (<0.01)": tohum denemesinin çözme getirisi artık minik bir kapsam ekliyor.
+
+Her iki gevşetme de koda değil teste yapıldı ve gerekçesi yorumda duruyor.
+
+### Test · `kal_test.js` +14 kontrol
+
+iki fonksiyon · yalnız en son deneme · çift sayım koruması · `para()` ve matris ekliyor · tek branş desteği · tohum getirisi · **163 konu · 193 soru** · temel/klinik ayrışması · yeni girdide parakete ve matris değişiyor · çift sayım engelleniyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-10-31a` ↔ `rota-2026-10-31a` · 474 967 bayt**
+
+⚠ Açık kalem: Histo-Embriyoloji'nin 7 sorusu hâlâ kapsam dışı (katalogda içerik yok).
+
+---
+
+## 172 · DENEME SORU SABİTİ DİNAMİK · HİSTO EKLENDİ · `2026-11-01a`
+
+### 1 · Histo-Embriyoloji kapsandı
+
+Kullanıcı kaynağı söyledi: **Klinisyen Vaka Fizyoloji-Histoloji ve Embriyoloji**. Katalogda 11 bölümü var, hepsi "…Histolojisi ve Fizyolojisi" + "Genel Embriyoloji" — Histo içeriği burada, yalnız `Fizyoloji` branşıyla etiketlenmiş.
+
+Histo'nun 7 sorusu bu 11 bölüme **sayfa oranında** dağıtıldı:
+
+| Konu | Soru |
+|---|---|
+| doku histolojisi ve fizyolojisi | 1.167 |
+| santral sinir sistemi histolojisi | 0.851 |
+| hematopoetik sistem histolojisi | 0.802 |
+| embriyoloji | 0.705 |
+| … | |
+| **Σ** | **7.000** |
+
+**`KONU_DAG` artık 200/200 tam** · 11 branş · 174 konu.
+
+### ⚠ 2 · 0.25 sabiti gerçeklikle bağdaşmıyordu
+
+Kullanıcının kanıtı: 6 Dahiliye 24'lüsü = **210 soru** çözmek 0.39 net getiriyordu. 210 soruyu çözüp çözümlerine bakan biri bundan fazlasını kazanır.
+
+**Öncel 0.25 → 1.00** (1 soru ≈ 1 sayfa). Gerekçe: bir TUS sorusu tipik olarak bir sayfalık içeriği yoklar; soru + çözüm okumak o sayfanın kilit bilgisine maruz kalmaktır. Geri getirme pratiği yeniden okumaya üstün olduğundan (Rowland 2014, g≈0.50) 1'in altına inmek için sebep yok. Belirsizlik geniş (SD 0.60) bırakıldı ki **veri baskın olsun**.
+
+| | Önce | Sonra |
+|---|---|---|
+| 6 Dahiliye 24'lüsü | 0.3862 net | **1.3427 net** |
+| Dahiliye kapsamı | 0.0084 | **0.0365** |
+
+### 3 · DİNAMİK KALİBRASYON · `dOran()`
+
+R_CAL'in aynı yapısı. Her ardışık deneme çifti, her branş için bir gözlem üretiyor:
+
+```
+gözlem = (branşın net değişimi − içerik kazancı)
+         / (çözülen soru × sayfa getirisi × sönüm)
+```
+
+- Öncel ve gözlemler **kesinlik ağırlıklı** birleşiyor
+- Varyans soru sayısıyla azalıyor — 8 soruluk gözlem 35 soruluktan belirsiz
+- Sınırlar 0.10–4.00
+- Hem 24'lü hem PreTUS200 verisi besliyor
+
+**Doğrulandı:** Dahiliye'de +3.0 net gözlenince D_ORAN 1.0000 → 1.0098, belirsizlik daraldı.
+
+### ⚠ 4 · DONDURMA ÇELİŞKİSİ ÇÖZÜLDÜ
+
+§164'te tamamlanmış denemelerin getirisi donduruluyordu. Ama sabit kalibre olunca geçmiş getiriler de güncellenmeli — *"demek ki eski deneme kazançlarını az/fazla hesaplamışız"*.
+
+**Çözüm: GİRDİ donuyor, ÇIKTI değil.**
+
+```js
+D.denKaz[k] = { birim: net/ORAN, birimT, birimK,
+                dagilim: [{…, birim: d.net/ORAN}], … }
+/* okurken */
+top = dz.birim × SORU_ORAN_VAR()
+```
+
+- Konu dağılımı, soru sayıları, yeni/tekrar sınıflandırması, tarih → **donuk**
+- Sabit değişince tüm geçmiş getiriler **anında yeniden hesaplanıyor**
+- Eski biçim kayıtları için geriye dönük uyum var
+
+Doğrulandı: sabit değişince 6 denemenin getirisi 1.3427 → 1.3558 olarak güncellendi.
+
+### Kapatılan mantık açıkları
+
+| Açık | Çözüm |
+|---|---|
+| Sabit donuk, veri onu düzeltemiyordu | Bayes kalibrasyonu |
+| Geçmiş getiriler eski sabitle donuk kalıyordu | girdi donuyor, çıktı hesaplanıyor |
+| Histo'nun 7 sorusu hiçbir yere düşmüyordu | Klinisyen Vaka Fizyoloji'ye dağıtıldı |
+| Gözlemler eşit ağırlıklı olsaydı 8 soruluk deneme 35'liği ezerdi | varyans soru sayısına bağlı |
+| Sabit uçlara kaçabilirdi | 0.10–4.00 sınırı |
+
+### Test · `kal_test.js` +19 kontrol
+
+sabit dinamik · öncel ve sınırlar · kalibrasyon ve önbellek · kesinlik ağırlıklı birleşim · **donmuş girdi/canlı çıktı** · geriye dönük uyum · Histo eklendi · öncelden başlıyor · **KONU_DAG 200/200** · 11 branş · 6 denemede anlamlı getiri · gözlem sayılıyor · **belirsizlik daralıyor** · **geçmiş getiriler yeni sabitle güncelleniyor** · sınırlar içinde.
+
+Ayrıca 12 eskimiş kontrol yeni ölçeklere göre güncellendi (programın tamamı 63.68 → **67.11**).
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-01a` ↔ `rota-2026-11-01a` · 479 982 bayt**
+
+---
+
+## 173 · PANEL REGRESYONU · DENEME LİSTESİ BÖLÜNDÜ · `2026-11-04a`
+
+### 1 · tahmin edici değişti · fark → panel
+
+Eski `dOranHesap` ardışık deneme **farkı** alıyordu. İki gürültülü ölçümün farkı tek ölçümden daha gürültülü: se(ORAN) ≈ 21, sabit hiç kalibre olmuyordu.
+
+**Yeni kurgu · tüm yörüngeye tek model:**
+
+```
+N_b(t) = α_b + görevKazanç_b(t) + ORAN × maruziyet_b(t) + ε
+maruziyet_b(t) = (o ana kadar çözülen soru) × netSayfa_b × (boşluk/tavan)
+ağırlık = 1/σ²,  σ² = soru × p(1−p) × 1.25²
+```
+
+α_b branş sabit etkisi, **branş içi merkezlemeyle** düşüyor.
+
+| Yöntem | se(ORAN) | Öncelle |
+|---|---|---|
+| Fark alma | 21.25 | 0.591 |
+| Tek branş regresyonu | 1.143 | 0.531 |
+| **Panel regresyonu** | **0.396** | **0.330** |
+
+Üç kaynak:
+- **PreTUS200 tek gözlem değil, 11 branş gözlemi** → 39 yerine **105**
+- branş içi merkezleme taban farklarını siliyor
+- kesinlik ağırlığı 8 soruluk Fizyoloji'nin 35 soruluk Dahiliye'yi ezmesini engelliyor
+
+**Kendini sınırlıyor:** gerçek ORAN 3 ise 3 ± 0.65 → 1'den ayırt edilir. 1 ise belirsiz kalır ama etki de küçüktür.
+
+### ⚠ 2 · sızıntı ve yanlılık korumaları
+
+**Sızıntı:** görev kazancının payı yüksek gözlemler düşük ağırlık alıyor (`pay = denemeKazanç/(görev+deneme)`, ölçüldü: %9–%100). Yoksa R_CAL'deki hata ORAN'a yıkılırdı — kullanıcının *"ya net değişimi denemeden değilse?"* endişesinin matematik karşılığı.
+
+**Yanlılık:** uygulama takibe başlamadan önceki dönemde yapılan çalışma bilinmiyor. O dönemin net artışını denemeye yıkmak ORAN'ı sistematik saptırıyordu (tohum veriyle 1.00 → 0.24 sapması gözlendi). Artık yalnız **izlenen dönem** kullanılıyor: ilk tamamlanan görevin tarihinden itibaren. Takip başlamadıysa gözlem yok, öncel korunuyor.
+
+Doğrulandı: takip yokken 1.0000 ± 0.6000 · 0 gözlem → takip sonrası 1.0487 ± 0.5986 · 10 gözlem.
+
+### 3 · R_CAL DENETİMİ · sorun yok
+
+| Soru | Cevap |
+|---|---|
+| 24'lü kayıtları R_CAL'i besliyor mu | **evet** · 0.4050 → 0.4189, belirsizlik 0.0995 → 0.0947 |
+| Geçmiş görev getirileri güncelleniyor mu | **evet** — `para()` her çağrıda canlı hesaplıyor, hiç dondurmuyor (K 56.9094 → 56.9264) |
+| Donmuş `kaz` değerine düşen görev var mı | **yok** · tavanı bilinmeyen grup 0 |
+| Fark alma zaayfı var mı | **yok** · seviye karşılaştırması yapıyor (p vs p₀), fark değil |
+| Döngüsellik var mı | **yok** · `kap` kayıt eklenmeden ÖNCE donduruluyor, kendi katkısını içermiyor |
+
+Yani R_CAL'de deneme getirilerindeki dondurma sorununun karşılığı yok; zaten doğru kurulmuş.
+
+### 4 · deneme kayıtları sol/sağ bölündü
+
+Power-up panelindeki düzenin aynısı:
+
+| Sol | Sağ |
+|---|---|
+| **200 soruluk genel denemeler** · tam sınav · 11 branş | **24'lü branş denemeleri** · tek branş · kalibrasyon verisi |
+
+- Her kayıtta tarih, net/K puanı, D/Y/B kırılımı
+- 200'lük kayıtlar için de **silme** düğmesi eklendi (eskiden yoktu)
+- Dar pencerede kaydırmalı anahtar, ≥900 px'te yan yana
+- Seçim kalıcı (`D.dnTur`)
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-04a` ↔ `rota-2026-11-04a` · 484 391 bayt**
+
+---
+
+## 174 · ORTAK GÖZLEM HAVUZU · KONU KIRILIMI · `2026-11-06a`
+
+Kullanıcının özgün tasarımı uygulandı: 24'lü kaydı artık **konu konu** giriliyor ve tek havuz **iki kalibrasyonu birden** besliyor.
+
+### Tasarımın gerekçesi · ölçüm
+
+| Branş | Konu başına soru/deneme | Tüm denemelerde | p belirsizliği |
+|---|---|---|---|
+| Dahiliye | 1.8 | 11.1 | ±0.295 |
+| Biyokimya | 1.5 | 7.5 | ±0.358 |
+| Patoloji | 0.9 | 4.7 | ±0.450 |
+
+Konu başına veri çok ince — **konu konu sonuç çıkarılmaz, konular HAVUZLANIR.** Tasarımın asıl kazancı başka:
+
+- hangi soruların çalışılmış/çalışılmamış konudan geldiği **kesin**
+- gerçek soru sayılarıyla ağırlıklandırma
+- her konunun çalışıldığından beri geçen süre ayrı ayrı biliniyor
+
+### Havuz ve iki tüketici
+
+```
+konuGozlem()  → tüm konu kayıtları (tar, br, konu, q, d, y, p)
+konuCift()    → aynı konunun ardışık ölçüm çiftleri
+                · en az BİR GÜN arayla (aynı gün başka deneme karıştırmasın)
+                · her çift SİMETRİK kullanılıyor (ortalamaya dönüş yanlılığı)
+```
+
+| Çift türü | Besler | Gerekçe |
+|---|---|---|
+| Arada **çalışma YOK** | **D_ORAN** | tek kaynak deneme çözmek → temiz pencere |
+| Arada **çalışma VAR** | **R_CAL** | çalışma + deneme; denemenin payı çıkarılıyor |
+
+### ⚠ R_CAL yukarı yanlıydı · düzeltildi
+
+Eskiden çalışılan konudaki tüm artış çalışmaya yıkılıyordu:
+
+```js
+const dp=(c.p1-c.p0)-denPay;   // denemenin payı D_ORAN ile hesaplanıp ÇIKARILIYOR
+```
+
+Kullanıcının tespiti: *"24'lü kalibrasyon formülünün denemelerin getirisini de hesap edip görev getirilerini bunlardan izole etmesi lazım."* İki sabit artık birbirini kirletmiyor.
+
+### Giriş arayüzü
+
+Branş seçilince o branşın konuları **TusAnaliz payıyla önceden dolu** listeleniyor; kullanıcı yalnız D/Y giriyor, soru sayısı farklıysa düzeltiyor. 30 sayı yerine çoğunlukla 15.
+
+Uyarı metni: *"Çalışmadığın konuları da gir: deneme kazancı ölçümü onlardan geliyor."*
+
+Tutarsız girdi (D+Y > soru) eleniyor.
+
+### Doğrulama
+
+| Senaryo | Sonuç |
+|---|---|
+| 3 konu × 2 ölçüm, hiç çalışma yok | D_ORAN 3 gözlem · R_CAL 0 |
+| Hematoloji'ye çalışıldı | D_ORAN 2 · R_CAL 1 · **çakışma yok** |
+| Aynı gün ikinci kayıt | çift üretmiyor |
+| Kırılımsız kayıt | gözlem üretmiyor |
+
+### Veri girme yükü · karar
+
+| Ne girilirse | Öncel 0.60 → |
+|---|---|
+| 24'lü'de konu kırılımı (39 deneme) | **0.532** |
+| PreTUS200'de de (22 ek alan × 6) | 0.468 |
+
+PreTUS200'ün ağır girişi %11 → %22 daralma sağlıyor; 132 sayı için küçük kazanç. **Karar: yalnız 24'lü'de kırılım girilecek.** "Salladım" alanı eklenmedi — −0.25 cezası tahmini zaten beklenen değerde düzeltiyor.
+
+### Test · `kal_test.js` +20 kontrol
+
+üç fonksiyon · bir gün kuralı · iki çift türü doğru kaleme gidiyor · **R_CAL deneme payını çıkarıyor** · konu satırları TusAnaliz payıyla · kaydetme · tutarsız girdi elenmesi · altı gözlem/üç çift · çalışma eklenince çiftin kalem değiştirmesi · **iki kalem çakışmıyor** · aynı gün çift üretmiyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-06a` ↔ `rota-2026-11-06a` · 488 177 bayt**
+
+⚠ Açık kalem: "getiri yalnız kayıttan gelsin" mimarisi hâlâ kurulmadı.
+
+---
+
+## 175 · GETİRİ YALNIZ KAYITTAN · PRETUS200 GERİ · LİSTE TAŞINDI · `2026-11-09a`
+
+### 1 · PreTUS200 dışlanmamalıydı
+
+Kullanıcı: *"PreTUS200 kaba bir veri biliyorum ama parakete de kaba bir tahmin değil mi? Bizim çalışmalarımızın sonucu aslında benim deneme sonucum."*
+
+Haklı. §174'te `dOranHesap` yalnız konu çiftlerine dayanınca PreTUS200 tamamen düşmüştü. Geri eklendi — **branş düzeyinde ikinci kaynak**:
+
+- Aynı branşın ardışık iki tam deneme ölçümü, arada o branşa **çalışma yoksa** gözlem üretiyor
+- Konu kırılımı olmadığı için **yarı ağırlık** (`vr *= 2`)
+
+Tohum veriyle bile **44 gözlem** üretiyor; 24'lü kırılımlarıyla birlikte 46.
+
+### 2 · GETİRİ YALNIZ KAYITTAN · mimari kuruldu
+
+Eski durumda hem görev tamamlama hem sonuç kaydı getiri üretiyordu; eşleşme yalnız "aynı gün" kuralına dayanıyordu, farklı günlerde girilince **çift sayıyordu**.
+
+Yeni kural: **deneme getirisi yalnız sonuç kaydından gelir.** Kayıt "gerçekleşti" belgesi, görev takvim.
+
+```js
+function kayitKaz(){   /* D.denemeler (en son) + D.kal (tabandan sonra) */ }
+/* para() ve grupKapsam() yalnız bunu okuyor */
+```
+
+**Çift sayım matrisi · altı hücre de sınandı:**
+
+| # | Durum | Sonuç |
+|---|---|---|
+| 1 | Çarkta tamamlandı, kayıt yok | **parakete ve matris ETKİSİZ** ✓ |
+| 2 | Sonuç kaydı girildi | ikisi de artıyor ✓ |
+| 3 | Görev geri alındı, kayıt duruyor | değişmiyor ✓ |
+| 4 | Power-up'tan öne çekme + tamamlama | ek etki yok ✓ |
+| 5 | Tek kayıt | tek katkı ✓ |
+| 6 | **51 deneme görevinin tamamı** işaretlendi | etkisiz ✓ |
+
+### ⚠ İki kusur bulundu ve düzeltildi
+
+**Sızıntı:** `konuCalisildi` deneme görevlerini de "çalışıldı" sayıyordu; görev tamamlama yeni öğrenme ↔ tekrar sınıflandırmasını değiştirip dolaylı yoldan 0.0007 etki yaratıyordu. Artık yalnız **içerik görevleri** (`oku`/`video`/`soru`/`tekrar`) sayılıyor.
+
+**Kart önizlemesi sıfırlandı:** getiri artık `para()` farkından gelmediği için deneme kartlarında çip kayboldu. `gorevKazanc` deneme için doğrudan `denemeKaz` önizlemesi döndürüyor:
+
+| Görev | Kart önizlemesi |
+|---|---|
+| PreTUS200 oturumu | +1.149 |
+| 24'lü | +0.331 |
+| Okuma | +0.545 |
+| Video | +0.047 |
+
+Kart *"bu denemeyi çözüp sonucunu girersen ne kazanırsın"* diyor; kazanç ancak kayıt girilince gerçekleşiyor.
+
+### 3 · deneme geçmişi doğru sayfaya taşındı
+
+Bölünmüş liste yanlışlıkla 24'lü kalibrasyon paneline konmuştu; **güç matrisi sayfasındaki "Çetele" bölümü** ile değiştirildi:
+
+| Sol | Sağ |
+|---|---|
+| **200 soruluk genel denemeler** · ölçülen tabanı belirler | **24'lü branş denemeleri** · kalibrasyon verisi · konu kırılımlı |
+
+Dar pencerede kaydırmalı anahtar, ≥900 px'te yan yana. 24'lü panelinin kendi listesi sadeleşti; kırılımsız kayıtlar *"kalibrasyona katkı vermez"* uyarısıyla işaretleniyor.
+
+### Test · `kal_test.js` +13 kontrol · 12 kontrol uyarlandı
+
+çift sayım matrisinin **altı hücresi** · kart önizlemesi duruyor · PreTUS200 branş düzeyinde besliyor · kırılımsız gözlem yarı ağırlık · deneme geçmişi matris sayfasında.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-09a` ↔ `rota-2026-11-09a` · 490 897 bayt**
+
+---
+
+## 176 · ⚠ ÜÇ ARAYÜZ HATASI · `2026-11-10a`
+
+Ekran görüntüsünden üç kusur çıktı, üçü de gerçek.
+
+### ⚠ 1 · `<s>` etiketi ÜSTÜ ÇİZİLİ demek
+
+Konu kırılımı başlığının altındaki açıklama üstü çizili görünüyordu:
+
+```html
+<s class="alt" style="display:block">Soru sayıları TusAnaliz beklentisiyle dolu…</s>
+```
+
+`.puSut .puAlt` kuralında `text-decoration:none` vardı ama yeni eklenen `<s class="alt">` o kuralın kapsamına girmiyordu. Tüm `<s>` kullanımları `<i>`/`<div>` ile değiştirildi, `.puAlt` kuralına `font-style:normal` eklendi.
+
+### ⚠ 2 · eski D/Y/B alanları kalmıştı
+
+24'lü sayfasında üç ayrı giriş vardı: toplam D/Y/B → konu kırılımı → **bir kez daha D/Y/B**. Sonuncusu eski *"Bunların kaçı bugün çalıştığın konulardan?"* alanlarıydı — konu kırılımı zaten aynı bilgiyi daha keskin veriyor.
+
+`dpKD` · `dpKY` · `dpKB` alanları, açıklama metni ve JS'teki tüm referansları kaldırıldı.
+
+### ⚠ 3 · deneme bölümü grid DIŞINDAydı
+
+"Erken çözülebilir denemeler" `puIki` grid'inin dışına yerleştirilmişti; anahtarın iki seçeneği vardı, deneme bölümü her durumda görünüyordu ve dar ekranda düzeni bozuyordu (ekran görüntüsündeki üst üste binen metinler).
+
+**Üçüncü seçenek yapıldı:**
+
+```
+┌──────────┬──────────┬──────────┐
+│ Konu 64  │ Soru  9  │ Deneme 39│   ← kaydırıcı 0 / 100% / 200%
+└──────────┴──────────┴──────────┘
+```
+
+- `.puAnh.uc` → üç eşit sütun, kaydırıcı genişliği %33.3
+- `.puIki` üç sütun; seçili olmayan ikisi dar pencerede gizli
+- ≥900 px'te üçü yan yana
+
+### Test · `pu_test.js` ve `kal_test.js` uyarlandı
+
+üçlü anahtar · üç düğme · üç sütun · deneme sütunu grid içinde · kaydırıcı üç konum · **üstü çizili `<s>` kalmadı** · eski D/Y/B alanları kaldırıldı.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-10a` ↔ `rota-2026-11-10a` · 490 925 bayt**
+
+---
+
+## 177 · ⚠ TANIMSIZ SINIF · SAYDAM PANEL · `2026-11-11a`
+
+### ⚠ 1 · deneme satırlarının başlığı yoktu
+
+`denSat` içeriği `<div class="kd">` içine koyuyordu — **böyle bir CSS sınıfı yok.** Var olan satırlar `.ic` kullanıyor:
+
+```css
+.kit .ic{flex:1 1 100%}
+.kit .ic s{display:block;text-decoration:none;…}
+```
+
+Başlıksız görünmenin sebebi buydu; `.ic` yapıldı. Artık satır şöyle:
+
+```
++0.183 net   Deneme çöz · Farmakoloji — 24'lü
+             24'lü #3 · Farmakoloji · programda 19 Ağu
+             0.56 sa · 18 soru · 0.327 net/sa      [Öne çek]
+```
+
+Ayrıca güvenlik olarak `.kit s` kuralı eklendi — `.ic` dışında kalan `<s>` etiketleri de üstü çizili çıkmasın.
+
+### ⚠ 2 · panel arka planı fazla saydamdı
+
+```css
+background:rgba(2,3,6,.74); backdrop-filter:blur(10px)
+```
+
+Arkadaki çark kartı okunuyordu; panel başlığı ("Power up") ile kart metni ("Deneme çöz · …") üst üste binip **iç içe geçmiş beyaz yazı** görüntüsü veriyordu. Ekran görüntüsündeki karmaşanın sebebi buydu.
+
+`rgba(2,3,6,.96)` + `blur(18px)` yapıldı. **Dört panelde de** (`ppanel` · `kpanel` · `bpanel` · `dpanel`) düzeltildi.
+
+### Test · `pu_test.js` +11 kontrol
+
+deneme satırı `.ic` kullanıyor · tanımsız `.kd` yok · başlık · alt satır · süre/verim satırı · öne çek düğmesi · panel opaklığı `.96` · bulanıklık 18px · **dört panel de opak** · `.kit s` üstü çizili değil · `puAlt` italik değil.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-11a` ↔ `rota-2026-11-11a` · 490 939 bayt**
+
+---
+
+## 178 · ⚠ KALAN POTANSİYEL 7.84 → 6.88 · `2026-11-12a`
+
+Kullanıcı düşüşü fark etti. **§175'in yan etkisiymiş.**
+
+### Kök sebep
+
+```js
+function kalanKazanci(){
+  const bek=GOREVLER.filter(g=>!D.bitti[id(g)]).map(id);
+  return {n:bek.length, fark:puanVarsayim(bek)-puan(p.t,p.k)}}
+```
+
+`puanVarsayim` görevleri işaretleyerek çalışıyor. Ama §175'ten beri **deneme getirisi yalnız sonuç kaydından geliyor**, görev tamamlamadan değil. Dolayısıyla tamamlanmamış 51 deneme görevinin potansiyeli hesaba hiç girmiyordu.
+
+Ölçüm: tamamlanmamış deneme görevlerinin önizleme toplamı **11.64 net ≈ 2.86 K** — kaybolan tam bu.
+
+### Düzeltme
+
+"Hepsini yaparsam" senaryosu, denemeleri çözüp **sonucunu girmeyi** de kapsar. Önizleme getirileri eklendi:
+
+```js
+GOREVLER.forEach(g=>{
+  if(g.act!=='deneme'&&g.act!=='deneme24')return;
+  if(D.bitti[id(g)])return;
+  const c=denemeKaz(g); if(c){dT+=c.t; dK+=c.k}
+});
+if(dT>0||dK>0)fark+=puan(p.t+dT,p.k+dK)-puan(p.t,p.k);
+```
+
+| | Değer |
+|---|---|
+| Parakete | 55.97 |
+| **Kalan potansiyel** | **+9.70** |
+| Hepsini yaparsam | 65.67 |
+| Tavan | 88.66 · aşılmıyor ✓ |
+
+6.88 → **9.70**. Eski 7.84'ten de yüksek çünkü §172'de deneme sabiti 0.25 → 1.00 önceline taşınmıştı.
+
+### ⚠ Test bir tutarsızlık daha yakaladı
+
+`kal_test.js` "kalan potansiyel = gerçek artış" kontrolü iki kez patladı ve **model belirsizliğini açığa çıkardı**: denemelerin getirisi, görevler işaretlenmeden ÖNCE mi sonra mı hesaplanmalı?
+
+- Önce hesaplanırsa konular "çalışılmamış" → **yeni öğrenme** (S_ILK 2.4)
+- Sonra hesaplanırsa "çalışılmış" → **tekrar** (S_TEK 6.0), getiri %24 yüksek
+
+Gerçekte sıra karışık (bazı denemeler çalışmadan önce, bazıları sonra). Karar: **ikisi de mevcut durumu esas alıyor** — `kalanKazanci` ve test aynı hizada. Bu, potansiyeli hafifçe muhafazakâr yapıyor; abartmaktansa iyi.
+
+### Test · `kal_test.js` +7 kontrol · 2 kontrol uyarlandı
+
+deneme potansiyeli ekleniyor · yalnız tamamlanmamışlar · potansiyel pozitif · deneme payı anlamlı · **tavanı aşmıyor** · denemeler işaretlenince potansiyel düşüyor · düşüş deneme payı kadar.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-12a` ↔ `rota-2026-11-12a` · 491 706 bayt**
+
+---
+
+## 179 · 24'LÜ HAVUZU BRANŞ BAZLI · `2026-11-15a`
+
+Power-up'ın deneme bölümü, programdaki 39 denemeyi "öne çekme" listesi olarak gösteriyordu. Kullanıcı asıl ihtiyacı tarif etti: **programa sığmayan denemeleri** boş günlerde çözebilmek.
+
+### Yeni yapı · 11 branş kartı
+
+```
++0.183 net   24'lü deneme · Farmakoloji
+             0 / 24 çözüldü · programda 3
+             0.56 sa · 18 soru · 0.326 net/sa    [✕] [Çarka çek]
+```
+
+- **10 kart** (Histo-Embriyoloji'nin ayrı 24'lü serisi yok)
+- **Mikrobiyoloji dahil** — programda 0 denemesi var ama kart duruyor (satın alınabilir)
+- Anlık `net/saat`e göre sıralı; deneme sonucu girildikçe **sıra değişiyor**
+
+### Numaralandırma · program kartları kayıyor
+
+```
+Biyokimya: program 5 deneme
+havuzdan 2 çekilirse → çekilenler #1–#2, program #3–#7
+```
+
+`denNo(g)` görünen numarayı üretiyor. Toplam 24'ü aşamıyor; `kalan = 24 − program − çekilen`.
+
+**Seri dolunca** (`kalan = 0`) çekme düğmesi, ileri tarihli program kartlarından en yakınını **bugüne çekiyor** — kullanıcının tarif ettiği davranış.
+
+### Yer açma · aynı gün, sonraki günlere dokunmadan
+
+Havuzdan çekilen bir deneme **çözülünce** (sonucu girilince), o branşın **en ileri tarihli** program kartı kapanıyor (`D.kapali`) ve bulunduğu blok yeniden zamanlanıyor:
+
+```
+önce : 16:30–17:04 | 17:04–17:38 | 17:38–18:03
+sonra: 16:30–17:04 | 17:04–17:29
+```
+
+`blokZamanla(gün,blok)` yalnız o gün+bloğu etkiliyor; sonraki günlere dokunmuyor, program bozulmuyor. Geri alınca kart yeniden açılıyor.
+
+### Senkron denetimi · sekiz kontrol
+
+| | Sonuç |
+|---|---|
+| Sıralama verime göre | ✓ |
+| Deneme girilince sıra/değer değişiyor | ✓ |
+| Çekilen görevin kazanç çipi | +0.130 |
+| Tamamlama tek başına etkisiz | ✓ (§175 kuralı korunuyor) |
+| Kayıt girilince paraketeye yansıyor | ✓ +0.036 |
+| Matrise yansıyor | ✓ |
+| Çözülen sayacı | 1 / 24 |
+| Kalibrasyona veri gidiyor | ✓ |
+
+### Test · `pu_test.js` 24 kontrol (eski blok tamamen değişti)
+
+beş fonksiyon · iki düğme · sentetik görev çarkta üstte · kapalı görev çarkta yok · **on branş kartı** · Histo yok · Mikrobiyoloji var · verime göre sıralı · `kalan = 24 − program − çekilen` · iki sentetik görev · bugüne tarihli · **program numarası #3'e kaydı** · kazanç çipi · tamamlama etkisiz · kayıt yansıyor · sayaç arttı · **en ileri kart kapandı** · çarktan düştü · geri alınca açıldı · sentetikler temizleniyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-15a` ↔ `rota-2026-11-15a` · 497 087 bayt**
+
+---
+
+## 180 · SENARYO BÜTÜNLÜĞÜ DENETİMİ · `2026-11-16a`
+
+Kullanıcının altı sorusu tek tek sınandı.
+
+### 1 · sıralama neden net'e göre değil
+
+Kartta sol üstteki sayı **net**, sıralama ise **net/saat**:
+
+| Branş | net | süre | verim |
+|---|---|---|---|
+| Farmakoloji | 0.183 | 0.56 | **0.3260** |
+| Anatomi | 0.132 | 0.41 | **0.3257** |
+| Biyokimya | 0.164 | 0.56 | 0.2917 |
+
+Anatomi daha az net getiriyor ama daha kısa sürede; saat başına Biyokimya'dan verimli. Sıralama doğru — kart yalnız net'i öne çıkardığı için kafa karıştırıyor. (Verim satırda zaten yazıyor.)
+
+### 2–5 · senaryolar
+
+| Senaryo | Sonuç |
+|---|---|
+| 23 çekilince kalan 0 | ✓ |
+| 23 sentetik görev oluşuyor | ✓ |
+| Hepsi çözülünce program kartı kapanıyor | ✓ |
+| Görev sayısı 196 → 219 → 196 | ✓ |
+| Blok saatleri geçerli ve ardışık | ✓ |
+| Çekip **çözmeden** geri yollama | ✓ tam temizlik |
+| Kapalı kart kalıntısı | 0 |
+| Deneme sonucu girilince net değişiyor | ✓ 0.1829 → 0.0506 |
+
+Program hiçbir senaryoda bozulmuyor; yalnız etkilenen gün+blok yeniden zamanlanıyor.
+
+### 6 · matrise kapsam çizen görev tipleri
+
+| Tür | Matrise çiziyor mu |
+|---|---|
+| `oku` | **evet** |
+| `video` (Dahiliye videoları dahil) | **evet** |
+| `soru` | evet |
+| `deneme` · `deneme24` | **hayır — sonuç kaydı gerekiyor** (§175 kuralı) |
+| `analiz` | hayır — soru değeri yok, içerik çalışması değil |
+
+Yani Dahiliye videoları matrise doğrudan yansıyor. Çizmeyen tek gerçek kalem denemeler ve o **bilinçli**: getirileri kayıttan geliyor, çift sayım olmasın diye.
+
+**Not:** güç matrisi ölçülen neti ve çalışma kapsamını gösteriyor; ayrı bir "beklenen net" katmanı yok — beklenti parakete ve kalan potansiyelde duruyor.
+
+### Test · `pu_test.js` +15 kontrol
+
+23 çekme senaryosunun altı adımı · geri yollamanın dört adımı · dört görev tipinin matris davranışı.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-16a` ↔ `rota-2026-11-16a` · 497 131 bayt**
+
+---
+
+## 181 · ⚠ RADAR HAYALET ÇİZGİSİ ÖLÜYDÜ · `2026-11-17a`
+
+Kullanıcı güç matrisinin katmanlı davranışını hatırlattı: yeşil beklenti çizgisi, kırmızı gerileme hayaleti, taralı aşım alanı.
+
+### ⚠ Kök sebep · statik `kaz` alanı
+
+```js
+let kz=0;
+GOREVLER.forEach(g=>{const bt=D.bitti[id(g)];
+  if(bt&&bt>o.tar&&g.br===b)kz+=g.kaz});      // ← g.kaz
+r[b]={olc, bek:Math.min(olc+kz/SORU.radar[b],1), …}
+```
+
+**Programdaki 196 görevin TAMAMINDA `kaz = 0`.** Ölçüldü:
+
+| Tür | Görev | `kaz>0` |
+|---|---|---|
+| oku | 95 | **0** |
+| video | 44 | **0** |
+| deneme | 12 | **0** |
+| deneme24 | 39 | **0** |
+| analiz | 6 | **0** |
+
+`kaz` eski statik kazanç modelinden kalma; `para()` çoktan dinamik hesaba geçmişti ama `bransDurum()` hâlâ onu okuyordu. Sonuç: **yeşil beklenti çizgisi ölçülen çizginin tam üstünde duruyor, hiç ayrılmıyordu.**
+
+### Düzeltme
+
+`para()` artık branş bazında dinamik kazancı da döndürüyor (`brKaz`):
+
+| Branş | dinamik kazanç |
+|---|---|
+| Dahiliye | 4.288 net |
+| Farmakoloji | 3.602 |
+| Biyokimya | 3.057 |
+
+`bransDurum()` bunu kullanıyor. Doğrulama:
+
+| Branş | ölçülen | beklenen |
+|---|---|---|
+| Anatomi | %15.4 | **%32.9** |
+| Dahiliye | %44.3 | **%62.8** |
+| Biyokimya | %33.3 | **%50.5** |
+
+Çizgi artık ayrılıyor. Dahiliye videoları da katkı veriyor.
+
+### Eksik katmanlar eklendi
+
+Kodda yalnız iki katman vardı (ölçülen + beklenen). Eklenenler:
+
+| Katman | Görünüm |
+|---|---|
+| **Önceki deneme** | kırmızı kesikli `#C4736A` · gerileyen alan görünür |
+| **Aşım** | 45° taralı yeşil (`asimTr` deseni) · beklentiyi geçen alan |
+
+Efsane üç katmana çıkarıldı: önceki · ölçülen · beklenen.
+
+### Test · `kal_test.js` +15 kontrol
+
+`para()` branş kazancı · `bransDurum` dinamik · **statik `g.kaz` toplaması kalmadı** · önceki oran · aşım alanı · kırmızı katman · tarama deseni · efsane · başta beklenen ≈ ölçülen · **çalışınca hayalet çizgi ayrılıyor** · Dahiliye video katkısı · beklenen 1'i aşmıyor · üç katman SVG'de.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-17a` ↔ `rota-2026-11-17a` · 499 343 bayt**
+
+---
+
+## 182 · ⚠ GEÇMİŞ MOLA KARTLARI · AŞIM HALKASI · `2026-11-18a`
+
+### ⚠ 1 · telafiye çekince dünün uyku kartı geliyordu
+
+Kullanıcı: dünün son işini (Kadın Genital Sistem Hastalıkları 19:39–20:30) telafi için çarka çekince yanında **29 Temmuz 20:30–23:00 yavaşlama** kartı da belirdi.
+
+```js
+if(tur==='yavas'||tur==='izin')return false;   /* ← tür ayrımı ÖNCE */
+…
+if(g.d<b)return true;                          /* geçmiş gün */
+```
+
+Tür ayrımı geçmiş gün kontrolünden **önce** geliyordu; uyku ve izin kartları her koşulda görünür sayılıyordu. Vakti geçmiş uyku/spor/izin kartının yeniden belirmesinin anlamı yok.
+
+**Sıra ters çevrildi:** geçmiş gün → tür ne olursa olsun gizli. Bugün ve gelecek için tür ayrımı korunuyor (bugünün uyku kartı görünür).
+
+Doğrulandı: geçmiş `yavas` · `spor` · `kisa` · `aksam` kartlarının hepsi gizli; telafiye çekilen görevin yanında mola durağı **0**.
+
+### ⚠ 2 · aşım taraması TÜM matrisi dolduruyordu
+
+```js
+if(asimVar)s+='<path d="'+po+'Z" fill="url(#asimTr)"/>';   // po = ölçülen poligon
+```
+
+Tek bir branşta bile aşım olsa **bütün alan** taranıyordu — kullanıcının gördüğü "her yer yeşil" görüntüsü buydu.
+
+**Halkaya çevrildi:** `fill-rule="evenodd"` ile dış (ölçülen) ve iç (önceki deneme) poligon arasındaki bölge doluyor. İlerleme olmayan branşta halka kendiliğinden kapanıyor.
+
+Aşım tanımı da netleşti — referans **önceki ölçüm**: *"geçen denemeden bu yana ne kadar açtım"*. İleriye dönük hedef ayrı katmanda (yeşil kesikli).
+
+| Branş | önceki | şimdi | halka |
+|---|---|---|---|
+| Patoloji | %25.0 | %65.3 | **%40.3** |
+| Dahiliye | %28.6 | %44.3 | **%15.7** |
+| Anatomi | %19.2 | %15.4 | 0 (gerileme) |
+| Biyokimya | %41.7 | %33.3 | 0 |
+
+### 3 · CEVAP · "hiç görev yapılmamışken neden artış var"
+
+`brKaz` sıfır değil çünkü **son denemeyi çözmenin kendisi** getiri sayılıyor (§171): branş başına 0.03–0.18 net. Küçük ama gerçek — o denemeyi çözüp çözümlerine baktın.
+
+Beklenen çizginin ölçülene çok yakın durması da doğru: hiç görev yapılmadıysa beklenen ≈ ölçülen. Çizgi ancak çalıştıkça dışarı açılıyor (§181'de doğrulandı: Dahiliye %44.3 → %62.8).
+
+### Test · `kal_test.js` +14 kontrol
+
+geçmiş gün her türü gizliyor · sıra doğru · **telafiye çekince dünün molası gelmiyor** · beş mola türü · bugünün uyku kartı görünür · halka evenodd · aşım önceki ölçüme göre · gerileyen branşta halka sıfır · ilerleyende var · **tüm alanı dolduran tarama yok**.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-18a` ↔ `rota-2026-11-18a` · 500 235 bayt**
+
+---
+
+## 183 · RADAR · DÖRT KATMAN · `2026-11-19a`
+
+Kullanıcı: *"beyaz çizginin iç alanı komple yeşil olursa bir şey ifade etmez."* Haklı — katmanlar yeniden kuruldu.
+
+### ⚠ Yeşil çizgi neden görünmüyordu
+
+İki sebep:
+
+1. **Payda tutarsızlığı** · ölçülen `SORU.den[b]` ile (Dahiliye 35), kazanç `SORU.radar[b]` ile (23.2) normalleniyordu. Aynı paydaya çekildi.
+2. **Ayrım çok küçüktü** · 12 video = 0.65 net / 35 soru → **3 piksel**. Görünmesi imkânsız.
+
+Dört katman bunu çözüyor: artık çürüme çizgisi de var ve o **20–29 piksel** içeride duruyor, ölçek hemen okunuyor.
+
+### Dört katman
+
+| Katman | Konum | Renk | Anlam |
+|---|---|---|---|
+| **çürüme** | beyazın İÇİNDE | kırmızı kesikli `#D9705F` | tekrar etmezsen sınavda nereye düşersin |
+| **ölçülen** | — | beyaz düz | son denemenin gerçeği |
+| **çalışma** | beyazın DIŞINDA | yeşil kesikli | yapılan işin getirisi |
+| **önceki** | referans | soluk kırmızı noktalı | geçen deneme |
+
+**İki taralı halka:**
+
+| Halka | Desen | Anlam |
+|---|---|---|
+| **artış** | 45° fosforlu yeşil `#7BE07B` | geçen denemeye göre açtığın alan |
+| **düşüş** | −45° kırmızı `#E0736A` | geçen denemenin altına düştüğün alan |
+
+Halkalar **vertiks bazında** kuruluyor: yeşil halka yalnız ilerleyen branşlarda genişliyor, kırmızı yalnız gerileyende. Diğerlerinde kendiliğinden kapanıyor, ikisi çakışmıyor.
+
+### Ölçüm · tüm okuma + video yapılmış
+
+| Branş | çürüme | ölçülen | çalışma | içe/dışa (px) |
+|---|---|---|---|---|
+| Dahiliye | %26.7 | %44.3 | %56.5 | 20 / 14 |
+| Patoloji | %39.3 | %65.3 | %72.1 | 29 / 8 |
+| Biyokimya | %20.1 | %33.3 | %50.3 | 15 / 19 |
+| Anatomi | %9.3 | %15.4 | %31.3 | 7 / 18 |
+
+Tek bakışta: nerede olduğun (beyaz), hiçbir şey yapmazsan nereye düşeceğin (kırmızı içeride), planı bitirirsen nereye çıkacağın (yeşil dışarıda), geçen denemeye göre nerede açtın/kapandın (taralı halkalar).
+
+### Test · `kal_test.js` +15 kontrol
+
+çürüme katmanı · payda tutarlı · iki desen · halkalar vertiks bazında · efsane beş katman · **çürüme içeride, çalışma dışarıda** · her ikisi >10px görünür · hiçbir katman 1'i aşmıyor · çürüme negatif değil · dört çizgi SVG'de · halkalar evenodd · **artış ve düşüş branşları ayrık**.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-19a` ↔ `rota-2026-11-19a` · 501 973 bayt**
+
+---
+
+## 184 · ⚠ STREAK EKSİĞİ · RADAR OKUNABİLİRLİĞİ · `2026-11-20a`
+
+### ⚠ 1 · çekilen 24'lüler streak'i tetiklemiyordu
+
+```js
+POWERUP.forEach(u=>{const st=puKay(puAnh(u)); …});   // yalnız kitap havuzu
+```
+
+`puStreak()` sadece `POWERUP` havuzunu (156 kitap konusu) tarıyordu. Havuzdan çarka çekilen 24'lü denemeler sentetik görev olduğu için (`g.ek`) seriye hiç girmiyordu.
+
+**Ölçüm:** power-up konusu tamamlandı → streak 1 ✓ · çekilen 24'lü tamamlandı → streak **0** ✗
+
+Düzeltildi. Artık ikisi birlikte sayılıyor: dün power-up + bugün deneme → **streak 2**, kademe 2.
+
+### 2 · radar okunabilirliği
+
+Beş katman 112 px yarıçapta üst üste biniyordu.
+
+| | Önce | Sonra |
+|---|---|---|
+| Yarıçap | 112 | **148** |
+| viewBox | 500×350 | **560×430** |
+| CSS yükseklik | 52vh / 430px | **66vh / 540px** |
+| Tarama aralığı | 6 px | **9 px** |
+| Tarama kalınlığı | 2.4 px · %85 | **1.6 px · %62** |
+| Etiket yazısı | 10.5 | **11.5** |
+
+Kesikli desenler birbirinden ayrıştırıldı:
+
+| Katman | Desen |
+|---|---|
+| çürüme | `7 4` · uzun |
+| çalışma | `3 3.5` · kısa |
+| önceki | `1 6` · noktalı, %42 |
+
+Ölçülen çizgi kalınlaştı (1.7 → 2), iç dolgusu inceltildi (%10 → %5.5) — üstteki katmanlar görünsün.
+
+**Ayrımlar:** Dahiliye çürüme→ölçülen **26 px**, ölçülen→çalışma **18 px**.
+
+### Test · `pu_test.js` +13 kontrol
+
+streak çekilen denemeleri tarıyor · başta sıfır · **çekilen 24'lü tetikliyor** · power-up ve deneme birlikte · kademe · temizlik · radar yarıçapı · viewBox · tarama seyrekliği · üç kesikli desen · etiket boyu · CSS yüksekliği.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-20a` ↔ `rota-2026-11-20a` · 502 517 bayt**
+
+---
+
+## 185 · ÖNCEKİ ÖLÇÜM TURUNCU · `2026-11-21a`
+
+Önceki ölçüm çizgisi soluk kırmızıydı (`#C4736A`) ve **düşüş taramasıyla** (`#E0736A`) karışıyordu — ikisi de kırmızı ailesinde.
+
+Turuncuya alındı: `#F0A65C`, kalınlık 1.15, desen `2 5`, %62 opaklık. Efsaneye de eklendi.
+
+### Altı katman · renk ailesi ayrımı
+
+| Katman | Renk | Görünüm |
+|---|---|---|
+| ölçülen | `#CBD2D9` | beyaz-gri düz |
+| **önceki** | **`#F0A65C`** | **turuncu noktalı** |
+| çalışma | `#6FA35A` | yeşil kesikli (dışarıda) |
+| çürüme | `#D9705F` | kırmızı kesikli (içeride) |
+| artış | `#7BE07B` | fosforlu yeşil tarama |
+| düşüş | `#E0736A` | kırmızı tarama |
+
+Kırmızı ailesi artık yalnız **olumsuz** anlam taşıyor (çürüme, düşüş); turuncu tarafsız referans (önceki ölçüm); yeşil ailesi olumlu (çalışma, artış).
+
+### Test · `kal_test.js` +7 kontrol
+
+turuncu çizgi · eski soluk kırmızı kalmadı · efsanede önceki · altı katman SVG'de · turuncu kırmızılardan ayrı · altı ayrı renk · efsane altı öge.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-21a` ↔ `rota-2026-11-21a` · 502 703 bayt**
+
+---
+
+## 186 · ETİKET DÜZENİ · ÜÇ SATIR · `2026-11-22a`
+
+### Doğrulama · beyaz çizgi SABİT
+
+Kullanıcı haklı olarak sordu: çalışma, ölçülen çizgiyi genişletiyor mu?
+
+**Hayır.** `po` yalnız `d.olc`den kuruluyor; 8 video işaretlendikten sonra Dahiliye ölçüleni **%44.29 → %44.29** — bit bit aynı. Çalışma ayrı bir poligon (`pb`), çürüme ayrı (`pc`).
+
+### Çalışma çizgisi neden görünmüyordu
+
+8 Dahiliye videosu = 0.33 net / 35 soru = **0.93 puan** → 142 px yarıçapta **1.4 piksel**. Sayı doğru, ölçek küçük. Bu yüzden bilgi **etikete** taşındı.
+
+### Üç satırlı etiket
+
+```
+Dahiliye
+29% ▲ 44%          ← önceki deneme → şimdiki · yeşil artış, kırmızı düşüş
+b 45% · ç 24%      ← beklenti (çalışma) · çürüme
+```
+
+| Branş | değişim | beklenti/çürüme |
+|---|---|---|
+| Dahiliye | 29% ▲ 44% | b 45% · ç 24% |
+| Patoloji | 25% ▲ 65% | ç 36% |
+| Anatomi | 19% ▼ 15% | b 16% · ç 8% |
+| Biyokimya | 42% ▼ 33% | b 34% · ç 18% |
+
+- İkinci satır **yalnız** önceki–şimdiki değişimi gösteriyor
+- Üçüncü satır yalnız anlamlıysa çiziliyor (>0.4 puan), yoksa hiç yok
+- Dar pencerede taşmasın diye kısa yazım: `b` ve `ç`
+- Renkler katman renkleriyle aynı: beklenti yeşil `#6FA35A`, çürüme kırmızı `#D9705F`
+
+Etiketlere yer açmak için yarıçap 148 → 142, viewBox 560×430 → **580×450**.
+
+### Taralı halkalar
+
+Yapısı gereği yalnız **ölçülen ile önceki** arasında: `pyD/pyI` ve `pkD/pkI` sadece `olc` ve `onc` kullanıyor, `bek`/`cur`a hiç dokunmuyor. Doğrulandı.
+
+### Test · `kal_test.js` +10 kontrol
+
+değişim satırı · üçüncü satır · yalnız anlamlıysa · kısa yazım · **beyaz çizgi sabit** · çalışma dışarıda · çürüme içeride · üçüncü satır SVG'de · renkli ok · halkalar `olc`–`onc` arasında.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-22a` ↔ `rota-2026-11-22a` · 503 750 bayt**
+
+---
+
+## 187 · ⚠ TEKERLEK · SÜRÜKLEME AKIŞINA BAĞLANDI · `2026-11-23a`
+
+Kullanıcı: tekerlek hiç akıcı değil, yavaş çevirince hareket yok, hızlı çevirince birkaç kart birden atlıyor, kartların yörüngesi kayıyor, seçili kart merkeze oturmuyor.
+
+### ⚠ Kök sebep
+
+```js
+tekBir+=e.deltaY;
+while(Math.abs(tekBir)>=TEK_ESIK){ adim(tekBir>0?1:-1) }   // ← ayrık sıçrama
+```
+
+Üç kusur birden:
+
+1. **Ayrık adım** · her eşik aşımında `adim()` → ayrı bir `gecis()` animasyonu. Hızlı çevirince üst üste binip birkaç kart atlıyor.
+2. **Eşik altı ölü bölge** · 48 birime ulaşmayan çevirme hiç hareket üretmiyor.
+3. **Sürükleme kipine hiç girilmiyor** · kartlar büyük kalıyor, yörünge kayıyor, `otur()` çağrılmadığı için çark seçili kartın merkezine dönmüyor.
+
+Koddaki eski yorum önceki bir denemenin neden başarısız olduğunu da anlatıyordu: `surTazele()` çağrılmadığı için `merkezEl` güncellenmiyor, `otur()` hedefi bilemiyordu.
+
+### Düzeltme · elle sürüklemenin AYNI akışı
+
+```
+ilk tık    → surukleBasla()   · küçülme animasyonu oynar
+her tık    → kayY -= delta×0.62 · şerit görünümünde sürekli kayar
+             surTazele()       · merkezdeki kart her karede güncellenir
+160 ms boş → otur()            · şeritte merkeze kayar, sonra açılır
+```
+
+**Ölçüm:**
+
+| | Sonuç |
+|---|---|
+| Tek tık | **62 px** · kart yüksekliği 36–107 px → hareket ediyor |
+| Beş tık | 310 px · sürekli, sıçrama yok |
+| Ölü bölge | **yok** |
+
+### Oturma da düzeltildi
+
+Eskiden `kayY=0` ile anında sıçranıyor, açılma animasyonu kaymanın üstüne biniyordu. Artık **önce şeritte merkeze kayılıyor**, sonra açılma oynuyor:
+
+```
+süre = min(190, 60 + |kalan| × 0.9) ms · easeOutCubic
+```
+
+Doğrulandı: sonda tam sıfır, monoton, geri sekme yok.
+
+### Test · `cark_test.js` +15 kontrol
+
+sürükleme kipine giriyor · kayY birikiyor · merkez tazeleniyor · **eski adım kodu kalmadı** · 160 ms oturma · katsayı · şeritte kayma · kayma sonrası açılma · süre sınırı · her tık hareket üretiyor · tek tık >50 px · beş tık sürekli · oturma sonda sıfır · monoton · süre makul.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-23a` ↔ `rota-2026-11-23a` · 505 245 bayt**
+
+---
+
+## 188 · ⚠ DOKUNMATİK GERİLEMESİ · GÜÇ IŞINLARI · `2026-11-25a`
+
+### ⚠ 1 · §187'nin yan etkisi · parmakta sallanma
+
+Oturma animasyonunu **her iki yola** (parmak + tekerlek) koymuştum. Parmakla sürüklerken devam eden `pointermove` olayları animasyonla çakışıp kartı yukarı aşağı sallıyordu.
+
+İki koruma:
+
+| | |
+|---|---|
+| `oturAnim` bayrağı | yeniden girişi ve `pointermove`un `kayY`ye yazmasını engelliyor |
+| `tekOtur` bayrağı | oturma animasyonu **yalnız tekerlekte** oynuyor |
+
+Parmakta bırakma anında zaten atalet hissi var; ek kayma sallanma üretiyordu. Tekerlekte ise gerekli, çünkü elin çarkta değil.
+
+### 2 · önceki ölçüm MOR
+
+Turuncu (`#F0A65C`) yerine **mor** (`#B98CE8`). Kırmızı ve yeşil ailelerinden tamamen ayrık, tarafsız referans olduğu hemen anlaşılıyor.
+
+### 3 · GÜÇ IŞINLARI
+
+Poligonlar birbirine çok yakın olduğunda (8 video = 1.4 px) hiçbir şey görünmüyordu. Her branşta **ölçülen noktadan başlayan ışınlar** eklendi:
+
+| Işın | Yön | Renk | His |
+|---|---|---|---|
+| **çürüme** | İÇERİ (merkeze) | `#F2604E` | ısırık alınmış |
+| **çalışma** | DIŞARI | `#6EF06E` | büyüyor |
+
+- Gauss parlaması (`isinP` süzgeci) · güç ışını görünümü
+- Uzunluk gerçek farkla orantılı ama **en az 7 px** — küçük değerler de okunsun
+- Kalınlık farkla artıyor (1.6 → 4.6 px)
+- Poligon çizgileri soluklaştırıldı (%50 ve %45), ışınlar öne çıksın
+
+**Ölçüm · 8 Dahiliye videosu:** 11 çürüme ışını, 9 çalışma ışını; en küçük yeşil ışın 7.0 px, kırmızı 9.9 px. Eskiden 1.4 px görünmez çizgiydi.
+
+### Test · `cark_test.js` +7 · `kal_test.js` +11
+
+`oturAnim` bayrağı · animasyon yalnız tekerlekte · pointermove karışmıyor · yeniden giriş engeli · parmakta kapalı · tekerlekte açık · bayrak iniyor · ışın süzgeci · **çürüme içeri, çalışma dışarı** · en az 7 px · kalınlık artışı · ışınlar çiziliyor · parlama · mor çizgi.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-25a` ↔ `rota-2026-11-25a` · 507 696 bayt**
+
+---
+
+## 189 · ⚠ AÇILMA FAZI · MAT ve TOK LOGO · `2026-11-27a`
+
+### ⚠ 1 · sıçramanın kaynağı · şeritten tam yerleşime ANLIK geçiş
+
+```js
+surukleKip=false; kayY=0;   // ← ŞERİT → TAM yerleşim, tek karede
+gecis(hed.i,hed.m);
+```
+
+Kaydırma bittiğinde şerit yerleşiminden tam yerleşime **anlık** geçiliyordu. Hedef doğru yerdeydi ama **çevredeki kartlar sıçrıyor**, tek kart değişmesine rağmen "iki kart atladı" hissi veriyordu. Kullanıcının Sonraki/Önceki'de gördüğü tam buydu.
+
+### Düzeltme · araya AÇILMA fazı
+
+`surukleKip` kapanıyor (açıklık yine konuma bağlı sürekli hesaplanıyor), kalan `kayY` **260 ms**'de yumuşatılarak sıfıra iniyor. Kartlar bu sırada kendiliğinden açılıyor.
+
+| Faz | Süre | 60 fps'te ara kare |
+|---|---|---|
+| kaydırma | 380 → **440 ms** | 26 |
+| **açılma** | **260 ms** (yeni) | 16 |
+| **Sonraki tuşu toplam** | **700 ms** | **42** (önce 23) |
+| tekerlek bırakma | 450 ms | 27 |
+
+Satır geçişi de 0.26s → **0.34s**.
+
+Süreklilik doğrulandı: kaydırma bitişindeki `kayY` açılma başlangıcının aynısı — devir noktasında sıçrama yok, eğri monoton.
+
+### 2 · logo · TOK ve MAT
+
+| | Önce | Sonra |
+|---|---|---|
+| Ana gövde kalınlığı | 12 | **17** |
+| Parlak piksel | 14 511 | **18 101** (+%25) |
+| Ton aralığı | 40–246 | **40–213** |
+| En parlak %2 | 242 | **204** |
+| Kenar parlaması | %55 · 2.4 px | **%34 · 2 px** |
+
+Gradyan dokuz duraktan yediye indi, beyaza yakın uçlar kaldırıldı — orta tonlar baskın, mat metal. Nötrlük %100 korundu. 88 pikselde gövde **+%28** kalınlaştı.
+
+Gömülü ikonlar ve `icon-180/192/512.png` yenilendi.
+
+### Test · `cark_test.js` +14 kontrol
+
+açılma fazı · anlık sıçrama kalmadı · tekerlekte de var · süreler · **kaydırma ≥25, açılma ≥15, toplam ≥40 ara kare** · açılma başı kayY korunuyor · sonu tam sıfır · monoton · 20 adımda hata ve atlama yok.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-27a` ↔ `rota-2026-11-27a` · 510 052 bayt**
+
+---
+
+## 190 · RADAR BAŞTAN TASARLANDI · `2026-11-29a`
+
+Kullanıcı: *"aynı derste hem çürüme hem beklenti görüntüsü saçma · bana net sonuç lazım."* Matris sadeleştirildi.
+
+### Üç katman, fazlası yok
+
+| Katman | Görünüm |
+|---|---|
+| **önceki** | pastel turuncu `#E8B98A`, ince kesikli |
+| **ölçülen** | beyaz düz `#E8EDF2`, 2.2 px |
+| **projeksiyon** | tek parlayan hayalet · üstteyse yeşil, alttaysa kırmızı |
+
+Kaldırılanlar: güç ışınları, iki taralı halka, ayrı çürüme ve çalışma çizgileri, üçüncü etiket satırı.
+
+### Tek birleşik projeksiyon
+
+```
+proj = ölçülen × tutma + çalışmanın getirisi
+```
+
+Çürüme ve çalışma tek sayıda birleşiyor. Sonuç ölçülenin üstündeyse yeşil, altındaysa kırmızı.
+
+### ⚠ Çürüme varsayımı yanlıştı
+
+Taban için `S_ILK` (2.4 gün · yeni öğrenilen) kullanılıyordu. Oysa ölçülen net **aylardır süren çalışmanın** ürünü.
+
+| S | 24 günde tutma | Patoloji %65 → |
+|---|---|---|
+| S_ILK 2.4 | %54.7 | %35.5 |
+| S_TEK 6.0 | %71.8 | %46.7 |
+| **S_TAB 19.8** | **%88.3** | **%57.4** |
+
+`S_TAB = S_TEK × 3.3` — birden çok kez görülmüş, oturmuş bilgi. Muhafazakâr bir seçim.
+
+**Etki:**
+
+| | Hiç çalışmadan | Tüm okuma+video |
+|---|---|---|
+| Anatomi | −1% | **+14%** |
+| Dahiliye | −5% | **+7%** |
+| Biyokimya | −3% | **+13%** |
+| **Alt özet** | — | **+14.8 net** |
+
+Eskiden her branşta −6…−29% çıkıyordu.
+
+### Etiket · iki satır
+
+```
+Anatomi
+19% ▼ 15%   +14%
+```
+
+önceki (turuncu) → şimdiki (yeşil/kırmızı ok) · sonra sıradaki denemede net beklenti.
+
+### Boyut
+
+| | Önce | Sonra |
+|---|---|---|
+| Yarıçap | 142 | **176** |
+| viewBox | 580×450 | **660×500** |
+| CSS yükseklik | 66vh / 540px | **72vh / 620px** |
+| Yan boşluk | 10 px | 6 px (dar pencerede yer) |
+
+Altta toplam özet: *"sıradaki denemede beklenti **+14.8 net**"*.
+
+### Test · `kal_test.js` +18 · eski radar testleri kaldırıldı
+
+birleşik projeksiyon · `S_TAB` · üç katman rengi · **eski ışınlar ve halkalar kalktı** · üçüncü satır kalktı · alt özet · efsane · hiç çalışmadan hafif eksi · tam programda artı · 0–1 aralığı · üç poligon · etiket iki satır · beklenti etikette · viewBox.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-11-29a` ↔ `rota-2026-11-29a` · 507 846 bayt**
+
+---
+
+## 191 · ⚠ IŞINLANMA ve SEKME · CANLI YERLEŞİM · `2026-12-01a`
+
+Kullanıcı iki kusuru tam yerinden tarif etti; ikisi de aynı köke bağlıydı.
+
+### ⚠ Kök sebep · yükseklik canlı, konum donmuş
+
+```js
+const h=c.map(x=>x.classList.contains('act')
+  ? x.getBoundingClientRect().height    // ← ANLIK ölçüm
+  : 36);
+```
+
+`diz()` etkin kartın yüksekliğini anlık ölçüyor ama **yalnız belirli anlarda** çağrılıyordu. CSS yükseklik geçişi sürerken konumlar donmuş anlık görüntüden hesaplanıyor; geçiş bitince kart olması gereken yere **ışınlanıyordu**.
+
+Kullanıcının ifadesiyle: *"kart animasyon bitince olması gereken yere ışınlanıyor/sıçrıyor."*
+
+### Düzeltme 1 · `canliDiz()` · bütün ara fazlar çiziliyor
+
+Açılma/kapanma geçişi boyunca **her karede** `diz()` çağrılıyor (420 ms). Yükseklik büyüdükçe komşu sınırları ve konumlar birlikte akıyor — ara faz görüntülerinin tamamı çiziliyor.
+
+Kullanıcının koşulu: *"kart kaydırma görünümüne geçince olması gereken konuma diğer kartlarla olan sınır komşuluğunu animasyon bitince tam olması gerektiği gibi elde edebilirse görüntüde süreklilik sağlanır."*
+
+### ⚠ Düzeltme 2 · SEKME
+
+Kaydırma bitince `kayY` hedefi merkeze getiren değerdeydi. `surukleKip` kapanıp yükseklikler büyüyünce **aynı kayY artık kartı merkezden uzaklaştırıyordu** — "gidip geri sekme" buydu.
+
+Açılma fazı artık `kayY`yi körü körüne sıfıra indirmiyor; her karede hedefin merkeze **gerçek** uzaklığını ölçüp onu kapatıyor:
+
+```js
+const u2=uzaklik();
+const hedS=(u2===null)?0:-u2;
+kayY=hedS+(k0-hedS)*(1-yA(t));
+```
+
+**Sapma ölçümü** (yükseklik 8→42 px büyürken):
+
+| t | hedef kayY | eski yöntem | yeni yöntem |
+|---|---|---|---|
+| 0.25 | −16.5 | −3.4 (sapma **13.1**) | −12.9 (sapma 3.6) |
+| 0.50 | −25.0 | −1.0 (sapma **24.0**) | −22.9 (sapma 2.1) |
+| 1.00 | −42.0 | 0.0 (sapma **42.0**) | −42.0 (sapma **0**) |
+
+Eski yöntemde en büyük sapma 42 px → görünür sekme. Yenisinde 3.6 px'i geçmiyor, bitişte tam sıfır.
+
+### Test · `cark_test.js` +13 kontrol
+
+`canliDiz` · geçiş sonrası çağrı · animasyon boyunca `diz()` · hedef her karede ölçülüyor · `kayY` hedefe göre · **körü körüne sıfıra inmiyor** · bitişte hedefte · eski yöntemde sekme >30 px · yenide <6 px · bitişte tam hedefte · 25 adımda hata ve atlama yok.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-01a` ↔ `rota-2026-12-01a` · 509 885 bayt**
+
+---
+
+## 192 · ÖZET TUTARLILIĞI · LOGO · ŞERİT BAŞLIĞI · `2026-12-03a`
+
+### 1 · CEVAP · çürüme yapmadığın işe uygulanmıyor
+
+Kullanıcı: *"yapmadığım çalışmaların da çürümesi varmış gibi mi hesaplama yapıyor?"*
+
+**Hayır.** Çürüme yalnız **ölçülen tabana** uygulanıyor — sahip olduğun bilgiye. Yapılmamış işin çürümesi diye bir şey yok; yapılmamış iş zaten sıfır katkı veriyor.
+
+Parakete de aynısını yapıyor: 57.61 (ölçülen) → 56.03 (parakete). Fark, tabanın 24 günlük çürümesi eksi yapılan işin kazancı.
+
+### ⚠ 2 · ama özet tutarsızdı
+
+| Durum | parakete | radar özeti |
+|---|---|---|
+| hiç çalışmadan | −7.10 | −7.10 ✓ |
+| 8 video | −6.89 | −6.89 ✓ |
+| tüm okuma+video | **17.53** | **14.19** ✗ |
+
+**3.34 net sapma.** Sebep: özet eksenlerin toplamıydı; **Küçük Stajlar** (`SORU.den`=0) ve **Histo-Embriyoloji** (Fizyoloji ekseninde birleşik) kazançları toplama girmiyordu.
+
+Düzeltme: özet artık doğrudan `para()`dan alınıyor — paraketenin kullandığı sayının aynısı. Ayrıca eksen kazançlarına da Histo ve Küçük Stajlar eklendi.
+
+**Doğrulandı:** dört durumda da birebir (−7.1 / −6.9 / +17.5 / +17.5).
+
+### 3 · logo
+
+| | Değişiklik |
+|---|---|
+| **E** | ayrı onay işaretleri kaldırıldı; **kolların ucu tick'e dönüşüyor** (`H146 l9 10 l17 -19`) |
+| **R** | kulaklık uçları hafif açıldı (`160,54` ve `172,65`) — küçük boyutta fark ediliyor |
+
+### 4 · şerit başlığı sabit boyutta
+
+Konu adı (`.kdm1 .ko`, 13px) `--r1` ile açılıp kapanıyordu: yazı saydamlaşıp daralıp yok oluyor, kart açılırken yeniden beliriyordu. Şerit görünümünde **en çok dikkat çeken detay** olduğu için kesinti göze çarpıyordu.
+
+```css
+.kdm1{height:21px;opacity:1}      /* her zaman görünür, aynı boyut */
+```
+
+Pasif kart yüksekliği 36 → **55 px**. Kart açılırken konu adının konumu da boyutu da değişmiyor — süreklilik hissi buradan geliyor.
+
+### Test
+
+`cark_test.js` uyarlandı: konu satırı şeritte görünür · alt satırlar orandan · 20 adımda hata ve atlama yok.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-03a` ↔ `rota-2026-12-03a` · 510 931 bayt**
+
+---
+
+## 193 · ⚠ BEKLENTİ UFKU · LOGO ZEMİNİ · `2026-12-05a`
+
+### ⚠ 1 · beklenti TUS gününe projekte ediliyordu
+
+Kullanıcı: *"en son verisini girdiğim denemeyle çalışmam sonucunda bir sonraki denemede kaç almamı bekliyorsa aradaki net farkı göstermeli."*
+
+`bransDurum()` ve özet, çürümeyi **TUS gününe** (24 gün) göre hesaplıyordu. Oysa soru "sıradaki denemede ne olur".
+
+`para(ufuk)` parametreli hâle getirildi; `sonrakiDeneme()` programdaki ilk tamamlanmamış deneme tarihini veriyor.
+
+| Ufuk | Kazanç (boş) |
+|---|---|
+| Sıradaki deneme (2 gün) | **−1.72 net** |
+| TUS günü (24 gün) | −7.10 net |
+
+**Çalışma yapılınca:** sıradaki denemeye kadar planlanan 29 görev işaretlendiğinde **+2.49 net**.
+
+Eksen farkları da makulleşti: Dahiliye %44 → %47 (+3), Patoloji %65 → %76 (+11). Eskiden 24 günlük çürümeyle hepsi eksiye düşüyordu.
+
+⚠ Bir çağrı atlanmıştı (`curume(br,o.tar)` ufuksuz kalmış); yakalanıp bağlandı — yoksa parametre hiç işlemiyordu.
+
+### 2 · logo zemini
+
+Bevel'de zemin ve şekil aynı yüzeyin parçası. Bizimki düz simsiyahtı, harfler zeminden kopuk duruyordu.
+
+- **Zemin gradyanı** `#2A2F35 → #1B1F24 → #0E1114` · logoyla aynı ışık yönü
+- **Işık odağı** sol üstte, %55 → 0 sönümlü radyal
+- **İnce kenar** `#5A626C` %38 · yuvarlatma 52 px
+
+| Nokta | Ton |
+|---|---|
+| sol üst | 60 |
+| sağ alt | 18 |
+| merkez (harfler) | 185 |
+
+Simsiyah piksel 28 000 → **1 407**. İkonlar artık `flatten` olmadan üretiliyor; zemin SVG'nin parçası.
+
+### Test · `kal_test.js` +11 kontrol
+
+`para` ufuk parametreli · `sonrakiDeneme` · `bransDurum` ve özet aynı ufku kullanıyor · `curume` ufka bağlı · **`para` içinde SINAV_G kalmadı** · ufuk gerçekten etkiliyor · yakın ufukta çürüme az · çalışınca beklenti artı · eksen farkları ±%20 içinde · logo zemini ve ışığı.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-05a` ↔ `rota-2026-12-05a` · 530 251 bayt**
+
+---
+
+## 194 · ⚠ BAŞLIK SÜREKLİLİĞİ · İKİ KÖK SEBEP · `2026-12-06a`
+
+§192'de konu adını şeritte görünür kılmıştım ama kullanıcı videoda hâlâ "başlık bir an kaybolup sonra beliriyor" gördü. İki ayrı sebep varmış.
+
+### ⚠ 1 · boyutlar farklıydı
+
+| | Boyut |
+|---|---|
+| Şerit başlığı `.kdm1 .ko` | **13 px** |
+| Kart başlığı `.kKonu` | **19 px** |
+
+Görünür kılmak yetmiyordu; kart açılırken yazı 13'ten 19'a sıçrıyordu. Şerit başlığı kart başlığıyla **birebir** eşitlendi: 19 px, `line-height:1.25`, `letter-spacing:-.02em`.
+
+`.kdm1` yüksekliği 21 → **26 px**, pasif kart yüksekliği 55 → **60 px**.
+
+### ⚠ 2 · başlık koreografiye dahildi
+
+```js
+function icerikDegis(el,yeni){
+  eski.classList.add('icCikis');                    // içerik küçülüp yok oluyor
+  setTimeout(()=>{el.innerHTML=yeni; icerikGiris(el)},100);  // yenisi büyüyerek geliyor
+}
+```
+
+`.icCikis>*` ve `.icGiris>*` **tüm** çocukları ölçekliyor — başlık dahil. Kart geçişinde başlık 100 ms yok oluyor, sonra 150 ms'de büyüyerek geri geliyordu. Kullanıcının gördüğü sıçrama buydu.
+
+Konu adı artık **muaf**:
+
+```css
+.icCikis .kKonu,.icGiris .kKonu,
+.icCikis .kdm1,.icGiris .kdm1{animation:none !important;
+  opacity:1 !important; transform:none !important}
+```
+
+Aynı boyutta, aynı yerde, kesintisiz duruyor. Diğer satırlar koreografiyi sürdürüyor.
+
+### Test · `cark_test.js` +12 kontrol
+
+iki başlık bulundu · **aynı boyutta** · aynı satır yüksekliği · aynı harf aralığı · koreografiden muaf · opacity zorlanıyor · transform sıfırlanıyor · `kdm1` yüksekliği yeterli · pasif kart yüksekliği güncel · 20 adımda hata ve atlama yok.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-06a` ↔ `rota-2026-12-06a` · 531 000 bayt**
+
+---
+
+## 195 · BAŞLIK SÜREKLİ BÜYÜR · KOREOGRAFİ KALKTI · `2026-12-07a`
+
+§194'teki sabit eşitleme yanlıştı: şeritteki 19 px yazı düzeni bozuyordu. Kullanıcının istediği **sürekli büyüme**.
+
+### Başlık artık konumdan büyüyor
+
+```css
+.kdm1 .ko{font-size:calc(13px + 6px * var(--ac,0))}
+.kdm1{height:calc(21px + 6px * var(--ac,0))}
+```
+
+`--ac` açıklık oranı, konumdan sürekli hesaplanıyor (§141) ve her karede yazılıyor.
+
+| `--ac` | Yazı | Satır |
+|---|---|---|
+| 0 (uzakta) | 13.0 px | 21 px |
+| 0.50 | 16.0 px | 24 px |
+| 1 (merkezde) | **19.0 px** | 27 px |
+
+Kart biçimine geçildiği an `--ac`=1 olduğu için şerit başlığı da 19 px — **kart başlığıyla aynı**, sıçrama yok.
+
+**Kendiliğinden tersine dönüyor:** oran konumun kendisinden geldiği için kaydırmaya devam edilince yazı küçülmeye başlıyor. Ayrı bir animasyon, ayrı bir zamanlayıcı yok.
+
+### Koreografi kaldırıldı
+
+`icerikDegis` içeriği önce küçültüp yok ediyor, 100 ms sonra yenisini büyüterek getiriyordu. Artık ölçek animasyonundan muaf olanlar:
+
+```css
+.icCikis .kdm, .icGiris .kdm,
+.icCikis .kdm>div, .icGiris .kdm>div,
+.icCikis .kUst, .icGiris .kUst,
+.icCikis .kBrans, .icGiris .kBrans,
+.icCikis .kKaynak, .icGiris .kKaynak,
+.icCikis .kKonu, .icGiris .kKonu
+```
+
+Şerit satırlarının hepsi ve kartın üst bölümü `--r1..--r4` oranlarıyla sürekli büyüyüp küçülüyor. Yalnız alt bölüm (buton, mola, uyarı) koreografiyi sürdürüyor.
+
+### Test · `cark_test.js` +13 kontrol
+
+boyut ve yükseklik orandan · `--ac` her karede yazılıyor · şerit ve kart üst satırları koreografisiz · **sabit eşitleme kaldırıldı** · r=0'da 13 px, r=1'de 19 px · ara değerler monoton · tersine dönebilir · 20 adımda hata ve atlama yok.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-07a` ↔ `rota-2026-12-07a` · 532 046 bayt**
+
+---
+
+## 196 · ⚠ BÜYÜME ARALIĞI DARALTILDI · `2026-12-08a`
+
+§195'te başlık boyutunu `--ac`e bağlamıştım. Kullanıcı iki kusur bildirdi: başlıklar kart boyutundan fazla büyüyüp sonra ışınlanıyor, ve kaydırma görünümündeki başlıklar eski hâline dönmemiş.
+
+### ⚠ Kök sebep · aralık çok geniş
+
+`--ac` merkeze yakın **bütün** şeritlerde 1'e yaklaşıyor. Dolayısıyla merkezin çevresindeki her şeridin başlığı 19 px'e çıkıyordu — kaydırma görünümü bozuluyordu.
+
+### Düzeltme · `--kb`
+
+Büyüme için ayrı bir oran:
+
+```js
+x.style.setProperty('--kb', ara01(v, 0.90, 1.0));
+```
+
+| `--ac` | `--kb` | Yazı |
+|---|---|---|
+| 0.00–0.90 | 0.00 | **13.0 px** · şerit görünümü |
+| 0.95 | 0.50 | 16.0 px |
+| 1.00 | 1.00 | **19.0 px** · kart başlığıyla aynı |
+
+Büyüme yalnız merkeze **çok yakınken** başlıyor. Kaydırma sırasındaki şeritlerin hepsi eski 13 px görünümünde kalıyor; sadece merkeze oturan kart büyüyor ve tam 19 px'te kart başlığıyla buluşuyor — ışınlanma yok.
+
+### Test · `cark_test.js` +14 kontrol
+
+`--kb` iki yolda da yazılıyor · aralık 0.90–1.00 · başlık ve yükseklik `--kb` kullanıyor · **`--ac` artık başlıkta değil** · ac=0.6 ve 0.8'de 13 px · 0.90'da başlıyor · 0.95'te ara değer · 1'de tam 19 px · **19 px'i aşmıyor** · monoton.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-08a` ↔ `rota-2026-12-08a` · 532 475 bayt**
+
+---
+
+## 197 · BÜYÜME AÇILMAYLA SENKRON · KAYNAK SATIRI · `2026-12-09a`
+
+### 1 · büyüme artık uzaklığa değil AÇILMAYA bağlı
+
+Kullanıcı: *"kart seçilip açılıp büyüme animasyonu başlamadıysa başlık çark odağına uzaklığına göre büyümemeli."*
+
+`--kb` merkeze yaklaşan her şeritte hesaplanıyordu. Artık:
+
+```js
+const etkin = x.classList.contains('act') && !surukleKip;
+x.style.setProperty('--kb', etkin ? ara01(v,0.90,1.0) : '0');
+```
+
+Kaydırma sürerken **hiçbir** başlık büyümüyor. Büyüme yalnız kart etkin olduğunda ve sürükleme kipi bittiğinde — kartın kendi açılmasıyla senkron.
+
+### 2 · kaynak satırı · büyüme + soldan sağa renk
+
+Şeritte `var(--yesil)` kullanılıyordu ama **o değişken hiç tanımlı değildi**; renk devralınana (beyazımsı) düşüyordu. Kartta ise `#93C47B` yeşil. Geçişte renk birden değişiyordu.
+
+İki renk tek gradyanda taşınıyor, kesim noktası `--kb` ile soldan sağa ilerliyor:
+
+```css
+background-image:linear-gradient(90deg,
+  #93C47B 0%, #93C47B calc(var(--kb,0)*100%),
+  var(--ink2) calc(var(--kb,0)*100% + 12%), var(--ink2) 100%);
+-webkit-background-clip:text; -webkit-text-fill-color:transparent;
+```
+
+| Durum | `--kb` | Başlık | Kaynak | Renk |
+|---|---|---|---|---|
+| kaydırma sürerken | 0.00 | 13.0 px | 10.5 px | beyaz |
+| kart açılıyor %50 | 0.50 | 16.0 px | 11.5 px | **soldan %50 yeşil** |
+| kart tam açık | 1.00 | 19.0 px | 12.5 px | yeşil |
+
+Boyutlar kart formundakilerle birebir buluşuyor (19 px ve 12.5 px), sıçrama yok.
+
+### Test · `cark_test.js` +12 kontrol
+
+`--kb` yalnız etkin kartta · sürükleme kipinde büyüme yok · etkin olmayan sıfır · kaynak büyümesi · gradyan · kesim `--kb` ile · metin kesimi · saydam dolgu · kb=0 şerit, kb=1 kart boyutları · kaynak kart boyutu · ikisi de monoton.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-09a` ↔ `rota-2026-12-09a` · 533 280 bayt**
+
+---
+
+## 198 · YUMUŞAK GEÇİŞ EĞRİSİ · `2026-12-10a`
+
+### Doğrulama · başlıklar aynı boyutta DEĞİL
+
+Kullanıcının şüphesi: *"zaten büyük kart başlık yazı büyüklüğü küçük kart yazı büyüklüğüyle aynı sanırım."*
+
+Değil: şerit `.kdm1 .ko` 13 px'ten başlıyor, kart `.kKonu` 19 px. Büyüme gerçek bir değişim.
+
+### ⚠ Sıçramanın kaynağı · TÜREV KIRILMASI
+
+Satır oranları doğrusal aralıklardan geliyordu:
+
+```js
+const ara01=(v,a0,a1)=>Math.max(0,Math.min(1,(v-a0)/(a1-a0)));
+```
+
+Her aralığın ucunda türev kırılıyor: satır **aniden** büyümeye başlıyor, **aniden** duruyordu. Gözle görülen boyut sıçramalarının kaynağı buydu.
+
+**`smoothstep` (3t²−2t³)** uçlarda türevi sıfırlıyor:
+
+| Ölçüm | Doğrusal | Yumuşak |
+|---|---|---|
+| İkinci fark (kink ölçüsü) | 0.6176 px | **0.1026 px** |
+
+**%83 daha pürüzsüz** — suyun iki yana akması gibi.
+
+### Aralıklar genişletildi · daha çok ara faz
+
+| Satır | Eski | Yeni | Genişlik |
+|---|---|---|---|
+| konu adı | 0.10–0.38 | **0.06–0.40** | 0.28 → 0.34 |
+| kaynak | 0.32–0.60 | **0.26–0.62** | 0.28 → 0.36 |
+| blok | 0.54–0.80 | **0.46–0.82** | 0.26 → 0.36 |
+| son seans | 0.74–0.96 | **0.66–0.99** | 0.22 → 0.33 |
+
+Satırlar sırayla, alttan üste doğru ve birbirine akarak beliriyor. `--kb` aralığı da 0.90 → **0.86** ile genişletildi.
+
+Yükseklik uçlarda doğru (36 px ve 107 px), monoton, kink yok.
+
+### Test · `cark_test.js` +10 kontrol
+
+smoothstep iki yolda da · **doğrusal `ara01` kalmadı** · aralıklar genişletildi · yumuşak eğri %60'tan fazla pürüzsüz · uçlarda türev sıfır · yükseklik monoton · uçlarda doğru değerler · aralıklar ≥0.32 · sıralı belirme.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-10a` ↔ `rota-2026-12-10a` · 533 944 bayt**
+
+---
+
+## 199 · ⚠ CSS GEÇİŞİ ile HER KARE YAZIMI ÇAKIŞIYORDU · `2026-12-11a`
+
+Kullanıcı: *"kart penceresinin sıçrama yapıyormuş gibi laglı görüntüsü devam ediyor."*
+
+### ⚠ Kök sebep
+
+```css
+#sahne.otu .sr{transition:transform .60s ...}
+#sahne.otu .kdm>div{transition:height .34s ...}
+```
+
+Ama `canliDiz()` (§191) **her karede** `dizKay()`/`diz()` çağırıp aynı `transform` ve `--r1..--r4` değerlerini yeniden yazıyor.
+
+| | Etki |
+|---|---|
+| JS | her 16.7 ms yeni değer yazıyor |
+| CSS | her yazımda 340/600 ms geçişi **baştan** başlatıyor |
+| Sonuç | tarayıcı hiç hedefe varamıyor · 26 karelik kaydırmada **26 kez kesilen animasyon** |
+
+İki mekanizma aynı özelliği aynı anda sürüyordu. Görüntünün "laglı" olmasının sebebi buydu — kare kaybı değil, çakışma.
+
+### Düzeltme
+
+Canlı yerleşim sürerken `#sahne` üzerine `canli` sınıfı takılıyor:
+
+```css
+#sahne.canli .sr,#sahne.canli .sr .serit,
+#sahne.canli .kdm>div,#sahne.canli .kart{transition:none !important}
+```
+
+Yumuşaklık zaten JS tarafından geliyor: §198'in smoothstep eğrisi ve kare kare ölçüm. CSS'in araya girmesine gerek yok. Canlı döngü bitince sınıf kalkıyor, `otu` geçişleri normal işine dönüyor.
+
+**Sonuç:** 60 fps'te 26 gerçek ara faz, kesinti yok.
+
+### Test · `cark_test.js` +10 kontrol
+
+`canli` sınıfı kuralı · satır ve kart geçişleri kapalı · `canliDiz` takıp çıkarıyor · açılma fazı da · `otu` geçişi hâlâ tanımlı · 25 adımda hata ve atlama yok.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-11a` ↔ `rota-2026-12-11a` · 534 879 bayt**
+
+---
+
+## 200 · ⚠ SÜRÜKLEME YARIDA KESİLİYORDU · `2026-12-12a`
+
+Kullanıcı: *"ekranı bırakmamış olmama rağmen kaydırmamı yarıda kesip kartı seçiyor."*
+
+### ⚠ Kök sebep · güvenlik ağı parmağı görmüyordu
+
+```js
+function surTazele(){
+  if(surZam)clearTimeout(surZam);
+  surZam=setTimeout(()=>{surZam=null; if(surukleKip)otur()},900);
+}
+```
+
+Bu zamanlayıcı, olay kaçarsa (parmak alan dışına çıkar, tarayıcı olayı yutar) sürüklemenin asılı kalmaması için kurulmuştu. `pointermove`da yenileniyor — ama **parmağını ekranda hareketsiz tutunca** yenilenme duruyor, 900 ms doluyor ve `otur()` çağrılıyordu. Kullanıcı hâlâ dokunurken sürükleme kesilip kart seçiliyordu.
+
+### Düzeltme
+
+Süre dolduğunda parmağın hâlâ ekranda olup olmadığına bakılıyor (`bas` doluysa dokunuş sürüyor):
+
+```js
+if(!surukleKip)return;
+if(bas){ surTazele(); return }    /* parmak hâlâ ekranda · bekle */
+otur();
+```
+
+| Durum | Davranış |
+|---|---|
+| Parmak ekranda, sürükleme sürüyor | **bekler** |
+| Parmak kalktı, olay kaçtı | oturur (ağ çalışıyor) |
+| Sürükleme yok | bekler |
+| Parmak ekranda ama kip kapalı | bekler |
+
+Güvenlik ağı işlevini koruyor; yalnız gerçekten kaçmış olaylarda devreye giriyor.
+
+### Test · `cark_test.js` +8 kontrol
+
+parmak denetimi · kip denetimi · süre 900 ms · zamanlayıcı kendini yeniliyor · dört durumun doğruluğu.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-12a` ↔ `rota-2026-12-12a` · 535 519 bayt**
+
+---
+
+## 201 · ⚠ SENTETİK GÖREV ALANLARI EKSİKTİ · TEK DÜĞME · `2026-12-13a`
+
+### ⚠ 1 · çark kilitleniyordu · kök sebep
+
+Havuzdan çekilen 24'lü görevlerinde **beş alan eksikti**: `t` · `blokT` · `blokSon` · `sira` · `tag`.
+
+`gecmis()` ve çizim yolları bu alanlara dokununca hata veriyor, çark o an görünen görevde **kilitli kalıyordu** — kullanıcının gördüğü "telafi görevinde takılma" buydu.
+
+```
+HATA: Cannot read properties of undefined (reading 'split')
+```
+
+Power-up görevleriyle aynı alan kümesi dolduruldu (`b:'D'`, `t:'—'`, `blokT:"— 24'lü havuz"`, `blokSon:'23:00'`, `tag:'pembe'`, `sira:[1,1]`, `why`).
+
+**Doğrulandı:** telafi görevleri varken 24'lü çekildiğinde çark en üstünde, 8 ileri adımda hata 0, takılma 0.
+
+### ⚠ 2 · iki düğme birden görünüyordu
+
+`✕` ve "Çarka çek" aynı anda çiziliyordu. Doğru davranış anlık duruma bakıyor:
+
+```js
+const bekleyen = GOREVLER.some(g => g.ek && g.br===x.br && !D.bitti[id(g)]);
+```
+
+| Durum | Düğme |
+|---|---|
+| Hiç çekilmemiş | **Çarka çek** |
+| Çekildi, bekliyor | **Geri al** |
+| Tamamlandı | **Çarka çek** |
+| Tamamlama geri alındı | **Geri al** |
+
+Ayrı bir durum tutulmuyor; dördü de doğrulandı.
+
+### Test · `pu_test.js` +16 kontrol
+
+sentetik görev tam alanlı · `tag`/`sira`/`why` · tek düğme mantığı · beş alanın dolu olması · çarkın en üstünde · **gezinme hata vermiyor ve takılmıyor** · dört düğme durumu.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-13a` ↔ `rota-2026-12-13a` · 536 490 bayt**
+
+---
+
+## 202 · ⚠ 24'LÜ SORU SAYILARI DÜZELTİLDİ · `2026-12-16a`
+
+Kullanıcı kitapçıkları sayıp bildirdi: 24'lü serisi **Küçük Stajlar'ı ayrı kitapçık** yapmış.
+
+### Fark
+
+| Branş | TUS | 24'lü |
+|---|---|---|
+| Dahiliye | 35 | **25** (−10) |
+| Genel Cerrahi | 30 | **21** (−9) |
+| **Küçük Stajlar** | 0 | **19** (10+9) |
+| diğerleri | — | aynı |
+
+Toplam yine **200**. (10+9=19 ✓ tam kapanıyor.)
+
+### `DEN24` tablosu
+
+`SORU.den` TUS projeksiyonu için kalıyor; 24'lü serisi kendi tablosunu kullanıyor:
+
+```js
+const DEN24={Anatomi:13,Fizyoloji:15,Biyokimya:18,Mikrobiyoloji:18,
+  Patoloji:18,Farmakoloji:18,Dahiliye:25,Pediatri:25,
+  'Genel Cerrahi':21,'Kadın Doğum':10,'Küçük Stajlar':19};
+```
+
+Etkilenenler: deneme süreleri · havuz kartları · sentetik görevler · getiri hesabı · kalibrasyon sayfası branş listesi.
+
+### Küçük Stajlar · iki gruba paylaştırma
+
+`KONU_DAG`'da karşılığı yok (konuları Dahiliye'ye 8, Genel Cerrahi'ye 14 dağıtılmıştı). Getiri hesabı o iki havuzdan `KS_PAY` oranıyla örnekliyor:
+
+```js
+const KS_PAY={'Dahiliye grubu':10/19,'Genel Cerrahi grubu':9/19};
+```
+
+Konu kırılımı giriş listesi de aynı mantıkla birleşik üretiliyor.
+
+### Havuz · yeni sıralama
+
+| # | Branş | Soru | net/sa |
+|---|---|---|---|
+| 1 | Farmakoloji | 18 | 0.326 |
+| 2 | Anatomi | 13 | 0.326 |
+| 3 | Biyokimya | 18 | 0.292 |
+| 4 | Genel Cerrahi | **21** | 0.290 |
+| 5 | **Küçük Stajlar** | **19** | **0.269** |
+| 6 | Dahiliye | **25** | 0.167 |
+
+Dahiliye'nin süresi 1.09 → **0.78 sa**, Genel Cerrahi 0.94 → **0.66 sa**.
+
+### Test · `pu_test.js` +27 kontrol
+
+`DEN24` · `KS_PAY` · `den24Soru` · **on bir branşın tek tek soru sayısı** · toplam 200 · TUS ile fark · Küçük Stajlar farkı kapatıyor · KS payları toplamı 1 · havuz 11 kart ve 200 soru · Küçük Stajlar getiri üretiyor · süreler yeni sayılara göre · sentetik görevin grubu.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-16a` ↔ `rota-2026-12-16a` · 539 023 bayt**
+
+---
+
+## 203 · ETİKETLER NET · ⚠ 200'LÜK DENEME R_CAL'i BESLEMİYORDU · `2026-12-18a`
+
+### 1 · matris etiketleri net cinsinden
+
+Yüzde yerine doğrudan net:
+
+```
+Dahiliye
+4.5 ▲ 12 net  +1.9
+```
+
+turuncu = önceki denemenin neti · yeşil/kırmızı ok = son denemenin neti · yanındaki = sıradaki denemede beklenen net değişimi. Oranlar branşın soru sayısıyla çarpılıyor (Fizyoloji ekseni Histo dahil 15).
+
+### ⚠ 2 · UÇTAN UCA SINAMA · bir boşluk çıktı
+
+Kullanıcının sorusu ölçüldü. 24'lü sonucu girildiğinde:
+
+| | Sonuç |
+|---|---|
+| R_CAL | 0.4050 → 0.4142 ✓ |
+| parakete | 56.707 → 56.748 ✓ |
+| potansiyel | 8.984 → 9.106 ✓ |
+| **gelecek görevin kazancı** | 0.22410 → **0.22500** ✓ |
+| R_CAL belirsizliği | 0.0995 → 0.0993 ✓ |
+
+Ama 200'lük deneme girildiğinde **R_CAL gözlem sayısı 1 → 1** kaldı: tam denemeler R_CAL'i hiç beslemiyordu. `rCalHesap` yalnız `D.kal`ı (24'lü) tarıyordu.
+
+**Düzeltildi.** Ardışık iki tam deneme arasında, o branşa çalışma yapıldıysa:
+
+```
+gözlenen artış  = p1 − p0
+denemenin payı  = maruziyet × D_ORAN   (çıkarılıyor)
+kalan / (1−p0)  = R_CAL gözlemi
+```
+
+§174'ün mantığının tam deneme karşılığı; iki sabit birbirini kirletmiyor.
+
+**Sonuç:** gözlem 0 → **2**, belirsizlik 0.0995 → **0.0920**.
+
+### Zincirin tamamı · doğrulandı
+
+| Girdi | Etkilediği |
+|---|---|
+| **24'lü sonucu** | R_CAL · parakete · potansiyel · **tüm gelecek görevlerin kazancı** |
+| **200'lük deneme** | ölçülen taban · parakete · potansiyel · **R_CAL** · D_ORAN · gelecek görev kazançları |
+
+Geçmiş görev getirileri de dinamik (`para()` hiç dondurmuyor); deneme getirileri `birim` alanı üzerinden yeni sabitle yeniden hesaplanıyor (§172).
+
+### Test · `kal_test.js` +17 kontrol
+
+etiket net cinsinden · yüzde kalmadı · 200'lük R_CAL'i besliyor · deneme payı çıkarılıyor · 24'lü'nün beş etkisi · 200'lüğün yedi etkisi · sabitler sınırlar içinde.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-18a` ↔ `rota-2026-12-18a` · 541 461 bayt**
+
+---
+
+## 204 · ÇAPRAZ BESLEME · ⚠ GİRDİ SÜZGECİ · SIRALAMA · `2026-12-22a`
+
+### 1 · kesinlik ağırlıklı çapraz besleme
+
+R_CAL (±0.09) D_ORAN'dan (±0.58) çok daha iyi belirlenmiş. Artık arada **çalışma olan** konu çiftleri de D_ORAN'a gözlem veriyor: çalışmanın payı R_CAL ile hesaplanıp çıkarılıyor.
+
+R_CAL'in kendi belirsizliği de hataya girdiği için gözlemin varyansı şişiriliyor:
+
+```js
+const ekV = Math.pow(rc.sd * taban / kat, 2);
+const vr  = vp/(kat*kat) + ekV;
+```
+
+R_CAL ne kadar kesinse gözlem o kadar ağırlık alıyor — **doğruluk olasılığıyla doğru orantılı**. Belirsizleşirse katkı kendiliğinden siliniyor. Doğrulandı: D_ORAN gözlemi 44 → 46.
+
+### ⚠ 2 · imkânsız kayıt sabitleri kaydırıyordu
+
+Denetimde bulundu: 25 soruluk denemeye `99D + 99Y + 99B` girilince **R_CAL 0.6713 → 0.5477** kayıyordu.
+
+`kayitGecerli()` süzgeci eklendi — üç yerde birden kullanılıyor (`rCalHesap` · `konuGozlem` · `denCozulen`):
+
+- sayılar sonlu ve negatif değil
+- tek branş kaydı 60 soruyu aşmıyor
+- konu toplamı da 60'ı aşmıyor
+
+Sınır **cömert** tutuldu: hiçbir 24'lü 25 sorudan fazla değil ama eski kayıtlar farklı sayılarla girilmiş olabilir (Dahiliye eskiden 35). Amaç meşru veriyi korumak, uç saçmalığı ayıklamak.
+
+**Doğrulandı:** bozuk kayıt R_CAL'i ve D_ORAN'ı hiç etkilemiyor; meşru 35'lik kayıt sayılmaya devam ediyor.
+
+### 3 · branş listesi getiriye göre sıralı
+
+24'lü kalibrasyon sayfasındaki branş seçimi `DEN24` anahtar sırasındaydı. Artık havuzla aynı sırada — **getirisi çok olandan aza**:
+
+| # | Branş | net/sa |
+|---|---|---|
+| 1 | Farmakoloji | 0.326 |
+| 2 | Anatomi | 0.326 |
+| 3 | Biyokimya | 0.292 |
+| 4 | Genel Cerrahi | 0.290 |
+| 5 | Küçük Stajlar | 0.269 |
+
+### Dayanıklılık denetimi
+
+| Senaryo | Sonuç |
+|---|---|
+| 30 kayıt · sınırlar | R_CAL 0.6713 ±0.0284 · D_ORAN 1.0134 ±0.5778 ✓ |
+| Bozuk girdi (NaN, negatif, imkânsız) | eleniyor, sabit değişmiyor ✓ |
+| Sıfır gözlem | öncele düşüyor (0.405 / 1.000) ✓ |
+
+### Test · `kal_test.js` +13 kontrol
+
+çapraz besleme · R_CAL belirsizliği varyansa giriyor · süzgeç üç yerde · branş listesi sıralı · bozuk kayıt iki sabiti de etkilemiyor · meşru kayıt korunuyor · sınırlar · sıfır gözlemde öncel.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-22a` ↔ `rota-2026-12-22a` · 544 606 bayt**
+
+---
+
+## 205 · SİSTEM DENETİMİ · ⚠ İKİ ÖNBELLEK HATASI · `2026-12-23a`
+
+Kalibrasyon, parakete, potansiyel ve görev getirisi sistemleri baştan sona denetlendi.
+
+### ⚠ 1 · `dOran` önbellek anahtarında `D.kal` YOKTU
+
+```js
+const a=JSON.stringify(D.denemeler||[])+'|'+Object.keys(D.bitti).length+'|'+bgun();
+```
+
+24'lü kaydı eklenince D_ORAN **bayat kalıyordu** — kayıt girmenin deneme sabitine hiç etkisi olmuyordu.
+
+### ⚠ 2 · `rCal` anahtarı da eksikti
+
+§203'ten beri R_CAL tam denemeleri (`D.denemeler`) ve aradaki çalışmayı (`D.bitti`) da kullanıyor ama anahtar yalnız `D.kal` ve son deneme tarihini kapsıyordu.
+
+**İkisi de düzeltildi.** Doğrulandı: elle temizlemeden, kayıt eklenince R_CAL 0.40500 → 0.41999, D_ORAN 1.01348 → 1.01351.
+
+### ⚠ 3 · özyineleme riski
+
+§204'ün çapraz beslemesi `rCalHesap` → `dOran()` → `dOranHesap` → `rCal()` zinciri kurdu. İki önbellek de geçersizse **sonsuz özyineleme**.
+
+`_rcMes` / `_doMes` kilitleri eklendi; iç içe çağrıda **son bilinen değer** dönüyor (öncel değil — öncel dönmek ilk geçişi saptırıyor, sonuç çağrı sırasına bağlı kalıyordu).
+
+Doğrulandı: 12 yinelemede en büyük oynama **5.45e-8**, çağrı sırasından bağımsız.
+
+### Denetim sonuçları
+
+| Kontrol | Sonuç |
+|---|---|
+| `para()` tekrarlanabilir | ✓ |
+| 80 görev eklerken parakete tekdüze artıyor | ✓ düşüş 0 |
+| Tavan aşılmıyor | ✓ T 42.24/100 · K 46.71/100 |
+| Görev tamamlama tek başına etkisiz | ✓ |
+| Bozuk girdi sabitleri etkilemiyor | ✓ |
+| Sıfır gözlemde öncele düşüyor | ✓ |
+| Döngü yakınsıyor | ✓ 5.45e-8 |
+
+### Açıkta bırakılan iki nokta (hata değil, bilinçli)
+
+1. **Potansiyel ile gerçek artış arasında ~0.42 net fark.** Sebep §178'de belgeli: potansiyel deneme getirilerini MEVCUT durumda hesaplıyor (yeni öğrenme), hepsi yapılınca konular "çalışılmış" sayılıp tekrar getirisine geçiyor. Sıra bilinmediği için muhafazakâr taraf seçildi.
+
+2. **Aynı kayıt iki kez girilirse iki kez sayılıyor.** Yinelenen kayıt denetimi yok — iki ayrı oturum da olabileceği için bilinçli. Listede görülüyor, silinebiliyor.
+
+### ⚠ Davranış değişimi · `derin_test.js` I2
+
+§203'ten beri deneme sonucu R_CAL'i de besliyor: iyi sonuç *"çalışmam verimli"* diye yorumlanıp **kalan işin değerini artırabiliyor**. Bu yüzden düşük→orta arasında tekdüzelik artık beklenmiyor (1.37 → 1.50). Boşluk kapandıkça (iyi deneme) etki baskın geliyor ve katkı 0.15'e düşüyor. Test bu gerçeğe göre yazıldı.
+
+### Test · `kal_test.js` +12 kontrol
+
+iki anahtar tam · özyineleme kilidi · kilit son bilineni döndürüyor · `para` tekrarlanabilir · tekdüze artış · tavan · tamamlama etkisiz · iki sabit tazeleniyor · **döngü yakınsıyor** · çağrı sırasından bağımsız.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-23a` ↔ `rota-2026-12-23a` · 545 555 bayt**
+
+---
+
+## 206 · DERİN DENETİM · ⚠ İKİ HATA DAHA · `2026-12-26a`
+
+### ⚠ 1 · konu kırılımı 24'lü sayısına ölçeklenmiyordu
+
+`konuSatir` önceden dolu soru sayılarını `KONU_DAG`dan alıyordu — o tablo **TUS dağılımına** göre (Dahiliye 35). 24'lü kitapçığı ise 25 soruluk.
+
+| Branş | KONU_DAG | 24'lü | |
+|---|---|---|---|
+| Dahiliye | 35.0 | 25 | ✗ |
+| Genel Cerrahi | 30.0 | 21 | ✗ |
+| Patoloji | 18.0 | 18 | ✓ |
+
+Toplam, o branşın 24'lü soru sayısına indirgeniyor. Doğrulandı: 35.0 → 25.0 · 30.0 → 21.0.
+
+### ⚠ 2 · net değerleri yuvarlanıyordu
+
+`bir(v)=|v|>=10 ? toFixed(0) : toFixed(1)` — **15.5 net "16" görünüyordu**. Kullanıcının sorusu buydu: *"ben en son sınavda 16 net mi yaptım?"*
+
+Gerçek değer **15.5**. Artık hep bir ondalık: yarım netler TUS'ta gerçek fark yaratıyor.
+
+### 3 · CEVAP · "gerçekten o gün çalıştıklarıma mı bakıyor?"
+
+**Evet.** İki mekanizma:
+
+```js
+D.bitti[id(g)] = bgun();          // gerçekten işaretlediğin GÜN
+konuCalisildiKume(): if(!D.bitti[id(g)])continue;   // programa değil, işarete bakıyor
+```
+
+- Telafiye düşüp yapmadığın görev → `D.bitti` yok → sayılmıyor ✓
+- Telafiden çekip bugün yaptığın → `D.bitti` = bugün ✓
+- Power-up'tan çekip yaptığın → `D.bitti` = bugün ✓
+
+Zaman etiketi zaten var ve kullanılıyor.
+
+### 4 · branş trendlerinde sayısal net
+
+- Her veri noktasının üstünde **net değeri** (8 px, ortalanmış)
+- Hedef çizgisinin ucunda yüzde değil **net**
+- Sağ üstte: **son net + değişim miktarı** — `15.5 net ▲ +5.5`
+
+### ⚠ 5 · radar etiketleri çakışıyordu
+
+Alt yarıdaki komşu eksenlerin iki satırlı etiketleri üst üste biniyordu (Dahiliye ↔ Farmakoloji). Alt eksenlerde etiket yarıçapı **dönüşümlü** açılıyor (1.13 / 1.27), komşular farklı halkalara düşüyor. viewBox 660×500 → **680×540**.
+
+Doğrulandı: 11 eksende çakışma riski **0**.
+
+### Test · `kal_test.js` +15 kontrol
+
+konu kırılımı ölçekli · net ondalıklı · grafik nokta etiketleri · sağ üstte değişim · kademeli yarıçap · dört branşın ölçekli toplamı · **Dahiliye neti son denemeyle birebir** · tamamlama bugünü yazıyor · `konuCalisildi` gerçek işarete bakıyor · **radar etiketleri çakışmıyor** · grafik etiketleri.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-26a` ↔ `rota-2026-12-26a` · 547 128 bayt**
+
+---
+
+## 207 · ⚠ "BUGÜN ÇALIŞILAN BRANŞ" PROGRAMA BAKIYORDU · `2026-12-27a`
+
+Kullanıcı: bugün Dahiliye videosu telafi etti, Patoloji tekrar okuması yaptı — ama sayfa *"bugün çalıştığın branşlar: Genel Cerrahi"* diyordu.
+
+### ⚠ 1 · ölçüt yanlıştı
+
+```js
+const bug=[...new Set(GOREVLER
+  .filter(g=>g.d===gun&&(g.act==='oku'||g.act==='tekrar'))   // ← PROGRAM tarihi
+  .map(g=>g.br))];
+```
+
+İki kusur:
+- **`g.d===gun`** · programın bugüne yazdığı görevlere bakıyordu. Telafi edilen, öne çekilen, hiç yapılmayan işler ayırt edilmiyordu.
+- **`video` sayılmıyordu** · Dahiliye videosu zaten listeye giremezdi.
+
+Ölçüt tamamlama işaretine çevrildi:
+
+```js
+D.bitti[id(g)]===gun && ['oku','tekrar','video','soru'].indexOf(g.act)>=0
+```
+
+**Doğrulandı** (kullanıcının senaryosu): Dahiliye videosu telafi + Patoloji okuması → liste `Dahiliye · Patoloji`. Programda bugüne yazılı ama yapılmamış Genel Cerrahi **listede yok**.
+
+### ⚠ 2 · beklenen soru sayısı TUS tablosundan
+
+```js
+bek=(SORU&&SORU.den&&SORU.den[brs])||0;   // Dahiliye 35
+```
+
+24'lü kitapçığı 25 soruluk. `den24Soru()` kullanılıyor: Dahiliye **25** · Genel Cerrahi **21** · Küçük Stajlar **19**.
+
+### ⚠ 3 · kaldırılmış alanlara bakan kalıntı
+
+Yardım metni §176'da kaldırılan `kd/ky/kb` DOM değişkenlerini okumaya devam ediyordu — tanımsız değişken hatası riski. Yerine konu kırılımı satırlarından toplam okunuyor; toplamı aşarsa uyarıyor.
+
+### Test · `kal_test.js` +13 kontrol
+
+gerçek tamamlamaya bakıyor · eski kod kalmadı · video sayılıyor · beklenen soru `DEN24`ten · `SORU.den` kalıntısı yok · kalıntı referans temizlendi · **telafi edilen video sayılıyor** · okunan branş sayılıyor · **yapılmamış program görevi sayılmıyor** · yalnız iki branş · üç branşın 24'lü soru sayısı.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-27a` ↔ `rota-2026-12-27a` · 547 640 bayt**
+
+---
+
+## 208 · DENEME İÇİ KONTRAST · EN GÜÇLÜ GÖZLEM · `2026-12-28a`
+
+Kullanıcının sorusu: *"bu 24'lü düşük geldi ama yanlışlar hep çalışmadığım konulardan gelmiş — bu sonuç beni yanıltmasın diyebilecek mi?"*
+
+### ⚠ Sınandı · HAYIR diyordu
+
+Aynı toplam netle (4.50/25) iki senaryo denendi:
+
+| | Çalışılan konuda | R_CAL |
+|---|---|---|
+| A | 5/6 doğru | 0.4050 → **0.4050** |
+| B | 1/6 doğru | 0.4050 → **0.4050** |
+
+**Ayırt etmiyordu.** Konu kırılımı yalnız iki deneme arası çift karşılaştırmasında kullanılıyordu; tek denemenin içindeki kontrast hiç değerlendirilmiyordu.
+
+### Deneme içi kontrast
+
+```
+p_ç = çalışılan konulardaki başarı
+p_h = çalışılmayan konulardaki başarı   (o gün için TABAN)
+R   = (p_ç − p_h) / (1 − p_h)
+```
+
+İki hücre **aynı denemeden** geldiği için deneme zorluğu, o günkü form, dikkat düzeyi gibi ortak etkenler **sadeleşiyor**. İkinci denemeye, tarih eşleştirmesine, çürüme varsayımına gerek yok — bu yüzden en güçlü gözlem türü.
+
+### Sonuç
+
+| | Çalışılan konuda | R_CAL |
+|---|---|---|
+| A | 5/6 doğru | 0.4050 → **0.4508** ▲ |
+| B | 1/6 doğru | 0.4050 → **0.3807** ▼ |
+
+Toplam net ikisinde de aynı. **Düşük sonuç artık yanıltmıyor:** yanlışlar çalışılmamış konulardansa R_CAL yükseliyor, çünkü çalışmanın işe yaradığı görülüyor.
+
+**Korumalar:** iki hücre de en az 3 soru içermeli · taban doygunsa (≥%97) bilgi yok sayılıyor · varyans iki binom hücresinden hesaplanıyor · tek hücreli kayıt gözlem üretmiyor.
+
+### Test · `kal_test.js` +13 kontrol
+
+kontrast bloğu · iki hücre ayrımı · formül · en az 3 soru · doygun taban · **tek denemeden gözlem üretiyor** · A ile B ayırt ediliyor · çalışılanda iyiyse yükseliyor · kötüyse düşüyor · **düşük toplam net yanıltmıyor** · belirsizlik daralıyor · tek hücrede gözlem yok · sınırlar.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-28a` ↔ `rota-2026-12-28a` · 549 929 bayt**
+
+---
+
+## 209 · BEKLENTİ ↔ GERÇEKLEŞEN ÇIKARIMI · `2026-12-30a`
+
+Kullanıcı: *"200 soruluk deneme verisi girince 'ben şunu bekliyordum, şu gelmiş' çıkarımı yapıyor mu?"*
+
+**Hesaplarda kullanıyordu (§203) ama göstermiyordu.** Artık ikisi de var.
+
+### `denemeSapma()` · snapshot gerekmiyor
+
+Beklenti **yeniden kurulabilir**: önceki denemenin tabanı + iki deneme arasında tamamlanan işin getirisi, o denemenin tarihine çürütülmüş. Aradaki 24'lü getirileri de sayılıyor.
+
+```
+bek   = önceki net + (görev getirisi + 24'lü getirisi)
+ger   = gerçekleşen net
+sapma = ger − bek
+oran  = gerçekleşen artış / beklenen artış     (1.0 = tam isabet)
+```
+
+`oran` kalibrasyonun isabetini tek sayıda veriyor.
+
+### Ölçüm
+
+| | Değer |
+|---|---|
+| Önceki deneme (24 Tem) | 70.75 net |
+| **Beklenen** | 72.75 (+2.00) |
+| **Gerçekleşen** | 76.41 (+5.66) |
+| **Sapma** | **+3.66 net** |
+| **İsabet** | **2.83×** |
+
+### Matris sayfasında kutu
+
+Dört alan: beklenen · gerçekleşen · sapma · isabet. Altında yorum:
+
+- oran > 1.15 → *"Beklentinin üstünde — kalibrasyon bunu öğrendi, görev getirileri yukarı gitti."*
+- oran < 0.85 → *"Beklentinin altında — kalibrasyon getirileri aşağı çekti."*
+- arası → *"Beklentiyle uyumlu — model tutarlı."*
+
+Dar pencerede iki sütuna düşüyor.
+
+### Test · `kal_test.js` +14 kontrol
+
+fonksiyon · snapshot gerekmiyor · 24'lü getirisi sayılıyor · kutu CSS · dört alan · yorum · tek denemede null · **beklenen = önceki + artış** · gerçekleşen artış tutarlı · sapma = gerçek − beklenen · isabet tanımlı · tarihler · **düşük sonuçta sapma eksi ve oran 1'in altında**.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-30a` ↔ `rota-2026-12-30a` · 553 618 bayt**
+
+---
+
+## 210 · ⚠ KONU İKİLENMESİ · 18 ÇİFT BİRLEŞTİRİLDİ · `2026-12-31a`
+
+Kullanıcı Dahiliye'de iki gastroenteroloji satırı gördü. Tarandı: **24 şüpheli çift**.
+
+### Ayıklama kuralı
+
+Körü körüne birleştirmek tehlikeliydi:
+
+| Çift | Karar |
+|---|---|
+| "gastroenteroloji/hepatoloji" (3.16) ↔ "gastroenteroloji" (3.16) | **birleştir** · değerler eşit |
+| "jinekolojik" (2.60) ↔ "jinekolojik onkoloji" (0.80) | **koru** · farklı konular |
+| "üroloji ve çocuk cerrahisi" (1.00) ↔ "üroloji" (0.50) | **koru** · biri diğerinin toplamı |
+
+**Kural: yalnız DEĞERLERİ EŞİT olan ve biri diğerinin kelime alt kümesi olan çiftler birleşiyor.** Ayrıca aynı kelime kümesinin farklı sıralanışı da ("genom ve nükleik asitler" ↔ "nükleik asitler ve genom").
+
+### Birleştirilen 18 çift
+
+| Branş | Sonuç |
+|---|---|
+| Dahiliye | gastroenteroloji/hepatoloji = **6.33** |
+| Biyokimya | aminoasitler ve proteinler 7.53 · genom ve nükleik asitler 1.22 |
+| Farmakoloji | kemoterapötikler ve immunmodülatörler 6.62 |
+| Fizyoloji | yedi histoloji/fizyoloji çifti |
+| Genel Cerrahi | şok travma 5.80 · meme 2.00 · KBB 1.20 · dört çift daha |
+
+### Doğrulama
+
+| | |
+|---|---|
+| Branş toplamları | **hepsi doğru** (35/18/18/…) |
+| Toplam soru | **200.0** |
+| Konu sayısı | 174 → **156** |
+| Kalan eşit değerli ikilenme | **0** |
+| Farklı konular korundu | jinekolojik onkoloji ✓ üroloji ✓ |
+
+Birleştirme toplamı korumak için **toplayarak** yapıldı; hesaplar ve formüller bozulmadı.
+
+### Etkisi
+
+- Kalibrasyon giriş listesinde tek satır
+- `konuCalisildi` eşleşmesi artık ikiye bölünmüyor
+- Deneme getirisi hesabı tek konudan tek katkı alıyor
+
+### Test · `kal_test.js` +8 kontrol
+
+ikilenme kalmadı · branş toplamları bozulmadı · toplam 200 · konu sayısı 156 · Dahiliye gastro birleşti · Genel Cerrahi şok birleşti · **jinekolojik onkoloji ayrı kaldı** · üroloji ayrı kaldı.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2026-12-31a` ↔ `rota-2026-12-31a` · 553 073 bayt**
+
+---
+
+## 211 · ⚠ KÜÇÜK STAJLAR KONULARI AYRILDI · BOŞ GÖSTERGESİ · `2027-01-02a`
+
+### ⚠ 1 · Küçük Stajlar konuları Dahiliye/GC listelerindeydi
+
+`KONU_DAG` TUS dağılımı: Küçük Stajlar soruları Dahiliye ve Genel Cerrahi **içinde** sayılıyor (§165'te oraya dağıtılmıştı). Ama 24'lü serisi bunları ayrı kitapçık yapıyor.
+
+Sonuç: kalibrasyonda **Dahiliye seçilince nöroloji, psikiyatri, dermatoloji, acil tıp da listeleniyordu.**
+
+### `konu24()` · üç ayrı liste
+
+`KS_KONU` (21 konu adı) ile ayrıştırılıp her biri kendi hedefine ölçekleniyor:
+
+| Liste | Konu | Toplam |
+|---|---|---|
+| Dahiliye | 9 | **25.00** |
+| Genel Cerrahi | 28 | **21.00** |
+| Küçük Stajlar | 19 | **19.00** |
+| | | **65** = 35+30 ✓ |
+
+`KONU_DAG` dokunulmadan duruyor — TUS projeksiyonu onu kullanmaya devam ediyor.
+
+**Doğrulandı:** Dahiliye listesinde nöroloji/psikiyatri/dermatoloji/acil tıp/halk sağlığı/radyoloji **yok**; Genel Cerrahi'de göz/üroloji/beyin cerrahisi/KBB **yok**; Küçük Stajlar listesinde nöroloji ve göz **var**, gastroenteroloji **yok**.
+
+### 2 · CEVAP · boş bırakılan soru
+
+**Evet, örtük olarak biliniyor:** `boş = soru − D − Y`. "2 soru, 1D 0Y" → 1 boş, net 1.00.
+
+Artık **görünür** de: her konu satırının sonunda anlık `1 boş` yazıyor, `D+Y > soru` olursa kırmızı **`fazla!`** uyarısı çıkıyor.
+
+### Test · `kal_test.js` +22 kontrol
+
+`KS_KONU` · `konu24` · form kullanıyor · boş göstergesi · tutarsızlık uyarısı · **beş listenin toplamı hedefine eşit** · Dahiliye'de altı KS konusu yok · Genel Cerrahi'de dört KS konusu yok · Küçük Stajlar 19 konu · içeriği doğru · **üç liste toplamı 65** · `KONU_DAG` bozulmadı · boş formülü.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-01-02a` ↔ `rota-2027-01-02a` · 555 259 bayt**
+
+---
+
+## 212 · ⚠ BİRLEŞTİRME İKİ GERİLEME YARATMIŞ · `2027-01-06a`
+
+Kullanıcı sordu: birleştirmeler hesapları etkiledi mi? **Evet, iki yerde.**
+
+### ⚠ 1 · konu eşleşmesi kırıldı
+
+`konuSade` ayraçları (`/ - –`) boşluğa çevirmiyordu. §210'da "gastroenteroloji" → "gastroenteroloji/hepatoloji" içine katılınca:
+
+```
+konuCalisildi("gastroenteroloji/hepatoloji")  →  FALSE
+konuCalisildi("gastroenteroloji")             →  true
+```
+
+Gastroenteroloji videoları tamamlanmış olsa bile konu **YENİ ÖĞRENME** sayılıyor, getiri yanlış hesaplanıyordu (S_ILK 2.4 vs S_TEK 6.0).
+
+**İki düzeltme:**
+- `konuSade` ayraçları temizliyor
+- `konuOrtus()` · kelime düzeyinde örtüşme: iki addan biri diğerinin anlamlı kelimelerini içeriyorsa eşleşiyor (dolgu kelimeleri elenmiş)
+
+Doğrulandı: gastro · meme · aminoasitler · KBB · kemoterapötikler — **hepsi eşleşiyor**.
+
+### ⚠ 2 · deneme getirisi yanlış tabloyu kullanıyordu
+
+`denemeKazHam` her zaman `KONU_DAG`ı (TUS dağılımı) okuyordu. 24'lü Dahiliye kaydı **35 soruluk** dağılımla değerlendiriliyordu — kitapçık 25 soruluk.
+
+`k24` bayrağı eklendi:
+
+| Çağrı | Tablo | Kapsam |
+|---|---|---|
+| PreTUS200 | `KONU_DAG` | **200 soru** |
+| 24'lü kaydı | `konu24` | 25 / 21 / 19 |
+| Havuz önizlemesi | `konu24` | ✓ |
+
+⚠ Ara adımda PreTUS200 da `konu24`e düşmüştü (kapsam 200 → 188); bayrakla ayrıldı.
+
+### Sonuç
+
+| | Değer |
+|---|---|
+| Ölçülen | 57.609 |
+| Parakete | 55.971 |
+| Potansiyel | 9.882 |
+| Havuz getirileri | **hepsi pozitif** (Küçük Stajlar dahil) |
+| R_CAL / D_ORAN | sınırlar içinde |
+
+### Test · `kal_test.js` +17 kontrol
+
+`konuSade` ayraçları · `konuOrtus` · `konuCalisildi` kullanıyor · `k24` bayrağı · iki çağrı bayraklı · **dört birleşik adın eşleşmesi** · PreTUS200 kapsamı 200 · üç 24'lü kapsamı · havuz getirileri pozitif · Küçük Stajlar getirisi · parakete/potansiyel makul · sabitler sınırlarda.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-01-06a` ↔ `rota-2027-01-06a` · 556 952 bayt**
+
+---
+
+## 213 · ⚠ KAYNAK HARİTASINDA POWER-UP BÖLÜMLERİ · `2027-01-07a`
+
+Kullanıcı: power-up'tan çekip yaptığım işler haritada "yapıldı"ya dönüyor mu?
+
+### Kısmen dönüyordu
+
+| Düzey | Durum |
+|---|---|
+| Üst sayaç | ✓ 11/21 → **12/21** |
+| Renk rozeti | ✓ 0/5 → **1/5** (`puA` vurgusu) |
+| ⚡ işareti | ✓ `+1⚡` |
+| **Bölümün kendisi** | ✗ **listede hiç yoktu** |
+
+Yani toplam değişiyordu ama "hangi bölüm yapıldı" görünmüyordu — etiket değiştirecek satır yoktu.
+
+### Power-up bölümleri artık satır
+
+```
+⚡  Yara İyileşmesi   —   power up havuzunda      ← çekilmemiş, soluk
+⚡  Yara İyileşmesi   —   çarka çekildi · 1 Ağu   ← çekilmiş
+✓  Yara İyileşmesi   —   power up ile yapıldı · 3 Ağu   ← yapılmış, yeşil
+```
+
+Üç durum ayrı işaret ve renkle: havuzda (mavi ⚡, %62 opaklık) · çekildi (mavi ⚡) · **yapıldı (yeşil ✓, tam opaklık)**.
+
+Programda olmayan iş, yapıldığında haritada da yapıldı görünüyor. Geri alınca eski hâline dönüyor.
+
+### Test · `pu_test.js` +12 kontrol
+
+satır üretimi · üç durum ayrı · yapıldı sınıfı · CSS · **bölüm listede görünüyor** · havuzda etiketi · çekildi etiketi · **yapıldı etiketi** · ✓ işareti · üst sayaç arttı · ⚡ ve `puA` · geri alınca eski hâle dönüyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-01-07a` ↔ `rota-2027-01-07a` · 558 076 bayt**
+
+---
+
+## 214 · KİTAP SEKMESİ · DOĞRUDAN TAMAMLAMA · `2027-01-10a`
+
+### Program ↔ Kitap anahtarı
+
+Liste görünümünün üstünde kaydırmalı anahtar. **Program** mevcut gün listesi; **Kitap** yeni.
+
+### Kitap görünümü
+
+1. **Kitap listesi** · 22 kitap, toplam getiriye göre sıralı
+2. **Konu listesi** · seçilen kitabın konuları, **en çok net getirenden aza**
+
+```
+Hormonlar          [programda]     +0.863 net   [Tamamlandı]
+Otonom Sinir S.    [power up]      +0.600 net   [Tamamlandı]
+Kemoterapötikler   [power up]      +0.525 net   [Tamamlandı]
+```
+
+Programda olanlar `programda`, olmayanlar `power up` etiketiyle. Getiriler azalan sıralı, hepsi pozitif.
+
+### Doğrudan tamamlama · her iki yol
+
+| Kaynak | İşaret | Sonuç |
+|---|---|---|
+| Programdaki görev | `D.bitti` | parakete + projeksiyon |
+| Power-up konusu | `D.pu` **+ `D.bitti`** | parakete + projeksiyon + **streak** |
+
+⚠ `puSenkron` sentetik görevi üretiyor ama `D.bitti`yi işaretlemiyordu — parakete oradan besleniyor. Kitap sekmesinden tamamlanınca ikisi birden kuruluyor.
+
+**Doğrulandı:** power-up konusu tamamlandığında parakete 55.9714 → **56.0779** (+0.107), streak **1**, potansiyel 9.543'e düştü.
+
+Program listesindeki satırlara da **Tamamlandı / Geri al** düğmesi eklendi — karta gidip çarka çekme adımı gerekmiyor.
+
+### Hatırlama oranı
+
+Tamamlanmış her satırın altında:
+
+```
+3 gün önce · %78 hatırlıyor olmalısın
+```
+
+FSRS üstel eğrisi (`Rr`); kararlılık ilk görüşte `S_ILK`, konu daha önce görülmüşse `S_TEK`. Renk: %75+ yeşil · %50+ turuncu · altı kırmızı.
+
+### Test · `pu_test.js` +21 kontrol
+
+üç fonksiyon · anahtar · iki tamamlama yolu · **`D.bitti` işareti** · `puEtki.etki` · kitap listesi doluyor · konular listeleniyor · getiriler pozitif · **azalan sıralı** · etiketler · **parakete artıyor** · streak tetikleniyor · hatırlama etiketi · geri al · hatırlama eğrisi üç kontrol.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-01-10a` ↔ `rota-2027-01-10a` · 566 874 bayt**
+
+---
+
+## 215 · ⚠ KİTAP LİSTESİ SIKIŞIYORDU · `2027-01-11a`
+
+### ⚠ Kök sebep
+
+```js
+const n=gl.querySelectorAll('[data-gi]').length;
+if(!n)return;                      // ← kitap satırlarında data-gi YOK
+```
+
+`gunOlcekle` yalnız program satırlarını sayıyordu. Kitap sekmesinde erken çıkıyor, ölçek hiç uygulanmıyor, liste 11 px'lik varsayılan `--gsat` ile dar alana sıkışıyordu — ekranın alt yarısı boşken.
+
+**İki düzeltme:**
+
+1. Satır sayımı üç türü kapsıyor: `[data-gi]`, `[data-klkitap]`, `.glS`
+2. **Kitap kipinde sıkıştırma yok, kaydırma var.** Program listesi bir günün işini gösteriyor (tek ekrana sığmalı); kitap listesinde 22 kitap / 24 konu olabiliyor, sıkıştırmak okunmaz hâle getiriyor. Rahat satır yüksekliği (30–46 px) + `overflow-y:auto`.
+
+### Uçtan uca sınama
+
+| Kontrol | Sonuç |
+|---|---|
+| Kitap sayısı | **22** · yinelenen yok |
+| Toplam konu | **295** |
+| Boş kitap | **0** |
+| Negatif getiri | **0** |
+| Azalan sıralı | **hepsi** ✓ |
+| Tamamla/geri al döngüsü (6 kitap) | **hata 0** · görev sayısı ve parakete tam geri dönüyor |
+| Program satırından tamamlama | 55.9714 → 56.0214 → geri ✓ |
+| Hatırlama etiketi ve geri al düğmesi | ✓ |
+
+### Test · `pu_test.js` +16 kontrol
+
+ölçek üç türü sayıyor · kitap kipinde sıkıştırma yok · kaydırma CSS · rahat satır yüksekliği · 22 kitap · yinelenen yok · **boş/negatif/sırasız kitap yok** · 295 konu · **tamamla/geri al döngüsü temiz** · program satırından tamamlama · hatırlama etiketi · geri al · geri alınca eski değer.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-01-11a` ↔ `rota-2027-01-11a` · 567 737 bayt**
+
+---
+
+## 216 · ⚠ LİSTE ÇARKIN ALANINA SIKIŞIYORDU · `2027-01-13a`
+
+Kullanıcı: *"neden çarkın kullandığı alana sıkışmak zorunda, aşağıda çipler yokken?"* Haklı.
+
+### ⚠ Kök sebep
+
+```css
+.gunKip{grid-template-columns:1fr}      /* yalnız SÜTUNLAR */
+```
+
+Liste `#cark` içinde yaşıyor. `.gunKip` sütunları tekleştiriyordu ama dar ekranda `#rota` **iki SATIR** olarak kalıyordu:
+
+```css
+@media (max-width:880px){
+  #rota{grid-template-rows:1.25fr minmax(88px,1fr)}   /* çark + brifing */
+}
+```
+
+Liste çarkın payına (yaklaşık %55) sıkışıyor, brifing satırı **boş dururken** alan kullanılmıyordu. `#rota.genis{grid-template-rows:1fr 0}` kuralı zaten vardı ama liste kipine bağlı değildi.
+
+```css
+.gunKip{grid-template-columns:1fr;grid-template-rows:1fr 0 !important}
+.gunKip #cark{min-height:0}
+```
+
+Üç dar-ekran kırılımında da yineleniyor (880 / 660 / 470 px).
+
+### Kazanılan alanla satır düzeni
+
+Tek satırda ad + getiri + düğme sığmıyor, ad kırpılıyordu (`Şok travma ve t…`). İki satırlık düzen:
+
+```
+Karaciğer, Dalak Hastalıkları ve Transplantasyon
+        +0.298 net                    [Tamamlandı]
+```
+
+Ad tam genişlikte, `white-space:normal`, kırpma yok. Doğrulandı: 47 karakterlik ad tam yazılıyor, hiçbir satırda `…` yok.
+
+### Test · `pu_test.js` +9 · `cark_test.js` uyarlandı
+
+satır sıfırlama · üç kırılımda geçerli · `min-height:0` · ad tam genişlik · kırpma kapalı · satırlar sarabiliyor · adlar dolu · **uzun ad tam yazılıyor** · kırpma işareti yok.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-01-13a` ↔ `rota-2027-01-13a` · 568 876 bayt**
+
+---
+
+## 217 · ⚠ LİSTE TASARIMI BAŞTAN · `2027-01-15a`
+
+Kullanıcı: yazılar birbirine geçmiş, boyutlar anlamsız, düğme rengi paletten kopuk, kaydırmaya gerek olmamalı.
+
+### ⚠ Kök sebep · sarma + sabit yükseklik
+
+```css
+.glS{height:var(--gsat,34px)}     /* sabit yükseklik */
+.glS.klS{flex-wrap:wrap}          /* §216'da eklemiştim */
+```
+
+Satır sarınca iki satırlık içerik 34 px'lik kutuya sıkışıyor, **yazılar üst üste biniyordu**. Ayrıca kitap kipinde ölçek atlanıp sabit boyutlar kullanılıyordu — bu yüzden yazılar devasa çıkıyordu.
+
+### Tasarım kuralları
+
+| Kural | Uygulama |
+|---|---|
+| **Kaydırma yok** | ikili arama her iki kipte de çalışıyor, tek bakışta sığıyor |
+| **Sarma yok** | tüm satırlar tek satırlık, sabit yüksekliğe uyuyor |
+| **Her ölçü orana bağlı** | `--gsat` / `--gyaz` · pencere daralınca kendiliğinden küçülüyor |
+| **Palet uygulamanın kendisi** | altın vurgular, cam yüzeyler |
+
+### Değişenler
+
+**Tamamlandı düğmesi** · geniş mavi kutu → **küçük daire** (`--gsat × .58`), boş `○` / tamamlanmış `✓`, altın vurgulu.
+
+**Anahtar** · mavi → altın gradyan (`#E4C583 → --altin`), yumuşak gölge, ölçeğe bağlı yuvarlaklık.
+
+**Etiketler** · `program` altın, `power up` mavi; ölçeğin %66'sı.
+
+**Hatırlama** · uzun cümle yerine kısa biçim: `3g · %78`, renk kodlu.
+
+### Kitaplar ikiye bölündü
+
+```
+[ Konu kitapları ]  [ Soru & Deneme ]
+```
+
+| Tür | Adet |
+|---|---|
+| Konu kitapları | 14 |
+| Soru & Deneme | 8 |
+
+Ayrım addan: `SB` · `SST` · vaka · soru · deneme · 24'lü → soru kitabı. İki liste ayrık, çakışma yok.
+
+Kitap seçilince başlıkta **‹ ok** ve **"tüm kitaplara dön"** düğmesi.
+
+### Uç senaryolar
+
+| | |
+|---|---|
+| 8 soru + 14 konu kitabının tamamı gezildi | hata **0** |
+| `undefined` / `NaN` | **yok** |
+| Bilinmeyen kitap adı | boş liste, çökme yok |
+| Boş tür | "Bu türde kitap yok" |
+
+### Test · `pu_test.js` +22 kontrol
+
+anahtar altın · düğme daire ve orana bağlı · etiketler orana bağlı · **kaydırma yok** · sarma yok · tür anahtarı · dön düğmesi · kısa hatırlama · her iki türde kitap var · anahtar doğru seçili · **kitaplarda hata yok** · ayrım doğru · iki liste ayrık · bilinmeyen kitap · program kipi · **sabit px yazı boyu kalmadı**.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-01-15a` ↔ `rota-2027-01-15a` · 570 669 bayt**
+
+---
+
+## 218 · RENK DÜZELTME · BÖLÜMLENDİRME · TTS · `2027-01-18a`
+
+### 1 · kalıntı çip kaldırıldı
+
+Sol geri oku varken ayrıca "tüm kitaplara dön" mavi çipi duruyordu. Çip kaldırıldı; ok tek geri yolu.
+
+### 2 · önem rengi düzeltilebiliyor
+
+Her konu satırının solunda **renk çipi**. Tıklayınca pembe → turuncu → sarı → mavi döner.
+
+```js
+D.renk[konuAnahtarı]   // override · programdaki yeri DEĞİŞTİRMİYOR
+```
+
+`konuRenk()` tek kaynak; **görev kartı · şerit · gün listesi · kaynak haritası** hepsi onu okuyor. `g.tag` alanına dokunulmuyor, süre ve getiri sabit.
+
+Doğrulandı: renk döndürülünce kart rengi değişiyor, `g.d` ve `g.tag` aynı kalıyor, dört renk döngüsü tam.
+
+### 3 · Soru & Deneme üç bölüme ayrıldı
+
+```
+── Soru bankaları        Emrullah Patoloji SST  +4.74  29 Tem
+                         Klinisyen Vaka Pediatri +3.81  6 gün
+── TTS · son tekrar      TTS Patoloji / Mikrobiyoloji
+── Denemeler             PreTUS200              +7.08  bugün
+                         24'lü Farmakoloji      +3.96
+```
+
+⚠ Önce yalnız getiriye göre sıralanınca bölüm başlıkları 13 kez tekrarlıyordu. Sıralama **önce bölüm, sonra getiri** yapıldı.
+
+**Eklenenler:** PreTUS200 · 11 branşın 24'lü serisi · `KHARITA.kullanilmayan`'daki 12 envanter kaynağı (`envanterde` etiketiyle).
+
+### 4 · TTS kitapları
+
+Kendi konu listesi yok; ilgili branşın konularını kullanıyor. Getiri **tekrar** olarak hesaplanıyor (`S_TEK`): bilgi zaten var, değeri erimeyi yavaşlatmasında.
+
+```
+hücre zedelenmesi    [tekrar]   +0.004   ○
+```
+
+`D.tts` kendi kaydını tutuyor, tamamlanabiliyor, hatırlama etiketi çıkıyor.
+
+⚠ Küçük getiriler iki ondalıkta `+0.00` görünüyordu; 0.01'in altında üç ondalık.
+
+### 5 · zaman bilgisi
+
+- **Kitap listesinde:** sıradaki tamamlanmamış görevine kaç gün (`6 gün` · `bugün` · geçmişse tarih)
+- **Konu listesinde:** program görevinin günü, aynı biçimde
+- **Konu adına tıklayınca** çarkta o göreve gidiliyor
+
+### Test · `pu_test.js` +25 kontrol
+
+on fonksiyon/yapı kontrolü · **kart rengi değişiyor** · program tarihi ve `tag` değişmiyor · dört renk döngüsü · **üç bölüm, doğru sırada, tekrarsız** · PreTUS200 ve 11 24'lü listede · envanter kaynakları · gün etiketi · TTS konuları ve getirileri · tekrar etiketi · TTS tamamlanabiliyor · hatırlama etiketi.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-01-18a` ↔ `rota-2027-01-18a` · 578 351 bayt**
+
+---
+
+## 219 · FT GENEL CERRAHİ · POWER-UP HAVUZUNA · `2027-01-19a`
+
+Kullanıcı FT kitaplarının içindekiler sayfalarını gönderiyor; hepsi **kitap sekmesinde power-up görevi** olarak görünecek (programa girmiyor).
+
+### Üretim betiği · `ft_ekle.py`
+
+Fotoğraftan çıkarılan `(bölüm, ilkSayfa, sonSayfa)` üçlüsünden POWERUP kaydı üretiyor.
+
+**Süre:** `sayfa / 5.71` — FT kitaplarının ölçülen oranı (Anatomi FT, FT Biyokimya, FT Farmakoloji üçü de tam 5.71 sf/saat).
+
+**Soru dağıtımı iki aşamalı:**
+
+1. Her bölüm `KONU_DAG`'daki **bir** konuya eşleşiyor — tekil, en güçlü örtüşme kazanıyor
+2. Eşleşmeyen bölümler artan soruyu **sayfa oranında** paylaşıyor
+
+⚠ İlk denemede "Transplantasyon" → "karaciğer, dalak hastalıkları ve transplantasyon" ile eşleşmiş, karaciğer bölümüyle **çift sayım** riski doğmuştu. Tekilleştirme eklendi: bir `KONU_DAG` konusu yalnız bir bölüme atanıyor.
+
+### FT Genel Cerrahi
+
+| | |
+|---|---|
+| Bölüm | **28** |
+| Sayfa | 145 (5–149) |
+| Süre | **25.4 saat** |
+| Soru | **30.00** — branşın TusAnaliz toplamına birebir |
+| Eşleşen | 19 · tekil ✓ |
+
+`PU_KONU_KITAP`'a eklendi (özet kitabı → konu kitabı sütunu). Power-up havuzu 156 → **184 konu**.
+
+### Etki
+
+| | |
+|---|---|
+| Görev sayısı | 196 · **değişmedi** (programa girmiyor) |
+| Parakete | 55.971 · değişmedi |
+| Potansiyel | 9.617 |
+
+Kitap sekmesinde 28 konu listeleniyor, hepsi `power up` etiketli ve doğrudan tamamlanabiliyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-01-19a` ↔ `rota-2027-01-19a` · 584 891 bayt**
+
+---
+
+## 220 · ALTI DÜZELTME · FT PEDİATRİ · `2027-01-24a`
+
+### ⚠ 1 · 24'lü içeriği konu değil DENEME
+
+24'lü kitapçığının içeriği konu kırılımıyla listeleniyordu. Doğrusu **Deneme 1…24**:
+
+- Havuzdan çekilenler önce (`havuzdan çekildi` notu)
+- Programdakiler tarih sırasıyla
+- Kalanlar `çözülmedi`
+
+Sonuç girilmiş denemeler işaretli görünüyor. 24 satır, numaralar §179'un `denNo` sırasıyla tutarlı.
+
+### ⚠ 2 · PreTUS kalan 30 · cilt + deneme no
+
+```
+Cilt 2 · Deneme 1 … Cilt 6 · Deneme 6
+```
+
+Seri 5 ciltte 6'şar deneme; programın kullandığı 6 atlanıp kalan 30 numaralanıyor.
+
+### ⚠ 3 · Dahiliye konuları ÇİFT görünüyordu
+
+Kullanıcı hematolojiyi tamamlayınca altında ikinci bir "Hematoloji" belirdi. Sebep: `Atilla Uslu Dahiliye 1/2`'nin **sekiz konusu da** video görevleriyle birebir aynı içerik (video izlemek = okumak).
+
+Artık aynı konunun program görevi varsa power-up kaydı gizleniyor — **program kazanıyor**. Doğrulandı: Dahiliye 1 ve 2 artık 0 satır, video listesinde tek kayıt.
+
+### ⚠ 4 · kalıntı kitap satırı
+
+`TUSTIME Fast Track Genel Cerrahi` (envanter) ile `FT Genel Cerrahi` (yeni) ayrı satırlar olarak duruyordu. Ad örtüşmesi denetimi eklendi — seri ekleri (`TUSTIME` · `Fast Track` · `FT`) atılıp karşılaştırılıyor.
+
+### 5 · konu kitapları bloklara ayrıldı
+
+```
+── FT · hızlı tekrar        FT Farmakoloji +4.63 · FT Genel Cerrahi +4.07 · …
+── Diğer konu kitapları     Feyyaz Akay Mikrobiyoloji +3.05 · …
+── TUSTIME konu kitapları   TUSTIME Mikrobiyoloji +3.32 · …
+```
+
+### 6 · renk seçici açılır pencere
+
+Tek tıkla döndürmek yanlışlıkla değiştirmeye açıktı. Artık dört renk çip olarak açılıyor, **programa kaydedilen renk parantez içinde** belirtiliyor:
+
+```
+● Pembe · kritik  (programa kaydettiğimiz)
+● Turuncu · yüksek                        ✓
+```
+
+`renkAta()` seçim yapıyor; `__sil` özgün renge döndürüyor.
+
+### FT Pediatri
+
+| | |
+|---|---|
+| Bölüm | **21** |
+| Sayfa | 136 (5–140) |
+| Süre | **23.9 saat** |
+| Soru | **24.99** (hedef 25) |
+| Eşleşen | 17 · tekil ✓ |
+
+Power-up havuzu 184 → **205 konu**.
+
+⚠ Kitap sekmesinde 13 satır görünüyor — 8 konusu Pediatri program görevleriyle örtüştüğü için gizlendi (§3'ün kuralı).
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-01-24a` ↔ `rota-2027-01-24a` · 594 692 bayt**
+
+---
+
+## 221 · DENEME GİRİŞİ · D/Y · `2027-01-25a`
+
+Kullanıcı: *"net hesaplayıp girmek zorunda kalıyorum, ben ders ders doğru yanlış girmeliyim."*
+
+### Form değişti
+
+```
+Dahiliye /35     [D] [Y]     18.00 · 7 boş
+Patoloji /18     [D] [Y]      8.25 · 6 boş
+```
+
+Her branş için **iki kutu**: doğru ve yanlış. Net uygulamada hesaplanıyor:
+
+```
+net = D − Y/4          (TUS: dört yanlış bir doğruyu götürür)
+boş = soru − D − Y      (örtük, satır sonunda gösteriliyor)
+```
+
+Satır sonunda anlık net ve boş sayısı; `D + Y > soru` olursa kırmızı `fazla!` ve kayıt reddediliyor.
+
+### Doğrulama
+
+| Girdi | Net | Boş |
+|---|---|---|
+| 20D 8Y / 35 | **18.00** | 7 |
+| 14D 6Y / 25 | **12.50** | 5 |
+| 9D 3Y / 18 | **8.25** | 6 |
+
+### Geriye dönük uyum
+
+Eski kayıtlar yalnız `bn` (net) taşıyor, `dy` alanı yok. `bransDurum` · `para` · `grupKapsam` hepsi eskisi gibi çalışıyor — yeni kayıtlar ayrıca `dy` saklıyor, ileride D/Y kırılımı gerekirse hazır.
+
+⚠ İlk kurulumda `dataset.b` boş gelince `b.replace` çöküyordu (`derin_test` yakaladı); kutular önceden eşlenip null denetimi eklendi.
+
+### Test · `kal_test.js` +16 kontrol
+
+D ve Y kutuları · net uygulamada · **eski tek-net kutusu kalmadı** · boş sayısı · tutarsızlık uyarısı · `dy` kaydediliyor · satır başına net · dört net formülü · boş formülü · **eski kayıtlarla dört fonksiyon çalışıyor**.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-01-25a` ↔ `rota-2027-01-25a` · 596 751 bayt**
+
+---
+
+## 221 · ⚠ GİZLEME KURALI FAZLA GENİŞTİ · `2027-01-25a`
+
+### ⚠ §220'nin yan etkisi
+
+Dahiliye çift kaydını çözerken kural şöyle yazılmıştı:
+
+```js
+const varProg=GOREVLER.some(g=> (g.br===u.brans||g.z===u.grup)
+  && konuOrtus(String(g.k||''),u.konu));
+if(varProg)return;                    // ← KİTAP AYRIMI YOK
+```
+
+Konu **başka bir kitapta** program görevi olarak varsa da gizleniyordu. Sonuç: FT Pediatri'nin 21 konusundan 8'i kayboldu, kullanıcı kitabın tam içeriğini göremedi.
+
+Kullanıcının gerekçesi: *"her kitabın içeriğini hangisine baktım bakmadım eksiksiz görmek istiyorum ki spesifik bir kitabın bir bölümüne bakıp bakmadığıma, hangi derse hangi kitaptan çalıştığımı bileyim."*
+
+**Gizleme AYNI KİTAP içine daraltıldı:**
+
+```js
+const ayniKitap=GOREVLER.some(g=>
+  String(g.src||'').replace(/\s*sf\s.*$/,'').trim()===secKit
+  && konuOrtus(String(g.k||''),u.konu));
+```
+
+| Kitap | Satır / havuz |
+|---|---|
+| FT Pediatri | **21 / 21** (önce 13) |
+| FT Genel Cerrahi | 28 / 28 |
+| Atilla Uslu Dahiliye 1 | 4 / 4 |
+| Atilla Uslu SST | 10 / 9 (+1 program görevi) |
+
+Tüm kitaplarda içerik eksilmesi **0**, yinelenen satır **0**.
+
+### 2 · CEVAP · deneme girişinde net hesabı
+
+Zaten var: her branş için **D** ve **Y** kutusu, net uygulamada `D − Y/4` olarak hesaplanıyor. Satır sonunda `net · N boş` gösteriliyor, `D+Y` soru sayısını aşarsa kırmızı `fazla!` uyarısı çıkıyor.
+
+11 branşın hepsi için D/Y kutusu ve net göstergesi çiziliyor — doğrulandı.
+
+### Test · `pu_test.js` +13 kontrol
+
+gizleme daraltıldı · kitap adı karşılaştırması · **eski geniş kural kalmadı** · hiçbir kitapta içerik eksilmiyor · yinelenen yok · D/Y kutuları · net hesabı · boş sayısı · tutarsızlık uyarısı · 11'er kutu.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-01-25a` ↔ `rota-2027-01-25a` · 594 715 bayt**
+
+---
+
+## 222 · FT SERİSİ TAMAMLANDI · `2027-01-29a`
+
+Dört kitap daha işlendi: **Fizyoloji · Mikrobiyoloji · Patoloji · Dahiliye**.
+
+| Kitap | Bölüm | Sayfa | Süre | Soru |
+|---|---|---|---|---|
+| FT Fizyoloji | 9 | 68 | 11.9 sa | 8.02 |
+| FT Mikrobiyoloji | 7 | 126 | 22.1 sa | 18.00 + 2.79 |
+| FT Patoloji | 24 | 94 | 16.5 sa | 18.00 |
+| FT Dahiliye | 9 | 159 | 27.8 sa | 20.30 |
+
+Havuz 214 → **254 konu**, on FT kitabı.
+
+### `ft_ekle.py` · üç iyileştirme
+
+**1 · dolgu listesi genişledi.** "Solunum Fizyolojisi" ile "Üreme Fizyolojisi" yalnız `fizyolojisi` kelimesiyle eşleşip yanlış atama yapıyordu. `fizyoloji · histoloji · anatomi · patoloji · doku · bezi` ve çekimleri eleniyor.
+
+**2 · eşanlamlı sözlüğü.** Kitap ile TusAnaliz farklı terim kullanıyor:
+
+| Kitap | TusAnaliz |
+|---|---|
+| Kalp / Damar | kardiyovasküler |
+| Akciğer | solunum |
+| Hematolojik | hematopoetik |
+| Kemik-Eklem | kas iskelet |
+| Böbrek | üriner |
+
+Patoloji'de eşleşme 12/24 → **19/24**.
+
+**3 · ortak konu paylaşımı.** "Kalp Hastalıkları" ve "Damar Hastalıkları" ikisi de kardiyovaskülere aday; tekilleştirme birine 0.79, diğerine 0.10 veriyordu. Payı sayfa oranında paylaşıyorlar (0.40'ar).
+
+### ⚠ Yakalanan iki hata
+
+**Değişken ezmesi.** Paylaşım kodunda `grup` adı fonksiyon parametresini eziyordu; üretilen kayıtların `grup` alanı `[7,8]` gibi indeks listesine dönüşüp getiriler **sıfır** çıkıyordu. Tüm FT kitapları denetlendi, yalnız Patoloji etkilenmişti.
+
+**Çift sayım.** `enfeksiyon hastalıkları` payı (2.79) hem FT Mikrobiyoloji'ye hem FT Dahiliye'ye gidiyordu. Dahiliye hedefinden çıkarıldı — Mikrobiyoloji'de kitabın kendi bölümü var, orada kalması doğru.
+
+### Not · sıfır getirili bölümler
+
+`FT Dahiliye · Geriatri` **0.00 soru** alıyor: TusAnaliz'de geriatri karşılığı yok ve kalan pay bittiği için sayfa oranından da alamıyor. Bölüm listede görünüyor, tamamlanabiliyor ama kazanç vermiyor — bu doğru bilgi, uydurulmuş pay verilmedi.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-01-29a` ↔ `rota-2027-01-29a` · 606 890 bayt**
+
+---
+
+## 223 · FT BİYOKİMYA · KATALOG · ÜÇ ALGORİTMA DÜZELTMESİ · `2027-01-30a`
+
+### `ft_katalog.py` · tek kaynak
+
+Yedi FT kitabının bölüm listesi tek dosyada. `ft_uret.py` hepsini yeniden üretiyor — algoritma iyileştikçe eski kitaplar eski (kusurlu) eşleştirmeyle kalmıyor.
+
+| Kitap | Bölüm | Sayfa | Süre | Soru |
+|---|---|---|---|---|
+| FT Genel Cerrahi | 28 | 145 | 25.4 sa | 29.67 |
+| FT Pediatri | 21 | 136 | 23.9 sa | 24.98 |
+| FT Fizyoloji | 9 | 68 | 11.9 sa | 8.02 |
+| FT Mikrobiyoloji | 7 | 126 | 22.1 sa | 20.79 |
+| FT Patoloji | 24 | 94 | 16.5 sa | 18.00 |
+| FT Dahiliye | 9 | 159 | 27.8 sa | 20.81 |
+| **FT Biyokimya** | 4* | 112 | 8.9 sa | 3.35 |
+
+*9 bölümün 5'i zaten programda; havuza yalnız kalan 4'ü giriyor.
+
+### ⚠ 1 · program örtüşmesi · ÇİFT SAYIM
+
+FT Biyokimya'nın beş bölümü görev olarak programda. Havuza da eklenince aynı sayfa iki kez sayılıyordu. `ft_uret.py` artık sayfa aralığı örtüşen havuz kaydını atıyor.
+
+Kitap sekmesinde bölüm yine görünüyor — program görevi olarak (§221'in kuralı). Doğrulandı: FT Biyokimya 9 satır, 5 `program` + 4 `power up`.
+
+### ⚠ 2 · boşluksuz karşılaştırma
+
+`"Aminoasitler ve Proteinler"` (tek kelime) ile TusAnaliz'in `"amino asitler"` (iki kelime) **hiç örtüşmüyordu**. Boşluk kaldırılınca ikisi de `aminoasitler` oluyor. Pay 7.53 → **11.29** (TusAnaliz'de gerçekten branşın %63'ü).
+
+### ⚠ 3 · atanmamış konular için ikinci tur
+
+Boşta kalan TusAnaliz konusunun payı, sayfa oranıyla **ilgisiz** bölümlere dağılıyordu ("Hücre ve Organeller" 3.30 soru almıştı). Artık boşta kalan konu, kendisine en çok benzeyen bölüme ekleniyor. Hücre 3.30 → **0.91**.
+
+### Geriatri payı
+
+Kullanıcı onayıyla **0.51 soru** — demans içeriği nöroloji altında sayılıyor, nöroloji payının (2.05) dörtte biri. Getiri artık pozitif (+0.07).
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-01-30a` ↔ `rota-2027-01-30a` · 607 438 bayt · havuz 252 konu**
+
+---
+
+## 224 · FT FARMAKOLOJİ · ⚠ SINIR ÇAKIŞMASI · `2027-01-31a`
+
+### FT Farmakoloji · 12 bölüm
+
+| | |
+|---|---|
+| Bölüm | 12 (6'sı programda, 6'sı havuzda) |
+| Sayfa | 116 (5–120) |
+| Havuz payı | 6.8 sa · 4.40 soru |
+
+Kitap sekmesinde 14 satır: 8 program görevi (parçalı) + 6 power up.
+
+### ⚠ Sınır sayfası yanlış eleme yapıyordu
+
+Program görevlerinin sayfa aralıkları bitiş sayfasını bir sonrakinin başlangıcı yapıyor:
+
+```
+(5,17) · (17,25) · (44,53) · (53,64) · (64,76) …
+```
+
+Salt kesişim testi bu **tek sayfalık sınır temasını** örtüşme sayıp bölümü havuzdan eliyordu:
+
+| Bölüm | Kesişim | Sonuç |
+|---|---|---|
+| Kardiyovasküler Sistem [25–43] | **1 sayfa** | yanlış elendi |
+| Otakoidler [76–82] | **1 sayfa** | yanlış elendi |
+| İmmün Modülatör [112–116] | **1 sayfa** | yanlış elendi |
+
+Eşik eklendi: **kesişim ≥ bölümün yarısı**. FT Farmakoloji 9 → 6 elenen, FT Biyokimya 5 → 4.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-01-31a` ↔ `rota-2027-01-31a` · 606 865 bayt · havuz 254 konu**
+
+---
+
+## 225 · FT ANATOMİ · ⚠ ÇOKLU ARALIK · `2027-02-01a`
+
+### Anatomi Fast Track · 13 bölüm
+
+| | |
+|---|---|
+| Bölüm | 13 · 7'si programda, 6'sı havuzda |
+| Sayfa | 123 (5–127) |
+| Havuz payı | 13.8 sa · 7.36 soru |
+
+Kitap sekmesinde 13 satır: 7 program görevi + 6 power up.
+
+### ⚠ Bir görev birden çok sayfa aralığı taşıyabiliyor
+
+```
+"Anatomi Fast Track sf 49–55 + 90–119 + 126–127"
+```
+
+`re.search` yalnız **ilk** aralığı görüyordu (49–55). MSS, PSS, Duyu Organları ve Deri bölümleri programda olmasına rağmen havuza da giriyor, **çift sayım** oluyordu.
+
+`re.finditer` ile tüm aralıklar toplanıyor. Anatomi 3 → **7** doğru eleme.
+
+### FT serisi · dokuz kitap
+
+| Kitap | Havuz bölümü | Soru |
+|---|---|---|
+| FT Genel Cerrahi | 28 | 29.67 |
+| FT Pediatri | 21 | 24.98 |
+| FT Mikrobiyoloji | 7 | 20.79 |
+| FT Dahiliye | 9 | 20.81 |
+| FT Patoloji | 24 | 18.00 |
+| FT Fizyoloji | 9 | 8.02 |
+| Anatomi Fast Track | 6 | 7.36 |
+| FT Farmakoloji | 6 | 4.40 |
+| FT Biyokimya | 5 | 3.55 |
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-02-01a` ↔ `rota-2027-02-01a` · 606 790 bayt · havuz 254 konu**
+
+---
+
+## 226 · FT KADIN DOĞUM · SERİ TAMAM · `2027-02-02a`
+
+### ⚠ Bu kitapta ana başlık yetersizdi
+
+Yalnız **dört** ana başlık var: Reproduktif Endokrinoloji · Genel Jinekoloji · Jinekolojik Onkoloji · **Obstetri**. Sonuncusu tek başına 55 sayfa = 9.6 saat — "hangi bölüme baktım" izlenemezdi.
+
+Bu kitapta **alt başlıklar** kullanıldı: 37 bölüm. Diğer dokuz kitapta ana başlık zaten yeterince ayrıntılıydı (ortalama 5–10 sayfa/bölüm).
+
+| | |
+|---|---|
+| Bölüm | 37 · 19'u programda, 18'i havuzda |
+| Sayfa | 131 (5–135) |
+| Havuz payı | 12.7 sa · 7.15 soru |
+
+Kitap sekmesinde 23 satır: 5 program görevi (parçalı) + 18 power up.
+
+### FT SERİSİ TAMAMLANDI · on kitap
+
+| Kitap | Havuz | Soru |
+|---|---|---|
+| FT Genel Cerrahi | 28 | 29.67 |
+| FT Pediatri | 21 | 24.98 |
+| FT Dahiliye | 9 | 20.81 |
+| FT Mikrobiyoloji | 7 | 20.79 |
+| FT Patoloji | 24 | 18.00 |
+| FT Fizyoloji | 9 | 8.02 |
+| Anatomi Fast Track | 6 | 7.36 |
+| FT Kadın Doğum | 18 | 7.15 |
+| FT Farmakoloji | 6 | 4.40 |
+| FT Biyokimya | 5 | 3.55 |
+
+Power-up havuzu 156 → **270 konu**. Program görev sayısı değişmedi (196); parakete 55.971'de sabit — FT bölümleri programa girmiyor, yalnız kitap sekmesinden erişiliyor.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-02-02a` ↔ `rota-2027-02-02a` · 610 148 bayt**
+
+---
+
+## 227 · ⚠ KONU TEKİLLİĞİ · NET HAVUZU PAYLAŞIMI · `2027-02-07a`
+
+Kullanıcının kuralı: *"öğrenmeye katkısı olan kitap değil KONU. Bir konuyu hangi kitaptan okursam okuyayım ilk okuma netini bir defa kazanırım; aynı konuya başka kitaptan bakarsam ancak tekrar geliri kazanırım."*
+
+### Merkezi konu kaydı · `konuKayit()`
+
+Konu adı → **ilk tamamlanma tarihi**. Üç kaynak taranıyor, en erken tarih geçerli:
+
+| Kaynak | İçerik |
+|---|---|
+| `D.bitti` | program görevleri |
+| `D.pu` | power-up (kitap sekmesi ya da çark) |
+| `D.tts` | TTS son tekrar |
+
+⚠ Önceden `konuCalisildi` yalnız `D.bitti`ye bakıyordu: power-up'tan çalışılan konu "hiç görülmemiş" sayılıp **yeni öğrenme** getirisi alıyordu. Artık merkezi kayıttan besleniyor.
+
+### Gölgeleme · `golge()` · `bittiTar()`
+
+Bir görevin konusu **başka kaynaktan** tamamlandıysa görev gölgeli:
+
+- `grupKapsam` gölgeyi de sayıyor → soru havuzu çalışılmış kabul ediliyor
+- Programda ayrıca getiri üretmiyor → **çift sayım yok**
+- Listede **üstü çizili** + `✓ <kaynak kitabı>` etiketi
+- Gün toplam saatinden düşülüyor
+
+### Ölçüm · Meme Hastalıkları
+
+| Senaryo | Parakete | Potansiyel |
+|---|---|---|
+| Başlangıç | 55.9714 | 7.552 |
+| Programdaki görev tamamlandı | 56.0145 | 7.526 |
+| **Aynı konu başka kitaptan** | 56.0060 | 7.534 |
+
+İki yol benzer getiri veriyor (fark 0.0085 — kitapların soru kapsamı farklı).
+
+**Çift sayım testi:** power-up sonra program görevi → ilk getiri **+0.0346**, ikinci **+0.0085** (**0.25×**). İkinci kaynak yalnız tekrar getirisi veriyor.
+
+**Uç durum:** tüm program + tüm power-up tamamlanınca parakete 60.166 — tavan 88.66 aşılmıyor.
+
+### Test · `pu_test.js` +20 kontrol
+
+dört fonksiyon · kapsam gölgeyi sayıyor · `konuCalisildi` merkezi kayıttan · üstü çizili · ikame etiketi · saatten düşülüyor · başka kaynak paraketeyi artırıyor · potansiyel düşüyor · **görev gölgeleniyor** · iki yol benzer · **ikinci kaynak daha az getiriyor** · tavan · liste görünümü.
+
+### ⚠ AÇIK KALEM · TASARIM
+
+Kullanıcı power-up paneli ve matris/seyir sayfalarının tasarımının uygulamaya uymadığını bildirdi (ekran görüntüleri IMG_4607–4612). Beğendiği referans: **kitap listesi + Program/Kitap anahtarı** (§217'nin altın paleti, orana bağlı ölçüler, küçük daire düğmeler).
+
+Yapılacak: Power up panelindeki Konu/Soru/Deneme anahtarı ve kartları aynı dile çevirmek; matris tablosu ve branş trend kartlarını da.
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-02-07a` ↔ `rota-2027-02-07a` · 619 034 bayt**
+
+---
+
+## 227 · KONU TEKİLLİĞİ · NET HAVUZU PAYLAŞIMI · `2027-02-07a`
+
+Gerçek hayattaki kural sisteme kuruldu: öğrenmeye katkı sağlayan **kitap değil konu**. Bir konu hangi kaynaktan okunursa okunsun ilk öğrenme getirisi **bir kez** kazanılıyor; aynı konuya ikinci bir kitaptan bakmak **tekrar** getirisi veriyor.
+
+### `konuKayit()` · merkezi konu defteri
+
+Konu adı → **ilk** tamamlanma tarihi. Üç kaynak birden taranıyor:
+
+| Kaynak | İçerik |
+|---|---|
+| `D.bitti` | program görevleri |
+| `D.pu` | power-up (kitap sekmesi ya da çark) |
+| `D.tts` | TTS son tekrar |
+
+Aynı konu birden çok kaynakta varsa **en erken** tarih geçerli.
+
+### `golge()` · ikame edilmiş görev
+
+Bir görevin konusu başka kaynaktan tamamlandıysa görev **gölgeli**: getirisi zaten kazanılmış, programda ayrıca sayılmıyor.
+
+```
+10:15  Patoloji  ~~Meme Hastalıkları~~  1.20 sa  ✓ Levent Kodal Genel Cerrahi SB
+```
+
+Üstü çizili, yerine ne yapıldığı yazılı, **günün saat toplamından düşülmüş**.
+
+### ⚠ Düzeltilen iki eksik
+
+**1 · `grupKapsam` yalnız `D.bitti`ye bakıyordu.** Gölgeli görevin soru havuzu "hiç çalışılmamış" sayılıyordu. `bittiTar()` kullanılıyor.
+
+**2 · `konuCalisildiKume` power-up ve TTS'i görmüyordu.** O kaynaklardan çalışılan konular "hiç görülmemiş" kabul edilip **yeni öğrenme** getirisi alıyordu. Merkezi kayıt bağlandı.
+
+### Ölçüm · çift sayım yok
+
+| Adım | Parakete | Artış |
+|---|---|---|
+| başlangıç | 55.9714 | — |
+| power-up'tan tamamla | 56.0060 | **+0.0346** |
+| programdakini de tamamla | 56.0145 | **+0.0085** |
+
+İkinci kaynak ilkinin **%25'i** kadar getiriyor — tekrar getirisi. Potansiyel de düşüyor (7.552 → 7.534).
+
+Tüm program + tüm power-up tamamlandığında parakete 60.17, tavan (88.66) aşılmıyor.
+
+### Test · `pu_test.js` +20 kontrol
+
+dört fonksiyon · kapsam gölgeyi sayıyor · `konuCalisildi` merkezi kayıttan · üstü çizili sınıf · ikame etiketi · saatten düşülüyor · **başka kaynak paraketeyi artırıyor** · potansiyel düşüyor · görev gölgeleniyor · iki yol benzer getiri · konu çalışılmış sayılıyor · **ikinci kaynak daha az getiriyor** · pozitif ama küçük · tavan · listede üstü çizili · kaynak adı.
+
+### ⚠ AÇIK KALEM · tasarım
+
+Kullanıcı power-up paneli, matris ve seyir sayfalarının tasarımının kitap sekmesi kadar iyi olmadığını bildirdi (ekran görüntüleriyle). **Henüz yapılmadı.**
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-02-07a` ↔ `rota-2027-02-07a` · 619 670 bayt**
+
+---
+
+## 228 · ⚠ ANAHTAR GRUP BAZLI OLMALIYDI · `2027-02-08a`
+
+Kullanıcı §227'nin kusurunu yakaladı: konu anahtarı **yalnız konu adıydı**, branş/grup yoktu.
+
+### ⚠ Yanlış birleşen 13 konu
+
+| Konu | Branşlar | Doğru mu? |
+|---|---|---|
+| meme hastalıkları | Patoloji · Genel Cerrahi | **HAYIR** · ikisi de ayrı soru getiriyor |
+| deri hastalıkları | Patoloji · Genel Cerrahi | **HAYIR** |
+| hormonlar | Biyokimya · Farmakoloji | **HAYIR** |
+| enfeksiyon hastalıkları | Dahiliye · Mikrobiyoloji | **HAYIR** |
+| nöroloji | Dahiliye · Küçük Stajlar | evet · aynı havuz |
+
+Kullanıcının kuralı: *"aynı konu da olsa farklı derste aynı anda soru çıkarırsa iki konudan da net kazanırım — dersler arasında sadeleştirme yapılmaz."*
+
+### Ayrım noktası · NET HAVUZU
+
+`TAVAN_G` grup bazlı tanımlı, dolayısıyla anahtar da grup bazlı:
+
+```js
+function konuAnh(brans,konu,grup){
+  const g=grup||DEN_ESL[brans]||brans||'';
+  return g+'§'+renkAnh(konu);
+}
+```
+
+Bu ayrım kendiliğinden doğru sonucu veriyor:
+- Patoloji ↔ Genel Cerrahi **ayrı** grup → meme hastalıkları ayrı ✓
+- Dahiliye ↔ Küçük Stajlar **aynı** grup → nöroloji tek ✓
+- Pediatri'nin iki kitabı **aynı** grup → tek havuz ✓
+
+### Doğrulama
+
+| Test | Sonuç |
+|---|---|
+| Genel Cerrahi meme okundu → Patoloji meme gölgelendi mi? | **hayır ✓** |
+| Aynı grupta 34 kitap çifti · ikinci kitap tekrar getirisi | ✓ |
+| `konuCalisildi` aynı grup öbür kitapta true | ✓ |
+
+`konuCalisildi` merkezi kayıttan okurken anahtarın konu kısmını ayıklıyor (`k.split('§')[1]`).
+
+### ✓ ON DÖRT KAPI · TOPLAM 0
+
+**sürüm `2027-02-08a` ↔ `rota-2027-02-08a` · 620 949 bayt**
+
+---
+
+# ⚠ DEVİR NOTU · KALDIĞIM YER
+
+## Tamamlanan (bu oturumda)
+
+§219–§226 · **FT serisi on kitap** power-up havuzuna işlendi (156 → 254 konu). `ft_katalog.py` tek kaynak, `ft_uret.py` hepsini yeniden üretiyor.
+
+§227–§228 · **Konu tekilliği · net havuzu paylaşımı.** Bir konu hangi kaynaktan okunursa okunsun ilk öğrenme getirisi bir kez; ikinci kaynak tekrar getirisi veriyor. Anahtar grup bazlı.
+
+## ⚠ YARIM KALAN · TASARIM
+
+Kullanıcı altı ekran görüntüsüyle bildirdi: **power-up paneli, matris ve seyir sayfalarının tasarımı** kitap sekmesi/Program-Kitap anahtarı kadar iyi değil.
+
+Beğenilen referans: `.glAnh` altın gradyan anahtar · `.glS` satır düzeni · daire tamamlama düğmesi (§217).
+
+Düzeltilecekler:
+- Power-up paneli · Konu/Soru/Deneme anahtarı mavi, panelin geri kalanıyla uyumsuz
+- Kart düzeni · "+0.189 net" üstte ayrı satır, dağınık
+- Matris tablosu · sütun hizaları ve tipografi
+- Seyir defteri grafikleri
+
+## Bilinen açık noktalar
+
+- **`FT Dahiliye · Geriatri`** 0.51 soru · kullanıcı onayıyla nöroloji payının 1/4'ü
+- **D_ORAN belirsizliği** hâlâ ±0.57 · program bitse ~0.33'e iner, öncel baskın kalıyor
+- **Potansiyel ile gerçek artış** arasında ~0.42 net fark (§205'te belgeli, bilinçli muhafazakâr)
+- **Aynı kayıt iki kez girilirse** iki kez sayılıyor · yinelenen denetimi yok (bilinçli)

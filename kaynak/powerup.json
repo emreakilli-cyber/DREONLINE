@@ -1,0 +1,4322 @@
+[
+ {
+  "konu": "Amino Asitler",
+  "kitap": "Yavuz Şahin Biyokimya SB",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 1.75,
+  "soru": 7.4,
+  "sayfa": 28,
+  "sf": [
+   123,
+   151
+  ],
+  "aralik": null,
+  "net": 1.5074,
+  "verim": 0.8614
+ },
+ {
+  "konu": "Aminoasitler",
+  "kitap": "Yavuz Şahin Biyokimya konu",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 2.45,
+  "soru": 7.4,
+  "sayfa": 14,
+  "sf": [
+   51,
+   65
+  ],
+  "aralik": null,
+  "net": 1.5074,
+  "verim": 0.6153
+ },
+ {
+  "konu": "Genital sistem Histolojisi ve Fizyolojisi",
+  "kitap": "Klinisyen Vaka Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 0.9167,
+  "soru": 2.4,
+  "sayfa": 11,
+  "sf": [
+   98,
+   109
+  ],
+  "aralik": null,
+  "net": 0.4889,
+  "verim": 0.5333
+ },
+ {
+  "konu": "Hormonlar",
+  "kitap": "Yavuz Şahin Biyokimya SB",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 0.875,
+  "soru": 2.2,
+  "sayfa": 14,
+  "sf": [
+   209,
+   223
+  ],
+  "aralik": null,
+  "net": 0.4481,
+  "verim": 0.5122
+ },
+ {
+  "konu": "Hormonlar",
+  "kitap": "Yavuz Şahin Farmakoloji SB",
+  "grup": "Farmakoloji",
+  "brans": "Farmakoloji",
+  "saat": 1.125,
+  "soru": 2.8,
+  "sayfa": 18,
+  "sf": [
+   87,
+   105
+  ],
+  "aralik": null,
+  "net": 0.5704,
+  "verim": 0.507
+ },
+ {
+  "konu": "Şok travma ve temel konular",
+  "kitap": "Levent Kodal Genel Cerrahi SB",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 2.4167,
+  "soru": 5.8,
+  "sayfa": 58,
+  "sf": [
+   5,
+   63
+  ],
+  "aralik": null,
+  "net": 1.1815,
+  "verim": 0.4889
+ },
+ {
+  "konu": "Karaciğer, Dalak Hastalıkları ve Transplantasyon",
+  "kitap": "Levent Kodal Genel Cerrahi SB",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 1.0833,
+  "soru": 2.2,
+  "sayfa": 26,
+  "sf": [
+   263,
+   289
+  ],
+  "aralik": null,
+  "net": 0.4481,
+  "verim": 0.4137
+ },
+ {
+  "konu": "Bakteriyoloji (Oldies+Goldies)",
+  "kitap": "Feyyaz Akay Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 3.4375,
+  "soru": 6.4,
+  "sayfa": 55,
+  "sf": [
+   64,
+   119
+  ],
+  "aralik": null,
+  "net": 1.3037,
+  "verim": 0.3793
+ },
+ {
+  "konu": "Genel Mikrobiyoloji (Oldies+Goldies)",
+  "kitap": "Feyyaz Akay Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 1.625,
+  "soru": 3.0,
+  "sayfa": 26,
+  "sf": [
+   8,
+   34
+  ],
+  "aralik": null,
+  "net": 0.6111,
+  "verim": 0.3761
+ },
+ {
+  "konu": "Meme Hastalıkları",
+  "kitap": "Levent Kodal Genel Cerrahi SB",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 1.0833,
+  "soru": 2.0,
+  "sayfa": 26,
+  "sf": [
+   109,
+   135
+  ],
+  "aralik": null,
+  "net": 0.4074,
+  "verim": 0.3761
+ },
+ {
+  "konu": "Karın duvarı fıtıkları",
+  "kitap": "Levent Kodal Genel Cerrahi SB",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.3333,
+  "soru": 0.6,
+  "sayfa": 8,
+  "sf": [
+   289,
+   297
+  ],
+  "aralik": null,
+  "net": 0.1222,
+  "verim": 0.3667
+ },
+ {
+  "konu": "Radyoloji",
+  "kitap": "Klinisyen Vaka Küçük Stajlar",
+  "grup": "Dahiliye grubu",
+  "brans": "Küçük Stajlar",
+  "saat": 0.5833,
+  "soru": 1.0,
+  "sayfa": 7,
+  "sf": [
+   211,
+   218
+  ],
+  "aralik": null,
+  "net": 0.2037,
+  "verim": 0.3492
+ },
+ {
+  "konu": "Santral Sinir Sistemi",
+  "kitap": "Yavuz Şahin Farmakoloji SB",
+  "grup": "Farmakoloji",
+  "brans": "Farmakoloji",
+  "saat": 1.875,
+  "soru": 3.2,
+  "sayfa": 30,
+  "sf": [
+   105,
+   135
+  ],
+  "aralik": null,
+  "net": 0.6518,
+  "verim": 0.3476
+ },
+ {
+  "konu": "Kemoterapötikler ve İmmunmodülatörler",
+  "kitap": "Yavuz Şahin Farmakoloji SB",
+  "grup": "Farmakoloji",
+  "brans": "Farmakoloji",
+  "saat": 2.75,
+  "soru": 4.6,
+  "sayfa": 44,
+  "sf": [
+   149,
+   193
+  ],
+  "aralik": null,
+  "net": 0.937,
+  "verim": 0.3407
+ },
+ {
+  "konu": "Diğer Sistem ilaçları",
+  "kitap": "Yavuz Şahin Farmakoloji SB",
+  "grup": "Farmakoloji",
+  "brans": "Farmakoloji",
+  "saat": 1.4375,
+  "soru": 2.4,
+  "sayfa": 23,
+  "sf": [
+   193,
+   216
+  ],
+  "aralik": null,
+  "net": 0.4889,
+  "verim": 0.3401
+ },
+ {
+  "konu": "Pankreas Hastalıkları",
+  "kitap": "Levent Kodal Genel Cerrahi SB",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.75,
+  "soru": 1.2,
+  "sayfa": 18,
+  "sf": [
+   245,
+   263
+  ],
+  "aralik": null,
+  "net": 0.2444,
+  "verim": 0.3259
+ },
+ {
+  "konu": "Onkoloji",
+  "kitap": "Atilla Uslu SST",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 1.2,
+  "soru": 1.8,
+  "sayfa": 18,
+  "sf": [
+   75,
+   93
+  ],
+  "aralik": null,
+  "net": 0.3667,
+  "verim": 0.3055
+ },
+ {
+  "konu": "Mide Duodenum hastalıkları, Obezite Cerrahisi",
+  "kitap": "Levent Kodal Genel Cerrahi SB",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 1.0833,
+  "soru": 1.6,
+  "sayfa": 26,
+  "sf": [
+   149,
+   175
+  ],
+  "aralik": null,
+  "net": 0.3259,
+  "verim": 0.3008
+ },
+ {
+  "konu": "Lipidler",
+  "kitap": "Yavuz Şahin Biyokimya SB",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 2.125,
+  "soru": 3.0,
+  "sayfa": 34,
+  "sf": [
+   55,
+   89
+  ],
+  "aralik": null,
+  "net": 0.6111,
+  "verim": 0.2876
+ },
+ {
+  "konu": "Viroloji (Oldies+Goldies)",
+  "kitap": "Feyyaz Akay Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 2.0,
+  "soru": 2.8,
+  "sayfa": 32,
+  "sf": [
+   119,
+   151
+  ],
+  "aralik": null,
+  "net": 0.5704,
+  "verim": 0.2852
+ },
+ {
+  "konu": "Nefroloji",
+  "kitap": "Atilla Uslu SST",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 1.6,
+  "soru": 2.2,
+  "sayfa": 24,
+  "sf": [
+   171,
+   195
+  ],
+  "aralik": null,
+  "net": 0.4481,
+  "verim": 0.2801
+ },
+ {
+  "konu": "Tiroid ve Paratiroid hastalıkları",
+  "kitap": "Levent Kodal Genel Cerrahi SB",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 1.1667,
+  "soru": 1.6,
+  "sayfa": 28,
+  "sf": [
+   81,
+   109
+  ],
+  "aralik": null,
+  "net": 0.3259,
+  "verim": 0.2794
+ },
+ {
+  "konu": "Mikoloji (Oldies+Goldies)",
+  "kitap": "Feyyaz Akay Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 1.625,
+  "soru": 2.2,
+  "sayfa": 26,
+  "sf": [
+   151,
+   177
+  ],
+  "aralik": null,
+  "net": 0.4481,
+  "verim": 0.2758
+ },
+ {
+  "konu": "Vitaminler",
+  "kitap": "Yavuz Şahin Biyokimya SB",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 0.75,
+  "soru": 1.0,
+  "sayfa": 12,
+  "sf": [
+   197,
+   209
+  ],
+  "aralik": null,
+  "net": 0.2037,
+  "verim": 0.2716
+ },
+ {
+  "konu": "Safra Kesesi ve Safra yolları hastalıkları",
+  "kitap": "Levent Kodal Genel Cerrahi SB",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.75,
+  "soru": 1.0,
+  "sayfa": 18,
+  "sf": [
+   227,
+   245
+  ],
+  "aralik": null,
+  "net": 0.2037,
+  "verim": 0.2716
+ },
+ {
+  "konu": "Parazitoloji (Oldies+Goldies)",
+  "kitap": "Feyyaz Akay Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 1.5625,
+  "soru": 2.0,
+  "sayfa": 25,
+  "sf": [
+   177,
+   202
+  ],
+  "aralik": null,
+  "net": 0.4074,
+  "verim": 0.2607
+ },
+ {
+  "konu": "Ortopedi",
+  "kitap": "Klinisyen Vaka Küçük Stajlar",
+  "grup": "Dahiliye grubu",
+  "brans": "Küçük Stajlar",
+  "saat": 1.25,
+  "soru": 1.6,
+  "sayfa": 15,
+  "sf": [
+   254,
+   269
+  ],
+  "aralik": null,
+  "net": 0.3259,
+  "verim": 0.2607
+ },
+ {
+  "konu": "Lipidler",
+  "kitap": "Yavuz Şahin Biyokimya konu",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 2.45,
+  "soru": 3.0,
+  "sayfa": 14,
+  "sf": [
+   23,
+   37
+  ],
+  "aralik": null,
+  "net": 0.6111,
+  "verim": 0.2494
+ },
+ {
+  "konu": "Onkoloji",
+  "kitap": "Atilla Uslu Dahiliye 1",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 1.5,
+  "soru": 1.8,
+  "sayfa": 12,
+  "sf": [
+   90,
+   102
+  ],
+  "aralik": null,
+  "net": 0.3667,
+  "verim": 0.2444
+ },
+ {
+  "konu": "Kalp ve Damar Cerrahisi",
+  "kitap": "Klinisyen Vaka Küçük Stajlar",
+  "grup": "Dahiliye grubu",
+  "brans": "Küçük Stajlar",
+  "saat": 1.1667,
+  "soru": 1.4,
+  "sayfa": 14,
+  "sf": [
+   176,
+   190
+  ],
+  "aralik": null,
+  "net": 0.2852,
+  "verim": 0.2444
+ },
+ {
+  "konu": "İnce ve Kalın bağırsak hastalıkları",
+  "kitap": "Levent Kodal Genel Cerrahi SB",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 2.1667,
+  "soru": 2.6,
+  "sayfa": 52,
+  "sf": [
+   175,
+   227
+  ],
+  "aralik": null,
+  "net": 0.5296,
+  "verim": 0.2444
+ },
+ {
+  "konu": "Otonom Sinir Sistemi",
+  "kitap": "Yavuz Şahin Farmakoloji SB",
+  "grup": "Farmakoloji",
+  "brans": "Farmakoloji",
+  "saat": 1.25,
+  "soru": 1.4,
+  "sayfa": 20,
+  "sf": [
+   31,
+   51
+  ],
+  "aralik": null,
+  "net": 0.2852,
+  "verim": 0.2281
+ },
+ {
+  "konu": "Metabolizma Entegrasyonu",
+  "kitap": "Yavuz Şahin Biyokimya SB",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 0.375,
+  "soru": 0.4,
+  "sayfa": 6,
+  "sf": [
+   89,
+   95
+  ],
+  "aralik": null,
+  "net": 0.0815,
+  "verim": 0.2173
+ },
+ {
+  "konu": "Romatoloji",
+  "kitap": "Atilla Uslu SST",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 2.1333,
+  "soru": 2.2,
+  "sayfa": 32,
+  "sf": [
+   305,
+   337
+  ],
+  "aralik": null,
+  "net": 0.4481,
+  "verim": 0.2101
+ },
+ {
+  "konu": "Halk Sağlığı",
+  "kitap": "Klinisyen Vaka Küçük Stajlar",
+  "grup": "Dahiliye grubu",
+  "brans": "Küçük Stajlar",
+  "saat": 1.0,
+  "soru": 1.0,
+  "sayfa": 12,
+  "sf": [
+   199,
+   211
+  ],
+  "aralik": null,
+  "net": 0.2037,
+  "verim": 0.2037
+ },
+ {
+  "konu": "Anestezi",
+  "kitap": "Klinisyen Vaka Küçük Stajlar",
+  "grup": "Dahiliye grubu",
+  "brans": "Küçük Stajlar",
+  "saat": 1.0,
+  "soru": 1.0,
+  "sayfa": 12,
+  "sf": [
+   218,
+   230
+  ],
+  "aralik": null,
+  "net": 0.2037,
+  "verim": 0.2037
+ },
+ {
+  "konu": "Kardiyoloji",
+  "kitap": "Atilla Uslu SST",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 3.0667,
+  "soru": 3.0,
+  "sayfa": 46,
+  "sf": [
+   93,
+   139
+  ],
+  "aralik": null,
+  "net": 0.6111,
+  "verim": 0.1993
+ },
+ {
+  "konu": "Vitaminler",
+  "kitap": "Yavuz Şahin Biyokimya konu",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 1.05,
+  "soru": 1.0,
+  "sayfa": 6,
+  "sf": [
+   91,
+   97
+  ],
+  "aralik": null,
+  "net": 0.2037,
+  "verim": 0.194
+ },
+ {
+  "konu": "Göğüs Hastalıkları",
+  "kitap": "Atilla Uslu SST",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 2.1333,
+  "soru": 2.0,
+  "sayfa": 32,
+  "sf": [
+   139,
+   171
+  ],
+  "aralik": null,
+  "net": 0.4074,
+  "verim": 0.191
+ },
+ {
+  "konu": "Genel Farmakoloji",
+  "kitap": "Yavuz Şahin Farmakoloji SB",
+  "grup": "Farmakoloji",
+  "brans": "Farmakoloji",
+  "saat": 1.5,
+  "soru": 1.4,
+  "sayfa": 24,
+  "sf": [
+   7,
+   31
+  ],
+  "aralik": null,
+  "net": 0.2852,
+  "verim": 0.1901
+ },
+ {
+  "konu": "Gastroenteroloji",
+  "kitap": "Atilla Uslu SST",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 3.7333,
+  "soru": 3.4,
+  "sayfa": 56,
+  "sf": [
+   249,
+   305
+  ],
+  "aralik": null,
+  "net": 0.6926,
+  "verim": 0.1855
+ },
+ {
+  "konu": "Kardiyovasküler sistem Histolojisi ve Fizyolojisi",
+  "kitap": "Klinisyen Vaka Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 1.5833,
+  "soru": 1.4,
+  "sayfa": 19,
+  "sf": [
+   200,
+   219
+  ],
+  "aralik": null,
+  "net": 0.2852,
+  "verim": 0.1801
+ },
+ {
+  "konu": "Karbonhidratlar",
+  "kitap": "Yavuz Şahin Biyokimya SB",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 3.0,
+  "soru": 2.6,
+  "sayfa": 48,
+  "sf": [
+   7,
+   55
+  ],
+  "aralik": null,
+  "net": 0.5296,
+  "verim": 0.1765
+ },
+ {
+  "konu": "Genom ve Nükleik asitler",
+  "kitap": "Yavuz Şahin Biyokimya konu",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 1.4,
+  "soru": 1.2,
+  "sayfa": 8,
+  "sf": [
+   43,
+   51
+  ],
+  "aralik": null,
+  "net": 0.2444,
+  "verim": 0.1746
+ },
+ {
+  "konu": "İmmünoloji (Oldies+Goldies)",
+  "kitap": "Feyyaz Akay Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 1.875,
+  "soru": 1.6,
+  "sayfa": 30,
+  "sf": [
+   34,
+   64
+  ],
+  "aralik": null,
+  "net": 0.3259,
+  "verim": 0.1738
+ },
+ {
+  "konu": "Santral sinir sistemi Histolojisi ve Fizyolojisi",
+  "kitap": "Klinisyen Vaka Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 2.9167,
+  "soru": 2.4,
+  "sayfa": 35,
+  "sf": [
+   260,
+   295
+  ],
+  "aralik": null,
+  "net": 0.4889,
+  "verim": 0.1676
+ },
+ {
+  "konu": "Kardiyovasküler sistem",
+  "kitap": "Yavuz Şahin Farmakoloji SB",
+  "grup": "Farmakoloji",
+  "brans": "Farmakoloji",
+  "saat": 2.25,
+  "soru": 1.8,
+  "sayfa": 36,
+  "sf": [
+   51,
+   87
+  ],
+  "aralik": null,
+  "net": 0.3667,
+  "verim": 0.163
+ },
+ {
+  "konu": "Psikiyatri",
+  "kitap": "Klinisyen Vaka Küçük Stajlar",
+  "grup": "Dahiliye grubu",
+  "brans": "Küçük Stajlar",
+  "saat": 2.25,
+  "soru": 1.8,
+  "sayfa": 27,
+  "sf": [
+   115,
+   142
+  ],
+  "aralik": null,
+  "net": 0.3667,
+  "verim": 0.163
+ },
+ {
+  "konu": "Göğüs Cerrahisi",
+  "kitap": "Klinisyen Vaka Küçük Stajlar",
+  "grup": "Dahiliye grubu",
+  "brans": "Küçük Stajlar",
+  "saat": 0.75,
+  "soru": 0.6,
+  "sayfa": 9,
+  "sf": [
+   190,
+   199
+  ],
+  "aralik": null,
+  "net": 0.1222,
+  "verim": 0.163
+ },
+ {
+  "konu": "Yanık",
+  "kitap": "Speetus Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.5,
+  "soru": 0.4,
+  "sayfa": 4,
+  "sf": [
+   32,
+   36
+  ],
+  "aralik": null,
+  "net": 0.0815,
+  "verim": 0.163
+ },
+ {
+  "konu": "Sıvı elektrolit, Asit baz bozuklukları",
+  "kitap": "Levent Kodal Genel Cerrahi SB",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.75,
+  "soru": 0.6,
+  "sayfa": 18,
+  "sf": [
+   63,
+   81
+  ],
+  "aralik": null,
+  "net": 0.1222,
+  "verim": 0.163
+ },
+ {
+  "konu": "Genel Jinekolojik",
+  "kitap": "TUSTIME Kadın Doğum konu",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 3.2667,
+  "soru": 2.6,
+  "sayfa": 49,
+  "sf": [
+   62,
+   111
+  ],
+  "aralik": null,
+  "net": 0.5296,
+  "verim": 0.1621
+ },
+ {
+  "konu": "Temel Mikrobiyoloji",
+  "kitap": "TUSTIME Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 3.92,
+  "soru": 3.0,
+  "sayfa": 42,
+  "sf": [
+   5,
+   47
+  ],
+  "aralik": null,
+  "net": 0.6111,
+  "verim": 0.1559
+ },
+ {
+  "konu": "Karbonhidratlar",
+  "kitap": "Yavuz Şahin Biyokimya konu",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 3.5,
+  "soru": 2.6,
+  "sayfa": 20,
+  "sf": [
+   3,
+   23
+  ],
+  "aralik": null,
+  "net": 0.5296,
+  "verim": 0.1513
+ },
+ {
+  "konu": "Üroloji ve Çocuk Cerrahisi",
+  "kitap": "Klinisyen Vaka Küçük Stajlar",
+  "grup": "Dahiliye grubu",
+  "brans": "Küçük Stajlar",
+  "saat": 2.8333,
+  "soru": 2.0,
+  "sayfa": 34,
+  "sf": [
+   142,
+   176
+  ],
+  "aralik": null,
+  "net": 0.4074,
+  "verim": 0.1438
+ },
+ {
+  "konu": "Reproduktif Endokrinoloji",
+  "kitap": "TUSTIME Kadın Doğum konu",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 4.0667,
+  "soru": 2.8,
+  "sayfa": 61,
+  "sf": [
+   1,
+   62
+  ],
+  "aralik": null,
+  "net": 0.5704,
+  "verim": 0.1403
+ },
+ {
+  "konu": "Nükleik Asitler ve Genom",
+  "kitap": "Yavuz Şahin Biyokimya SB",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 1.75,
+  "soru": 1.2,
+  "sayfa": 28,
+  "sf": [
+   95,
+   123
+  ],
+  "aralik": null,
+  "net": 0.2444,
+  "verim": 0.1397
+ },
+ {
+  "konu": "Özofagus Hastalıkları",
+  "kitap": "Levent Kodal Genel Cerrahi SB",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.5833,
+  "soru": 0.4,
+  "sayfa": 14,
+  "sf": [
+   135,
+   149
+  ],
+  "aralik": null,
+  "net": 0.0815,
+  "verim": 0.1397
+ },
+ {
+  "konu": "Yenidoğan",
+  "kitap": "Klinisyen Vaka Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 3.25,
+  "soru": 2.2,
+  "sayfa": 39,
+  "sf": [
+   1,
+   40
+  ],
+  "aralik": null,
+  "net": 0.4481,
+  "verim": 0.1379
+ },
+ {
+  "konu": "Bakteriyoloji",
+  "kitap": "TUSTIME Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 9.6133,
+  "soru": 6.4,
+  "sayfa": 103,
+  "sf": [
+   87,
+   190
+  ],
+  "aralik": null,
+  "net": 1.3037,
+  "verim": 0.1356
+ },
+ {
+  "konu": "Pediatrik Endokrinoloji",
+  "kitap": "Klinisyen Vaka Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 1.8333,
+  "soru": 1.2,
+  "sayfa": 22,
+  "sf": [
+   226,
+   248
+  ],
+  "aralik": null,
+  "net": 0.2444,
+  "verim": 0.1333
+ },
+ {
+  "konu": "Obstetri",
+  "kitap": "TUSTIME Kadın Doğum konu",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 5.8667,
+  "soru": 3.8,
+  "sayfa": 88,
+  "sf": [
+   148,
+   236
+  ],
+  "aralik": null,
+  "net": 0.7741,
+  "verim": 0.1319
+ },
+ {
+  "konu": "Hücre Histolojisi ve Fizyolojisi",
+  "kitap": "Klinisyen Vaka Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 2.1667,
+  "soru": 1.4,
+  "sayfa": 26,
+  "sf": [
+   7,
+   33
+  ],
+  "aralik": null,
+  "net": 0.2852,
+  "verim": 0.1316
+ },
+ {
+  "konu": "Tıbbi Parazitoloji",
+  "kitap": "TUSTIME Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 3.1733,
+  "soru": 2.0,
+  "sayfa": 34,
+  "sf": [
+   287,
+   321
+  ],
+  "aralik": null,
+  "net": 0.4074,
+  "verim": 0.1284
+ },
+ {
+  "konu": "Böbrek Fizyolojisi",
+  "kitap": "TUSTIME Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 1.3333,
+  "soru": 0.8,
+  "sayfa": 20,
+  "sf": [
+   159,
+   179
+  ],
+  "aralik": null,
+  "net": 0.163,
+  "verim": 0.1222
+ },
+ {
+  "konu": "Kulak Burun Boğaz Hastalıkları",
+  "kitap": "Klinisyen Vaka Küçük Stajlar",
+  "grup": "Dahiliye grubu",
+  "brans": "Küçük Stajlar",
+  "saat": 2.0,
+  "soru": 1.2,
+  "sayfa": 24,
+  "sf": [
+   230,
+   254
+  ],
+  "aralik": null,
+  "net": 0.2444,
+  "verim": 0.1222
+ },
+ {
+  "konu": "Sıvı Elektrolit Dengesi Asit Baz Bozuklukları",
+  "kitap": "Speetus Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 1.0,
+  "soru": 0.6,
+  "sayfa": 8,
+  "sf": [
+   1,
+   9
+  ],
+  "aralik": null,
+  "net": 0.1222,
+  "verim": 0.1222
+ },
+ {
+  "konu": "Endokrin Sistem Fizyolojisi",
+  "kitap": "TUSTIME Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 1.7333,
+  "soru": 1.0,
+  "sayfa": 26,
+  "sf": [
+   179,
+   205
+  ],
+  "aralik": null,
+  "net": 0.2037,
+  "verim": 0.1175
+ },
+ {
+  "konu": "Endokrin sistem Histolojisi ve Fizyolojisi",
+  "kitap": "Klinisyen Vaka Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 1.75,
+  "soru": 1.0,
+  "sayfa": 21,
+  "sf": [
+   219,
+   240
+  ],
+  "aralik": null,
+  "net": 0.2037,
+  "verim": 0.1164
+ },
+ {
+  "konu": "Kas Dokusu Histoloji ve Fizyolojisi",
+  "kitap": "Klinisyen Vaka Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 1.4167,
+  "soru": 0.8,
+  "sayfa": 17,
+  "sf": [
+   81,
+   98
+  ],
+  "aralik": null,
+  "net": 0.163,
+  "verim": 0.115
+ },
+ {
+  "konu": "Üriner Sistem Hastalıkları",
+  "kitap": "Emrullah Patoloji SST",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 2.1333,
+  "soru": 1.2,
+  "sayfa": 32,
+  "sf": [
+   204,
+   236
+  ],
+  "aralik": null,
+  "net": 0.2444,
+  "verim": 0.1146
+ },
+ {
+  "konu": "Endokrinoloji",
+  "kitap": "Atilla Uslu SST",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 3.6,
+  "soru": 2.0,
+  "sayfa": 54,
+  "sf": [
+   195,
+   249
+  ],
+  "aralik": null,
+  "net": 0.4074,
+  "verim": 0.1132
+ },
+ {
+  "konu": "Pediatrik Kardiyoloji",
+  "kitap": "Klinisyen Vaka Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 4.3333,
+  "soru": 2.4,
+  "sayfa": 52,
+  "sf": [
+   109,
+   161
+  ],
+  "aralik": null,
+  "net": 0.4889,
+  "verim": 0.1128
+ },
+ {
+  "konu": "Doku Histolojisi ve Fizyolojisi",
+  "kitap": "Klinisyen Vaka Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 4.0,
+  "soru": 2.2,
+  "sayfa": 48,
+  "sf": [
+   33,
+   81
+  ],
+  "aralik": null,
+  "net": 0.4481,
+  "verim": 0.112
+ },
+ {
+  "konu": "Hematopoetik Sistem Fizyolojisi",
+  "kitap": "TUSTIME Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 0.7333,
+  "soru": 0.4,
+  "sayfa": 11,
+  "sf": [
+   129,
+   140
+  ],
+  "aralik": null,
+  "net": 0.0815,
+  "verim": 0.1111
+ },
+ {
+  "konu": "Karaciğer Hastalıkları",
+  "kitap": "Emrullah Patoloji SST",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 1.4667,
+  "soru": 0.8,
+  "sayfa": 22,
+  "sf": [
+   300,
+   322
+  ],
+  "aralik": null,
+  "net": 0.163,
+  "verim": 0.1111
+ },
+ {
+  "konu": "Fizik Tedavi ve Rehabilitasyon",
+  "kitap": "Klinisyen Vaka Küçük Stajlar",
+  "grup": "Dahiliye grubu",
+  "brans": "Küçük Stajlar",
+  "saat": 1.8333,
+  "soru": 1.0,
+  "sayfa": 22,
+  "sf": [
+   269,
+   291
+  ],
+  "aralik": null,
+  "net": 0.2037,
+  "verim": 0.1111
+ },
+ {
+  "konu": "İmmünoloji",
+  "kitap": "Emrullah Patoloji SST",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 1.8667,
+  "soru": 1.0,
+  "sayfa": 28,
+  "sf": [
+   62,
+   90
+  ],
+  "aralik": null,
+  "net": 0.2037,
+  "verim": 0.1091
+ },
+ {
+  "konu": "Pediatrik Onkoloji",
+  "kitap": "Klinisyen Vaka Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 2.25,
+  "soru": 1.2,
+  "sayfa": 27,
+  "sf": [
+   309,
+   336
+  ],
+  "aralik": null,
+  "net": 0.2444,
+  "verim": 0.1086
+ },
+ {
+  "konu": "Gastrointestinal sistem Histolojisi ve Fizyolojisi",
+  "kitap": "Klinisyen Vaka Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 2.4167,
+  "soru": 1.2,
+  "sayfa": 29,
+  "sf": [
+   171,
+   200
+  ],
+  "aralik": null,
+  "net": 0.2444,
+  "verim": 0.1011
+ },
+ {
+  "konu": "Pediatrik Hematoloji",
+  "kitap": "Klinisyen Vaka Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 2.0833,
+  "soru": 1.0,
+  "sayfa": 25,
+  "sf": [
+   284,
+   309
+  ],
+  "aralik": null,
+  "net": 0.2037,
+  "verim": 0.0978
+ },
+ {
+  "konu": "Metabolik Hastalıklar",
+  "kitap": "Klinisyen Vaka Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 3.0,
+  "soru": 1.4,
+  "sayfa": 36,
+  "sf": [
+   248,
+   284
+  ],
+  "aralik": null,
+  "net": 0.2852,
+  "verim": 0.0951
+ },
+ {
+  "konu": "Otakoidler ve NSAİİ",
+  "kitap": "Yavuz Şahin Farmakoloji SB",
+  "grup": "Farmakoloji",
+  "brans": "Farmakoloji",
+  "saat": 0.875,
+  "soru": 0.4,
+  "sayfa": 14,
+  "sf": [
+   135,
+   149
+  ],
+  "aralik": null,
+  "net": 0.0815,
+  "verim": 0.0931
+ },
+ {
+  "konu": "İnflamasyon",
+  "kitap": "Emrullah Patoloji SST",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 1.3333,
+  "soru": 0.6,
+  "sayfa": 20,
+  "sf": [
+   32,
+   52
+  ],
+  "aralik": null,
+  "net": 0.1222,
+  "verim": 0.0917
+ },
+ {
+  "konu": "Viroloji",
+  "kitap": "TUSTIME Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 6.44,
+  "soru": 2.8,
+  "sayfa": 69,
+  "sf": [
+   190,
+   259
+  ],
+  "aralik": null,
+  "net": 0.5704,
+  "verim": 0.0886
+ },
+ {
+  "konu": "Beyin Cerrahisi",
+  "kitap": "Klinisyen Vaka Küçük Stajlar",
+  "grup": "Dahiliye grubu",
+  "brans": "Küçük Stajlar",
+  "saat": 3.25,
+  "soru": 1.4,
+  "sayfa": 39,
+  "sf": [
+   76,
+   115
+  ],
+  "aralik": null,
+  "net": 0.2852,
+  "verim": 0.0877
+ },
+ {
+  "konu": "İmmünoloji",
+  "kitap": "TUSTIME Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 3.7333,
+  "soru": 1.6,
+  "sayfa": 40,
+  "sf": [
+   47,
+   87
+  ],
+  "aralik": null,
+  "net": 0.3259,
+  "verim": 0.0873
+ },
+ {
+  "konu": "Göz Hastalıkları",
+  "kitap": "Klinisyen Vaka Küçük Stajlar",
+  "grup": "Dahiliye grubu",
+  "brans": "Küçük Stajlar",
+  "saat": 2.3333,
+  "soru": 1.0,
+  "sayfa": 28,
+  "sf": [
+   297,
+   325
+  ],
+  "aralik": null,
+  "net": 0.2037,
+  "verim": 0.0873
+ },
+ {
+  "konu": "Hematopoetik Sistem hastalıkları",
+  "kitap": "Emrullah Patoloji SST",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 1.4667,
+  "soru": 0.6,
+  "sayfa": 22,
+  "sf": [
+   158,
+   180
+  ],
+  "aralik": null,
+  "net": 0.1222,
+  "verim": 0.0833
+ },
+ {
+  "konu": "Özofagus Hastalıkları ve Cerrahisi",
+  "kitap": "Speetus Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 1.0,
+  "soru": 0.4,
+  "sayfa": 8,
+  "sf": [
+   59,
+   67
+  ],
+  "aralik": null,
+  "net": 0.0815,
+  "verim": 0.0815
+ },
+ {
+  "konu": "Romatoloji",
+  "kitap": "Atilla Uslu Dahiliye 2",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 5.625,
+  "soru": 2.2,
+  "sayfa": 45,
+  "sf": [
+   216,
+   261
+  ],
+  "aralik": null,
+  "net": 0.4481,
+  "verim": 0.0797
+ },
+ {
+  "konu": "Hematoloji",
+  "kitap": "Atilla Uslu SST",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 4.6667,
+  "soru": 1.8,
+  "sayfa": 70,
+  "sf": [
+   5,
+   75
+  ],
+  "aralik": null,
+  "net": 0.3667,
+  "verim": 0.0786
+ },
+ {
+  "konu": "Nöroloji",
+  "kitap": "Klinisyen Vaka Küçük Stajlar",
+  "grup": "Dahiliye grubu",
+  "brans": "Küçük Stajlar",
+  "saat": 5.75,
+  "soru": 2.2,
+  "sayfa": 69,
+  "sf": [
+   7,
+   76
+  ],
+  "aralik": null,
+  "net": 0.4481,
+  "verim": 0.0779
+ },
+ {
+  "konu": "Metabolizma Entegrasyonu",
+  "kitap": "Yavuz Şahin Biyokimya konu",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 1.05,
+  "soru": 0.4,
+  "sayfa": 6,
+  "sf": [
+   37,
+   43
+  ],
+  "aralik": null,
+  "net": 0.0815,
+  "verim": 0.0776
+ },
+ {
+  "konu": "Pediatrik Allerji",
+  "kitap": "Klinisyen Vaka Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 1.5833,
+  "soru": 0.6,
+  "sayfa": 19,
+  "sf": [
+   207,
+   226
+  ],
+  "aralik": null,
+  "net": 0.1222,
+  "verim": 0.0772
+ },
+ {
+  "konu": "Endokrin Sistem Hastalıkları",
+  "kitap": "Emrullah Patoloji SST",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 1.7333,
+  "soru": 0.6,
+  "sayfa": 26,
+  "sf": [
+   378,
+   404
+  ],
+  "aralik": null,
+  "net": 0.1222,
+  "verim": 0.0705
+ },
+ {
+  "konu": "Gastroenteroloji/Hepatoloji",
+  "kitap": "Atilla Uslu Dahiliye 2",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 10.0,
+  "soru": 3.4,
+  "sayfa": 80,
+  "sf": [
+   136,
+   216
+  ],
+  "aralik": null,
+  "net": 0.6926,
+  "verim": 0.0693
+ },
+ {
+  "konu": "Nefroloji",
+  "kitap": "Atilla Uslu Dahiliye 2",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 6.5,
+  "soru": 2.2,
+  "sayfa": 52,
+  "sf": [
+   8,
+   60
+  ],
+  "aralik": null,
+  "net": 0.4481,
+  "verim": 0.0689
+ },
+ {
+  "konu": "Jinekolojik Onkoloji",
+  "kitap": "TUSTIME Kadın Doğum konu",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 2.4667,
+  "soru": 0.8,
+  "sayfa": 37,
+  "sf": [
+   111,
+   148
+  ],
+  "aralik": null,
+  "net": 0.163,
+  "verim": 0.0661
+ },
+ {
+  "konu": "Kardiyoloji",
+  "kitap": "Atilla Uslu Dahiliye 1",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 10.25,
+  "soru": 3.0,
+  "sayfa": 82,
+  "sf": [
+   102,
+   184
+  ],
+  "aralik": null,
+  "net": 0.6111,
+  "verim": 0.0596
+ },
+ {
+  "konu": "Göğüs Hastalıkları",
+  "kitap": "Atilla Uslu Dahiliye 1",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 8.5,
+  "soru": 2.0,
+  "sayfa": 68,
+  "sf": [
+   184,
+   252
+  ],
+  "aralik": null,
+  "net": 0.4074,
+  "verim": 0.0479
+ },
+ {
+  "konu": "Endokrinoloji",
+  "kitap": "Atilla Uslu Dahiliye 2",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 9.5,
+  "soru": 2.0,
+  "sayfa": 76,
+  "sf": [
+   60,
+   136
+  ],
+  "aralik": null,
+  "net": 0.4074,
+  "verim": 0.0429
+ },
+ {
+  "konu": "Hematoloji",
+  "kitap": "Atilla Uslu Dahiliye 1",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 10.25,
+  "soru": 1.8,
+  "sayfa": 82,
+  "sf": [
+   8,
+   90
+  ],
+  "aralik": null,
+  "net": 0.3667,
+  "verim": 0.0358
+ },
+ {
+  "konu": "Hematopoetik sistem Histolojisi ve Fizyolojisi",
+  "kitap": "Klinisyen Vaka Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 2.75,
+  "soru": 0.4,
+  "sayfa": 33,
+  "sf": [
+   138,
+   171
+  ],
+  "aralik": null,
+  "net": 0.0815,
+  "verim": 0.0296
+ },
+ {
+  "konu": "Sinir sistemi Hastalıkları",
+  "kitap": "Emrullah Patoloji SST",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 1.8667,
+  "soru": 0.2,
+  "sayfa": 28,
+  "sf": [
+   350,
+   378
+  ],
+  "aralik": null,
+  "net": 0.0407,
+  "verim": 0.0218
+ },
+ {
+  "konu": "Kısaltmalar ve Normal Lab değerleri",
+  "kitap": "Atilla Uslu SST",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 0.0667,
+  "soru": 0.0,
+  "sayfa": 1,
+  "sf": [
+   4,
+   5
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Proteinler",
+  "kitap": "Yavuz Şahin Biyokimya konu",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 2.1,
+  "soru": 0.0,
+  "sayfa": 12,
+  "sf": [
+   65,
+   77
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Enzimler ve Klinik Biyokimya",
+  "kitap": "Yavuz Şahin Biyokimya konu",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 1.4,
+  "soru": 0.0,
+  "sayfa": 8,
+  "sf": [
+   77,
+   85
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Hücre ve Organeller",
+  "kitap": "Yavuz Şahin Biyokimya konu",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 1.05,
+  "soru": 0.0,
+  "sayfa": 6,
+  "sf": [
+   85,
+   91
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Proteinler",
+  "kitap": "Yavuz Şahin Biyokimya SB",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 1.25,
+  "soru": 0.0,
+  "sayfa": 20,
+  "sf": [
+   151,
+   171
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Enzimler ve Klinik Biyokimya",
+  "kitap": "Yavuz Şahin Biyokimya SB",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 0.75,
+  "soru": 0.0,
+  "sayfa": 12,
+  "sf": [
+   171,
+   183
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Hücre ve Organeller",
+  "kitap": "Yavuz Şahin Biyokimya SB",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 0.875,
+  "soru": 0.0,
+  "sayfa": 14,
+  "sf": [
+   183,
+   197
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Enfeksiyon Hastalıkları",
+  "kitap": "TUSTIME Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 2.7067,
+  "soru": 0.0,
+  "sayfa": 29,
+  "sf": [
+   321,
+   350
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Genel Tekrar",
+  "kitap": "Feyyaz Akay Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 1.875,
+  "soru": 0.0,
+  "sayfa": 30,
+  "sf": [
+   202,
+   232
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Kaynakça",
+  "kitap": "Feyyaz Akay Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 0.0625,
+  "soru": 0.0,
+  "sayfa": 1,
+  "sf": [
+   232,
+   233
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Solunum Sistemi Fizyolojisi",
+  "kitap": "TUSTIME Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 0.8667,
+  "soru": 0.0,
+  "sayfa": 13,
+  "sf": [
+   116,
+   129
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Genel Embriyoloji",
+  "kitap": "Klinisyen Vaka Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 2.4167,
+  "soru": 0.0,
+  "sayfa": 29,
+  "sf": [
+   109,
+   138
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Solunum sistemi Histolojisi ve Fizyolojisi",
+  "kitap": "Klinisyen Vaka Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 1.6667,
+  "soru": 0.0,
+  "sayfa": 20,
+  "sf": [
+   240,
+   260
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Pediatrik ve Çevresel Hastalıklar",
+  "kitap": "Emrullah Patoloji SST",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.8,
+  "soru": 0.0,
+  "sayfa": 12,
+  "sf": [
+   134,
+   146
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Pankreas Hastalıkları",
+  "kitap": "Emrullah Patoloji SST",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.6667,
+  "soru": 0.0,
+  "sayfa": 10,
+  "sf": [
+   322,
+   332
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Sosyal Pediatri ve Adölesan",
+  "kitap": "Klinisyen Vaka Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 0.1667,
+  "soru": 0.0,
+  "sayfa": 2,
+  "sf": [
+   52,
+   54
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Sıvı Elektrolit - Asit Baz Bozuklukları",
+  "kitap": "Klinisyen Vaka Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 0.5833,
+  "soru": 0.0,
+  "sayfa": 7,
+  "sf": [
+   63,
+   70
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Zehirlenmeler",
+  "kitap": "Klinisyen Vaka Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 0.25,
+  "soru": 0.0,
+  "sayfa": 3,
+  "sf": [
+   376,
+   379
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Plastik Cerrahi",
+  "kitap": "Klinisyen Vaka Küçük Stajlar",
+  "grup": "Dahiliye grubu",
+  "brans": "Küçük Stajlar",
+  "saat": 0.5,
+  "soru": 0.0,
+  "sayfa": 6,
+  "sf": [
+   291,
+   297
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Yara İyileşmesi",
+  "kitap": "Speetus Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.25,
+  "soru": 0.0,
+  "sayfa": 2,
+  "sf": [
+   21,
+   23
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Adrenal bez Hastalıkları ve Cerrahisi",
+  "kitap": "Speetus Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.375,
+  "soru": 0.0,
+  "sayfa": 3,
+  "sf": [
+   52,
+   55
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Transplantasyon",
+  "kitap": "Speetus Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.375,
+  "soru": 0.0,
+  "sayfa": 3,
+  "sf": [
+   55,
+   58
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Akut Karın",
+  "kitap": "Speetus Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.125,
+  "soru": 0.0,
+  "sayfa": 1,
+  "sf": [
+   58,
+   59
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Morbid Obezite ve Cerrahisi",
+  "kitap": "Speetus Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.125,
+  "soru": 0.0,
+  "sayfa": 1,
+  "sf": [
+   73,
+   74
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Apendiks Vermiformis Hastalıkları ve Cerrahisi",
+  "kitap": "Speetus Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.5,
+  "soru": 0.0,
+  "sayfa": 4,
+  "sf": [
+   91,
+   95
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Perianal bölge Hastalıkları ve Cerrahisi",
+  "kitap": "Speetus Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.375,
+  "soru": 0.0,
+  "sayfa": 3,
+  "sf": [
+   95,
+   98
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "İntestinal Tıkanıklıklar ve Cerrahisi",
+  "kitap": "Speetus Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.25,
+  "soru": 0.0,
+  "sayfa": 2,
+  "sf": [
+   98,
+   100
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Gastrointestinal Sistem Kanamaları ve Cerrahisi",
+  "kitap": "Speetus Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.25,
+  "soru": 0.0,
+  "sayfa": 2,
+  "sf": [
+   100,
+   102
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Gastrointestinal sistem Fistülleri ve Cerrahisi",
+  "kitap": "Speetus Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.125,
+  "soru": 0.0,
+  "sayfa": 1,
+  "sf": [
+   102,
+   103
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Portal Hipertansiyon ve Cerrahisi",
+  "kitap": "Speetus Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.375,
+  "soru": 0.0,
+  "sayfa": 3,
+  "sf": [
+   109,
+   112
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Mezenterik Vasküler Hastalıklar ve Cerrahisi",
+  "kitap": "Speetus Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.25,
+  "soru": 0.0,
+  "sayfa": 2,
+  "sf": [
+   128,
+   130
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Cerrahi komplikasyonlar ve tedavisi",
+  "kitap": "Speetus Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.375,
+  "soru": 0.0,
+  "sayfa": 3,
+  "sf": [
+   140,
+   143
+  ],
+  "aralik": null,
+  "net": 0.0,
+  "verim": 0
+ },
+ {
+  "konu": "Travmaya Sistemik Yanıt ve Metabolik Destek",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 1.58,
+  "soru": 0.4,
+  "sayfa": 9,
+  "sf": [
+   5,
+   13
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Adrenal Hastalıkları ve Cerrahisi",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.7,
+  "soru": 2.86,
+  "sayfa": 4,
+  "sf": [
+   14,
+   17
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Sıvı-Elektrolit Dengesi ve Asit Baz Metabolizması",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 1.93,
+  "soru": 0.6,
+  "sayfa": 11,
+  "sf": [
+   18,
+   28
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Cerrahi Hastalarda Beslenme",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.7,
+  "soru": 0.2,
+  "sayfa": 4,
+  "sf": [
+   29,
+   32
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Şok Patofizyolojisi ve Şok Çeşitleri",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.7,
+  "soru": 2.86,
+  "sayfa": 4,
+  "sf": [
+   33,
+   36
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Tiroid Hastalıkları ve Cerrahisi",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 1.93,
+  "soru": 1.4,
+  "sayfa": 11,
+  "sf": [
+   37,
+   47
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Paratiroid Hastalıkları ve Cerrahisi",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.53,
+  "soru": 0.2,
+  "sayfa": 3,
+  "sf": [
+   48,
+   50
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Meme Hastalıkları ve Cerrahisi",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 1.75,
+  "soru": 2.0,
+  "sayfa": 10,
+  "sf": [
+   51,
+   60
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Transplantasyon",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.88,
+  "soru": 1.1,
+  "sayfa": 5,
+  "sf": [
+   61,
+   65
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Yara İyileşmesi",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.53,
+  "soru": 2.14,
+  "sayfa": 3,
+  "sf": [
+   66,
+   68
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Yanık ve Cerrahisi",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.35,
+  "soru": 0.2,
+  "sayfa": 2,
+  "sf": [
+   69,
+   70
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Dalak Hastalıkları ve Cerrahisi",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.35,
+  "soru": 0.5,
+  "sayfa": 2,
+  "sf": [
+   71,
+   72
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Karın Duvarı ve Karın Duvarı Fıtıkları Cerrahisi",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.53,
+  "soru": 0.26,
+  "sayfa": 3,
+  "sf": [
+   73,
+   75
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Akut Karın Hastalıkları ve Cerrahisi",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.35,
+  "soru": 0.08,
+  "sayfa": 2,
+  "sf": [
+   76,
+   77
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Karın İçi Enfeksiyonlar ve Karın Duvarı Hastalıkları",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.18,
+  "soru": 0.02,
+  "sayfa": 1,
+  "sf": [
+   78,
+   78
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Karın Travmaları ve Cerrahisi",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.53,
+  "soru": 0.12,
+  "sayfa": 3,
+  "sf": [
+   79,
+   81
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Özofagus Hastalıkları ve Diyafragmatik Herniler",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.88,
+  "soru": 0.4,
+  "sayfa": 5,
+  "sf": [
+   82,
+   86
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Mide Hastalıkları ve Cerrahisi",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 1.4,
+  "soru": 1.6,
+  "sayfa": 8,
+  "sf": [
+   87,
+   94
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "İnce Barsaklar Hastalıkları ve Cerrahisi",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.7,
+  "soru": 1.8,
+  "sayfa": 4,
+  "sf": [
+   95,
+   98
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Apendiks Hastalıkları ve Cerrahisi",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.35,
+  "soru": 1.43,
+  "sayfa": 2,
+  "sf": [
+   99,
+   100
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Kolon ve Rektum Hastalıkları ve Cerrahisi",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 1.75,
+  "soru": 0.8,
+  "sayfa": 10,
+  "sf": [
+   101,
+   110
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "GİS Kanamalar, Fistüller ve Obstrüksiyonlar",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.7,
+  "soru": 2.86,
+  "sayfa": 4,
+  "sf": [
+   111,
+   114
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Karaciğer Hastalıkları ve Cerrahisi",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.88,
+  "soru": 0.6,
+  "sayfa": 5,
+  "sf": [
+   115,
+   119
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Safra Kesesi ve Safra Yolları Hastalıkları ve Cerrahisi",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.88,
+  "soru": 1.0,
+  "sayfa": 5,
+  "sf": [
+   120,
+   124
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Pankreas Hastalıkları ve Cerrahisi",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 1.75,
+  "soru": 1.2,
+  "sayfa": 10,
+  "sf": [
+   125,
+   134
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Cerrahi Hazırlık ve Cerrahi Enfeksiyonlar",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.88,
+  "soru": 0.08,
+  "sayfa": 5,
+  "sf": [
+   135,
+   139
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Hemostaz, Cerrahi Kanama ve Kan Transfüzyonları",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 1.05,
+  "soru": 0.1,
+  "sayfa": 6,
+  "sf": [
+   140,
+   145
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Deri Hastalıkları",
+  "kitap": "FT Genel Cerrahi",
+  "grup": "Genel Cerrahi grubu",
+  "brans": "Genel Cerrahi",
+  "saat": 0.7,
+  "soru": 2.86,
+  "sayfa": 4,
+  "sf": [
+   146,
+   149
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Pediatriye Genel Bakış",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 0.53,
+  "soru": 0.19,
+  "sayfa": 3,
+  "sf": [
+   5,
+   7
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Büyüme-Gelişme ve Davranış",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 0.88,
+  "soru": 1.28,
+  "sayfa": 5,
+  "sf": [
+   8,
+   12
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Anne Sütü, Beslenme, Mineral ve Vitamin",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 1.75,
+  "soru": 0.85,
+  "sayfa": 10,
+  "sf": [
+   13,
+   22
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Genetik",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 0.7,
+  "soru": 0.85,
+  "sayfa": 4,
+  "sf": [
+   23,
+   26
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Aşılar ve Temel Uygulama Prensipleri",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 1.05,
+  "soru": 0.38,
+  "sayfa": 6,
+  "sf": [
+   27,
+   32
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Döküntülü Hastalıklar",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 0.7,
+  "soru": 0.43,
+  "sayfa": 4,
+  "sf": [
+   33,
+   36
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Pediatrik Gastroenteroloji ve Hepatoloji",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 1.93,
+  "soru": 1.5,
+  "sayfa": 11,
+  "sf": [
+   37,
+   47
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Pediatrik Hematoloji",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 2.28,
+  "soru": 1.07,
+  "sayfa": 13,
+  "sf": [
+   48,
+   60
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Pediatrik Onkoloji",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 1.58,
+  "soru": 1.28,
+  "sayfa": 9,
+  "sf": [
+   61,
+   69
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Yenidoğan · Neonatoloji",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 1.75,
+  "soru": 2.35,
+  "sayfa": 10,
+  "sf": [
+   70,
+   79
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Pediatrik Nöroloji",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 1.23,
+  "soru": 1.71,
+  "sayfa": 7,
+  "sf": [
+   80,
+   86
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Adölesan · Ergen Sağlığı",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 0.18,
+  "soru": 0.06,
+  "sayfa": 1,
+  "sf": [
+   87,
+   87
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Acil ve Zehirlenmeler",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 0.7,
+  "soru": 1.28,
+  "sayfa": 4,
+  "sf": [
+   88,
+   91
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Pediatrik Metabolik Hastalıklar",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 1.05,
+  "soru": 1.5,
+  "sayfa": 6,
+  "sf": [
+   92,
+   97
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Pediatrik İmmünoloji ve Hastalıkları",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 0.53,
+  "soru": 1.28,
+  "sayfa": 3,
+  "sf": [
+   98,
+   100
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Pediatrik Alerji",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 0.53,
+  "soru": 2.56,
+  "sayfa": 3,
+  "sf": [
+   101,
+   103
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Pediatrik Nefroloji",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 1.23,
+  "soru": 1.92,
+  "sayfa": 7,
+  "sf": [
+   104,
+   110
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Pediatrik Romatoloji",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 0.88,
+  "soru": 1.07,
+  "sayfa": 5,
+  "sf": [
+   111,
+   115
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Pediatrik Göğüs Hastalıkları",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 1.05,
+  "soru": 1.5,
+  "sayfa": 6,
+  "sf": [
+   116,
+   121
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Pediatrik Kardiyovasküler Sistem ve Hastalıkları",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 1.58,
+  "soru": 0.64,
+  "sayfa": 9,
+  "sf": [
+   122,
+   130
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Pediatrik Endokrinoloji",
+  "kitap": "FT Pediatri",
+  "grup": "Pediatri",
+  "brans": "Pediatri",
+  "saat": 1.75,
+  "soru": 1.28,
+  "sayfa": 10,
+  "sf": [
+   131,
+   140
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Hücre Fizyolojisi",
+  "kitap": "FT Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 1.05,
+  "soru": 0.9,
+  "sayfa": 6,
+  "sf": [
+   5,
+   10
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Sinir Sistemi Fizyolojisi",
+  "kitap": "FT Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 3.33,
+  "soru": 1.54,
+  "sayfa": 19,
+  "sf": [
+   11,
+   29
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Kas Fizyolojisi",
+  "kitap": "FT Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 1.05,
+  "soru": 0.51,
+  "sayfa": 6,
+  "sf": [
+   30,
+   35
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Kardiyovasküler Sistem Fizyolojisi",
+  "kitap": "FT Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 1.75,
+  "soru": 0.9,
+  "sayfa": 10,
+  "sf": [
+   36,
+   45
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Solunum Sistemi Fizyolojisi",
+  "kitap": "FT Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 0.88,
+  "soru": 2.24,
+  "sayfa": 5,
+  "sf": [
+   46,
+   50
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Hematopoetik Sistem Fizyolojisi",
+  "kitap": "FT Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 0.88,
+  "soru": 0.26,
+  "sayfa": 5,
+  "sf": [
+   51,
+   55
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Gastrointestinal Sistem Fizyolojisi",
+  "kitap": "FT Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 0.88,
+  "soru": 0.77,
+  "sayfa": 5,
+  "sf": [
+   56,
+   60
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Böbrek Fizyolojisi",
+  "kitap": "FT Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 1.05,
+  "soru": 0.26,
+  "sayfa": 6,
+  "sf": [
+   61,
+   66
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Endokrin Sistem Fizyolojisi",
+  "kitap": "FT Fizyoloji",
+  "grup": "Fizyoloji+Histo",
+  "brans": "Fizyoloji",
+  "saat": 1.05,
+  "soru": 0.64,
+  "sayfa": 6,
+  "sf": [
+   67,
+   72
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Temel Mikrobiyoloji",
+  "kitap": "FT Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 2.63,
+  "soru": 3.0,
+  "sayfa": 15,
+  "sf": [
+   5,
+   19
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "İmmünoloji",
+  "kitap": "FT Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 2.28,
+  "soru": 1.6,
+  "sayfa": 13,
+  "sf": [
+   20,
+   32
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Bakteriyoloji",
+  "kitap": "FT Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 7.36,
+  "soru": 6.4,
+  "sayfa": 42,
+  "sf": [
+   33,
+   74
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Viroloji",
+  "kitap": "FT Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 4.2,
+  "soru": 2.8,
+  "sayfa": 24,
+  "sf": [
+   75,
+   98
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Mikoloji",
+  "kitap": "FT Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 1.75,
+  "soru": 2.2,
+  "sayfa": 10,
+  "sf": [
+   99,
+   108
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Tıbbi Parazitoloji",
+  "kitap": "FT Mikrobiyoloji",
+  "grup": "Mikrobiyoloji",
+  "brans": "Mikrobiyoloji",
+  "saat": 2.63,
+  "soru": 2.0,
+  "sayfa": 15,
+  "sf": [
+   109,
+   123
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Enfeksiyon Hastalıkları",
+  "kitap": "FT Mikrobiyoloji",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 1.23,
+  "soru": 2.79,
+  "sayfa": 7,
+  "sf": [
+   124,
+   130
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Hücre Hasarı, Hücre Ölümü ve Adaptasyonlar",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.53,
+  "soru": 1.78,
+  "sayfa": 3,
+  "sf": [
+   5,
+   7
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "İnflamasyon ve Doku Tamiri",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.7,
+  "soru": 0.59,
+  "sayfa": 4,
+  "sf": [
+   8,
+   11
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Hemodinamik Hastalıklar, Tromboembolik Hastalık ve Şok",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.53,
+  "soru": 0.59,
+  "sayfa": 3,
+  "sf": [
+   12,
+   14
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "İmmün Sistem Hastalıkları",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.88,
+  "soru": 0.99,
+  "sayfa": 5,
+  "sf": [
+   15,
+   19
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Neoplazi",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.7,
+  "soru": 1.58,
+  "sayfa": 4,
+  "sf": [
+   20,
+   23
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Çocukluk Çağı Tümörleri",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.18,
+  "soru": 0.04,
+  "sayfa": 1,
+  "sf": [
+   24,
+   24
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Genetik Hastalıklar",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.35,
+  "soru": 0.09,
+  "sayfa": 2,
+  "sf": [
+   25,
+   26
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Damar Hastalıkları",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.53,
+  "soru": 0.4,
+  "sayfa": 3,
+  "sf": [
+   27,
+   29
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Kalp Hastalıkları",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.53,
+  "soru": 0.4,
+  "sayfa": 3,
+  "sf": [
+   30,
+   32
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Hematolojik Hastalıklar",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 1.23,
+  "soru": 0.59,
+  "sayfa": 7,
+  "sf": [
+   33,
+   39
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Çevresel ve Nütrisyonel Hastalıklar",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.35,
+  "soru": 0.09,
+  "sayfa": 2,
+  "sf": [
+   40,
+   41
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Akciğer Hastalıkları",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.88,
+  "soru": 0.99,
+  "sayfa": 5,
+  "sf": [
+   42,
+   46
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Baş ve Boyun Hastalıkları",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.35,
+  "soru": 0.09,
+  "sayfa": 2,
+  "sf": [
+   47,
+   48
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Gastrointestinal Sistem Hastalıkları",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 1.05,
+  "soru": 1.78,
+  "sayfa": 6,
+  "sf": [
+   49,
+   54
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Karaciğer ve Safra Kesesi Hastalıkları",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.7,
+  "soru": 0.79,
+  "sayfa": 4,
+  "sf": [
+   55,
+   58
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Pankreas Hastalıkları",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.35,
+  "soru": 0.09,
+  "sayfa": 2,
+  "sf": [
+   59,
+   60
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Böbrek Hastalıkları",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.88,
+  "soru": 1.19,
+  "sayfa": 5,
+  "sf": [
+   61,
+   65
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Alt Üriner Sistem ve Erkek Genital Sistemi Hastalıkları",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.7,
+  "soru": 0.59,
+  "sayfa": 4,
+  "sf": [
+   66,
+   69
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Kadın Genital Sistem Hastalıkları",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.88,
+  "soru": 1.19,
+  "sayfa": 5,
+  "sf": [
+   70,
+   74
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Meme Hastalıkları",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.7,
+  "soru": 0.99,
+  "sayfa": 4,
+  "sf": [
+   75,
+   78
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Endokrin Sistem Hastalıkları",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.7,
+  "soru": 0.59,
+  "sayfa": 4,
+  "sf": [
+   79,
+   82
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Deri Hastalıkları",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.88,
+  "soru": 0.99,
+  "sayfa": 5,
+  "sf": [
+   83,
+   87
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Kemik-Eklem Hastalıkları ve Yumuşak Doku Tümörleri",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 0.88,
+  "soru": 1.38,
+  "sayfa": 5,
+  "sf": [
+   88,
+   92
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Sinir Sistemi Hastalıkları",
+  "kitap": "FT Patoloji",
+  "grup": "Patoloji",
+  "brans": "Patoloji",
+  "saat": 1.05,
+  "soru": 0.2,
+  "sayfa": 6,
+  "sf": [
+   93,
+   98
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Hematoloji",
+  "kitap": "FT Dahiliye",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 4.2,
+  "soru": 1.68,
+  "sayfa": 24,
+  "sf": [
+   5,
+   28
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Onkoloji",
+  "kitap": "FT Dahiliye",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 1.58,
+  "soru": 1.68,
+  "sayfa": 9,
+  "sf": [
+   29,
+   37
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Endokrinoloji ve Metabolizma Hastalıkları",
+  "kitap": "FT Dahiliye",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 5.25,
+  "soru": 1.86,
+  "sayfa": 30,
+  "sf": [
+   38,
+   67
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Nefroloji",
+  "kitap": "FT Dahiliye",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 3.5,
+  "soru": 2.05,
+  "sayfa": 20,
+  "sf": [
+   68,
+   87
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Gastroenteroloji",
+  "kitap": "FT Dahiliye",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 4.9,
+  "soru": 6.33,
+  "sayfa": 28,
+  "sf": [
+   88,
+   115
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Kardiyoloji",
+  "kitap": "FT Dahiliye",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 2.1,
+  "soru": 2.79,
+  "sayfa": 12,
+  "sf": [
+   116,
+   127
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Göğüs Hastalıkları",
+  "kitap": "FT Dahiliye",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 1.75,
+  "soru": 1.86,
+  "sayfa": 10,
+  "sf": [
+   128,
+   137
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Romatoloji",
+  "kitap": "FT Dahiliye",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 3.5,
+  "soru": 2.05,
+  "sayfa": 20,
+  "sf": [
+   138,
+   157
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Geriatri",
+  "kitap": "FT Dahiliye",
+  "grup": "Dahiliye grubu",
+  "brans": "Dahiliye",
+  "saat": 1.05,
+  "soru": 0.51,
+  "sayfa": 6,
+  "sf": [
+   158,
+   163
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Vajenin Premalign ve Malign Hastalıkları",
+  "kitap": "FT Kadın Doğum",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 0.18,
+  "soru": 0.05,
+  "sayfa": 1,
+  "sf": [
+   64,
+   64
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Serviks Uterinin Premalign ve Malign Hastalıkları",
+  "kitap": "FT Kadın Doğum",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 0.53,
+  "soru": 0.15,
+  "sayfa": 3,
+  "sf": [
+   65,
+   67
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Korpus Uterinin Premalign ve Malign Hastalıkları",
+  "kitap": "FT Kadın Doğum",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 0.7,
+  "soru": 0.2,
+  "sayfa": 4,
+  "sf": [
+   68,
+   71
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Tuba ve Overin Malign Hastalıkları",
+  "kitap": "FT Kadın Doğum",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 0.88,
+  "soru": 0.24,
+  "sayfa": 5,
+  "sf": [
+   72,
+   76
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Gestasyonel Trofoblastik Hastalıklar",
+  "kitap": "FT Kadın Doğum",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 0.7,
+  "soru": 0.2,
+  "sayfa": 4,
+  "sf": [
+   77,
+   80
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Obstetriye Giriş ve İmplantasyon",
+  "kitap": "FT Kadın Doğum",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 0.7,
+  "soru": 3.8,
+  "sayfa": 4,
+  "sf": [
+   81,
+   84
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Abortus",
+  "kitap": "FT Kadın Doğum",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 0.7,
+  "soru": 0.2,
+  "sayfa": 4,
+  "sf": [
+   85,
+   88
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Ektopik Gebelikler",
+  "kitap": "FT Kadın Doğum",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 0.35,
+  "soru": 0.1,
+  "sayfa": 2,
+  "sf": [
+   89,
+   90
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Fetal Gelişim ve Fizyoloji",
+  "kitap": "FT Kadın Doğum",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 0.53,
+  "soru": 0.15,
+  "sayfa": 3,
+  "sf": [
+   91,
+   93
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Maternal Fizyoloji",
+  "kitap": "FT Kadın Doğum",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 0.35,
+  "soru": 0.1,
+  "sayfa": 2,
+  "sf": [
+   94,
+   95
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Gebelik-İlaç İlişkisi",
+  "kitap": "FT Kadın Doğum",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 0.53,
+  "soru": 0.15,
+  "sayfa": 3,
+  "sf": [
+   96,
+   98
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Prenatal Değerlendirme",
+  "kitap": "FT Kadın Doğum",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 0.53,
+  "soru": 0.15,
+  "sayfa": 3,
+  "sf": [
+   99,
+   101
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Fetal Monitorizasyon",
+  "kitap": "FT Kadın Doğum",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 0.53,
+  "soru": 0.15,
+  "sayfa": 3,
+  "sf": [
+   102,
+   104
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Doğum ve Komplikasyonları",
+  "kitap": "FT Kadın Doğum",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 1.23,
+  "soru": 0.34,
+  "sayfa": 7,
+  "sf": [
+   105,
+   111
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Anormal Doğum",
+  "kitap": "FT Kadın Doğum",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 0.88,
+  "soru": 0.24,
+  "sayfa": 5,
+  "sf": [
+   112,
+   116
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Puerperium ve Puerperal Enfeksiyonlar",
+  "kitap": "FT Kadın Doğum",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 0.35,
+  "soru": 0.1,
+  "sayfa": 2,
+  "sf": [
+   117,
+   118
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Riskli Gebelikler",
+  "kitap": "FT Kadın Doğum",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 1.58,
+  "soru": 0.44,
+  "sayfa": 9,
+  "sf": [
+   119,
+   127
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Gebelikte Sistemik Hastalıklar",
+  "kitap": "FT Kadın Doğum",
+  "grup": "Kadın Doğum",
+  "brans": "Kadın Doğum",
+  "saat": 1.4,
+  "soru": 0.39,
+  "sayfa": 8,
+  "sf": [
+   128,
+   135
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Kemikler",
+  "kitap": "Anatomi Fast Track",
+  "grup": "Anatomi",
+  "brans": "Anatomi",
+  "saat": 2.98,
+  "soru": 1.0,
+  "sayfa": 17,
+  "sf": [
+   5,
+   21
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Eklemler",
+  "kitap": "Anatomi Fast Track",
+  "grup": "Anatomi",
+  "brans": "Anatomi",
+  "saat": 1.05,
+  "soru": 0.2,
+  "sayfa": 6,
+  "sf": [
+   22,
+   27
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Kaslar",
+  "kitap": "Anatomi Fast Track",
+  "grup": "Anatomi",
+  "brans": "Anatomi",
+  "saat": 3.68,
+  "soru": 2.2,
+  "sayfa": 21,
+  "sf": [
+   28,
+   48
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Solunum Sistemi Anatomisi",
+  "kitap": "Anatomi Fast Track",
+  "grup": "Anatomi",
+  "brans": "Anatomi",
+  "saat": 0.88,
+  "soru": 1.0,
+  "sayfa": 5,
+  "sf": [
+   55,
+   59
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Dolaşım Sistemi Anatomisi",
+  "kitap": "Anatomi Fast Track",
+  "grup": "Anatomi",
+  "brans": "Anatomi",
+  "saat": 2.98,
+  "soru": 1.4,
+  "sayfa": 17,
+  "sf": [
+   60,
+   76
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Sindirim Sistemi Anatomisi",
+  "kitap": "Anatomi Fast Track",
+  "grup": "Anatomi",
+  "brans": "Anatomi",
+  "saat": 2.28,
+  "soru": 1.56,
+  "sayfa": 13,
+  "sf": [
+   77,
+   89
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Kardiyovasküler Sistem",
+  "kitap": "FT Farmakoloji",
+  "grup": "Farmakoloji",
+  "brans": "Farmakoloji",
+  "saat": 3.33,
+  "soru": 1.3,
+  "sayfa": 19,
+  "sf": [
+   25,
+   43
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Otakoidler",
+  "kitap": "FT Farmakoloji",
+  "grup": "Farmakoloji",
+  "brans": "Farmakoloji",
+  "saat": 1.23,
+  "soru": 0.43,
+  "sayfa": 7,
+  "sf": [
+   76,
+   82
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "NSAII",
+  "kitap": "FT Farmakoloji",
+  "grup": "Farmakoloji",
+  "brans": "Farmakoloji",
+  "saat": 0.7,
+  "soru": 0.83,
+  "sayfa": 4,
+  "sf": [
+   83,
+   86
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Gastrointestinal Sistem",
+  "kitap": "FT Farmakoloji",
+  "grup": "Farmakoloji",
+  "brans": "Farmakoloji",
+  "saat": 0.53,
+  "soru": 0.72,
+  "sayfa": 3,
+  "sf": [
+   87,
+   89
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "İmmün Modülatör İlaçlar",
+  "kitap": "FT Farmakoloji",
+  "grup": "Farmakoloji",
+  "brans": "Farmakoloji",
+  "saat": 0.88,
+  "soru": 1.04,
+  "sayfa": 5,
+  "sf": [
+   112,
+   116
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Hematopoetik Sistem Farmakolojisi",
+  "kitap": "FT Farmakoloji",
+  "grup": "Farmakoloji",
+  "brans": "Farmakoloji",
+  "saat": 0.18,
+  "soru": 0.08,
+  "sayfa": 1,
+  "sf": [
+   117,
+   117
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Hücre ve Organeller",
+  "kitap": "FT Biyokimya",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 1.23,
+  "soru": 0.91,
+  "sayfa": 7,
+  "sf": [
+   5,
+   11
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Karbonhidratlar",
+  "kitap": "FT Biyokimya",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 3.68,
+  "soru": 1.32,
+  "sayfa": 21,
+  "sf": [
+   27,
+   47
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Aminoasitlerin Metabolizması",
+  "kitap": "FT Biyokimya",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 2.98,
+  "soru": 0.2,
+  "sayfa": 17,
+  "sf": [
+   69,
+   85
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Nükleotid Metabolizması",
+  "kitap": "FT Biyokimya",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 2.63,
+  "soru": 0.61,
+  "sayfa": 15,
+  "sf": [
+   86,
+   100
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ },
+ {
+  "konu": "Vitaminler",
+  "kitap": "FT Biyokimya",
+  "grup": "Biyokimya",
+  "brans": "Biyokimya",
+  "saat": 1.4,
+  "soru": 0.51,
+  "sayfa": 8,
+  "sf": [
+   101,
+   108
+  ],
+  "aralik": null,
+  "net": 0,
+  "verim": 0
+ }
+]
