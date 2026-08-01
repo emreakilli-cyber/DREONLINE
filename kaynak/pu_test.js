@@ -518,7 +518,7 @@ let KA=0;const eA=(a,ok,x)=>{if(!ok){KA++;console.log('  ✗ '+a+(x!==undefined?
   C.setGun('2026-07-30'); X.D.bitti={}; X.D.erken={}; R('D.puTur="deneme"');
   R('ppanelCiz()');
   const h=R('document.getElementById("puListe").innerHTML||""');
-  eA("deneme satırı .ic kullanıyor",/class="kit den"><div class="gn">[^<]*<em>net<\/em><\/div><div class="ic">/.test(h));
+  eA("deneme satırı .ic kullanıyor · değer başlık satırında",/class="kit den"><div class="ic"><b><span class="pAd">[^<]*<\/span><i class="pKz">\+[\d.]+ net<\/i><\/b>/.test(h));
   eA('tanımsız .kd sınıfı yok',h.indexOf('<div class="kd">')<0);
   eA("başlık var",h.indexOf("24'lü deneme · ")>=0);
   eA("alt satır var",h.indexOf(" / 24 çözüldü")>=0);
