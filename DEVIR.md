@@ -11661,6 +11661,88 @@ niyeti korunarak yeni yapıya (`.pAd`/`.pKz` başlık satırı) çevrildi.
 
 ---
 
+## 230 · ÖLÇÜM YENİDEN TASARIMI · KÖR NOKTA · HATA KAYDI · `2027-02-10a`
+
+Kullanıcı beş ekran görüntüsüyle geldi: matris/trend tasarımı yetersiz, uygulama
+"laglıymış gibi", konsolda tekrar eden `Script error.`, ⚠ rozeti 32. Ayrıca
+1 Ağustos denemesi çözüldü ve kritik bir içgörü verildi: *"Genel Cerrahi, Kadın
+Doğum, Biyokimya, Farmakoloji'ye hiç bakmadım; sorularını sezgiyle yapıyorum —
+ben bunu demeden uygulama anlamalı."*
+
+### Deneme matematiği doğrulandı (kullanıcı beyanı)
+
+Temel 50D 37Y → net **40.75** · Klinik 52D 45Y → net **40.75** ·
+K = 40.269 + 0.207×40.75 + 0.277×40.75 = **59.99 ≈ 60.0** (önceki ölçülen 57.61,
++2.38). Formül uygulamadakiyle birebir (`TABAN/KT/KK`). ⚠ Boşlar: Temel 33,
+Klinik 23 — "boş bırakma yok" stratejisine aykırı, kullanıcıya iletildi.
+Deneme uygulamaya HENÜZ girilmedi (ekran görüntüsünde ölçülen hâlâ 57.61).
+
+### Matris tablosu (`gucT`) yeniden tasarlandı + KÖR NOKTA
+
+- Yüzde yerine **net** (radar §"yüzde değil net" dersiyle tutarlı); Fark → "Yolda"
+  (▲ yeşil çip · tamamlanan işlerin denemeye yansımamış katkısı); zebra satır,
+  tabular-nums, monospace sayı sütunları.
+- **Yeni sütun: Çalışma** — `bransCalisma()` (yeni): branş başına tamamlanmış
+  saat = program görevleri (`D.bitti`) + biten power-up'lar.
+- **KÖR NOKTA rozeti**: `çalışma < 0.5 sa` VE `ölçülen net > 0` olan branş —
+  net yalnız sezgiyle taşınıyor demek. Satır kehribar tonla işaretli, tablo altı
+  açıklama notu var. ⚠ İlk sürüm taze/senkronsuz cihazda 11 satırın 11'ini
+  işaretliyordu → `korAktif` eşiği eklendi (toplam çalışma ≥ 5 sa değilse rozet
+  kapalı). Dar ekranda (≤560px) TUS soru sütunu gizleniyor, rozet kendi satırına
+  iniyor (taşma gerçek tarayıcıda görülüp düzeltildi).
+
+### Trend kartları (`miniCiz`) yeniden tasarlandı
+
+Alan dolgusu (gümüş gradyan, kart başına benzersiz id `mgA{i}`), yumuşak çizgi,
+**altın son nokta + hale + altın değer**, başlıkta büyük net + renkli değişim
+çipi (`.miniV`/`.miniD`), hedef çizgisi korundu; hedef etiketi son değer
+etiketine 11px'ten fazla yaklaşırsa aşağı kayıyor (ANATOMİ'de üst üste binmişti).
+
+### Kalıcı hata kaydı (cihazdaki `Script error.` avı için altyapı)
+
+- Repo sürümü headless tarayıcıda 60 sanal saniyede **0 hata** üretti — tekrar
+  eden hatalar cihaz/ortam kaynaklı. Şüpheli: uygulamanın HTML görüntüleyici
+  uygulamasında (file:// benzeri köken) açılması — hem mesaj maskeleniyor hem
+  650KB dosya yavaş çalışıyor. Tahminle düzeltme YAPILMADI; önce gerçek mesaj.
+- `hataKaydet()` (yeni): sarmalayıcı yakalamaları + `window.onerror` +
+  **`unhandledrejection` (ilk kez dinleniyor)** → `localStorage['rota-hatalar']`
+  (son 40, ardışık tekrar sayaçlı). ÖLÇÜM > Veri panelinde **"Hata kaydı (N)"**
+  düğmesi kaydı metin kutusuna döker — kullanıcı kopyalayıp gönderecek.
+
+### Etiketli deneme kalibrasyonu — KULLANICIDAN VERİ BEKLENİYOR
+
+Kullanıcı son denemeyi soru başına Eminim/Bilmiyorum/Unuttum/Arada-kaldım
+etiketleriyle çözmüş. Plan: D'ler etikete göre **sağlam net / kırılgan net**
+diye ayrışacak (kırılgan = sezgi-D, hızlı çürür), Unuttum = branş çürüme
+kalibrasyonu, Bilmiyorum+Boş = konu bazlı boşluk haritası → power-up sıralaması.
+İstenen format (soru başına): `branş · konu · etiket(E/B/U/A) · sonuç(D/Y/BOŞ)`.
+Veri gelince `kaynak/`ta işlenecek — model değişikliği BU TURDA YAPILMADI.
+
+### Test · `kal_test.js` 2 eskimiş kontrol yeni kaynağa uyarlandı (meşru)
+
+`grafik noktalarında net` ve `grafik sağ üstte değişim` eski miniCiz dizgilerini
+arıyordu; niyet korunarak yeni dizgilere çevrildi.
+
+### Headless test yöntemi notları (tekrar kullanılacak)
+
+- `sayfaGec` koreografisi (`setTimeout 230ms` + rAF opaklık dansı) sanal-zaman
+  modunda ateşlenmiyor → sekme, sınıflar elle değiştirilip `olcumCiz()` doğrudan
+  çağrılarak açılmalı. "Boş sayfa" bir uygulama hatası değildi.
+- Kullanıcı durumu simülasyonu: 4 branşın görevleri `D.bitti`'ye işaretlenerek
+  kör nokta davranışı gerçek dağılımla doğrulandı.
+
+### Kapılar · koşulabilenlerin tamamı
+
+| Kapı | Sonuç |
+|---|---|
+| pu_test | benim alanlarım 0 · KONU TEKİLLİĞİ 7 (önceden var, §229 açık maddesi) |
+| kal_test (2 kontrol uyarlandı) · derin_test · tarayici_test · cark_test · mola_test · kombo_test · senk_uc/rol/etag | **0** |
+| kural_test.py · senk_poll.js · kos.js | KOŞAMIYOR (§229 açık maddeleri sürüyor) |
+
+**sürüm `2027-02-10a` ↔ `rota-2027-02-10a` · 656 675 bayt**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
@@ -11678,8 +11760,10 @@ Beğenilen referans: `.glAnh` altın gradyan anahtar · `.glS` satır düzeni ·
 Düzeltilecekler:
 - ~~Power-up paneli · Konu/Soru/Deneme anahtarı mavi, panelin geri kalanıyla uyumsuz~~ ✓ §229
 - ~~Kart düzeni · "+0.189 net" üstte ayrı satır, dağınık~~ ✓ §229
-- Matris tablosu · sütun hizaları ve tipografi
-- Seyir defteri grafikleri
+- ~~Matris tablosu · sütun hizaları ve tipografi~~ ✓ §230 (+ kör nokta rozeti)
+- ~~Seyir defteri grafikleri~~ ✓ §230 (branş trend kartları; ana seyir grafiği hafif dokunuş)
+
+Bekleyen: kullanıcıdan etiketli deneme verisi (§230 formatı) · cihazdan "Hata kaydı" dökümü.
 
 ## Bilinen açık noktalar
 

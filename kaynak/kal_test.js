@@ -671,8 +671,8 @@ let NJ=0;const hJ=(a,ok,e)=>{if(!ok){NJ++;console.log('  ✗ '+a+(e!==undefined?
 const KAYJ=require('fs').readFileSync('/mnt/user-data/outputs/index.html','utf8');
 hJ("konu kırılımı konu24ten",KAYJ.indexOf("let K=konu24(br);")>=0);
 hJ('net gösterimi ondalıklı',KAYJ.indexOf('const bir=v=>v.toFixed(1);')>=0);
-hJ('grafik noktalarında net',KAYJ.indexOf("font-size=\"8\" text-anchor=\"middle\"")>=0);
-hJ('grafik sağ üstte değişim',KAYJ.indexOf('const fn=(s1-s0)*payda;')>=0);
+hJ('grafik noktalarında net',KAYJ.indexOf("text-anchor=\"middle\" font-family=\"ui-monospace,monospace\">'+nv.toFixed(1)")>=0);
+hJ('grafik sağ üstte değişim',KAYJ.indexOf('const f=s1-s0,fn=f*payda;')>=0);
 hJ('etiket kademeli yarıçap',KAYJ.indexOf('const kad=(sy>0.25&&(i%2===1))?1.27:1.13;')>=0);
 (function(){
   C.setGun('2026-08-05'); X.D.bitti={}; X.D.kal=[]; X.D.denKaz={};
