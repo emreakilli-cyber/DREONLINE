@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="DRE">
+<defs>
+  <!-- METALİK GRİ · çok duraklı gradyan: iki parlama, iki gölge.
+       Işık sol üstten geliyor; sağ alt kenar koyuyor. -->
+  <linearGradient id="metal" gradientUnits="userSpaceOnUse" x1="40" y1="30" x2="200" y2="215">
+    <stop offset="0.00" stop-color="#CFD4D9"/>
+    <stop offset="0.18" stop-color="#B4BAC0"/>
+    <stop offset="0.36" stop-color="#949AA1"/>
+    <stop offset="0.50" stop-color="#BFC5CB"/>
+    <stop offset="0.64" stop-color="#8E949B"/>
+    <stop offset="0.82" stop-color="#787E85"/>
+    <stop offset="1.00" stop-color="#9BA1A8"/>
+  </linearGradient>
+  <!-- alt kenar gölgesi · derinlik -->
+  <linearGradient id="golge" gradientUnits="userSpaceOnUse" x1="40" y1="30" x2="200" y2="215">
+    <stop offset="0" stop-color="#252A2F"/><stop offset="1" stop-color="#12161A"/>
+  </linearGradient>
+  <!-- üst kenar parlaması -->
+  <linearGradient id="parla" gradientUnits="userSpaceOnUse" x1="40" y1="30" x2="200" y2="215">
+    <stop offset="0" stop-color="#FFFFFF" stop-opacity=".34"/>
+    <stop offset="0.55" stop-color="#FFFFFF" stop-opacity=".16"/>
+    <stop offset="1" stop-color="#FFFFFF" stop-opacity=".05"/>
+  </linearGradient>
+
+  <!-- ── HARFLER · bir kez tanımlanıp üç katman hâlinde kullanılıyor ── -->
+  <g id="dre" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- D · iletki -->
+    <g transform="rotate(-20 84 92)">
+      <path d="M56 44 V140" stroke-width="17"/>
+      <path d="M56 44 H78 A48 48 0 0 1 78 140 H56" stroke-width="17"/>
+      <path d="M50 92 H68" stroke-width="5.4"/>
+      <path d="M56 84 L64 92 L56 100" stroke-width="4.4"/>
+      <circle cx="56" cy="92" r="4.4" stroke-width="2.8"/>
+      <g stroke-width="5.4">
+        <path d="M97 55 l-7.5 4.5"/><path d="M110 92 l-9 0"/><path d="M97 129 l-7.5 -4.5"/>
+      </g>
+      <g stroke-width="3.4">
+        <path d="M104 73 l-6.5 2"/><path d="M104 111 l-6.5 -2"/>
+      </g>
+      <g stroke-width="2.8">
+        <path d="M88 48 l-4 3"/><path d="M107 82 l-5 1"/>
+        <path d="M107 102 l-5 -1"/><path d="M88 136 l-4 -3"/>
+      </g>
+    </g>
+    <!-- R · steteskop -->
+    <g transform="rotate(20 156 92)">
+      <path d="M132 50 V140" stroke-width="17"/>
+      <path d="M132 50 H147 A26 26 0 0 1 158 53" stroke-width="17"/>
+      <path d="M173 66 A26 26 0 0 1 157 102 H132" stroke-width="17"/>
+      <circle cx="160" cy="54" r="5.8" stroke-width="4"/>
+      <circle cx="172" cy="65" r="5.8" stroke-width="4"/>
+      <path d="M155 102 L167 130" stroke-width="17"/>
+      <circle cx="170" cy="139" r="11.5" stroke-width="9"/>
+      <circle cx="170" cy="139" r="4.6" stroke-width="3.2"/>
+    </g>
+    <!-- E · yapılacaklar listesi -->
+    <!-- E · üç satır, kolların UÇLARI onay işaretine dönüşüyor -->
+    <path d="M100 152 V212" stroke-width="17"/>
+    <path d="M100 152 H146 l9 10 l17 -19" stroke-width="17"/>
+    <path d="M100 182 H146 l9 10 l17 -19" stroke-width="17"/>
+    <path d="M100 212 H150" stroke-width="17"/>
+  </g>
+  <linearGradient id="zemin" gradientUnits="userSpaceOnUse" x1="30" y1="20" x2="215" y2="225">
+    <stop offset="0" stop-color="#2A2F35"/>
+    <stop offset="0.42" stop-color="#1B1F24"/>
+    <stop offset="1" stop-color="#0E1114"/>
+  </linearGradient>
+  <radialGradient id="zeminIsik" cx="30%" cy="24%" r="78%">
+    <stop offset="0" stop-color="#48505A" stop-opacity=".55"/>
+    <stop offset="1" stop-color="#48505A" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+<!-- Zemin · logoyla aynı ışık yönü ve metal ailesi. Düz siyah zeminde
+     harfler zeminden kopuk duruyordu; Bevel'de olduğu gibi şekil ve
+     zemin aynı yüzeyin parçası gibi görünüyor. -->
+<rect width="240" height="240" rx="52" fill="url(#zemin)"/>
+<rect width="240" height="240" rx="52" fill="url(#zeminIsik)"/>
+<rect x="1" y="1" width="238" height="238" rx="51" fill="none"
+      stroke="#5A626C" stroke-width="1.2" opacity=".38"/>
+
+<!-- 1 · gölge · aşağı-sağa kaçık -->
+<use href="#dre" x="2.6" y="3" stroke="url(#golge)"/>
+<!-- 2 · metal gövde -->
+<use href="#dre" stroke="url(#metal)"/>
+<!-- 3 · üst kenar parlaması · yukarı-sola kaçık, ince -->
+<g opacity=".34" transform="translate(-1,-1.2)">
+  <use href="#dre" stroke="url(#parla)" stroke-width="3.2"/>
+</g>
+</svg>

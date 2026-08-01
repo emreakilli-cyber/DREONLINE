@@ -148,7 +148,7 @@ c5('geometri önbelleği kuruluyor',/dizOnb=\{c:c,a:a,R:R,he:he/.test(kod));
 c5('sürükleme karesi ölçümsüz (dizKay)',/function dizKay\(\)\{/.test(kod));
 c5('dizKay içinde getBoundingClientRect YOK',!/function dizKay\(\)\{[\s\S]*?getBoundingClientRect[\s\S]*?\n\}/.test(kod.match(/function dizKay\(\)\{[\s\S]*?\n\}/)?.[0]||''));
 c5('parmak hareketi rAF ile kare başına tek',/if\(!kayKare\)kayKare=requestAnimationFrame\(\(\)=>\{kayKare=0;dizKay\(\)\}\)/.test(kod));
-c5('tekerlek birikimli adım',kod.indexOf('const TEK_ESIK=48')>=0);
+c5("tekerlek sürükleme akışını kullanıyor",kod.indexOf("if(!surukleKip){ surukleBasla(); tekY=0 }")>=0);
 c5('sürüklerken diz() çağrılmıyor',!/kayY=dy; diz\(\);/.test(kod));
 c5('bırakınca yumuşak oturma sınıfı',/sahne\.classList\.add\('otu'\)/.test(kod)&&/#sahne\.otu \.sr\{transition:transform \.60s/.test(kod));
 c5('oturma sınıfı geri alınıyor',kod.indexOf('),900)')>=0);
@@ -339,7 +339,7 @@ cI('teşhis paneli varsayılan KAPALI',kod.indexOf('if(!HATA_AC)return')>=0);
 cI('yalnız ?hata=1 ile açılır',kod.indexOf('HATA_AC=/[?&]hata=1/')>=0);
 cI('açıklık açıdan sürekli',kod.indexOf('const acOf=t=>')>=0);
 cI('yükseklik sürekli hesaplanıyor',kod.indexOf('36+SAT[0]*r[0]')>=0);
-cI('konu satırı sürekli',kod.indexOf('.kdm1{height:calc(21px * var(--r1,0))')>=0);
+cI("konu satırı şeritte de görünür",kod.indexOf(".kdm1{height:calc(21px")>=0);
 cI('sf satırı sürekli',kod.indexOf('.kdm2{height:calc(18px * var(--r2,0))')>=0);
 cI('blok satırı sürekli',kod.indexOf('.kdm3{height:calc(17px * var(--r3,0))')>=0);
 cI('son seans satırı sürekli',kod.indexOf('.kdm3b{height:calc(15px * var(--r4,0))')>=0);
@@ -606,7 +606,7 @@ cT('gunKip sınıfı ekleniyor',kod.indexOf("r0.classList.add('gunKip')")>=0);
 cT('gunKip sınıfı kaldırılıyor',kod.indexOf("r1.classList.remove('gunKip')")>=0);
 cT('pencere düzeyinde pointerup',kod.indexOf("window.addEventListener('pointerup',bitir)")>=0);
 cT('odak kaybında oturuyor',kod.indexOf("window.addEventListener('blur',bitir)")>=0);
-cT('sürükleme zaman aşımı (900ms)',kod.indexOf('function surTazele()')>=0&&kod.indexOf('if(surukleKip)otur()},900)')>=0);
+cT("sürükleme zaman aşımı parmağa duyarlı",kod.indexOf("if(bas){ surTazele(); return }")>=0);
 cT('hareket zaman aşımını tazeliyor',kod.indexOf('kayY=dy; surTazele()')>=0);
 cT('oturunca zamanlayıcı iptal',kod.indexOf('if(surZam){clearTimeout(surZam);surZam=null}')>=0);
 (function(){
@@ -707,15 +707,15 @@ console.log('\n═══ OTOMATİK KAYDIRMA ═══');
 let HX=0;const cX=(a,ok,e)=>{if(!ok){HX++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
 const vmX=require('vm'); const RX=e=>vmX.runInContext(e,C);
 cX('otoKaydir fonksiyonu',RX('typeof otoKaydir')==='function');
-cX('ÇARK LİSTESİ üzerinden ilerliyor',kod.indexOf('const S=duraklar(); if(!S.length){bit();return false}')>=0);
+cX('ÇARK LİSTESİ üzerinden ilerliyor',kod.indexOf('const S=duraklar();')>=0&&kod.indexOf('durakKonum(S)')>=0);
 cX('global sıra kullanımı kalmadı',kod.indexOf("if(a==='s'&&aktif<GOREVLER.length-1)gecis(aktif+1)")<0&&
    kod.indexOf("if(a==='o'&&aktif>0){if(motivMod)motivKapat=true;gecis(aktif-1)}")<0);
 cX('Sonraki otomatik kaydırıyor',kod.indexOf("if(a==='s')otoKaydir(1)")>=0);
-cX('Önceki otomatik kaydırıyor',kod.indexOf("otoKaydir(-1)")>=0);
-cX('Tamamlandı da otomatik kaydırıyor',kod.indexOf('return otoKaydir(1,()=>{ust();carkCiz();brifCiz(GOREVLER[aktif])})')>=0);
+cX('Önceki otomatik kaydırıyor',kod.indexOf('otoKaydir(-1)')>=0);
+cX('Tamamlandı da otomatik kaydırıyor',kod.indexOf('return otoKaydirHedef(hd,()=>{ust();carkCiz();brifCiz(GOREVLER[aktif])})')>=0);
 cX('sürükleme kipi kullanılıyor',kod.indexOf('sBas();')>=0);
 cX('yumuşatma eğrisi',kod.indexOf('const yumusat=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2')>=0);
-cX('süre 380 ms',kod.indexOf('const SURE=380')>=0);
+cX("kaydırma süresi 440 ms",kod.indexOf("const SURE=440;")>=0);
 cX('bitince HEDEFE geçiyor (atlama yok)',kod.indexOf('gecis(hed.i,hed.m);')>=0);
 cX("önceki animasyon iptal ediliyor",kod.indexOf("kareBirak(otoKare); otoKare=0")>=0);
 cX("konum bulunamazsa doğrudan geçiyor",kod.indexOf("if(y0===null||!y0)")>=0);
@@ -742,7 +742,7 @@ let HY=0;const cY=(a,ok,e)=>{if(!ok){HY++;console.log('  ✗ '+a+(e!==undefined?
 cY('hedef gerçek konumdan',kod.indexOf('const anahtar=hed.m?')>=0);
 cY('yığılan yükseklik hesabı',kod.indexOf('t+=(K.he[n-1]||0)/2+(K.ar[n]||0)+(K.he[n]||0)/2')>=0);
 cY('geri yönde de hesaplanıyor',kod.indexOf('t-=(K.he[n]||0)/2+(K.ar[n]||0)+(K.he[n-1]||0)/2')>=0);
-cY('bitince hedefe geçiliyor',kod.indexOf('gecis(hed.i,hed.m);')>=0);
+cY("bitince hedefe geçiliyor",kod.indexOf("gecis(hed.i,hed.m)")>=0);
 cY('en yakına oturma kumarı yok',kod.indexOf('try{sOtur()}catch(e){}')<0);
 cY('sınır koreografisi kapatılıyor',kod.indexOf('sinirAc(false); sinirAgKur();')>=0);
 cY('mola durağı anahtarla ayırt ediliyor',kod.indexOf("hed.m?('m'+hed.i)")>=0);
@@ -812,7 +812,7 @@ c1('küçülme konumla sürekli',kod.indexOf('ÖLÇEK ARTIK YALNIZ KONUMDAN')>=0
 c1('açılma da konumla sürekli',kod.indexOf('@keyframes birakAc')<0);
 c1('tek hareket kaynağı var',kod.indexOf('Şerit merkeze yaklaştıkça büyür')>=0);
 c1('mola da aynı kurala tabi',kod.indexOf('kaydırma sürerken de, tuşla geçerken de aynı')>=0);
-c1('oturmada satır geçişi var',kod.indexOf('#sahne.otu .kdm>div{transition:height .26s')>=0);
+c1("oturmada satır geçişi var",kod.indexOf("#sahne.otu .kdm>div{transition:height .34s")>=0);
 c1('hareket azaltma kademelerde geçerli',kod.indexOf('@media (prefers-reduced-motion:reduce){.kdm>div{transition:none}}')>=0);
 console.log('\n'+(I1?'✗ '+I1+' HATA':'✓ SIFIR HATA — 15 ek kontrol'));
 if(I1)process.exitCode=1;
@@ -825,7 +825,7 @@ c2('zamanlayıcılı açılma kalmadı',kod.indexOf('animation:birakAc')<0);
   const say=ad=>{const i=kod.indexOf('@keyframes '+ad+'{'); if(i<0)return 0;
     const j=kod.indexOf('}}',i); return (kod.slice(i,j).match(/\d+%\s*\{/g)||[]).length};
 c2('yükseklik sürekli',kod.indexOf('SAT[0]*r[0]')>=0);
-c2('satır yükseklikleri orandan',kod.indexOf('.kdm1{height:calc(21px * var(--r1,0))')>=0);
+c2("alt satırlar orandan",kod.indexOf(".kdm2{height:calc(18px * var(--r2,0))")>=0);
 })();
 c2('zemin sürekli',kod.indexOf('.kdm{background:rgb(calc(')>=0);
 c2('sınırda saydamlaşma sürüyor',kod.indexOf('SON_BAS=0.52, SON_UC=0.95')>=0);
@@ -849,7 +849,7 @@ c3b('yükseklik sürekli',kod.indexOf('SAT=[21,18,17,15]')>=0);
 c3b('faz devri kaldırıldı',kod.indexOf('fazDevir')<0);
 c3b('negatif gecikme kaldırıldı',kod.indexOf('--fz')<0);
 c3b("sürükleme kipine giriliyor",kod.indexOf("sBas();")>=0);
-c3b("bitince kip kapanıyor",kod.indexOf("surukleKip=false; kayY=0;")>=0);
+c3b("bitince kip kapanıyor",kod.indexOf("surukleKip=false;")>=0);
 c3b('açıklık artık donmuyor',kod.indexOf('if(!otoKilit)')<0);
 c3b('kilit kavramı kalmadı',kod.indexOf('otoKilit=')<0);
 c3b('hata varsayılanı bastırılıyor',kod.indexOf('try{e.preventDefault&&e.preventDefault()}catch(_){}\n    const m=(e.message')>=0);
@@ -878,7 +878,7 @@ c4b('ölçek rampası derinleşti',kod.indexOf('Math.max(.72,Math.pow(Math.max(0
 c4b('rampa diz ve dizKay ikisinde de',(kod.match(/Math\.max\(\.72,Math\.pow\(Math\.max\(0,Math\.cos\(t\)\),\.62\)\)/g)||[]).length===2);
 c4b('kilit kaldırıldı (kartlar büyüyor)',kod.indexOf('let otoKare=0;')>=0&&kod.indexOf('otoKilit=true')<0);
 c4b('kaydırma sürükleme kipine giriyor',kod.indexOf('sBas();\n  try{diz()}catch(e){}')>=0);
-c4b('bitince kip kapanıyor',kod.indexOf('surukleKip=false; kayY=0;')>=0);
+c4b("bitince kip kapanıyor",kod.indexOf("surukleKip=false;")>=0);
 c4b('iptalde kare bırakılıyor',kod.indexOf('kareBirak(otoKare)')>=0);
 c4b("doğrudan geçişte kip geri alınıyor",kod.indexOf("surukleKip=false;")>=0);
 c4b('açıklık serbest',kod.indexOf('otoKilit')<0||kod.indexOf('otoKilit=')<0);
@@ -902,7 +902,7 @@ let I5=0;const c5b=(a,ok,e)=>{if(!ok){I5++;console.log('  ✗ '+a+(e!==undefined
 const vm5=require('vm'); const R5=e=>vm5.runInContext(e,C);
 c5b('icerikDegis fonksiyonu',R5('typeof icerikDegis')==='function');
 c5b('icerikGiris fonksiyonu',R5('typeof icerikGiris')==='function');
-c5b('çıkış süresi tanımlı',R5('ICERIK_CIKIS')===100);
+c5b("koreografi kapatıldı",kod.indexOf("const ICERIK_CIKIS=0;")>=0);
 c5b('kart ve satır orta çizgiden',kod.indexOf('.kdm,.kart,.molaB{transform-origin:50% 50%}')>=0);
 c5b('çıkış orta çizgiden',kod.indexOf('.icCikis>*{animation:icCik')>=0&&kod.indexOf('transform-origin:50% 50%}')>=0);
 c5b('giriş orta çizgiden',kod.indexOf('.icGiris>*{animation:icGir')>=0);
@@ -912,9 +912,9 @@ c5b('çıkışta dört kare',(function(){const i=kod.indexOf('@keyframes icCik{'
   const j=kod.indexOf('}}',i); return (kod.slice(i,j).match(/\d+%\s*\{/g)||[]).length>=6})());
 c5b('girişte dört kare',(function(){const i=kod.indexOf('@keyframes icGir{');
   const j=kod.indexOf('}}',i); return (kod.slice(i,j).match(/\d+%\s*\{/g)||[]).length>=6})());
-c5b("satırlar kademeli çıkıyor",kod.indexOf("(Math.min(n,3)*0.010)")>=0);
+c5b("tek karede değişim",kod.indexOf("/* Tek karede değişim · çıkış animasyonu yok. */")>=0);
 c5b("satırlar kademeli giriyor",kod.indexOf("(Math.min(n,3)*0.012)")>=0);
-c5b('çıkış bitince içerik takas ediliyor',kod.indexOf('el.innerHTML=yeni; icerikGiris(el)}catch(e){} },ICERIK_CIKIS)')>=0);
+c5b("içerik doğrudan takas",kod.indexOf("try{el.innerHTML=yeni}catch(e){}")>=0);
 c5b('ilk çizimde animasyon yok',kod.indexOf('if(ilkKez)el.innerHTML=yeniHTML; else icerikDegis(el,yeniHTML)')>=0);
 c5b('mola içeriği de koreografide',kod.indexOf('if(mGerek){ if(!mVar)m.innerHTML=mYeni; else icerikDegis(m,mYeni) }')>=0);
 c5b('giriş sınıfı temizleniyor',kod.indexOf("yeni.classList.remove('icGiris')")>=0);
@@ -939,10 +939,10 @@ c6b('büyük kart artık flex değil',kod.indexOf('.molaB{border-radius:18px;pad
 c6b('alt seçiciler taşındı',kod.indexOf('.molaB .mkUst{')>=0&&kod.indexOf('.molaB .mkMet{')>=0);
 c6b('nefes animasyonu taşındı',kod.indexOf('.molaB.say{animation:molaNefes')>=0);
 c6b('düğmeler kartın altında',kod.indexOf('<div class="kBtn"><button class="bt" data-a="s">Sonraki</button>')>=0);
-c6b('çıkış süresi 100 ms',kod.indexOf('const ICERIK_CIKIS=100')>=0);
+c6b("çıkış süresi sıfır",kod.indexOf("const ICERIK_CIKIS=0;")>=0);
 c6b('çıkış animasyonu .11s',kod.indexOf('animation:icCik .11s')>=0);
 c6b('giriş animasyonu .15s',kod.indexOf('animation:icGir .15s')>=0);
-c6b('gecikme tavanı 3 satır',kod.indexOf('Math.min(n,3)*0.010')>=0&&kod.indexOf('Math.min(n,3)*0.012')>=0);
+c6b("giriş animasyonu kapalı",kod.indexOf("/* Giriş animasyonu da kapalı")>=0);
 c6b('temizlik 340 ms',kod.indexOf("x.style.animationDelay=''})}catch(e){}},340)")>=0);
 (function(){
   const C=100,G=150,kc=10,kg=12,t=3;
@@ -959,11 +959,11 @@ let I7=0;const c7b=(a,ok,e)=>{if(!ok){I7++;console.log('  ✗ '+a+(e!==undefined
 c7b('açıklık sürekli fonksiyon',kod.indexOf('const acOf=t=>Math.max(0,Math.min(1,1-Math.abs(t)/AC_UC))')>=0);
 c7b('oran yazıcı',kod.indexOf('const acYaz=(x,v)=>{')>=0);
 c7b('dört satır oranı',kod.indexOf("x.style.setProperty('--r'+(q+1),r[q].toFixed(3))")>=0);
-c7b('satır aralıkları tanımlı',kod.indexOf('ara01(v,0.10,0.38)')>=0&&kod.indexOf('ara01(v,0.74,0.96)')>=0);
+c7b("satır aralıkları tanımlı",kod.indexOf("ara01(v,0.06,0.40)")>=0);
 c7b('yükseklik oranlardan',kod.indexOf('return 36+SAT[0]*r[0]+SAT[1]*r[1]+SAT[2]*r[2]+SAT[3]*r[3]')>=0);
 c7b('sürüklerken de sürekli',kod.indexOf('const acOf2=t=>Math.max(0,Math.min(1,1-Math.abs(t)/AC_UC2))')>=0);
 c7b('ayrık kademe sınıfı kalmadı',kod.indexOf('.sr.k1 ')<0&&kod.indexOf('KD_SIRA')<0);
-c7b('CSS satırları orandan',kod.indexOf('.kdm1{height:calc(21px * var(--r1,0));opacity:var(--r1,0)}')>=0);
+c7b("alt satırlar orandan",kod.indexOf(".kdm2{height:calc(18px * var(--r2,0))")>=0);
 c7b('zemin de sürekli',kod.indexOf('.kdm{background:rgb(calc(10 + 9*var(--ac,0))')>=0);
 c7b('mola zemini sürekli',kod.indexOf('.kdm.mk{background:rgb(')>=0);
 c7b('power-up zemini sürekli',kod.indexOf('.kdm.puK{background:rgb(')>=0);
@@ -998,8 +998,8 @@ c8b('ölçüm sürükleme kipinden SONRA',kod.indexOf('sBas();\n  try{diz()}catc
 c8b('hedef her karede ölçülüyor',kod.indexOf('const uzaklik=()=>{')>=0);
 c8b('sBas yoksa doğrudan geçiliyor',kod.indexOf('if(!sBas){ if(motivMod)motivKapat=true; gecis(hed.i,hed.m); bit(); return true}')>=0);
 c8b('ölçüm başarısızsa kip geri alınıyor',kod.indexOf('surukleKip=false;\n    if(sahneEl)')>=0);
-c8b('çarka geri taşımada da otomatik kaydırma',kod.indexOf("otoKaydir(1,()=>{aktif=bul(); ust(); carkCiz(); brifCiz(GOREVLER[aktif])})")>=0);
-c8b('geri taşınan kart da sönüyor',/if\(a==='x'\)\{[\s\S]{0,120}classList\.add\('bitiyor'\)/.test(kod));
+c8b('geri taşımada da otomatik kaydırma',kod.indexOf('return otoKaydirHedef(hdX,')>=0);
+c8b("geri taşınan kart da sönüyor",kod.indexOf("const hdX=siradakiDurak(aktif);")>=0 && /classList\.add\(.bitiyor.\)/.test(kod));
 c8b('sönme dış katman opaklık',kod.indexOf('@keyframes kartBit{')>=0);
 c8b('sönme iç katman küçülüp yukarı kayıyor',kod.indexOf('@keyframes kartBitIc{')>=0&&
    kod.indexOf('transform:translateY(-40px) scale(.66)')>=0);
@@ -1074,7 +1074,7 @@ d1('çıkış orta çizgiden',/\.icCikis>\*\{animation:icCik[\s\S]{0,90}transfor
 d1('giriş orta çizgiden',/\.icGiris>\*\{animation:icGir[\s\S]{0,90}transform-origin:50% 50%\}/.test(kod));
 d1('satırlarda CSS geçişi YOK',kod.indexOf('transition:height .30s')<0);
 d1('satır orta çizgiden ölçekleniyor',/\.kdm>div\{[\s\S]{0,120}transform-origin:50% 50%\}/.test(kod));
-d1('yalnız oturmada kısa geçiş',kod.indexOf('#sahne.otu .kdm>div{transition:height .26s')>=0);
+d1("oturmada satır geçişi var",kod.indexOf("#sahne.otu .kdm>div{transition:height .34s")>=0);
 d1('yükseklik her karede JS yazıyor',kod.indexOf("x.style.setProperty('--r'+(q+1)")>=0);
 d1('kart ve satır aynı eksende',kod.indexOf('.kdm,.kart,.molaB{transform-origin:50% 50%}')>=0);
 (function(){
@@ -1100,7 +1100,7 @@ d2('maske değişkene alındı',kod.indexOf('--mask:linear-gradient(to bottom')>
 d2('webkit ve standart maske',kod.indexOf('-webkit-mask-image:var(--mask); mask-image:var(--mask)')>=0);
 d2('çipler dikeyde ortalı',kod.indexOf('align-content:center;align-items:center;')>=0);
 d2('geniş görünümde de ortalı',kod.indexOf('align-content:center;align-items:center;overflow:hidden;border-radius:17px')>=0);
-d2('gün kipinde tek sütun',kod.indexOf('#rota.gunKip{grid-template-columns:1fr}')>=0);
+d2("gün kipinde tek sütun ve tam yükseklik",kod.indexOf(".gunKip{grid-template-columns:1fr;grid-template-rows:1fr 0 !important}")>=0);
 d2('sütun geçişi yumuşak',kod.indexOf('grid-template-columns .48s cubic-bezier(.22,.78,.28,1)')>=0);
 d2('geniş görünümde liste ferah',kod.indexOf('@media (min-width:881px){\n  #gunListe{padding:30px 40px 34px}')>=0);
 d2('geniş görünümde başlık büyük',kod.indexOf('#gunListe .glBas b{font-size:19px}')>=0);
@@ -1348,3 +1348,452 @@ f1('yumuşatma easeInOutCubic',kod.indexOf('yumusat=t=>t<.5?4*t*t*t:1-Math.pow(-
 })();
 console.log('\n'+(L1?'✗ '+L1+' HATA':'✓ SIFIR HATA — 17 ek kontrol'));
 if(L1)process.exitCode=1;
+
+console.log('\n═══ GÜN GEZİNMESİ ═══');
+let L2=0;const f2=(a,ok,e)=>{if(!ok){L2++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
+const vmG=require('vm'); const RG=e=>vmG.runInContext(e,C);
+f2('gunGoster değişkeni',kod.indexOf('let gunGoster=null')>=0);
+f2('gün dizisi fonksiyonu',RG('typeof gunDizi')==='function');
+f2('komşu gün fonksiyonu',RG('typeof gunKomsu')==='function');
+f2('yeniden bağlama fonksiyonu',RG('typeof gunBagla')==='function');
+(function(){
+  C.setGun('2026-08-05');
+  const G=RG('gunDizi()');
+  f2('program günleri sıralı',G.every((d,i)=>i===0||G[i-1]<d),G.length);
+  f2('yirmi beş gün',G.length===25,G.length);
+  f2('geri komşu doğru',RG('gunKomsu("2026-08-05",-1)')==='2026-08-04');
+  f2('ileri komşu doğru',RG('gunKomsu("2026-08-05",1)')==='2026-08-06');
+  f2('ilk günde geri yok',RG('gunKomsu(gunDizi()[0],-1)')===null);
+  f2('son günde ileri yok',RG('gunKomsu(gunDizi()[gunDizi().length-1],1)')===null);
+  f2('bilinmeyen gün null',RG('gunKomsu("1999-01-01",1)')===null);
+})();
+(function(){
+  C.setGun('2026-08-05'); RG('gunGoster=null');
+  const h=RG('gunListe()');
+  f2('iki ok düğmesi',(h.match(/class="glOk"/g)||[]).length===2);
+  f2('erişilebilirlik etiketi',/aria-label="Önceki gün"/.test(h)&&/aria-label="Sonraki gün"/.test(h));
+  f2('bugünde "bugün" yazıyor',/<i>bugün<\/i>/.test(h));
+  f2('bugünde "bugüne dön" yok',!/glBug/.test(h));
+  RG('gunGoster="2026-08-08"');
+  const h2=RG('gunListe()');
+  f2('başka günde "bugüne dön" çıkıyor',/glBug/.test(h2));
+  f2('tarih değişiyor',h2.indexOf(RG('trT("2026-08-08")'))>=0);
+  RG('gunGoster=gunDizi()[0]');
+  f2('ilk günde geri oku kapalı',/data-gun="" disabled/.test(RG('gunListe()')));
+  RG('gunGoster=gunDizi()[gunDizi().length-1]');
+  f2('son günde ileri oku kapalı',(RG('gunListe()').match(/disabled/g)||[]).length===1);
+  RG('gunGoster=null');
+})();
+f2('kip kapanınca bugüne dönüyor',kod.indexOf("classList.remove('gizli'); gunGoster=null")>=0);
+f2('ok tıklaması olayı durduruyor',kod.indexOf('e.stopPropagation();\n    const d=x.dataset.gun')>=0);
+f2('görev tıklaması yeniden bağlanıyor',kod.indexOf("gunKipAc(false); gecis(+y.dataset.gi)")>=0);
+f2('ölçek de tazeleniyor',kod.indexOf('try{gunOlcekle(gl)}catch(er){}')>=0);
+f2('okların odak halkası',kod.indexOf('.glOk:focus-visible,.glBug:focus-visible{outline:2px solid var(--bilgi)')>=0);
+f2('kapalı ok soluk',kod.indexOf('.glOk[disabled]{opacity:.28;cursor:default}')>=0);
+console.log('\n'+(L2?'✗ '+L2+' HATA':'✓ SIFIR HATA — 22 ek kontrol'));
+if(L2)process.exitCode=1;
+
+console.log('\n═══ TAMAMLAMADA DURAK ATLAMASI ═══');
+let L3=0;const f3=(a,ok,e)=>{if(!ok){L3++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
+const vmT=require('vm'); const RT=e=>vmT.runInContext(e,C);
+f3('hedef seçimi ayrıldı',RT('typeof otoKaydirHedef')==='function');
+f3('yön sarmalayıcısı',RT('typeof otoKaydir')==='function');
+f3('sıradaki durak fonksiyonu',RT('typeof siradakiDurak')==='function');
+f3('atlaI parametresi',kod.indexOf('function siradakiDurak(atlaI)')>=0);
+f3('göreve ait duraklar atlanıyor',kod.indexOf('if(atlaI!==undefined&&atlaI!==null&&S[n].i===atlaI)continue')>=0);
+f3('Tamamlandı hedefi ÖNCE seçiyor',kod.indexOf('const hdOnce=siradakiDurak(aktif);\n      D.bitti[id(g)]=bgun()')>=0);
+f3('geri taşıma hedefi ÖNCE seçiyor',kod.indexOf('const hdX=siradakiDurak(aktif);')>=0);
+(function(){
+  /* 14 ardışık tamamlamada tek durak bile atlanmamalı */
+  C.setGun('2026-07-29'); C.setSaat(1000); X.D.bitti={};
+  RT('aktif=bul(); carkCiz()');
+  let atl=0,n=0;
+  for(;n<14;n++){
+    const S=RT('duraklar()'), p=RT('durakKonum(duraklar())'), akt=RT('aktif');
+    let b=null;
+    for(let k=(p<0?0:p)+1;k<S.length;k++){ if(S[k].i!==akt){b=S[k];break} }
+    if(!b)break;
+    RT('(function(){const hd=siradakiDurak(aktif); D.bitti[id(GOREVLER[aktif])]=bgun(); return otoKaydirHedef(hd)})()');
+    if(!(RT('aktif')===b.i&&RT('molaOdak')===b.m))atl++;
+  }
+  f3(n+' ardışık tamamlamada atlama yok',atl===0,atl);
+  X.D.bitti={};
+})();
+(function(){
+  /* Sonraki/Önceki bozulmamış olmalı */
+  C.setGun('2026-07-29'); C.setSaat(1000); X.D.bitti={};
+  RT('aktif=bul(); carkCiz()');
+  let h=0,a2=0;
+  for(let n=0;n<20;n++){
+    const o=RT('durakKonum(duraklar())'), d=(n%3===2)?-1:1;
+    try{RT('otoKaydir('+d+')')}catch(e){h++}
+    const s=RT('durakKonum(duraklar())');
+    if(s-o!==d&&!(o===0&&d===-1))a2++;
+  }
+  f3('Sonraki/Önceki hâlâ hatasız',h===0,h);
+  f3('Sonraki/Önceki hâlâ atlamasız',a2===0,a2);
+})();
+(function(){
+  /* siradakiDurak · uç durumlar */
+  C.setGun('2026-07-29');
+  const S=RT('duraklar()');
+  const son=S[S.length-1];
+  f3('atlaI olmadan da çalışıyor',RT('siradakiDurak()')!==undefined);
+  f3('bilinmeyen atlaI zarar vermiyor',RT('siradakiDurak(99999)')!==undefined);
+})();
+console.log('\n'+(L3?'✗ '+L3+' HATA':'✓ SIFIR HATA — 13 ek kontrol'));
+if(L3)process.exitCode=1;
+
+console.log('\n═══ TEKERLEK · SÜRÜKLEME AKIŞI ═══');
+let L4=0;const f4=(a,ok,e)=>{if(!ok){L4++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
+f4('ilk tıkta sürükleme kipine giriyor',kod.indexOf('if(!surukleKip){ surukleBasla(); tekY=0 }')>=0);
+f4('kayY birikiyor',kod.indexOf('tekY-=e.deltaY*TEK_KAT;')>=0);
+f4('merkez her tıkta tazeleniyor',kod.indexOf('kayY=tekY; surTazele();')>=0);
+f4('eski adım tabanlı kod kalmadı',kod.indexOf('while(Math.abs(tekBir)>=TEK_ESIK)')<0);
+f4("160 ms sonra oturuyor",kod.indexOf("if(surukleKip)otur(); tekOtur=false},160)")>=0);
+f4('katsayı tanımlı',kod.indexOf('const TEK_KAT=0.62')>=0);
+f4('oturmada şeritte kayıyor',kod.indexOf('const kalanKay=kayY;')>=0);
+f4('kayma sonrası açılma',kod.indexOf('function bitir2(){')>=0);
+f4('kayma süresi sınırlı',kod.indexOf('Math.min(190,60+Math.abs(kalanKay)*0.9)')>=0);
+(function(){
+  /* Hareket sürekliliği · her tık kayY'yi oynatmalı */
+  const KAT=0.62;
+  let k=0; const adimlar=[];
+  for(let i=0;i<5;i++){k-=100*KAT; adimlar.push(k)}
+  f4('her tık hareket üretiyor',adimlar.every((v,i)=>i===0||v<adimlar[i-1]));
+  f4('tek tık anlamlı mesafe (>50px)',Math.abs(adimlar[0])>50,Math.abs(adimlar[0]));
+  f4('beş tık sürekli (sıçrama yok)',Math.abs(adimlar[4]-adimlar[3])===Math.abs(adimlar[1]-adimlar[0]));
+  /* Oturma eğrisi · sonda tam sıfır, monoton */
+  const yum=t=>1-Math.pow(1-t,3);
+  const kalan=-150, SUR=Math.min(190,60+150*0.9);
+  const seri=[];
+  for(let t=0;t<=1.0001;t+=0.05)seri.push(kalan*(1-yum(t)));
+  f4('oturma sonda sıfır',Math.abs(seri[seri.length-1])<1e-9);
+  f4('oturma monoton',seri.every((v,i)=>i===0||v>=seri[i-1]-1e-9));
+  f4('oturma süresi makul',SUR<=190&&SUR>=60,SUR);
+})();
+console.log('\n'+(L4?'✗ '+L4+' HATA':'✓ SIFIR HATA — 15 ek kontrol'));
+if(L4)process.exitCode=1;
+
+console.log('\n═══ DOKUNMATİK ÇAKIŞMASI ═══');
+let L5=0;const f5=(a,ok,e)=>{if(!ok){L5++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
+f5('oturAnim bayrağı',kod.indexOf('let oturAnim=false, tekOtur=false;')>=0);
+f5('oturma animasyonu YALNIZ tekerlekte',kod.indexOf('if(tekOtur&&Math.abs(kalanKay)>1.5')>=0);
+f5('pointermove animasyon sırasında karışmıyor',kod.indexOf('if(oturAnim)return;                        /* oturma animasyonu sürerken karışma */')>=0);
+f5('yeniden giriş engeli',kod.indexOf('if(oturAnim){return}')>=0);
+f5('parmakta tekOtur kapatılıyor',kod.indexOf('tekOtur=false; surukleBasla()')>=0);
+f5('tekerlekte tekOtur açılıyor',kod.indexOf('surukleBasla(); tekY=0 }\n    tekOtur=true;')>=0);
+f5('animasyon bitince bayrak iniyor',kod.indexOf('oturAnim=false; bitir2();')>=0);
+console.log('\n'+(L5?'✗ '+L5+' HATA':'✓ SIFIR HATA — 7 ek kontrol'));
+if(L5)process.exitCode=1;
+
+console.log('\n═══ AÇILMA FAZI ═══');
+let L6=0;const f6=(a,ok,e)=>{if(!ok){L6++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
+f6('kaydırma sonrası açılma fazı',kod.indexOf('const AC=260, yA=t=>1-Math.pow(1-t,3);')>=0);
+f6('anlık kayY=0 sıçraması kalmadı',kod.indexOf('surukleKip=false; kayY=0;\n      if(sahneEl)')<0);
+f6('tekerlekte de açılma fazı',kod.indexOf('const k1=kayY, a1=')>=0);
+f6('kaydırma 440 ms',kod.indexOf('const SURE=440;')>=0);
+f6('satır geçişi 0.34s',kod.indexOf('transition:height .34s')>=0);
+(function(){
+  /* Faz sayısı · 60 fps */
+  const kare=ms=>Math.round(ms/16.7);
+  f6('kaydırma ≥25 ara kare',kare(440)>=25,kare(440));
+  f6('açılma ≥15 ara kare',kare(260)>=15,kare(260));
+  f6('toplam ≥40 kare',kare(440)+kare(260)>=40,kare(440)+kare(260));
+  /* Süreklilik · kaydırma bitişi = açılma başlangıcı */
+  const y=t=>1-Math.pow(1-t,3);
+  const k0=120;
+  f6('açılma başı kayY korunuyor',Math.abs(k0*(1-y(0))-k0)<1e-9);
+  f6('açılma sonu tam sıfır',Math.abs(k0*(1-y(1)))<1e-9);
+  let onc=null,mono=true;
+  for(let t=0;t<=1.001;t+=0.02){const v=k0*(1-y(t)); if(onc!==null&&v>onc+1e-9)mono=false; onc=v}
+  f6('açılma monoton',mono);
+})();
+(function(){
+  const vmA=require('vm'); const RA=e=>vmA.runInContext(e,C);
+  C.setGun('2026-07-29'); C.setSaat(1000); X.D.bitti={};
+  RA('aktif=bul(); carkCiz()');
+  let h=0,a=0;
+  for(let n=0;n<20;n++){
+    const o=RA('durakKonum(duraklar())'), d=(n%3===2)?-1:1;
+    try{RA('otoKaydir('+d+')')}catch(e){h++}
+    const s2=RA('durakKonum(duraklar())');
+    if(s2-o!==d&&!(o===0&&d===-1))a++;
+  }
+  f6('20 adımda hata yok',h===0,h);
+  f6('20 adımda atlama yok',a===0,a);
+  f6('kayY sonda sıfır',RA('kayY')===0);
+})();
+console.log('\n'+(L6?'✗ '+L6+' HATA':'✓ SIFIR HATA — 14 ek kontrol'));
+if(L6)process.exitCode=1;
+
+console.log('\n═══ CANLI YERLEŞİM · SEKME ═══');
+let L7=0;const f7=(a,ok,e)=>{if(!ok){L7++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
+const vmB=require('vm'); const RB2=e=>vmB.runInContext(e,C);
+f7('canliDiz fonksiyonu',RB2('typeof canliDiz')==='function');
+f7('geçiş sonrası canlı yerleşim',kod.indexOf('try{canliDiz(420)}catch(e){}')>=0);
+f7('animasyon boyunca diz() çağrılıyor',kod.indexOf('try{ if(surukleKip)dizKay(); else diz() }catch(e){}')>=0);
+f7('hedef her karede ölçülüyor',kod.indexOf('const u2=uzaklik();')>=0);
+f7('kayY hedefe göre kuruluyor',kod.indexOf('kayY=hedS+(k0-hedS)*(1-yA(t))')>=0);
+f7('körü körüne sıfıra inmiyor',kod.indexOf('kayY=k0*(1-yA(t));')<0);
+f7('bitişte de hedefe oturuyor',kod.indexOf('const uS=uzaklik(); kayY=(uS===null)?0:-uS;')>=0);
+(function(){
+  /* Sekme matematiği · yükseklik büyürken hedef kayıyor */
+  const yA=t=>1-Math.pow(1-t,3);
+  const k0=-8, hedS=t=>-(8+34*t);
+  let enBuyukEski=0, enBuyukYeni=0;
+  for(let t=0;t<=1.0001;t+=0.05){
+    enBuyukEski=Math.max(enBuyukEski,Math.abs(k0*(1-yA(t))-hedS(t)));
+    enBuyukYeni=Math.max(enBuyukYeni,Math.abs((hedS(t)+(k0-hedS(t))*(1-yA(t)))-hedS(t)));
+  }
+  f7('eski yöntemde sekme büyük',enBuyukEski>30,+enBuyukEski.toFixed(1));
+  f7('yeni yöntemde sekme küçük',enBuyukYeni<6,+enBuyukYeni.toFixed(1));
+  const son=hedS(1)+(k0-hedS(1))*(1-yA(1));
+  f7('bitişte tam hedefte',Math.abs(son-hedS(1))<1e-9);
+})();
+(function(){
+  C.setGun('2026-07-29'); C.setSaat(1000); X.D.bitti={};
+  RB2('aktif=bul(); carkCiz()');
+  let h=0,a=0;
+  for(let n=0;n<25;n++){
+    const o=RB2('durakKonum(duraklar())'), d=(n%3===2)?-1:1;
+    try{RB2('otoKaydir('+d+')')}catch(e){h++}
+    const s2=RB2('durakKonum(duraklar())');
+    if(s2-o!==d&&!(o===0&&d===-1))a++;
+  }
+  f7('25 adımda hata yok',h===0,h);
+  f7('25 adımda atlama yok',a===0,a);
+  f7('kayY sonda sıfır',RB2('kayY')===0);
+})();
+console.log('\n'+(L7?'✗ '+L7+' HATA':'✓ SIFIR HATA — 13 ek kontrol'));
+if(L7)process.exitCode=1;
+
+console.log('\n═══ BAŞLIK SÜREKLİLİĞİ ═══');
+let L8=0;const f8=(a,ok,e)=>{if(!ok){L8++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
+(function(){
+  const m1=kod.match(/\.kKonu\{font-size:(\d+)px/);
+  const m2=kod.match(/\.kdm1 \.ko\{font-size:(\d+)px/);
+  f8("kart başlığı 19px",kod.indexOf(".kKonu{font-size:19px")>=0);
+  f8("şerit başlığı --kb ile büyüyor",kod.indexOf("font-size:calc(13px + 6px * var(--kb,0))")>=0);
+  f8("ac=1de kart boyutuna ulaşıyor",13+6===19);
+  f8("satır yüksekliği --kb ile",kod.indexOf("height:calc(21px + 6px * var(--kb,0))")>=0);
+  f8("kart başlığı 19px",kod.indexOf(".kKonu{font-size:19px")>=0);
+})();
+f8("şerit satırları koreografiden muaf",kod.indexOf(".icCikis .kdm,.icGiris .kdm")>=0);
+f8("opacity zorlanıyor",kod.indexOf("opacity:1 !important;transform:none !important}")>=0);
+f8('transform sıfırlanıyor',kod.indexOf('transform:none !important}')>=0);
+f8("satır yüksekliği --kb ile",kod.indexOf("height:calc(21px + 6px * var(--kb,0))")>=0);
+f8("pasif kart yüksekliği 55",kod.indexOf("height:55}")>=0);
+(function(){
+  const vmC=require('vm'); const RC2=e=>vmC.runInContext(e,C);
+  C.setGun('2026-07-29'); C.setSaat(1000); X.D.bitti={};
+  RC2('aktif=bul(); carkCiz()');
+  let h=0,a=0;
+  for(let n=0;n<20;n++){
+    const o=RC2('durakKonum(duraklar())'), d=(n%3===2)?-1:1;
+    try{RC2('otoKaydir('+d+')')}catch(e){h++}
+    const s2=RC2('durakKonum(duraklar())');
+    if(s2-o!==d&&!(o===0&&d===-1))a++;
+  }
+  f8('20 adımda hata yok',h===0,h);
+  f8('20 adımda atlama yok',a===0,a);
+})();
+console.log('\n'+(L8?'✗ '+L8+' HATA':'✓ SIFIR HATA — 12 ek kontrol'));
+if(L8)process.exitCode=1;
+
+console.log('\n═══ SÜREKLİ BÜYÜME ═══');
+let L9=0;const f9=(a,ok,e)=>{if(!ok){L9++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
+f9("başlık --kb ile sürekli",kod.indexOf("var(--kb,0)")>=0);
+f9("satır yüksekliği --kb ile",kod.indexOf("height:calc(21px + 6px * var(--kb,0))")>=0);
+f9('koreografi kapalı',kod.indexOf('const ICERIK_CIKIS=0;')>=0);
+f9('çıkış animasyonu yok',kod.indexOf("eski.classList.add('icCikis');")<0);
+f9('giriş animasyonu erken dönüyor',kod.indexOf('/* Giriş animasyonu da kapalı')>=0);
+f9('--ac JS tarafından yazılıyor',kod.indexOf("setProperty('--ac'")>=0);
+(function(){
+  /* Sürekli büyüme eğrisi */
+  const bo=ac=>13+6*ac, yk=ac=>21+6*ac;
+  f9('ac=0 şerit boyutu',bo(0)===13);
+  f9('ac=1 kart boyutu',bo(1)===19);
+  let onc=null,mono=true;
+  for(let a=0;a<=1.001;a+=0.05){const v=bo(a); if(onc!==null&&v<onc-1e-9)mono=false; onc=v}
+  f9('boyut monoton artıyor',mono);
+  f9('hiçbir noktada sıfır değil',[0,.25,.5,.75,1].every(a=>bo(a)>0&&yk(a)>0));
+  f9('geri kaydırınca küçülüyor',bo(0.3)<bo(0.7));
+})();
+(function(){
+  const vmD=require('vm'); const RD2=e=>vmD.runInContext(e,C);
+  C.setGun('2026-07-29'); C.setSaat(1000); X.D.bitti={};
+  RD2('aktif=bul(); carkCiz()');
+  let h=0,a=0;
+  for(let n=0;n<20;n++){
+    const o=RD2('durakKonum(duraklar())'), d=(n%3===2)?-1:1;
+    try{RD2('otoKaydir('+d+')')}catch(e){h++}
+    const s2=RD2('durakKonum(duraklar())');
+    if(s2-o!==d&&!(o===0&&d===-1))a++;
+  }
+  f9('20 adımda hata yok',h===0,h);
+  f9('20 adımda atlama yok',a===0,a);
+})();
+console.log('\n'+(L9?'✗ '+L9+' HATA':'✓ SIFIR HATA — 13 ek kontrol'));
+if(L9)process.exitCode=1;
+
+console.log('\n═══ SÜREKLİ BÜYÜME ═══');
+let LA=0;const fA=(a,ok,e)=>{if(!ok){LA++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
+fA("başlık boyutu --kb orandan",kod.indexOf("font-size:calc(13px + 6px * var(--kb,0))")>=0);
+fA("satır yüksekliği --kb orandan",kod.indexOf("height:calc(21px + 6px * var(--kb,0))")>=0);
+fA("--kb her karede yazılıyor",(kod.match(/setProperty\(.--kb./g)||[]).length>=2);
+fA('şerit satırları koreografisiz',kod.indexOf('.icCikis .kdm>div,.icGiris .kdm>div')>=0);
+fA('kart üst satırları koreografisiz',kod.indexOf('.icCikis .kUst,.icGiris .kUst')>=0);
+fA('sabit eşitleme kaldırıldı',kod.indexOf('.kdm1 .ko{font-size:19px')<0);
+(function(){
+  /* Boyut eğrisi · sürekli, uçlarda doğru */
+  const boy=r=>13+6*r, yuk=r=>21+6*r;
+  fA('r=0 şerit boyutu 13px',Math.abs(boy(0)-13)<1e-9);
+  fA('r=1 kart boyutu 19px',Math.abs(boy(1)-19)<1e-9);
+  fA('ara değerler sürekli',(function(){
+    let onc=null,mono=true;
+    for(let r=0;r<=1.001;r+=0.05){const v=boy(r); if(onc!==null&&v<onc)mono=false; onc=v}
+    return mono})());
+  fA('yükseklik de sürekli',Math.abs(yuk(0)-21)<1e-9&&Math.abs(yuk(1)-27)<1e-9);
+  /* Tersine dönebilir · oran konumdan geldiği için */
+  fA("tersine dönebilir",kod.indexOf("setProperty('--kb'")>=0);
+})();
+(function(){
+  const vmD=require('vm'); const RD2=e=>vmD.runInContext(e,C);
+  C.setGun('2026-07-29'); C.setSaat(1000); X.D.bitti={};
+  RD2('aktif=bul(); carkCiz()');
+  let h=0,a=0;
+  for(let n=0;n<20;n++){
+    const o=RD2('durakKonum(duraklar())'), d=(n%3===2)?-1:1;
+    try{RD2('otoKaydir('+d+')')}catch(e){h++}
+    const s2=RD2('durakKonum(duraklar())');
+    if(s2-o!==d&&!(o===0&&d===-1))a++;
+  }
+  fA('20 adımda hata yok',h===0,h);
+  fA('20 adımda atlama yok',a===0,a);
+})();
+console.log('\n'+(LA?'✗ '+LA+' HATA':'✓ SIFIR HATA — 13 ek kontrol'));
+if(LA)process.exitCode=1;
+
+console.log('\n═══ BÜYÜME ARALIĞI ═══');
+let LB=0;const fB=(a,ok,e)=>{if(!ok){LB++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
+fB('--kb değişkeni tanımlı',(kod.match(/setProperty\('--kb'/g)||[]).length>=2);
+fB("kb aralığı 0.86–1.00",kod.indexOf("ara01(v,0.86,1.0)")>=0);
+fB("etkin olmayan kart büyümüyor",kod.indexOf("setProperty('--kb','0')")>=0);
+fB('başlık --kb kullanıyor',kod.indexOf('font-size:calc(13px + 6px * var(--kb,0))')>=0);
+fB('yükseklik --kb kullanıyor',kod.indexOf('height:calc(21px + 6px * var(--kb,0))')>=0);
+fB('--ac artık başlıkta değil',kod.indexOf('font-size:calc(13px + 6px * var(--ac,0))')<0);
+(function(){
+  const ara=(v,a,b)=>Math.max(0,Math.min(1,(v-a)/(b-a)));
+  const boy=v=>13+6*ara(v,0.90,1.0);
+  fB('ac=0.6da şerit boyutu 13px',Math.abs(boy(0.6)-13)<1e-9);
+  fB('ac=0.8de hâlâ 13px',Math.abs(boy(0.8)-13)<1e-9,boy(0.8));
+  fB('ac=0.90da büyüme başlıyor',Math.abs(boy(0.90)-13)<1e-9);
+  fB('ac=0.95te ara değer',boy(0.95)>13&&boy(0.95)<19,+boy(0.95).toFixed(1));
+  fB('ac=1de tam 19px',Math.abs(boy(1)-19)<1e-9);
+  fB('19px kart başlığıyla aynı',kod.indexOf('.kKonu{font-size:19px')>=0);
+  fB('boyut 19px aşmıyor',(function(){
+    for(let v=0;v<=1.001;v+=0.02)if(boy(v)>19.0001)return false;
+    return true})());
+  fB('monoton artıyor',(function(){
+    let o=null;for(let v=0;v<=1.001;v+=0.02){const b=boy(v);if(o!==null&&b<o-1e-9)return false;o=b}
+    return true})());
+})();
+console.log('\n'+(LB?'✗ '+LB+' HATA':'✓ SIFIR HATA — 14 ek kontrol'));
+if(LB)process.exitCode=1;
+
+console.log('\n═══ AÇILMAYLA SENKRON ═══');
+let LC=0;const fC=(a,ok,e)=>{if(!ok){LC++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
+fC('--kb yalnız etkin kartta',kod.indexOf("const etkin=x.classList.contains('act')&&!surukleKip;")>=0);
+fC('sürükleme kipinde büyüme yok',kod.indexOf("&&!surukleKip;")>=0);
+fC('etkin olmayan kart sıfır',kod.indexOf("setProperty('--kb','0')")>=0);
+fC('kaynak satırı büyüyor',kod.indexOf('font-size:calc(10.5px + 2px * var(--kb,0))')>=0);
+fC('kaynak gradyanı',kod.indexOf('background-image:linear-gradient(90deg,')>=0);
+fC('gradyan kesimi --kb ile',kod.indexOf('#93C47B calc(var(--kb,0) * 100%)')>=0);
+fC('metin kesimi açık',kod.indexOf('-webkit-background-clip:text;background-clip:text')>=0);
+fC('dolgu saydam',kod.indexOf('-webkit-text-fill-color:transparent')>=0);
+(function(){
+  const bas=kb=>13+6*kb, kay=kb=>10.5+2*kb;
+  fC('kb=0 · şerit boyutları',Math.abs(bas(0)-13)<1e-9&&Math.abs(kay(0)-10.5)<1e-9);
+  fC('kb=1 · kart boyutları',Math.abs(bas(1)-19)<1e-9&&Math.abs(kay(1)-12.5)<1e-9);
+  fC('kaynak kart boyutu 12.5px',kod.indexOf('.kKaynak{font-size:12.5px')>=0);
+  fC('ikisi de monoton',(function(){
+    let a=null,b=null;
+    for(let k=0;k<=1.001;k+=0.05){
+      if(a!==null&&(bas(k)<a-1e-9||kay(k)<b-1e-9))return false;
+      a=bas(k); b=kay(k)}
+    return true})());
+})();
+console.log('\n'+(LC?'✗ '+LC+' HATA':'✓ SIFIR HATA — 12 ek kontrol'));
+if(LC)process.exitCode=1;
+
+console.log('\n═══ YUMUŞAK GEÇİŞ EĞRİSİ ═══');
+let LD=0;const fD=(a,ok,e)=>{if(!ok){LD++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
+fD('smoothstep kullanılıyor',kod.indexOf('return t*t*(3-2*t)')>=0);
+fD('iki yolda da',(kod.match(/t\*t\*\(3-2\*t\)/g)||[]).length>=2);
+fD('doğrusal ara01 kalmadı',kod.indexOf('const ara01=(v,a0,a1)=>Math.max(0,Math.min(1,(v-a0)/(a1-a0)));')<0);
+fD('aralıklar genişletildi',kod.indexOf('ara01(v,0.06,0.40)')>=0&&kod.indexOf('ara01(v,0.66,0.99)')>=0);
+(function(){
+  const dz=(v,a,b)=>Math.max(0,Math.min(1,(v-a)/(b-a)));
+  const dus=(v,a,b)=>{const t=dz(v,a,b);return t*t*(3-2*t)};
+  const AR=[[0.06,0.40],[0.26,0.62],[0.46,0.82],[0.66,0.99]], SAT=[21,18,17,15];
+  const yuk=(v,f)=>36+SAT.reduce((a,s,i)=>a+s*f(v,AR[i][0],AR[i][1]),0);
+  const ikinci=f=>{let m=0,p=null,pp=null;
+    for(let v=0;v<=1.0001;v+=0.01){const y=yuk(v,f);
+      if(pp!==null)m=Math.max(m,Math.abs(y-2*p+pp)); pp=p; p=y}
+    return m};
+  const kD=ikinci(dz), kY=ikinci(dus);
+  fD('yumuşak eğri daha pürüzsüz',kY<kD*0.4,{dogrusal:+kD.toFixed(4),yumusak:+kY.toFixed(4)});
+  fD('uçlarda türev sıfır',Math.abs(dus(0.06,0.06,0.40))<1e-9&&Math.abs(dus(0.40,0.06,0.40)-1)<1e-9);
+  fD('yükseklik monoton',(function(){
+    let o=null;for(let v=0;v<=1.0001;v+=0.01){const y=yuk(v,dus);if(o!==null&&y<o-1e-9)return false;o=y}
+    return true})());
+  fD('uçlarda doğru değerler',Math.abs(yuk(0,dus)-36)<0.01&&Math.abs(yuk(1,dus)-107)<0.01);
+  fD("aralıklar genişledi",AR.every(a=>(a[1]-a[0])>=0.32));
+  fD('sıralı belirme',AR.every((a,i)=>i===0||a[0]>AR[i-1][0]));
+})();
+console.log('\n'+(LD?'✗ '+LD+' HATA':'✓ SIFIR HATA — 10 ek kontrol'));
+if(LD)process.exitCode=1;
+
+console.log('\n═══ CSS GEÇİŞ ÇAKIŞMASI ═══');
+let LE=0;const fE=(a,ok,e)=>{if(!ok){LE++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
+fE('canli sınıfı CSS kuralı',kod.indexOf('#sahne.canli .sr,#sahne.canli .sr .serit')>=0);
+fE('satır ve kart geçişleri kapalı',kod.indexOf('#sahne.canli .kdm>div,#sahne.canli .kart{transition:none !important}')>=0);
+fE('canliDiz sınıfı takıyor',kod.indexOf("sh.classList.add('canli')")>=0);
+fE('canliDiz sınıfı çıkarıyor',kod.indexOf("sh.classList.remove('canli')")>=0);
+fE('açılma fazı da takıyor',kod.indexOf("sahneEl.classList.add('canli')")>=0);
+fE('açılma sonrası çıkarıyor',kod.indexOf("sahneEl.classList.remove('canli')")>=0);
+fE('otu geçişi hâlâ tanımlı (canlı bitince)',kod.indexOf('#sahne.otu .kdm>div{transition:height .34s')>=0);
+(function(){
+  const vmE=require('vm'); const RE2=e=>vmE.runInContext(e,C);
+  C.setGun('2026-07-29'); C.setSaat(1000); X.D.bitti={};
+  RE2('aktif=bul(); carkCiz()');
+  let h=0,a=0;
+  for(let n=0;n<25;n++){
+    const o=RE2('durakKonum(duraklar())'), d=(n%3===2)?-1:1;
+    try{RE2('otoKaydir('+d+')')}catch(e){h++}
+    const s2=RE2('durakKonum(duraklar())');
+    if(s2-o!==d&&!(o===0&&d===-1))a++;
+  }
+  fE('25 adımda hata yok',h===0,h);
+  fE('25 adımda atlama yok',a===0,a);
+  fE('canliDiz tanımlı',RE2('typeof canliDiz')==='function');
+})();
+console.log('\n'+(LE?'✗ '+LE+' HATA':'✓ SIFIR HATA — 10 ek kontrol'));
+if(LE)process.exitCode=1;
+
+console.log('\n═══ GÜVENLİK AĞI ═══');
+let LF=0;const fF=(a,ok,e)=>{if(!ok){LF++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
+fF('parmak denetimi var',kod.indexOf('if(bas){ surTazele(); return }')>=0);
+fF('kip denetimi var',kod.indexOf('if(!surukleKip)return;\n      if(bas)')>=0);
+fF('süre 900 ms',kod.indexOf('},900)')>=0);
+fF('zamanlayıcı kendini yeniliyor',kod.indexOf('surTazele(); return }')>=0);
+(function(){
+  const kar=(bas,kip)=>kip&&!bas;
+  fF('parmak ekranda → oturmaz',kar(true,true)===false);
+  fF('parmak kalktı → oturur',kar(null,true)===true);
+  fF('sürükleme yok → oturmaz',kar(null,false)===false);
+  fF('kip kapalı → oturmaz',kar(true,false)===false);
+})();
+console.log('\n'+(LF?'✗ '+LF+' HATA':'✓ SIFIR HATA — 8 ek kontrol'));
+if(LF)process.exitCode=1;
