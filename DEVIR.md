@@ -11587,6 +11587,80 @@ Bu ayrım kendiliğinden doğru sonucu veriyor:
 
 ---
 
+## 229 · POWER-UP PANELİ ALTIN DİLE GEÇTİ · `2027-02-09a`
+
+Yarım kalan tasarım listesinin ilk kalemi. Ortam değişti: bu tur repodan çalışıldı
+(devir paketi artık sürüm kontrolünde), testler `kaynak/` klasöründen koşuldu.
+
+### Anahtar · mavi → altın gradyan (§217 dili)
+
+`.puKay` `rgba(143,212,255,.92)` → `linear-gradient(135deg,#E4C583,var(--altin))` +
+altın gölge; `.puAnh button.on` ve `em` çipi koyu kahve (`#1A1206`). Panelin mavi
+kromu kaldırıldı: `#ppanel .kbox` mavi kenar/zemin geçersiz kılması silindi (taban
+altın kbox devraldı), `.pri` düğme mavi geçersiz kılması silindi (taban altın düğme),
+`.puBas` başlıkları maviden altına döndü. Uygulama genelindeki power-up kimlik mavisi
+(çark kartı `.puK`, `.puI`, harita rozeti, `khT` satırı) BİLEREK korundu — şikâyet
+paneldeki uyumsuzluktu, uygulama genelindeki kimlik değil.
+
+### Kart düzeni · değer üst satırdan başlık satırına
+
+`.gn` sol/üst sütunu panelden tamamen çıktı. Değer (`0.94 net/sa`, `+0.189 net`,
+tekrar durumu `✓/ŞİMDİ/N gün`) başlık satırının sağına alındı: `<b>` esnek satır,
+`.pAd` (ad, kısalabilir) + `.pKz` (monospace altın, sarmaz). Dar ekranda `.gn`'nin
+`width:100%` ile ayrı satıra düşme sorunu kökten bitti. Dört üretici de değişti:
+`sat`, `denSat`, tekrar kartının iki varyantı. Ölü kalan `.kit.den .gn` kuralı silindi.
+
+### ⚠ Bu turda bulunan ve düzeltilen: flex min-content taşması
+
+İlk sürümde ≥900px üç sütunlu görünümde "Çarka çek" düğmeleri içeriğe biniyordu.
+Kök sebep: `.ic`'de `min-width:0` yoktu ve başlık esneği sarmıyordu — esnek satırın
+min-content'i `pAd + pKz` TOPLAMI olunca dar sütun taşıyordu. Çözüm:
+`#ppanel .kit .ic{min-width:0}` + `b{flex-wrap:wrap}`. Davranış: değer sığarsa
+başlıkla aynı satırda, sığmazsa altta sağa hizalı.
+
+### Doğrulama · gerçek tarayıcıda (yeni yöntem)
+
+Headless Chromium ile panel iki boyutta görüntülendi (500px dar · 1100px üç sütun),
+ekran görüntüleri taban sürümle karşılaştırıldı. İki tuzak not edildi:
+1. Chromium headless pencereyi 500px altına indirmiyor — 430px isteği 500px açılıp
+   görüntüyü kırpıyor; "taşma var" yanılgısı buradan çıktı, ölçümle çürütüldü
+   (`vp=500`, kbox=448, taşan öğe 0).
+2. Ölçüm enjeksiyonu (`document.title`'a genişlik basıp `--dump-dom`) §109'daki
+   teşhis kalıbının tarayıcı sürümü — işe yaradı, tekrar kullanılabilir.
+
+### Test · `pu_test.js` 1 eskimiş kontrol güncellendi (meşru, susturma değil)
+
+"deneme satırı .ic kullanıyor" kontrolü eski `.gn` markup'ını arıyordu; kontrolün
+niyeti korunarak yeni yapıya (`.pAd`/`.pKz` başlık satırı) çevrildi.
+
+### ⚠ AÇIK MADDELER · paketle gelen, bu turdan bağımsız (taban sürümde doğrulandı)
+
+1. **`pu_test.js` KONU TEKİLLİĞİ bölümü 7 hata veriyor** — değişiklikten ÖNCE de
+   veriyordu (taban `2027-02-08a` ile koşuldu, birebir aynı 7 hata). Karışım:
+   §228'in yeniden yazdığı satırı arayan eskimiş metin kontrolleri + gerçek görünen
+   davranışsal sapmalar (`potansiyel düşüyor` 7.552→7.568 YÜKSELIYOR; `ikinci kaynak
+   daha az getiriyor` ilk 0.0012 < ikinci 0.0419 TERSİNE). §227/228 davranışının
+   yeniden incelenmesi gerekiyor — bu tur dokunulmadı.
+2. **`kos.js` ayrıştırılamıyor** — 302. satırda sözdizimi hatası, paketten böyle
+   geldi. Niyeti bilinmeden onarılmadı.
+3. **Paket boşlukları:** `eko.py` (kural_test.py buna bağımlı, koşamıyor),
+   `senk_test.js` (senk_poll.js buna bağımlı, koşamıyor), `senk_kos.js`.
+   Kullanıcının yerelinde varsa repoya eklenmeli.
+
+### Kapılar · koşulabilenlerin tamamı
+
+| Kapı | Sonuç |
+|---|---|
+| pu_test.js | benim alanım 0 hata (28 bölüm) · KONU TEKİLLİĞİ 7 (önceden var, açık madde 1) |
+| tarayici_test · cark_test · derin_test · mola_test · kombo_test | 0 |
+| kal_test (logo.svg fixture ile) · senk_uc · senk_rol · senk_etag | 0 |
+| denet.py | 0 · 196 görev, 177.7 etkin saat |
+| kural_test.py · senk_poll.js · kos.js | KOŞAMADI (açık madde 2-3) |
+
+**sürüm `2027-02-09a` ↔ `rota-2027-02-09a` · 649 645 bayt**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
@@ -11602,8 +11676,8 @@ Kullanıcı altı ekran görüntüsüyle bildirdi: **power-up paneli, matris ve 
 Beğenilen referans: `.glAnh` altın gradyan anahtar · `.glS` satır düzeni · daire tamamlama düğmesi (§217).
 
 Düzeltilecekler:
-- Power-up paneli · Konu/Soru/Deneme anahtarı mavi, panelin geri kalanıyla uyumsuz
-- Kart düzeni · "+0.189 net" üstte ayrı satır, dağınık
+- ~~Power-up paneli · Konu/Soru/Deneme anahtarı mavi, panelin geri kalanıyla uyumsuz~~ ✓ §229
+- ~~Kart düzeni · "+0.189 net" üstte ayrı satır, dağınık~~ ✓ §229
 - Matris tablosu · sütun hizaları ve tipografi
 - Seyir defteri grafikleri
 
@@ -11613,3 +11687,4 @@ Düzeltilecekler:
 - **D_ORAN belirsizliği** hâlâ ±0.57 · program bitse ~0.33'e iner, öncel baskın kalıyor
 - **Potansiyel ile gerçek artış** arasında ~0.42 net fark (§205'te belgeli, bilinçli muhafazakâr)
 - **Aynı kayıt iki kez girilirse** iki kez sayılıyor · yinelenen denetimi yok (bilinçli)
+- **§229'un üç açık maddesi:** pu_test KONU TEKİLLİĞİ 7 hata (§227/228 davranışı yeniden incelenmeli) · kos.js sözdizimi kırık · paket boşlukları (eko.py, senk_test.js, senk_kos.js)
