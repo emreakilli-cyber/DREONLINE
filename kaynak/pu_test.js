@@ -1552,3 +1552,42 @@ eAT('semantic zoom eşikleri kaynakta (aKit/aKonu/eKonu)',/aKit=atSm\(/.test(kod
 eAT('açılış atlas + eski Evren güvenli düşüş',/try\{ atlasAc\(\) \}catch/.test(kod)&&/ACILIS ATLAS/.test(kod));
 console.log('\n'+(QAT?'✗ '+QAT+' HATA':'✓ SIFIR HATA — 10 ek kontrol'));
 if(QAT)process.exitCode=1;
+
+console.log('\n═══ ATLAS · ODAK MİKRO-YERLEŞİMİ + FAZ 2 VERİ (§262) ═══');
+let QA2=0;const eA2=(a,ok,x)=>{if(!ok){QA2++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eA2('atlasMikro/atlasCocuklar/atlasKonuToggle/omrMock fonksiyonları',
+  R('typeof atlasMikro')==='function'&&R('typeof atlasCocuklar')==='function'&&
+  R('typeof atlasKonuToggle')==='function'&&R('typeof omrMock')==='function');
+(function(){ C.setGun('2026-08-02'); R('D.pu={}'); R('D.bitti={}');
+  R('D.denemeler=[{tar:"2026-08-01",kay:"t1",t:30,k:28,bn:{}},{tar:"2026-08-02",kay:"t2",t:32,k:30,bn:{}}]');
+  /* mikro: çocuklar SIKI halkada — global fizik değil */
+  const mk=R('(function(){const V=atlasYerlesim(atlasVeri(true),true);'+
+    'const d=V.N.find(n=>n.tip==="ders"&&n.ad==="Biyokimya");const mk=atlasMikro(d,V);'+
+    'let max=0,min=1e9;mk.map.forEach(h=>{const u=Math.hypot(h.mx-d.x,h.my-d.y);'+
+    'max=Math.max(max,u);min=Math.min(min,u)});'+
+    'return {n:mk.map.size,min:Math.round(min),max:Math.round(max),maxR:Math.round(mk.maxR)}})()');
+  eA2('çocuklar ebeveyn çevresinde SIKI halkada (≤ maxR, dağınık değil)',
+    mk.n>10&&mk.max<=mk.maxR+1&&mk.maxR<160,mk);
+  eA2('halka yarıçapları dar bantta (radyal kabuk)',mk.min>=25&&mk.max-mk.min<80,mk);
+  /* deneme düğümleri gerçek kayıtlardan */
+  const dn=R('(function(){const V=atlasVeri(true);return V.N.filter(n=>n.tip==="deneme").length})()');
+  eA2('deneme düğümleri = D.denemeler sayısı',dn===2,dn);
+  /* omrMock: boru hattı çalışır ama GERÇEK KAYDA YAZMAZ */
+  const om=R('(function(){const once=D.denemeler.length;const r=omrMock();'+
+    'return {n:r.n,kayit:r.kayit,once:once,sonra:D.denemeler.length}})()');
+  eA2('mock OMR 200 işareti motor yolundan geçiriyor',om.n===200,om.n);
+  eA2('mock OMR GERÇEK KAYDA YAZMIYOR (kalibrasyon temiz)',om.kayit===false&&om.once===om.sonra,om);
+  /* konu tamamlama: mevcut D.pu yolu + düzey canlı */
+  const tg=R('(function(){const V=atlasVeri(true);'+
+    'const n=V.N.find(x=>x.tip==="konu"&&x.br==="Biyokimya"&&x.key===bcKN("Amino Asitler"));'+
+    'const l0=n.lvl;atlasKonuToggle(n);const p1=Object.keys(D.pu).length;const l1=n.lvl;'+
+    'atlasKonuToggle(n);const p2=Object.keys(D.pu).length;'+
+    'return {l0:l0,l1:l1,p1:p1,p2:p2,l2:n.lvl}})()');
+  eA2('düğümde tamamlama D.pu yazıyor + düzey canlı (0→4→0)',
+    tg.l0===0&&tg.l1>=3&&tg.p1===1&&tg.p2===0&&tg.l2===0,tg);
+  R('D.pu={}');
+})();
+eA2('gövde ışınları yalnız odakta (dersKonu çizimi mik koşullu)',/dersKonu[\s\S]{0,200}mk3&&mk3\.t>\.05&&sec/.test(kod));
+eA2('halka üyeleri soluklaşmıyor (odak gövdesi parlak)',/atlas\.mik\.map\.has\(n\)\)\)\?1:\.14/.test(kod));
+console.log('\n'+(QA2?'✗ '+QA2+' HATA':'✓ SIFIR HATA — 8 ek kontrol'));
+if(QA2)process.exitCode=1;

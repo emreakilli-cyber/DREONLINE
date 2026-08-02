@@ -13154,6 +13154,57 @@ Bugün paneli çalışıyor; sayfa hatası yok.
 
 ---
 
+## §262 · ODAK MİKRO-YERLEŞİMİ + ATLAS FAZ 2 (veri haritada yaşıyor) + mock-OMR
+
+**Kullanıcı düzeltmesi (birebir):** "Bir düğüme odaklanınca çocuk düğümler global
+force simülasyonuyla değil, parent'ın etrafında sabit, sıkı bir dairesel düzende
+konumlanmalı — parent'ın gövdesini oluşturuyormuş gibi durmalı, dağınık değil."
+
+**1) Odak mikro-yerleşimi (`atlasMikro`):** odaklanınca çocuklar (kök→dersler+
+denemeler · ders→kitaplar+konular · kitap→konuları) global fizikten çıkıp ebeveyn
+çevresinde eş-aralıklı dairesel KABUKLARA dizilir (halka kapasitesi çevre/17 birim;
+kitaplar içte, hakimiyeti yüksek konular içte — gövdenin sağlam çekirdeği). Geçiş
+animasyonlu (t 0↔1, smoothstep); odak dağılınca aynı yoldan global konuma süzülür.
+Kamera halkayı ekrana SIĞDIRIR (sabit ölçek değil). Halka üyeleri soluklaşmaz;
+ebeveyn→çocuk "gövde ışınları" yalnız odakta çizilir; halka etiketleri açı yönünde
+DIŞA yelpazelenir (üst üste binme kırıldı — ilk karede binmişti, gerçek karede
+görülüp düzeltildi). Gerçek ölçüm: Biyokimya odağında 21 çocuk, halka bandı 32–56
+birim, maxR 56; testte "sıkı halka + dar bant" kontrolü var.
+
+**2) FAZ 2 · veri haritada:**
+- **Deneme düğümleri:** D.denemeler'deki 6 gerçek deneme haritada düğüm (kök
+  yörüngesi, mavi-gri — altın değil). Dokununca JARVIS özetler: tarih · T/K · puan ·
+  soru-soru işaretli mi. Yeni deneme kaydında bir sonraki tazelemede kendiliğinden belirir.
+- **Düğümde tamamlama (form yok):** konuya odaklanınca düğümün üstünde ○/✓ dairesi;
+  dokununca MEVCUT kayıt yolu (D.pu / power-up karşılığı yoksa son ilgili görevin
+  D.bitti'si) çalışır, düzey YERİNDE tazelenir (0→4→0 testli), nokta bulutu değişir.
+- **Branş sparkline:** derse odaklanınca düğümün yanında sade gri eğri — denemeBrNet
+  serisi (ayrı grafik sayfası yok; "5.0 net" ucuyla).
+
+**3) Mock-OMR borusu (`omrMock`):** optik form malzemesi gelene dek boru hattı
+sentetik işaretlerle: 200 işaret → dqBransNet (mevcut motor) → JARVIS önizleme.
+⚠ **GERÇEK KAYITLARA YAZMAZ** (kayit:false; D.denemeler değişmiyor — testli).
+Kalibrasyon kirlenmez. Gerçek OMR geldiğinde yalnız işaret-okuma katmanı değişecek.
+Menüde "Kamera · Tara (mock)".
+
+**Düzeltme (test VM):** jarvis() clearTimeout'suz ortamda patlıyordu → try/catch.
+
+**Kapılar:** kal/derin/cark/mola/kombo ✓ · pu_test yeni §262 bölümü **8 kontrol
+SIFIR HATA** (sıkı halka, dar bant, deneme düğümü=kayıt sayısı, mock 200 işaret,
+mock kayda yazmıyor, tamamlama D.pu+canlı düzey, gövde ışını koşulu, halka
+solukluk istisnası) · toplam ✗ **7** = değişmeden §229.
+**Gerçek tarayıcı (390px, gerçek veri):** 6 deneme düğümü adlarıyla; Biyokimya
+odağı gövde-halka görünümü kare alındı; toggle localStorage'a yazdı (sonra geri
+alındı); mock OMR D.denemeler 6→6; sayfa hatası yok.
+
+**Sonraki:** FAZ 2 devamı (bilgi panelinin haritaya gömülmesi, yeni-düğüm beliriş
+animasyonu) · FAZ 3 Altın Yol · gerçek OMR malzemesi bekleniyor (boş optik form +
+cevap anahtarı formatı + işaretli örnek sayfa).
+
+**sürüm 2027-03-09a ↔ rota-2027-03-09a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
