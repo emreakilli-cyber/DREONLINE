@@ -11955,6 +11955,21 @@ Uygulama sırası önerisi: önce öneri motoru (mevcut `para()`/`puEtki`/
 `denemeSapma` üstüne "sıradaki görev" seçicisi), sonra karşılama ekranı,
 sonra scroll-reveal katmanları, en son tema dönüşümü.
 
+### ⚠ NETLEŞTİRME (kullanıcı · bir sonraki mesaj): ÖZELLİK DONDU, TASARIM EVRİMİ
+
+"İhtiyacım olan bütün özelliklere artık sahibim." YENİ ÖZELLİK YOK; iş,
+mevcut her yeteneği KAYBETMEDEN her şeyi en estetik + en basit + en modern
+biçimde KÖKTEN yeniden tasarlamak. Korunacak yetenek sözleşmesi (asgari):
+- Tek dokunuşla herhangi bir kitabın TÜM içeriği görünür; görev tıklanıp
+  "tamamlandı" yapılabilir.
+- Her tamamlama/deneme girişi ANINDA kelebek etkisi: tüm senaryolar
+  (parakete, potansiyel, seriler, power-up sıralaması) yeniden hesaplanır —
+  "su gibi akıcı".
+- Ayrıntılı deneme girişi, hata kaydı, senkron, kör nokta/kırılgan rozetleri,
+  boşluk ağırlığı — hepsi tasarımın içinde yaşamaya devam eder.
+Yeniden tasarım bu sözleşmeye karşı denetlenir (her yüzey: "bu yetenek yeni
+tasarımda nerede?" sorusuna cevap vermek zorunda).
+
 **sürüm `2027-02-15a` ↔ `rota-2027-02-15a` · 679 208 bayt**
 
 ---
