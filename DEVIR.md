@@ -12143,6 +12143,25 @@ navigasyon zekâsı, içerik UYDURMAZ).
 
 ---
 
+## 241 · KLİNİK REHBER MOTORU · `2027-02-20a`
+
+Goal koşulu gereği fiilen kuruldu (§240 omurga üstüne):
+- `rehberSec()`: adaylar YALNIZ POWERUP kataloğu (gerçek kitap+konu+sayfa;
+  içerik/sayfa uydurma yapısal olarak imkânsız). CS = 2.2·boşluk +
+  1.6·kırılgan-yanlış + 1.4·çürüme + 1.2·düşüş + 0.35·sınav ağırlığı +
+  1.5·tekrar-eksikliği — tümü mevcut veriden (dqIstat/bransDurum/curume/D.pu).
+- `rehberMetin(n)`: 📍 ÇALIŞILACAK YER (Kitap/Bölüm—Konu/Sayfa) + NEDEN
+  (yalnız gerçekleşen sinyaller) + NE YAPMALISIN (katalogdaki eylem+saat+net).
+- Yüzey: ÖLÇÜM Veri panelinde **Rehber 📍** düğmesi → en kritik 3 nokta
+  metin kutusuna. (Kamera entegrasyonu Evren aşama 3'te.)
+- pu_test +6 kontrol (format+gerçek sayfa regex+CS sıralı) · örnek çıktı
+  test ortamında doğrulandı (Biyokimya—Amino Asitler · sf 123–151) ·
+  cark_test 0 · JS parse OK.
+
+**sürüm `2027-02-20a` ↔ `rota-2027-02-20a`**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)

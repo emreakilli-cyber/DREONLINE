@@ -1265,3 +1265,18 @@ eEV('evrenVeri fonksiyonu',R('typeof evrenVeri')==='function');
 })();
 console.log('\n'+(QEV?'✗ '+QEV+' HATA':'✓ SIFIR HATA — 5 ek kontrol'));
 if(QEV)process.exitCode=1;
+
+console.log('\n═══ KLİNİK REHBER MOTORU (§241) ═══');
+let QR=0;const eR=(a,ok,x)=>{if(!ok){QR++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eR('rehberSec fonksiyonu',R('typeof rehberSec')==='function');
+eR('rehberMetin fonksiyonu',R('typeof rehberMetin')==='function');
+(function(){const L=R('rehberSec()');
+  eR('aday listesi CS sıralı',L.length>10&&L[0].CS>=L[L.length-1].CS);
+  eR('aday gerçek katalogdan',!!(L[0].u.kitap&&L[0].u.konu&&(L[0].u.sf||L[0].u.aralik)));
+  const M=R('rehberMetin(1)');
+  eR('📍 format',M.indexOf('📍 ÇALIŞILACAK YER:')===0&&M.indexOf('NEDEN:')>0&&M.indexOf('NE YAPMALISIN:')>0,M.slice(0,60));
+  eR('sayfa gerçek veriden',/Sayfa: \d+–\d+/.test(M));
+  console.log('  ÖRNEK ÇIKTI:\n'+M.split('\n').map(s=>'  '+s).join('\n'));
+})();
+console.log('\n'+(QR?'✗ '+QR+' HATA':'✓ SIFIR HATA — 6 ek kontrol'));
+if(QR)process.exitCode=1;
