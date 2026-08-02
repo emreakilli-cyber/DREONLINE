@@ -676,7 +676,13 @@ if(HV)process.exitCode=1;
 console.log('\n═══ İKİLİ ARAMA · TAŞMA YOK ═══');
 let HW=0;const cW=(a,ok,e)=>{if(!ok){HW++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
 cW("ikili arama tavanı alana bağlı",kod.indexOf("ust=SAT_TAVAN")>=0);
-cW('gerçek yükseklik ölçülüyor',kod.indexOf('gl.scrollHeight<=h-2')>=0);
+/* §258 · ölçü kaynağı DEĞİŞTİ. `gl` `position:absolute;inset:0;overflow:hidden`
+   olduğu için scrollHeight asla clientHeight'ın altına inmiyor; `h` de aynı
+   kutudan geliyordu → `scrollHeight<=h-2` HİÇ sağlanmıyor, satır 11 px'te
+   donuyordu (gerçek cihazda da böyleydi). Doğru ölçü: son çocuğun alt kenarı. */
+cW('gerçek yükseklik ölçülüyor (içerik alt kenarı)',kod.indexOf('icerikAlt()<=h-2')>=0);
+cW('içerik alt kenarı son çocuktan türetiliyor',/c\.offsetTop\+c\.offsetHeight/.test(kod));
+cW('GERİLEME: sığma testi scrollHeight ile yapılmıyor',kod.indexOf('gl.scrollHeight<=h-2')<0);
 cW('en çok 9 tur',kod.indexOf('for(let t=0;t<9;t++)')>=0);
 cW('yakınsayınca duruyor',kod.indexOf('if(ust-alt<0.5)break')>=0);
 cW('en iyi değer uygulanıyor',kod.indexOf('uygula(enIyi)')>=0);

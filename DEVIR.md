@@ -12894,6 +12894,101 @@ edilmedi. Detay paneli: konu L5 detayı haritada zaten var.
 
 ---
 
+## §258 · KABUK TERSİNE ÇEVRİLDİ — uygulama artık Bilgi Evreni'nin kendisi
+
+### ⚠ Bu turun sebebi: benim yorum hatam
+
+Kullanıcı "mevcut sistemi bozma" dediğinde ben bunu **"eski görsel arayüz aynen
+kalsın"** diye okudum. Korunması istenen **VERİ MOTORUYDU**, arayüz değil.
+Sonuç: §254–§257'de yaptığım her şeyi (8'li matris, yaşayan harita, arama)
+Bilgi Evreni'nin içine koydum — ve Evren'e **yalnız karşılama ekranındaki
+maskottan** giriliyordu (`evrenAc` tek çağrı: maskot onclick). Kullanıcı
+telefonda "hâlâ eski uygulama" gördü, HAKLIYDI: günlük kullandığı ekran
+gerçekten eski ekrandı. Yeni işler görünmez bir kapının arkasındaydı.
+
+Düzeltilmiş yönerge (kullanıcının kendi sözleriyle): *"Bilgi Evreni uygulamanın
+kendisi; eski TUS motoru bunun altında çalışan beyin."*
+
+### Ne yapıldı
+
+**Kabuk (5 kanıtlı ayar · denetim workflow'u ile çıkarıldı):**
+1. `body.evrenKip header, body.evrenKip main{opacity:0;pointer-events:none}` —
+   eski kabuk DOM'da KALIR (motor ona yazmaya devam eder, hesaplar birebir aynı)
+   ama görünmez/tıklanamaz. `<body class="evrenKip">` ile ilk boyamada bile.
+   ⚠ **`display:none` DEĞİL** — `diz()` (4893) yerleşim oturmadıysa kendini
+   rAF ile yeniden çağırıyor; kutu 0x0 olsaydı o döngü asla bitmez ve HER
+   `carkCiz` bir yenisini eklerdi (pil + kare düşüşü). `opacity` yerleşim
+   kutusunu koruyor. Emsal repoda vardı: `body.karsiAcik` (1650).
+2. Boot son satırı `karsilamaAc()` → `evrenAc()`; kurulum başarısızsa
+   `evrenKabukGeri()` ile eski kabuğa güvenli düşüş (boş ekran kilidi yok).
+3. `evrenKapat()` kabuk kipinde KİLİTLİ (altında gizli kabuk var, boş ekran olurdu).
+4. `zeGeri()` artık kök seviyede **dışarı atmıyor**, en dış zoom'da duruyor
+   (eski: iki "geri" ile eski UI'ye düşülüyordu — kabul kriterinin kilidi).
+5. `kare()` (yıldız/toz rAF) Evren açıkken çizimi atlıyor — görünmez yere
+   iki tam ekran clearRect + zeKare ile yarışan ikinci rAF hattı vardı.
+
+**Günlük akış (kaybolmaması ŞART olan kısım):**
+- `#gunListe` DÜĞÜMÜ Evren paneline **TAŞINDI** (kopya değil). id korunduğu için
+  `gunListe()/glBagla()/gunOlcekle()/gunBagla()` ve tüm kayıt yolları
+  (`D.bitti`, `D.pu`) **tek satır değişmeden** çalışıyor. Yeniden yazma yok.
+- Günlük akışın tamamı zaten liste içinde: her satırda doğrudan tamamlama
+  dairesi (`[data-klgorev]`), gün okları, Program/Kitap anahtarı. Çark gerekmiyor.
+- Satır gövdesine dokunma eski çarka atlıyordu (kabuk kipinde görünmez iş);
+  artık haritada o konuya uçuyor. Eşleşme bulunamazsa HİÇBİR ŞEY yapmıyor
+  (sessiz sıfır riski — kullanıcı eski arayüze düşürülmüyor).
+- `#olcumIc` düğümü de aynı yolla `#zeOlc` paneline taşındı (olcumCiz aynen).
+
+**Evren üst şeridi:** eski header'ın gösterdiği her sayı motor fonksiyonlarından
+yeniden okunuyor (`son()`, `para()`, `puan()`, `tavanBant()`, `kalanKazanci()`,
+`kacanlar()`): kalan gün · ÖLÇÜLEN · PARAKETE + tavan bandı · POTANSİYEL + iş sayısı.
+Kalibrasyon ayrımı korundu. Girişler: Bugün · Ölçüm · Deneme · Power-up · Telafi(rozet).
+Eski paneller (#dpanel/#ppanel/#kpanel/#bpanel/#perde) **aynen açılıyor** — yalnız
+z-index 70/80 → 130/128 (Evren 118'in üstü); body kardeşi oldukları için gizlenmiyorlar.
+
+**`zeTazele()`:** `ze` bir kez kurulup donuyordu (donmuş değer ailesi, §72–85).
+Görev tamamlanınca kamera/seçim korunarak yeniden kuruluyor.
+
+### 🔴 GERÇEK HATA BULUNDU (mevcut YAYINDAKİ sürümde de var)
+
+`gunOlcekle()` ikili araması **hiç çalışmıyordu**: sığma testi `gl.scrollHeight<=h-2`
+idi, ama `#gunListe` `position:absolute;inset:0;overflow:hidden` — böyle bir kutuda
+**scrollHeight asla clientHeight'ın altına inmez**, `h` de aynı kutudan geliyordu.
+Yani koşul HİÇBİR ZAMAN sağlanmıyor, arama her turda küçültüyor ve satır **11 px
+tabanında** donuyordu; yazı satır kutusundan taşıyordu. Kullanıcının gönderdiği
+telefon ekran görüntüsünde de aynen böyleydi (ince kapsüller, taşan yazı).
+Düzeltme: sığma ölçüsü **son çocuğun alt kenarı** (`c.offsetTop+c.offsetHeight`) —
+taşma kırpmasından bağımsız. Ölçülen sonuç: telefon 11 → **29.8 px** satır /
+10 → **17.3 px** yazı; iPad 11 → **46.2 px** / **26.8 px**; içerik taşmıyor
+(634≤639 · 922≤928). Hata atmayan, yalnız yanlış görünen ölçüm — CLAUDE.md'nin
+"tahmin değil ölçüm" ailesinden. `cark_test`'teki iddia hatalı satırı arıyordu;
+doğru ölçüme güncellendi + gerileme kontrolü eklendi.
+
+**Açık tema kapsamı:** taşınan düğümler koyu tema için renklendirilmişti; açık
+zeminde yazı beyaz-üstüne-beyaz kalıyordu (gerçek karede görüldü — kapılar görmez).
+`#zeGun,#zeOlc` kapsamında değişkenler (`--ink*`, `--kn`, `--cam`, `--altin`)
+çevrildi + sabit `rgba(255,255,255)` yüzeyler karşılandı. Seçici gövdeleri değişmedi.
+
+### Kapılar ve doğrulama
+kal ✓ · derin ✓ · kombo ✓ · cark ✓ (güncellendi) · mola ✓ · pu_test toplam ✗ **7**
+= değişmeden §229 bloğu. **Gerçek tarayıcı (Chromium, gerçek kullanıcı verisi,
+telefon 390 + iPad 834):** açılış evrenKip=true · karşılama açılmıyor ·
+header/main opacity 0 · şerit dolu · Bugün paneli `#zeGunIc` içinde 11 satır ·
+**görev tamamlama `D.bitti`+localStorage'a yazıyor** (potansiyel 179→178 iş) ·
+6 kez "geri" → eski UI'ye **düşmüyor** · sayfa hatası yok.
+
+### Eksik / sonraki
+- `#zeOlc` (Ölçüm) ve eski paneller hâlâ KOYU tema — açık temaya çevrilmesi ayrı
+  bir tasarım turu (radar/trend SVG'leri koyu renk üretiyor).
+- Maskot artık karşılama açılmadığı için görünmüyor (`maskotTak` ile Evren'e
+  takılabilir).
+- Açılış kamerası L1: ekranda geniş boşluk bırakıyor; yerleşim/etiket çakışması
+  polish turu bekliyor.
+- Konu/alt başlık bilgi paneli · alt başlık çözünürlüğü · kamera OCR + golden test.
+
+**sürüm 2027-03-05a ↔ rota-2027-03-05a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
