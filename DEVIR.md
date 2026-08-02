@@ -12487,6 +12487,63 @@ birleştirilip birleştirilmeyeceği. Motor DEĞİŞMEDEN audit tamamlandı.
 
 ---
 
+## 249 · PROFESYONEL SİSTEM YOL HARİTASI · FAZ 1 (bağlantı kurtarma) + FAZ 2 (konu decay) · `2027-02-27a`
+
+Kullanıcı 11 fazlık yol haritası verdi (Obsidian+Wikipedia+Anki+mevcut TUS
+motoru = ciddi doktor bilgi haritası). DEĞİŞMEZ: paralel model YOK, mevcut
+motor tek kaynak, eski UI görsel olarak geri gelmez (yalnız veri). Her fazdan
+sonra 7-başlıklı rapor. Bu tur FAZ 1 + FAZ 2.
+
+**FAZ 1 · Eski Seyir Defteri konu bağlantıları KURTARILDI (kod değişmedi):**
+İki paralel arkeoloji ajanı + doğrudan okuma. Bulgu: bağlantılar kayıp değil —
+**KOMBO** (index.html ~2111, kaynak/kombo.json, 99 kayıt). Eski "Sefer"
+(seyirCiz/kordonCiz) sayfasında "yeşil halatlar" olarak çiziliyor: "bir konuyu
+öğrenince bağlı olduğunun maliyeti düşüyor". Yapı: `[kaynakGörevId, hedefId,
+gerekçe, kaynakEtiket, hedefEtiket, günFarkı(f)]`. İki tip: f=0 aynı gün
+"↔ kesişen konular pekiştiriyor" (40), f=1 ertesi gün "→ temel yarını
+hızlandırıyor" (59). ⚠ NÜANSLAR: (a) **kural-türevi**, elle çizilmiş değil —
+`yeniden.py` konuların `z` (organ-sistem zinciri) etiketinden üretiyor (aynı z,
+≤1 gün, farklı branş). Kullanıcının elle kurduğu = konuların `z` gruplaması.
+(b) **salt görsel** — gorevKazanc/bul/denemeDeger'e bağlı DEĞİL. (c) **üretici
+drift**: dağıtımdaki kombo.json'u üreten gerçek jeneratör kaynak/'ta YOK;
+boru hattı baştan koşulursa açıklamalar bozulur (pu/kural_test yalnız uç-geçerli
+denetliyor). (d) git geçmişi 2026-07-27'de başlıyor; KOMBO ilk commit'ten beri
+var, başka/daha eski konu↔konu yapısı git'te YOK (öncesi olsa tus_tamami.tar.gz
+devir paketinde olurdu). Yeni force-graph kenarları hiyerarşik (merkez→ders→
+kitap), KOMBO'yu kullanmıyor. → FAZ 8'de KOMBO yeni haritaya "yol" olarak
+taşınacak + türetilebilir tipler (ortak-kitap/aynı-ad/birlikte-hata) SİSTEM
+ETİKETLİ eklenecek (kullanıcı-kurulu gibi gösterilmeyecek).
+
+**FAZ 2 · Konu-seviye gerçek decay → görev önceliği (§248'de bulunan cur hatası
+düzeltildi):** rehberSec CS'indeki `cur` dejenereydi — `curume(br,bugün,SINAV_G)`
+bir gün içinde tüm branşlarda AYNI, sıralamayı ayrıştırmıyordu. Düzeltme (YENİ
+MODEL YOK):
+- `konuSonKume()` / `konuSon()` — bir konunun EN SON çalışma tarihi, mevcut
+  D.bitti (içerik görevleri) + D.pu (.tb/.bit power-up) tarihlerinden. konuKayit
+  EN ERKEN tutuyordu; bu EN SON tutuyor. Anahtar mevcut konuAnh şeması.
+- `konuCurume(brans,konu,grup,gün)` — son çalışmadan bu yana `1-Rr(g,S_TEK)`
+  (para()'nın taze-materyal modelinin aynısı). Hiç çalışılmadıysa cur=0
+  (bu decay değil, boşluk; bos/mastery taşır).
+- rehberSec artık konu-seviye cur kullanıyor + neden.sonGun ekli (açıklanabilirlik).
+- **Doğrulama (kaynak/audit_test yanında canlı test):** 18 gün önce çalışılan konu
+  cur=0.234 vs 2 gün önce cur=0.037 (ayrışıyor ✓); rehberSec cur değeri 1→çok
+  (dejenere düzeldi); hiç çalışılmamış 268/270 konu cur=0 (boşluk).
+
+**Bu turda yaptığım hatalar:** (1) §248 audit commit'imi branch reset'iyle geçici
+kaybettim; b3e7227'den geri aldım. (2) Test harness'ı /mnt/user-data/outputs'tan
+okuyor; index.html'i kopyalamadan koştum, konuCurume "tanımsız" çıktı — kopyalayıp
+tekrar koştum. (3) İlk connection-audit ajanı (§248) KOMBO'yu bağlantı olarak
+tanımadı; kullanıcının ısrarı üzerine yeniden arayınca bulundu.
+
+**Sonraki:** FAZ 3 (son 5 deneme kayan-pencere trendi, R_CAL'den AYRI gözlemsel
+katman). Sonra FAZ 4 (tempo-bazlı ileri projeksiyon), FAZ 5 (iki öneri motorunu
+birleştir), FAZ 6-11 (200 soru derinleştirme, yaşayan harita, Obsidian fonk.,
+ajanlar, geri izolasyon, polish). Görsel değişiklik FAZ 7'de başlıyor.
+
+**sürüm `2027-02-27a` ↔ `rota-2027-02-27a`**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
