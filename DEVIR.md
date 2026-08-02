@@ -12656,6 +12656,53 @@ JSON'unu vermesi gerekiyor (rapor sonunda adımlar).
 
 ---
 
+## 253 · GERÇEK VERİ AUDİTİ · kullanıcı 200 soruluk denemesi (kod değişmedi)
+
+Kullanıcı gerçek localStorage 'rota-veri' verisini verdi (6 deneme, sonuncusu
+2026-08-02 · 200 soru · Ayrıntılı · t=41.5 k=40.75). Motor DEĞİŞMEDEN denetlendi
+(kaynak/audit_gercek.js; kullanıcı verisi repoya KOYULMADI, scratchpad'de).
+
+**Deploy audit:** `.github/workflows` YOK → otomatik deploy YOK; dağıtım elle
+(CLAUDE.md ile tutarlı). origin/main güncel (e03da6e · 2027-02-28a). Canlı Pages
+container'dan erişilemedi (HTTP 000, proxy github.io). Kullanıcı cihazda sürümü
+görüp 2027-02-28a ile karşılaştırmalı.
+
+**🟢 DOĞRULANAN (gerçek veriyle, birebir):**
+- 200 soru: dy(kayıtlı) ↔ sorular[] bağımsız sayım BİREBİR; dqBransNet T=41.5
+  K=40.75 = kayıtlı.
+- 8'li matris (gerçek): D+Emin 45 · D+Bilmiyorum 39 · Y+Bilmiyorum 51 · Y+Unuttum
+  16 · Y+Emin 6. dqIstat sağlam=45 kırılgan=58 = matris. → "Netin 82 ama sağlam
+  bilgi 45; 39 doğru şans/tanıma" içgörüsü VERİDEN çıkıyor.
+- PARAKETE: ölçülen puan(41.5,40.75)=60.15; para()→59.35; bağımsız yeniden hesap
+  BİREBİR. PARAKETE(59.35) < ölçülen(60.15): decay dürüstçe düşürüyor.
+- R_CAL: gerçek 6 denemeyle n=2, R_CAL=0.355 SD=0.092 (önsel 0.405'ten aşağı —
+  kişisel: bir tur çalışma ortalamadan AZ kapatıyor). Son deneme ΔR_CAL=-0.050
+  (aşırı oynatmıyor). ⚠ Düzeltme: §252'de "tek deneme R_CAL'i oynatmıyor" dedim;
+  DOĞRU ama kullanıcının 6 denemesi var → ardışık-çift kanalı çalışıyor, R_CAL
+  kalibre oluyor. İlk deneme oynatmaz, sonrakiler oynatır.
+- FAZ 3 denemeTrend(5): 53.2→52.8→55.2→57.6→60.1 · Δ +6.9 (gerçek yükseliş).
+- FAZ 4 tempoProjeksiyon: tempo 2.48 sa/gün · +0→60.1, +1→60.8, +3→61.8 (124/124);
+  MONOTON ✓. Kalibre tahmin (PARAKETE 59.35) ile senaryo (tempo) AYRI.
+
+**🟡 AÇIKLANABİLİRLİK/UX (FAZ 5 kapsamı, motor doğru):**
+1. Güven bandı PARAKETE'ye bağlı ve 0.00 çıkıyor (bu senaryoda deneme-sonrası
+   çalışma yok → R_CAL belirsizliği tabana yansımıyor). Bant, R_CAL belirsizliğinin
+   yaşadığı ULAŞILABİLİR TAVAN'a (PARAKETE+Potansiyel) taşınmalı.
+2. rehberSec yinelenen öneri: 270 kayıt / 230 tekil → 40 yinelenen. Tekilleştir.
+3. Export'ta D.pu yoktu (yalnız bitti/denemeler/guncel); power-up çalışma tarihleri
+   ayrı anahtarda olabilir — FAZ 2 decay program görevlerinden çalışıyor, power-up
+   tarafı eksik veriyle sınanamadı.
+
+**VERDİKT: 🟢 MOTOR DOĞRU · FAZ 5'e geçilebilir.** Çekirdek hesaplar (veri
+bütünlüğü, PARAKETE, R_CAL kalibrasyon, trend, tempo) gerçek veriyle birebir
+doğrulandı; UI↔motor ayrışması yok. 🟡 maddeler tam olarak FAZ 5'in (açıklanabilir
+birleşik öneri + net kartı) işi — orada bant yerleşimi + dedup + "neden" görünürlüğü
+ele alınacak.
+
+**sürüm değişmedi (audit) · kaynak/audit_gercek.js eklendi**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
