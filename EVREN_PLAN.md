@@ -1,10 +1,13 @@
 # EVREN PLANI · TUS Bilgi Evreni (goal + DEVIR §235/§239)
 
-> ⚠ **3D PİVOT (§244):** Bu plandaki 2D SVG sahne yaklaşımı kullanıcı
-> tarafından reddedildi. Sahne artık saf WebGL raymarch gezegen (gerçek
-> kamera, GPU-pick). Aşağıdaki kozmik eşleme ve veri kuralları GEÇERLİ;
-> aşama 2+ (kitap katmanı, DRE menüsü, deneme uydusu) dikey dilimin
-> kullanıcı onayına kilitli — onaysız eklenmez.
+> ⚠ **BİLGİ HARİTASI PİVOTU (§245):** Hem 2D SVG (§242) hem WebGL raymarch
+> gezegen (§244) kullanıcı tarafından reddedildi ("küre istediğim ürün
+> değil; oyun/shader/node-gürültüsü yok"). Nihai görsel dil: AÇIK ZEMİN,
+> ince siyah çizgi, nokta kümeleri — Obsidian+Wikipedia+Anki berraklığı,
+> Animus "yaklaştıkça çözülme". Uygulama: `zeVeri/zeCiz` (Canvas 2D, tek
+> kamera). Aşağıdaki veri kuralları GEÇERLİ; kozmik/gezegen görsel eşlemesi
+> ARTIK GEÇERSİZ. Diğer ajanlara (Deneme/Çalışma) dalış + anıt görselleri
+> dikey dilim kullanıcı onayına kilitli.
 
 Amaç: klasik dashboard değil, YAŞAYAN BİLGİ EVRENİ — tek kamera, fetih
 metaforu, her görsel gerçek veriye bağlı. Veri kaybı / çalışan özellik

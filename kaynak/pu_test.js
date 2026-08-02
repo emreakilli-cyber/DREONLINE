@@ -1281,23 +1281,28 @@ eR('rehberMetin fonksiyonu',R('typeof rehberMetin')==='function');
 console.log('\n'+(QR?'✗ '+QR+' HATA':'✓ SIFIR HATA — 6 ek kontrol'));
 if(QR)process.exitCode=1;
 
-console.log('\n═══ EVREN 3D DİKEY DİLİM (§244) ═══');
-/* 2D SVG evren (§242-243) kullanıcı tarafından reddedildi ve söküldü;
-   yerine saf WebGL raymarch gezegen (dikey dilim). Eski semboller YOK olmalı. */
+console.log('\n═══ ZİHİN EVRENİ · BİLGİ HARİTASI (§245) ═══');
+/* Raymarch gezegen (§244) da reddedildi (küre = istenen ürün değil).
+   Yerine açık zeminli, ince çizgili, tek-kameralı zihin haritası (Canvas 2D).
+   Veri motoru DEĞİŞMEDİ: zeVeri() sadece evrenVeri()+POWERUP'tan türetir. */
 let QV=0;const eV1=(a,ok)=>{if(!ok){QV++;console.log('  ✗ '+a)}};
 eV1('evrenAc',R('typeof evrenAc')==='function');
 eV1('evrenKapat',R('typeof evrenKapat')==='function');
-eV1('ev3dKur',R('typeof ev3dKur')==='function');
-eV1('evOdakla',R('typeof evOdakla')==='function');
-eV1('evUzaklas',R('typeof evUzaklas')==='function');
-eV1('evSec (GPU pick)',R('typeof evSec')==='function');
-eV1('evSiteler 11 birim vektör',(function(){const S=R('evSiteler()');
-  return S.length===11&&S.every(v=>Math.abs(Math.hypot(v[0],v[1],v[2])-1)<1e-9)})());
-eV1('fragment shader kaynakta',kod.indexOf('precision mediump float')>=0&&kod.indexOf('u_sites[11]')>=0);
-eV1('GPU pick kipi shaderda',kod.indexOf('u_pick')>=0);
-eV1('canvas ev3d HTML iskelede',kod.indexOf('<canvas id="ev3d">')>=0);
-eV1('eski 2D semboller söküldü',R('typeof evrenCiz')==='undefined'&&R('typeof evYakinlas')==='undefined'&&
-  R('typeof evKitapCiz')==='undefined'&&kod.indexOf('class="evSek"')<0&&kod.indexOf('evMenuBar')<0);
-eV1('evrenKat arkası opak (eski UI görünmez)',/#evrenKat\{[^}]*background:#020308/.test(kod));
+eV1('zeKur (harita kurar)',R('typeof zeKur')==='function');
+eV1('zeVeri türetme adaptörü',R('typeof zeVeri')==='function');
+eV1('zeCiz / zeKare çizim döngüsü',R('typeof zeCiz')==='function'&&R('typeof zeKare')==='function');
+eV1('zeTikla / zeVur navigasyon',R('typeof zeTikla')==='function'&&R('typeof zeVur')==='function');
+eV1('canvas zeTuval HTML iskelede',kod.indexOf('<canvas id="zeTuval">')>=0);
+(function(){const V=R('zeVeri()');
+  eV1('zeVeri gerçek veriden: 11 bölge + kitap sözlüğü',
+    !!(V&&V.V&&V.V.bolgeler&&V.V.bolgeler.length>=11&&V.kit&&Object.keys(V.kit).length>0));
+  eV1('kitap→konu gerçek sayfa taşıyor',(function(){
+    for(const br in V.kit)for(const k in V.kit[br]){const ko=V.kit[br][k].konular[0];
+      if(ko&&(ko.sf||ko.aralik))return true} return false})());
+  eV1('deneme K puanı motordan (paralel model yok)',V.deneme&&(V.deneme.K===null||typeof V.deneme.K==='number'));
+})();
+eV1('açık zemin (beyaz sahne, oyun/uzay değil)',/#evrenKat\{[^}]*background:#FBFAF7/.test(kod)&&kod.indexOf("fillStyle='#FBFAF7'")>=0);
+eV1('eski 3D/2D semboller söküldü',R('typeof ev3dKur')==='undefined'&&R('typeof evOdakla')==='undefined'&&
+  R('typeof evrenCiz')==='undefined'&&kod.indexOf('u_sites[11]')<0&&kod.indexOf('precision mediump float')<0);
 console.log('\n'+(QV?'✗ '+QV+' HATA':'✓ SIFIR HATA — 12 ek kontrol'));
 if(QV)process.exitCode=1;
