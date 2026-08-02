@@ -11920,6 +11920,45 @@ o an neyle uğraşıyorsam o öne çıksın."
 
 ---
 
+## 235 · ANAHTAR TIKLAMASI ONARILDI · JARVIS VİZYONU KAYDA · `2027-02-15a`
+
+### Onarım: Program|Kitap anahtarı fareyle tıklanamıyordu
+
+Açılış yolu (`gunKipAc(true)` boot'tan) listeyi kurarken `glBagla()` her
+yoldan çağrılmıyordu — anahtar düğmeleri işleyicisiz kalıyordu. İki katman:
+boot'ta açık `glBagla()` çağrısı + `[data-glkip]/[data-kltur]` için belge
+düzeyinde olay-devri YEDEK devresi (normal bağ varsa `k.onclick` kontrolüyle
+karışmıyor). cark_test 0 · JS parse OK.
+
+### ⚠ YENİ ÜRÜN VİZYONU (kullanıcının sözleriyle · sonraki oturumların ana işi)
+
+Çark ve saat-saat planlama YETERSİZ; uygulama "o ana" evrilecek:
+
+1. **Karşılama:** açılışta veri YOK — dupduru ekran, "Hoşgeldin DRE" yazar,
+   yazı kaybolur, TEK önerilen görev kartı belirir.
+2. **Öneri motoru (görünüşte sade, altta derin):** deneme çıkarımları +
+   kelebek etkisi — sınava kadar hangi görev SERİLERİ yetişir, günlük rutin
+   ve uyku çıkınca kalan hacme ne sığar → "şu an en verimli iş bu" tek kart.
+   Görev bitince sıradaki kendiliğinden gelir.
+3. **Üstte 3 liquid glass hap** (gerçek Apple dili) — sayfalar bunlarla değişir.
+4. **Hikâye katman katman:** sayfa verileri bir anda DEĞİL, kaydırdıkça
+   animasyonla katman katman açılır (scroll-reveal); "her şey birden
+   belirmeyecek".
+5. **Telafi / power-up / tamamlandı / kalibrasyon** konum-görünürlük-zamanı
+   bu amaca göre KÖKTEN yeniden kurgulanabilir (kullanıcı yetki verdi:
+   "sormadan köklü değiştirebilirsin").
+6. **Performansa tepkili tema:** performans arttıkça tasarım dönüşsün
+   ("ghost rider gibi yanmaya başlayabilir") — gaza getirsin, kanayan
+   yaraları güçlü yana çevirsin. Jarvis ↔ Tony Stark ilişkisi hedef duygu.
+
+Uygulama sırası önerisi: önce öneri motoru (mevcut `para()`/`puEtki`/
+`denemeSapma` üstüne "sıradaki görev" seçicisi), sonra karşılama ekranı,
+sonra scroll-reveal katmanları, en son tema dönüşümü.
+
+**sürüm `2027-02-15a` ↔ `rota-2027-02-15a` · 679 208 bayt**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
