@@ -12280,6 +12280,70 @@ SwiftShader'da; gerçek cihaz (iPad, Metal) görünümü kullanıcı onayında.
 
 ---
 
+## 245 · ZİHİN EVRENİ · AÇIK ZEMİN BİLGİ HARİTASI · `2027-02-24a`
+
+**Kullanıcı §244 raymarch gezegeni de reddetti** (yeni /goal). Özü: "Küre
+teknik olarak güzel ama istediğim ürün değil. Çarkıfelek, pizza dilimi,
+gerçekçi gezegen, çocukça oyun haritası, aşırı shader/node-gürültüsü
+istemiyorum." İstenen: Obsidian graph berraklığı + Wikipedia bilgi düzeni +
+Anki mastery + Animus "yaklaştıkça çözülme" hissi. UZAKTAN açık/beyaz zemin,
+ince siyah çizgiler, küçük nokta kümeleri, az etiket; YAKLAŞTIKÇA yalnız
+odaklanan alan çözülür; EN YAKINDA kitap/konu haritası gerçekten okunur.
+Başarı testi: "Mobil oyun mu? HAYIR. Obsidian+Wikipedia zihin haritası mı?
+EVET." Öncelik: veri bütünlüğü > navigasyon > okunabilirlik > hiyerarşi >
+yaşayan katman > animasyon.
+
+**Sökülen:** §244 WebGL raymarch gezegeni tamamı — EV_VS/EV_FS shaderları,
+ev3dKur/evSiteler/evOdakla/evUzaklas/evSec/ev3dKare, `#ev3d` canvas, karanlık
+`#020308` sahne. Veri omurgası `evrenVeri()` DOKUNULMADI.
+
+**Kurulan (Canvas 2D, kütüphane yok):** `zeVeri()` türetme adaptörü — her
+sayı mevcut motordan (`evrenVeri` + `POWERUP` + `D.pu` + `sirali/puan` +
+`bransCalisma` + `rehberSec`); PARALEL MODEL YOK. Hiyerarşi tek yapıda:
+- **L0 Evren:** TUS aktif galaksi (nokta sarmalı) + boş galaksi yuvaları
+  (Harrison / USMLE / +yeni) — ürün genel amaçlı bilgi sistemi olabilir.
+- **L1 Galaksi:** dört ajan — Görev Gezegeni (bilgi dünyası), Deneme
+  Gezegeni (gerçek net trend çizgisi + K/ΔK), Çalışma Uydusu (saat+kalan
+  gün), DRE (rehber ajan; `rehberSec()[0]`'a altın kesikli işaretçi).
+- **L2 Bilgi dünyası:** 11 ders ülkesi (soru ağırlığıyla ölçekli daireler).
+- **L2+ Şehirler:** konular nokta olarak (çalışılan dolu, boşluk kırmızı halka).
+- **L3 Kitaplar:** her ders içinde POWERUP kitapları; içlerinde konu noktaları
+  (Obsidian düğümü); tamamlanan oranı altın yay.
+- **L4 İçindekiler:** seçili kitabın konuları haritada YERİNDE çözülen liste
+  — gerçek sayfa aralıkları (sf a–b), ✓ tamamlanan / ◐ çalışılan / ○ bekleyen.
+- **L5 Konu detayı:** seçili satır kendi bandında açılır (çakışmasız):
+  ~saat · beklenen +net · soru ağırlığı + boşluk/tekrar durumu.
+- **TEK KAMERA:** sürekli zoom/pan (tekerlek + pinch + sürükle), tıkla→hedefe
+  eased uçuş, `geri` bir katman yukarı çıkar. Kırılım yolu üst şeritte
+  (TUS › Görev › Ders › Kitap › Konu). Yaşayan katman (yaşam yapıları,
+  çürüme sisi, kırılgan halkası) yalnız yakın zoomda; uzakta sade çizgi/nokta.
+
+**Doğrulama (başsız chromium + playwright, altı düzey):** L0 evren, L1
+galaksi, L2 dünya, L3 ders (Fizyoloji odak), L4 kitap içindekiler (Klinisyen
+Vaka Fizyoloji, gerçek sf), L5 konu detayı — hepsi okunur, çakışmasız.
+Ekran görüntüleri kullanıcıya gönderildi.
+
+**Bilinçli DURULAN yer:** dilim yalnız Görev Gezegeni'ni gezer; Deneme/
+Çalışma ajanlarına dalış ve kullanıcının diktiği anıt/heykel görselleri
+sonraki adıma bırakıldı (goal: "önce sadece dikey dilim … sonra diğer
+ajanlar eklenir"). Kullanıcı görsel onayı bekleniyor.
+
+**Bu turda yaptığım hatalar:**
+1. Test sarmalayıcısı `getElementById('ev3d')` ile canvas ölçüsünü okuyordu;
+   canvas id `zeTuval` olunca null döndü — bir çekim kaybettim, düzelttim.
+2. İlk kitap glifi çift dikey çizgiydi (kitap sırtı) ama ders zoomunda
+   çetele-çizgisi/gürültü gibi okundu — goal "node gürültüsü yok" diyordu;
+   konu noktalarına çevirdim.
+3. Konu detayı ilk sürümde bir alttaki satırın üstüne biniyordu; seçili
+   satırı kendi bandıyla genişletip hit-test'i de ona göre düzelttim.
+
+**Kapılar:** pu_test §245 12/12 ✓; kırmızıların hepsi §229 KONU TEKİLLİĞİ 7
+(bilinçli, bu turdan bağımsız). Diğer kapılar bu turda koşuldu.
+
+**sürüm `2027-02-24a` ↔ `rota-2027-02-24a`**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
@@ -12308,5 +12372,5 @@ Bekleyen: kullanıcıdan etiketli deneme verisi (§230 formatı) · cihazdan "Ha
 - **D_ORAN belirsizliği** hâlâ ±0.57 · program bitse ~0.33'e iner, öncel baskın kalıyor
 - **Potansiyel ile gerçek artış** arasında ~0.42 net fark (§205'te belgeli, bilinçli muhafazakâr)
 - **Aynı kayıt iki kez girilirse** iki kez sayılıyor · yinelenen denetimi yok (bilinçli)
-- **EVREN 3D dikey dilim (§244) kullanıcı görsel onayı bekliyor** · onaysız aşama 2+ (kitap/DRE/uydu) eklenmeyecek
+- **Zihin evreni bilgi haritası (§245) kullanıcı görsel onayı bekliyor** · onaysız diğer ajanlara (Deneme/Çalışma) dalış + anıt görselleri eklenmeyecek
 - **§229'un üç açık maddesi:** pu_test KONU TEKİLLİĞİ 7 hata (§227/228 davranışı yeniden incelenmeli) · kos.js sözdizimi kırık · paket boşlukları (eko.py, senk_test.js, senk_kos.js)
