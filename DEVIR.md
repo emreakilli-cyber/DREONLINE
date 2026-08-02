@@ -12183,6 +12183,34 @@ Goal "bütün aşamaları gerçekleştir" — EVREN_PLAN.md aşama 1 yayında:
 
 ---
 
+## 243 · EVREN AŞAMA 2-5 · ÜRÜN TAMAM · `2027-02-22a`
+
+Goal "bütün aşamaları gerçekleştir" — EVREN_PLAN.md kalan aşamaları yayında:
+- **Aşama 2 · Kitap içindekiler:** bölge paneli kitap sekmeli; her kitabın
+  konuları GERÇEK sayfa aralıklarıyla (POWERUP kataloğu) + ✓ durumu +
+  "Çek" düğmesi (mevcut D.pu akışı: puSenkron+kay+carkCiz).
+- **Aşama 3 · DRE menüsü + kamera sürüşü:** evMenuBar (📍 Sıradaki nokta ·
+  Çürüyenler · En zayıf · En güçlü · Deneme trendleri). "Sıradaki nokta"
+  rehberSec()[0]'ı alır → kamera bölgeye dalar, doğru kitap açılır, hedef
+  konu satırı altın vurguyla ortalanır (evYakinlasVurgu). Trendler →
+  kamera ÖLÇÜM dünyasına iner.
+- **Aşama 4 · Yaşam/çürüme + deneme uydusu:** H≥.45 bölgelerde deterministik
+  konumlu titreyen yaşam ışıkları (reduce-motion'da sabit); çürüme sektör
+  doygunluğunu düşürüyor (aşama 1'den); DENEME UYDUSU: son K + eğilim oku,
+  tıklayınca ÖLÇÜM'e iner.
+- **Aşama 5 · Kara delik + sayfa düzeyi:** karaDelik bölgelerinde mor
+  çerçeveli girdap görseli; sayfa düzeyi içindekilerde ulaşıldı (sf a–b).
+- Doğrulama: gerçek tarayıcıda uçtan uca sürüş (rehber→Biyokimya→Yavuz
+  Şahin SB→Amino Asitler sf 123–151 vurgulu). pu_test +7 · cark_test 0 ·
+  JS/CSS temiz.
+- Kalan cila (ürün sonrası iyileştirme, engel değil): sektör etiket LOD'u,
+  uydu yörünge animasyonu, Dre yıldız-morph menüsü, kart açılış sekansına
+  evren köprüsü.
+
+**sürüm `2027-02-22a` ↔ `rota-2027-02-22a`**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
