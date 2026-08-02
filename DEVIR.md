@@ -12211,6 +12211,75 @@ Goal "bütün aşamaları gerçekleştir" — EVREN_PLAN.md kalan aşamaları ya
 
 ---
 
+## 244 · 3D PİVOT · GERÇEK WEBGL GEZEGEN · DİKEY DİLİM · `2027-02-23a`
+
+**Kullanıcı §242-243 çıktısını REDDETTİ.** Talebin özü (birebir):
+"Eski uygulamanın üzerine kozmetik bir katman istemiyorum … Gerçek bir 3D
+kozmik sahne … KAMERA GERÇEKTEN HAREKET ETMELİ … 11 alanı pizza dilimi /
+radial chart olarak çizmek YASAK … eski UI EVREN'in arkasında görünmemeli …
+2D CSS transformlarıyla 3D gezegen taklidi yapma … Önce sadece bir vertical
+slice: UZAY → GERÇEK 3D GEZEGEN → BİR BÖLGE → KAMERAYLA YÜZEYE YAKLAŞMA.
+Bu küçük bölüm gerçekten doğru görünmeden kitap, DRE, decay ve deneme
+uydusunu ekleme." Ölçüt: ekran görüntüsünde "uzayda duran, yaşayan bir
+bilgi gezegeni" görünmeli; estetik Apple/Wikipedia bilimsel-premium, oyun değil.
+
+**Sökülen:** 2D SVG evren tamamı — `evrenCiz/evYakinlas/evKitapCiz/evSur/`
+`evYakinlasVurgu` JS'i, `#evSvg`+`evMenuBar`+`.evKonu` DOM/CSS'i (3 051
+karakter CSS, imza-eşleşmeli tek blok; süslü parantez dengesi 1237=1237
+doğrulandı). 2D revizyon iş akışı (wf_29697f1a) arka planda tamamlandı ama
+çıktısı ENTEGRE EDİLMEDİ — son kullanıcı mesajı onu geçersiz kılmıştı.
+
+**Kurulan (saf WebGL1, kütüphane yok — çevrimdışı tek dosya korunur):**
+- `EV_VS/EV_FS`: tam ekran üçgen + raymarch küre. Kıtalar organik:
+  domain-warp'lu (fbm bükümü) küresel Voronoi, 11 düzensiz merkez
+  (`evSiteler()` altın sarmal + deterministik sapma). Eşit dilim YOK.
+- Hâkimiyet → sürekli bant (§135 kuralı): ölü bazalt → kurak → yaşayan
+  yeşil; şehir ışıkları makro-küme × nokta dokusu, gece yüzünde parlar.
+  Çürüme → gri sis. Bölge içi denizler (`yuk` fbm) + kıyı sığlığı turkuazı
+  + kutup buzu + bulut sürüklenmesi + fresnel atmosfer + yıldız alanı.
+- KAMERA GERÇEK: `u_dist`+`u_rot`; giriş uçuşu 6.5→2.7 (2 600 ms ease-out),
+  parmakla yörünge sürükleme, bölgeye tıkla → `evOdakla` en kısa yay
+  üzerinden 1.45'e dalar; `evUzaklas` geri çıkar. Yaklaşınca sinematik
+  ışık harmanı + normal-bükümlü rölyef + yakın doku oktavı devreye girer.
+- Bölge seçimi GPU-pick: aynı shader `u_pick` kipinde bölge kimliğini
+  kırmızı kanala yazar, `readPixels` okur. Ayrı 2D hit-test yok.
+- `#evrenKat` arkaplanı OPAK `#020308` — eski UI evrenin arkasında görünmez
+  (açık talep). Veri omurgası değişmedi: `evrenVeri()` aynen kaynak.
+- WebGL yoksa `evrenAc` `hataKaydet('EVREN3D · …')` ile sessiz düşer.
+
+**Doğrulama (başsız chromium + SwiftShader + playwright-core):**
+yörünge görünümü: organik kıyılı kıtalar, iç denizler, kutup buzu,
+terminatör ve gece yüzünde şehir ışıkları okunuyor; odak görünümü: bölgeye
+gerçek kamera dalışı, HUD "Bölge · hâkimiyet %X · çürüme %Y". Bant testi
+sarmalayıcıda u_H/u_C yelpazesiyle (0.04–0.92) çekildi — uygulama verisi
+değil, görsel bant denetimi. Ekran görüntüleri kullanıcıya gönderildi.
+
+**Bilinçli DURULAN yer:** kitap katmanı, DRE menüsü, decay ayrıntısı,
+deneme uydusu EKLENMEDİ — kullanıcı "bu bölüm doğru görünmeden ekleme"
+dedi; dilim onayı bekleniyor. EVREN_PLAN.md aşama 2+ bu onaya kilitli.
+
+**Bu turda yaptığım hatalar:**
+1. İlk ekran görüntüsünü karşılama katmanını hesaba katmadan çektim —
+   kare karşılama animasyonunu gösterdi, bir tur kaybettim.
+2. İlk shader taslağında güneş-kamera hizasını kontrol etmedim: varsayılan
+   açı tam aydınlık yüz verdi ("bej top" görünümü). Terminatörü görünür
+   kılan açıyı ölçerek seçmem gerekirdi (tahmin değil ölçüm ailesi).
+3. §242/§243 pu_test bölümlerini kod söküldükten sonra bir süre bayat
+   bıraktım; kapı koşulmadan önce fark edip yeniden yazdım.
+
+**Kapılar (14'ü de koşuldu, çıktı tamamı okundu):** denet.py ✓ 196 görev ·
+derin_test ✓ · kombo_test ✓ · cark_test ✓ (tamamı) · mola_test ✓ ·
+kal_test ✓ (tamamı) · senk_etag ✓ · senk_uc ✓ 26 · senk_rol ✓ 20 ·
+pu_test: yeni §244 bölümü 12/12 ✓, tek kırmızı bilinen §229 KONU TEKİLLİĞİ
+7 hatası. Kırmızılar (hepsi §229'da belgeli, bu turdan bağımsız):
+kural_test.py `eko.py` yok · kos.js sözdizimi kırık · senk_kos.js dosyası
+yok · senk_poll.js `senk_test.js` bulamıyor. Görsel doğrulama başsız
+SwiftShader'da; gerçek cihaz (iPad, Metal) görünümü kullanıcı onayında.
+
+**sürüm `2027-02-23a` ↔ `rota-2027-02-23a`**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
@@ -12239,4 +12308,5 @@ Bekleyen: kullanıcıdan etiketli deneme verisi (§230 formatı) · cihazdan "Ha
 - **D_ORAN belirsizliği** hâlâ ±0.57 · program bitse ~0.33'e iner, öncel baskın kalıyor
 - **Potansiyel ile gerçek artış** arasında ~0.42 net fark (§205'te belgeli, bilinçli muhafazakâr)
 - **Aynı kayıt iki kez girilirse** iki kez sayılıyor · yinelenen denetimi yok (bilinçli)
+- **EVREN 3D dikey dilim (§244) kullanıcı görsel onayı bekliyor** · onaysız aşama 2+ (kitap/DRE/uydu) eklenmeyecek
 - **§229'un üç açık maddesi:** pu_test KONU TEKİLLİĞİ 7 hata (§227/228 davranışı yeniden incelenmeli) · kos.js sözdizimi kırık · paket boşlukları (eko.py, senk_test.js, senk_kos.js)
