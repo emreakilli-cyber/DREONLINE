@@ -11811,6 +11811,53 @@ doğrulandı ama regresyon koruması yok; sonraki turda `pu_test`e eklenmeli.
 
 ---
 
+## 232 · MODEL BAĞLAMA · TEST KAPISI · A'DAN Z'YE CİLA · `2027-02-12a`
+
+Kullanıcının üç isteği: §231'in iki açık işi + tüm uygulamanın tasarımını
+üst düzeye çıkarmak.
+
+### 1 · Ayrıntılı deneme verisi modele bağlandı (`dqIstat`)
+
+Kayıtlı denemelerin `sorular` dizilerinden her çizimde yeniden türetilen
+birikimli istatistik (donmuş değer YOK, §72–85):
+- **Matris:** ayrıntılı verisi olan branşta doğruların çoğu sezgiyse
+  (E-dışı > Eminim, ≥4 doğru) satıra **"kırılgan · N/M sezgi"** rozeti —
+  kör noktanın ölçülmüş kardeşi.
+- **Power-up:** konu, denemede Bilmiyorum+cevapsız/yanlış çıktıysa kartta
+  kehribar **"denemede N boşluk"** işareti. Harita panel çizimi başına BİR
+  kez hesaplanır (kart başına değil — lag dersi).
+- ⚠ Sıralamaya/`puDeger`e KARIŞMADI: boşluk işareti şimdilik yalnız
+  görünür bilgi. Sıralama ağırlığına girmesi kullanıcı kararı bekliyor.
+
+### 2 · `pu_test`e AYRINTILI GİRİŞ bölümü (+16 kontrol)
+
+Fonksiyon varlıkları · `dqBransNet` matematiği (D−Y/4, temel/klinik ayrımı,
+dy sayaçları) · `dqGuvenOzet` · `dqIstat` sağlam/kırılgan + boşluk haritası ·
+**`PANELLER` tanımlı (regresyon korunumu)** · kip anahtarı ve `yenile(true)`
+kaynak izleri · konu listesi getiri sıralı. İlk koşuda 1 hata çıktı ve testin
+kendi beklentisiydi (boşluk haritası tasarım gereği yalnız Bilmiyorum'dan
+beslenir; teste U koymuşum) — test düzeltildi, uygulama değil.
+
+### 3 · A'dan Z'ye cila (yerleşim DEĞİŞMEDİ)
+
+Jeton katmanı: zemin `#030408`, cam/kenar/mürekkep ölçeği netleşti.
+Bileşenler: `.bt.pri` altın gradyan + gölge + bası durumu · üst şerit metrik
+kartlarına iç ışık çizgisi ve tabular rakam · `h2.bb` başlıklara altın tik ·
+kbox/kart derinlik gölgeleri · ince altın-vurgulu kaydırma çubukları ·
+`::selection` altın · `:focus-visible` halkası · girdi odağında altın parıltı
+· orb hover parlaması. Çark geometrisi ve tüm yerleşimler bilinçli olarak
+ellenmedi (§118–123 zinciri). Dört yüzey gerçek tarayıcıda doğrulandı
+(ROTA/SEYİR geniş · ÖLÇÜM/power-up dar).
+
+### Kapılar
+
+pu_test: yeni bölüm 0 (KONU TEKİLLİĞİ 7 · §229 açık maddesi değişmedi) ·
+kal/cark/tarayici/derin: **0** · CSS dengesi 0 · JS parse OK.
+
+**sürüm `2027-02-12a` ↔ `rota-2027-02-12a` · 675 387 bayt**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
