@@ -12406,6 +12406,32 @@ Kırmızıların hepsi §229 KONU TEKİLLİĞİ 7 (bilinçli, bağımsız).
 
 ---
 
+## 247 · FORCE-SIM SERTLEŞTİRME · uzak-itme kapağı · `2027-02-26a`
+
+§246 planlama workflow'unun jürisi (7 ajan tamamlandı) bağımsız olarak
+**A2'yi seçti: "mevcut el-yazımı zeForceSim'i koru ve sertleştir"** (skor 9.1;
+d3 vendor 5.5; saf geometriye dönüş 6.0). d3 GÖMÜLMEDİ, geometriye dönülmedi —
+yani §246'da sevk edilen zaten kazanan yaklaşım. Jürinin tek somut ön-onay
+rafinmanı: A1'in tek iyi fikri olan **distanceMax kapağı**nı O(n²) charge
+döngüsüne 2 satır guard olarak ekle (uzak düğümler global sürüklenme yaratmasın).
+
+Uygulanan: `zeForceSim`'e `opt.distMax` (d²>dm² → itme atla). `zeYerlestir`'de
+distMax **küme yarıçapına göreli**: `560+40·√(düğüm)` — jüri sabit 820'yi
+"küme-göreli değil, katalog büyürse aşılır" diye riskli bulmuştu; göreli
+formül bunu karşılıyor (156→254 konu geçmişi göz önünde). Doğrulama: iki
+açılış birebir AYNI konum (determinizm/gist senk şartı ✓), gorevR 429, ders
+bbox 715×728 (zarf uyumlu), ağ görünümü §246 ile görsel olarak AYNI (küçük
+grafikte uzak-alan kuvvetleri zaten ihmal edilebilir; kapak yalnız büyük
+katalogda devreye girer).
+
+**Ertelenen (jüri onay-sonrası adımlar):** Obsidian yay kuralı (.6/min(deg))
+denemesi, etiket çakışma-önleme (Görev/Küçük Stajlar örtüşmesi), ders↔ders
+çapraz kenarları — hepsi kullanıcı görsel onayına bağlı.
+
+**sürüm `2027-02-26a` ↔ `rota-2027-02-26a`**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
