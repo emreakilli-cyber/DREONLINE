@@ -12763,6 +12763,62 @@ FAZ 7 (yaşayan harita görsel dili), FAZ 8 (Obsidian fonksiyonları), FAZ 9-11.
 
 ---
 
+## §255 · FAZ 6 — Deneme Gezegeni derinliği (8'li matris + tanı + konu kırılımı)
+
+**Ne yapıldı:** zihin evrenindeki **Deneme Gezegeni** artık dalış yapılabilir
+(eskiden tıklayınca "bu dilimde yalnız Görev Gezegeni gezilir" diyordu). Tıklayınca
+alttan açılan bir **derinlik paneli** (`#zeDp`) geliyor:
+
+1. **8 hücreli güven matrisi** — Doğru/Yanlış × Eminim/Arada/Bilmiyorum/Unuttum.
+   Gerçek veride: DE 45 · DAK 8 · DB 39 · DU 11 · YE 6 · YAK 10 · YB 51 · YU 16.
+2. **Tanısal bölgeler** — sağlam bilgi (DE 45) · yanlış öğrenilmiş (YE 6, "emindin
+   ama yanlış, en tehlikelisi") · şans/tanıma (DB+DU 50) · kararsız sınır (18) ·
+   unutma/decay (YU 16). Her biri renk noktalı, sayılı.
+3. **Vurgu** — "103 doğrunun 45'i (%44) sağlam · net 82.3 ama güvenebileceğin
+   çekirdek 45 soru." (§253'teki "net 82 ama bilgi 45" bulgusu artık UI'da.)
+4. **Konu kırılımı** — en çok boşluk verilen konular (Nöroanatomi 7, Aminoasit
+   metabolizması 3, …), ince çubuklu.
+
+**Yeni motor fonksiyonu:** `denemeMatris()` — ayrıntılı denemelerin `sorular[]`
+alanından 8 hücre + tanısal toplamları TÜRETİR (donmuş değer yok, paralel model yok;
+`dqIstat`'ın ham kaynağını 8 hücreye ayırır). Boş sorular 8 hücrenin dışında.
+net = doğru − 0.25·yanlış birebir tutuyor.
+
+**Kullanılan mevcut motor:** dqIstat (bosluk), D.denemeler. **Paralel model:** yok.
+
+**Görsel dil:** açık zemin (#FBFAF7), ince gri çizgiler, çok hafif tanısal tonlar
+(DE soft yeşil #EEF4EA, YE soft kırmızı #FaEDE9 — neon değil, akademik/tıbbi çizelge
+hissi). Panel alttan yay ile açılıyor; scrim tıklanınca ve × ile kapanıyor.
+
+**Geri izolasyonu (FAZ 10 ön-adımı):** panel açıkken `zeGeri()` önce paneli kapatır,
+haritaya dönmez; eski arayüze ASLA gitmez.
+
+**Kapılar:** kal_test/derin/kombo/cark/mola ✓ · pu_test yeni FAZ 6 bölümü 10 kontrol
+SIFIR HATA (8 hücre birebir, boş dışarıda, net doğru, tanısal bölge eşlemesi,
+dqIstat tutarlılığı, dalış+geri bağlantısı); toplam ✗ hâlâ 7 = değişmeden §229 bloğu.
+
+**Görsel doğrulama:** başsız Chromium (iPad 834px + telefon 390px), GERÇEK kullanıcı
+verisiyle (localStorage anahtarı `rota-tus-v6`) ekran görüntüsü alındı; panel her iki
+genişlikte de düzgün, matris ızgarası taşmıyor. (Kare-fark değil, tam-kare inceleme.)
+
+**Eksik / sonraki:** FAZ 7 (yaşayan harita görsel dili · mastery/decay renk-doku,
+anıt, canlanma), FAZ 8 (Obsidian: KOMBO yolları + arama/filtre/odak + backlink),
+FAZ 9-11.
+
+**Bu turda yaptığım hatalar:**
+- Görsel doğrulama betiğinde localStorage anahtarını **CLAUDE.md'ye güvenerek**
+  `rota-veri` yazdım; gerçek anahtar koddaki `rota-tus-v6` (Depo, satır ~2180).
+  İlk ekran görüntüsü bu yüzden BOŞ durumu (seed veri) gösterdi ve panelin
+  çalışmadığını sanabilirdim. Kod okununca (belge değil) anahtar düzeldi, gerçek
+  veri yüklendi. Ders (yine, CLAUDE.md §hafıza-2): durum bilgisini belgeden değil
+  KODDAN oku.
+- pu_test FAZ 6 regex'ini tırnak-birleştirmeyle bozuk yazdım (`'+"'deneme'"+'`),
+  yanlış "hata" verdi; temiz literal ile düzeldi. (Gerçek kusur değildi, test kusuru.)
+
+**sürüm 2027-03-02a ↔ rota-2027-03-02a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)

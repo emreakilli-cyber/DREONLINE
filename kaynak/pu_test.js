@@ -1430,3 +1430,34 @@ eF5('gorevOncelik / gorevNeden fonksiyonları',R('typeof gorevOncelik')==='funct
 })();
 console.log('\n'+(QF5?'✗ '+QF5+' HATA':'✓ SIFIR HATA — 12 ek kontrol'));
 if(QF5)process.exitCode=1;
+
+console.log('\n═══ DENEME GEZEGENİ DERİNLİĞİ · 8 HÜCRE (§255 · FAZ 6) ═══');
+let QF6=0;const eF6=(a,ok,x)=>{if(!ok){QF6++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eF6('denemeMatris / zeDenemeAc fonksiyonları',R('typeof denemeMatris')==='function'&&R('typeof zeDenemeAc')==='function');
+(function(){
+  // Bilinen 8 hücreli sentetik ayrıntılı deneme (+1 boş)
+  R('D.denemeler=[{tar:"2026-08-01",kay:"t",t:0,k:0,bn:{},detay:true,sorular:['+
+    '{b:"Anatomi",konu:"a",s:"D",e:"E"},{b:"Anatomi",konu:"a",s:"D",e:"AK"},'+
+    '{b:"Anatomi",konu:"a",s:"D",e:"B"},{b:"Anatomi",konu:"a",s:"D",e:"U"},'+
+    '{b:"Anatomi",konu:"a",s:"Y",e:"E"},{b:"Anatomi",konu:"a",s:"Y",e:"AK"},'+
+    '{b:"Anatomi",konu:"b",s:"Y",e:"B"},{b:"Anatomi",konu:"b",s:"Y",e:"U"},'+
+    '{b:"Anatomi",konu:"c",s:"B",e:"B"}]}]');
+  const mx=R('denemeMatris()'), M=mx.M;
+  eF6('8 hücre birebir (her biri 1)',['DE','DAK','DB','DU','YE','YAK','YB','YU'].every(k=>M[k]===1),M);
+  eF6('boş 8 hücrenin DIŞINDA sayılıyor',mx.bos===1&&mx.top===9,{bos:mx.bos,top:mx.top});
+  eF6('net = doğru − 0.25·yanlış',Math.abs(mx.net-3)<1e-9&&mx.dog===4&&mx.yan===4,{net:mx.net,dog:mx.dog,yan:mx.yan});
+  eF6('tanısal bölgeler doğru eşleniyor',
+    mx.saglam===M.DE&&mx.yanlisOgren===M.YE&&mx.sans===(M.DB+M.DU)&&mx.kararsiz===(M.DAK+M.YAK)&&mx.decay===M.YU,
+    {sag:mx.saglam,yanO:mx.yanlisOgren,sans:mx.sans,krr:mx.kararsiz,dcy:mx.decay});
+  eF6('denSay yalnız sorular[] taşıyan denemeleri sayıyor',mx.denSay===1,mx.denSay);
+  // dqIstat ile tutarlılık: sag(D+Emin) toplamı = M.DE
+  const ist=R('dqIstat()'); let sag=0; Object.values(ist.brans).forEach(b=>sag+=b.sag);
+  eF6('dqIstat.sag ↔ denemeMatris.DE tutarlı',sag===M.DE,{dqSag:sag,DE:M.DE});
+  // sorular[] olmayan denemeler denSay'ı şişirmiyor (hızlı D/Y girişi)
+  R('D.denemeler=[{tar:"2026-08-01",t:30,k:28,bn:{}}]');
+  eF6('sorular[] yoksa denSay=0 (hızlı giriş dahil edilmiyor)',R('denemeMatris().denSay')===0);
+})();
+eF6('deneme node dalışı bağlı (zeTikla → zeDenemeAc)',/ajan\.tip==='deneme'[\s\S]{0,40}zeDenemeAc/.test(kod));
+eF6('geri düğmesi önce paneli kapatıyor (izolasyon)',/zeDp[\s\S]{0,80}zeDenemeKapat\(\); return/.test(kod));
+console.log('\n'+(QF6?'✗ '+QF6+' HATA':'✓ SIFIR HATA — 10 ek kontrol'));
+if(QF6)process.exitCode=1;
