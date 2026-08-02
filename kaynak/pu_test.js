@@ -1339,3 +1339,61 @@ eGR('kenar çizimi + odak dim kaynakta (Obsidian odak davranışı)',
   kod.indexOf('ze.kenarlar')>=0&&/sol=\(ze\.sec\.ders&&!odak\)/.test(kod));
 console.log('\n'+(QGR?'✗ '+QGR+' HATA':'✓ SIFIR HATA — 9 ek kontrol'));
 if(QGR)process.exitCode=1;
+
+console.log('\n═══ KONU DECAY + DENEME TRENDİ (§249/§250 · FAZ 2-3) ═══');
+let QFZ=0;const eFZ=(a,ok,x)=>{if(!ok){QFZ++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eFZ('konuSon / konuCurume fonksiyonları',R('typeof konuSon')==='function'&&R('typeof konuCurume')==='function');
+eFZ('denemeTrend fonksiyonu',R('typeof denemeTrend')==='function');
+// FAZ 2: konu-seviye decay son çalışma tarihinden ayrışıyor
+(function(){ C.setGun('2026-08-20'); R('D.bitti={}'); R('D.pu={}');
+  const p=R('(function(){const by={};POWERUP.forEach(u=>{(by[u.brans]=by[u.brans]||[]).push(u)});for(const b in by)if(by[b].length>=2)return[by[b][0],by[b][1]];return null})()');
+  R('D.pu[puAnh('+JSON.stringify(p[0])+')]={al:"2026-08-01",bit:"2026-08-02"}');
+  R('D.pu[puAnh('+JSON.stringify(p[1])+')]={al:"2026-08-17",bit:"2026-08-18"}');
+  const A=R('konuCurume('+JSON.stringify(p[0].brans)+','+JSON.stringify(p[0].konu)+','+JSON.stringify(p[0].grup)+',"2026-08-20")');
+  const B=R('konuCurume('+JSON.stringify(p[1].brans)+','+JSON.stringify(p[1].konu)+','+JSON.stringify(p[1].grup)+',"2026-08-20")');
+  eFZ('eski çalışılan konu daha yüksek decay',A.cur>B.cur,{eski18g:+A.cur.toFixed(3),yeni2g:+B.cur.toFixed(3)});
+  eFZ('hiç çalışılmayan konu cur=0 (boşluk, decay değil)',
+    R('konuCurume("Anatomi","__yok__","Anatomi","2026-08-20").cur')===0);
+  const L=R('rehberSec()');
+  const curSet=new Set(L.map(x=>x.neden.cur.toFixed(4)));
+  eFZ('rehberSec cur artık dejenere değil (>1 farklı değer)',curSet.size>1,{farkliCur:curSet.size});
+  eFZ('rehberSec neden.sonGun açıklanabilirlik alanı var',L.some(x=>'sonGun' in x.neden));
+})();
+// FAZ 3: son N deneme gözlemsel trendi, R_CAL'den bağımsız
+(function(){ const D5=[
+  {tar:'2026-08-01',t:30,k:28,bn:{Anatomi:6,Patoloji:9}},
+  {tar:'2026-08-05',t:33,k:30,bn:{Anatomi:7,Patoloji:8}},
+  {tar:'2026-08-17',t:40,k:35,bn:{Anatomi:10,Patoloji:5}}];
+  R('D.denemeler='+JSON.stringify(D5));
+  const T=R('denemeTrend(5)');
+  eFZ('trend serisi artan puanı yansıtıyor',T.yeter&&T.seri.length===3&&T.seri[2]>T.seri[0]);
+  eFZ('trend delta pozitif (yükseliş)',T.delta>0,{delta:T.delta});
+  eFZ('branş yönü ayrışıyor (Anatomi ▲ · Patoloji ▼)',T.bransTrend.Anatomi==='▲'&&T.bransTrend.Patoloji==='▼');
+  R('D.denemeler=[{tar:"2026-08-01",t:30,k:28,bn:{}}]');
+  eFZ('az veri koruması (tek deneme → yeter:false)',R('denemeTrend(5).yeter')===false);
+  R('D.denemeler='+JSON.stringify(D5));
+  const rc1=R('rCal().r'); R('denemeTrend(5)'); const rc2=R('rCal().r');
+  eFZ('trend R_CAL\'i DEĞİŞTİRMİYOR (ayrı katman)',rc1===rc2);
+})();
+console.log('\n'+(QFZ?'✗ '+QFZ+' HATA':'✓ SIFIR HATA — 11 ek kontrol'));
+if(QFZ)process.exitCode=1;
+
+console.log('\n═══ TEMPO-BAZLI SENARYO PROJEKSİYONU (§251 · FAZ 4) ═══');
+let QTP=0;const eTP=(a,ok,x)=>{if(!ok){QTP++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eTP('tempoProjeksiyon fonksiyonu',R('typeof tempoProjeksiyon')==='function');
+(function(){ C.setGun('2026-08-10'); R('D.bitti={}'); R('D.pu={}');
+  R('D.denemeler=[{tar:"2026-08-05",t:32,k:30,bn:{Dahiliye:14,Patoloji:8,Biyokimya:5,Fizyoloji:5,Anatomi:6,"Genel Cerrahi":6,Farmakoloji:5,Mikrobiyoloji:5,Pediatri:6,"Kadın Doğum":4}}]');
+  R('(function(){const gun=[...new Set(GOREVLER.map(g=>g.d))].sort().slice(0,3);GOREVLER.forEach((g,i)=>{if(gun.indexOf(g.d)>=0&&["oku","video","soru","tekrar"].indexOf(g.act)>=0&&i%2===0)D.bitti[id(g)]=g.d})})()');
+  const T0=R('tempoProjeksiyon(0)'), T1=R('tempoProjeksiyon(1)'), T3=R('tempoProjeksiyon(3)');
+  const tam=R('+puanVarsayim(GOREVLER.filter(g=>!D.bitti[id(g)]).map(id)).toFixed(1)');
+  eTP('gerçek tempo ölçülüyor (harcanan/geçen gün)',T0.tempo>0);
+  eTP('kalan gün + kapasite hesaplı',T0.kalanGun>0&&T0.kapasite>0);
+  eTP('mevcut ≤ tempo korunursa (ileri getiri)',T0.net>=T0.mevcut-0.05,{mevcut:T0.mevcut,tempo:T0.net});
+  eTP('ek saat neti monoton yükseltiyor',T1.net>=T0.net-0.05&&T3.net>=T1.net-0.05,{t0:T0.net,t1:T1.net,t3:T3.net});
+  eTP('senaryolar planın tamamını (tavan) AŞMIYOR',T0.net<=tam+0.05&&T3.net<=tam+0.05,{t3:T3.net,tavan:tam});
+  const rc1=R('rCal().r'); R('tempoProjeksiyon(2)'); const rc2=R('rCal().r');
+  eTP('tempoProjeksiyon R_CAL\'i DEĞİŞTİRMİYOR (kalibreden ayrı senaryo)',rc1===rc2);
+  C.setGun('2026-08-23'); eTP('sınav günü/sonrası: net=mevcut (kalan gün 0)',R('tempoProjeksiyon(0)').net===R('tempoProjeksiyon(0)').mevcut);
+})();
+console.log('\n'+(QTP?'✗ '+QTP+' HATA':'✓ SIFIR HATA — 7 ek kontrol'));
+if(QTP)process.exitCode=1;

@@ -12544,6 +12544,67 @@ ajanlar, geri izolasyon, polish). Görsel değişiklik FAZ 7'de başlıyor.
 
 ---
 
+## 250 · FAZ 3 · SON N DENEME GÖZLEMSEL TRENDİ · `2027-02-28a`
+
+Auditte (§248) bulunan ikinci eksik kapatıldı: "son 5 deneme +3.1" kayan-pencere
+trendi YOKtu. Eklendi — **R_CAL'in YERİNE değil, AYRI gözlem katmanı** (kullanıcı
+şartı). Yeni model değil; yalnız D.denemeler + puan() okuması.
+- `denemeBrNet(o,br)`: bir denemenin branş neti (Fizyoloji+Histo birleşik).
+- `denemeTrend(N=5)`: son N denemenin puan serisi + delta + genel yön (▲→▼) +
+  branş yönleri (pencere ilk↔son oran değişimi, ±0.03 eşiği). <2 deneme →
+  `{yeter:false}` ("yeterli veri yok").
+- **Doğrulama:** seri 54.2→55.4→56.1→57.3→58.2, delta +4 ▲; Anatomi ▲/Fizyoloji ▲/
+  Biyokimya →/Patoloji ▼ beklendiği gibi; tek deneme yeter:false; **trend R_CAL'i
+  DEĞİŞTİRMİYOR** (0.405 sabit — ayrı katman kanıtı).
+- pu_test'e §249/§250 bölümü eklendi (11 kontrol): konu decay ayrışması + dejenere
+  değil + denemeTrend + az-veri koruması + R_CAL izolasyonu.
+
+**Not · UI:** denemeTrend/konuCurume şu an motor katmanı; kullanıcıya gösterim
+(Son 5: … +3.1, branş okları, "son çalışma X gün önce") FAZ 5 (açıklanabilir öneri)
+ve FAZ 7 (yaşayan harita) UI işi. Motor hazır, yüzey sonra.
+
+**Sonraki:** FAZ 4 — tempo-bazlı ileri projeksiyon (kalibre tahminin YANINDA ayrı
+senaryo: mevcut tempo + kalan süre + beklenen çalışma etkisi + decay; para()'nın
+gerçek getiri mantığıyla, uydurma yok).
+
+**sürüm `2027-02-28a` ↔ `rota-2027-02-28a`**
+
+---
+
+## 251 · FAZ 4 · TEMPO-BAZLI SENARYO PROJEKSİYONU · `2027-02-28a`
+
+Auditteki (§248) üçüncü eksik: "mevcut tempoyla ileri projeksiyon" YOKtu.
+Eklendi — kalibre tahminin (puan(para())) YANINA ayrı senaryo. Yeni model YOK:
+- `tempoProjeksiyon(ekSaatGün)`: gerçek tempo = (harcanan saat)/(geçen gün);
+  kapasite = (tempo+ekSaat)×kalan gün; kalan işler PLAN SIRASINDA kapasiteye
+  kadar doldurulur; getiri mevcut `puanVarsayim`(seçilenler) ile — para/decay/
+  R_CAL zinciriyle. Döner: {tempo, kalanGun, kapasite, mevcut, net, secilenIs,
+  kalanIs, kapsananSaat}.
+- Kavram ayrımı (kullanıcı şartı): A) kalibre tahmin = puan(para()) [banttı, §248];
+  B) senaryo = bu. İkisi ayrı gösterilecek.
+- **Doğrulama (değişmezler):** MEVCUT 54.8 ≤ TEMPO 55.1 ≤ +1 55.5 ≤ +3 56.3 ≤
+  PLANIN TAMAMI 59.0 (tavan); monoton; hepsi tavanla sınırlı; ek saat tavana
+  yaklaştırıyor; sınav günü net=mevcut; **R_CAL değişmiyor** (ayrı senaryo).
+  pu_test §251 (7 kontrol). Kullanıcının section-5 örneğiyle (58.7→61.2→63.0)
+  aynı yapı.
+
+**Not · UI:** tempoProjeksiyon motor katmanı; "MEVCUT TAHMİN / TEMPO KORUNURSA /
++1 saat" gösterimi FAZ 5-7 UI işi. Aşırı kesinlik göstermeyecek — kapasite
+yaklaşık, net "~" ile sunulacak.
+
+**Motor katmanı özeti (FAZ 2-4 bitti):** konuCurume (konu-decay), denemeTrend
+(gözlemsel trend), tempoProjeksiyon (senaryo) — üçü de mevcut motordan türetim,
+paralel model yok, R_CAL/kalibrasyon dokunulmadı. Kapılarla korunuyor.
+
+**Sonraki:** FAZ 5 — iki görev öneri motorunu (rehberSec CS · puEtki/puSirali
+verim) TEK açıklanabilir öncelik katmanında birleştir; her önerinin "neden"i
+(boşluk/yanlış/decay/soru ağırlığı/beklenen net/süre/tekrar/mastery/son çalışma)
+izlenebilir olsun. Mevcut sinyalleri sil me — ortak karar katmanında topla.
+
+**sürüm `2027-02-28a` ↔ `rota-2027-02-28a`**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
