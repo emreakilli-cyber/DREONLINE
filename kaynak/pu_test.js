@@ -1472,3 +1472,17 @@ eF7('çürüme yayı SÜREKLİ griye kaydırıyor (kademe değil)',/185-35\*dt/.
 eF7('derin yakınlaşmada yay soluyor (yaşayan yapıyla çift kodlama yok)',/1-aCan\*\.7/.test(kod));
 console.log('\n'+(QF7?'✗ '+QF7+' HATA':'✓ SIFIR HATA — 6 ek kontrol'));
 if(QF7)process.exitCode=1;
+
+console.log('\n═══ HARİTA ARAMA · QUICK-SWITCHER (§257 · FAZ 8) ═══');
+let QF8=0;const eF8=(a,ok)=>{if(!ok){QF8++;console.log('  ✗ '+a)}};
+eF8('zeAraIndeks / zeGit / zeAraAc fonksiyonları',
+  R('typeof zeAraIndeks')==='function'&&R('typeof zeGit')==='function'&&R('typeof zeAraAc')==='function');
+eF8('arama düğmesi + girişi HTML iskelede',/id="evAra"/.test(kod)&&/id="zeAraG"/.test(kod)&&/id="zeAraSon"/.test(kod));
+eF8('indeks üç düzeyi kapsıyor (branş+kitap+konu)',
+  /tip:'branş'/.test(kod)&&/tip:'kitap'/.test(kod)&&/tip:'konu'/.test(kod));
+eF8('Türkçe-duyarlı arama (toLocaleLowerCase tr)',/toLocaleLowerCase\('tr'\)/.test(kod));
+eF8('zeGit odaklıyor + uçuyor (ze.sec + zeUc)',/function zeGit[\s\S]{0,400}ze\.sec=\{ders:[\s\S]{0,400}zeUc\(/.test(kod));
+eF8('Enter ilk sonuca gider · Escape kapatır',/e\.key==='Enter'[\s\S]{0,60}zeGit\(ze\._hit\[0\]\)/.test(kod)&&/e\.key==='Escape'/.test(kod));
+eF8('geri düğmesi önce aramayı kapatır (izolasyon)',/zeAra[\s\S]{0,80}zeAraKapat\(\); return/.test(kod));
+console.log('\n'+(QF8?'✗ '+QF8+' HATA':'✓ SIFIR HATA — 7 ek kontrol'));
+if(QF8)process.exitCode=1;

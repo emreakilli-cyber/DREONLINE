@@ -12863,6 +12863,37 @@ dersinin akrabası). Kod tarafında hata çıkmadı; eklenti additive ve gate+g�
 
 ---
 
+## §257 · FAZ 8 (kısım 1) — Harita arama · Obsidian quick-switcher
+
+**Ne yapıldı:** zihin evrenine **arama** eklendi (üst şeritte büyüteç düğmesi).
+Branş/kitap/konu adıyla ara → sonuç listesi → tıkla, harita oraya UÇAR ve odaklar.
+- `zeAraIndeks()` — ze.dersler'den branş+kitap+konu indeksi (mevcut veri, yeni model yok).
+- `zeGit(h)` — hedefe göre ze.sec + zeUc (zeTikla navigasyonunun aynısı; branş→ders
+  zoom, kitap→satır yerleşimi, konu→konu satırı). Panel kapanır, odak kalır.
+- Türkçe-duyarlı filtre (`toLocaleLowerCase('tr')`), branş>kitap>konu sıralı, ilk 40.
+- Enter ilk sonuca gider · Escape/× kapatır · scrim tıklanınca kapanır.
+- Geri izolasyonu: arama açıkken `zeGeri()` önce aramayı kapatır.
+
+**Görsel dil:** üstten açılan beyaz kart, ince gri çizgi, KONU/KİTAP/BRANŞ etiketi,
+yol (branş · kitap) gri altmetin. Akademik, neon yok.
+
+**Kapılar:** kal/derin/kombo/cark/mola ✓ · pu_test yeni FAZ 8 bölümü 7 kontrol SIFIR
+HATA; toplam ✗ hâlâ 7 = değişmeden §229. **Görsel doğrulama:** başsız Chromium
+(iPad 834px) gerçek veriyle: "amino" → 3 konu (Amino Asitler / Aminoasitler /
+Aminoasitlerin Metabolizması), ilk sonuç → Biyokimya·Yavuz Şahin·konu 0'a uçtu,
+panel kapandı. Navigasyon kanıtlı.
+
+**⚠ FAZ 8'DE EKSİK KALAN (bilinçli, sonraki tur):** KOMBO yolları haritada + backlink.
+Neden ertelendi: **KOMBO çiftleri görev-ID (`gun|blok`) anahtarlı** (index.html ~6354),
+harita konuları ise kitap+konu anahtarlı — 1:1 değil. Rastgele eşleme "sessiz sıfır"
+tuzağına düşer (§153/§155). KOMBO backlink ZATEN brif (görev) panelinde çalışıyor
+(ROTA tarafı). Haritaya taşımak için görev↔konu köprüsü dikkatle kurulmalı; acele
+edilmedi. Detay paneli: konu L5 detayı haritada zaten var.
+
+**sürüm 2027-03-04a ↔ rota-2027-03-04a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
