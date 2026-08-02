@@ -1289,3 +1289,15 @@ eV1('evYakinlas',R('typeof evYakinlas')==='function');
 eV1('sektor kaynakta',kod.indexOf('class="evSek"')>=0&&kod.indexOf('evGrup')>=0);
 console.log('\n'+(QV?'✗ '+QV+' HATA':'✓ SIFIR HATA — 4 ek kontrol'));
 if(QV)process.exitCode=1;
+
+console.log('\n═══ EVREN AŞAMA 2-5 (§243) ═══');
+let QU=0;const eU2=(a,ok)=>{if(!ok){QU++;console.log('  ✗ '+a)}};
+eU2('evKitapCiz',R('typeof evKitapCiz')==='function');
+eU2('evSur',R('typeof evSur')==='function');
+eU2('evYakinlasVurgu',R('typeof evYakinlasVurgu')==='function');
+eU2('uydu kaynakta',kod.indexOf('DENEME UYDUSU')>=0);
+eU2('kara delik görseli',kod.indexOf('rgba(168,140,214,.5)')>=0);
+eU2('yaşam ışıkları',kod.indexOf('class="evYil"')>=0);
+eU2('menü barı',kod.indexOf('evMenuBar')>=0&&kod.indexOf("evSur('rehber')")>=0);
+console.log('\n'+(QU?'✗ '+QU+' HATA':'✓ SIFIR HATA — 7 ek kontrol'));
+if(QU)process.exitCode=1;
