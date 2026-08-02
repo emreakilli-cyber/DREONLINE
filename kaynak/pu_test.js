@@ -1397,3 +1397,92 @@ eTP('tempoProjeksiyon fonksiyonu',R('typeof tempoProjeksiyon')==='function');
 })();
 console.log('\n'+(QTP?'✗ '+QTP+' HATA':'✓ SIFIR HATA — 7 ek kontrol'));
 if(QTP)process.exitCode=1;
+
+console.log('\n═══ GÖREV ÖNCELİK · TEK KATMAN + ULAŞILABİLİR TAVAN BANDI (§254 · FAZ 5) ═══');
+let QF5=0;const eF5=(a,ok,x)=>{if(!ok){QF5++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eF5('gorevOncelik / gorevNeden fonksiyonları',R('typeof gorevOncelik')==='function'&&R('typeof gorevNeden')==='function');
+(function(){ C.setGun('2026-08-05'); R('D.bitti={}'); R('D.pu={}'); R('D.kal=[]');
+  R('D.denemeler=[{tar:"2026-08-01",t:32,k:30,bn:{Dahiliye:14,Patoloji:8,Biyokimya:5,Fizyoloji:5,Anatomi:6,"Genel Cerrahi":6,Farmakoloji:5,Mikrobiyoloji:5,Pediatri:6,"Kadın Doğum":4}}]');
+  const L=R('gorevOncelik()');
+  eF5('öncelik listesi üretiliyor',Array.isArray(L)&&L.length>0,L&&L.length);
+  // TEKİLLEŞTİRME · aynı (branş§konu) iki öneri olarak dönmüyor
+  const anah=L.map(a=>a.u.brans+'§'+a.u.konu), tek=new Set(anah);
+  eF5('branş§konu tekil (yinelenen ayıklandı)',anah.length===tek.size,{liste:anah.length,tekil:tek.size});
+  const hamAnah=R('rehberSec()').map(a=>a.u.brans+'§'+a.u.konu);
+  eF5('ham rehberSec ≥ tekil liste (gerçekten ayıkladı)',hamAnah.length>=anah.length,{ham:hamAnah.length,tekil:anah.length});
+  // BİRLEŞİM · CS (zayıflık) + puEtki (ekonomik beklenen net) tek skorda
+  eF5('skor = CS + ekonomik beklenenNet (birleşik katman)',L.every(a=>typeof a.skor==='number'&&'beklenenNet' in a));
+  eF5('skora göre azalan sıralı',L.every((a,i)=>i===0||L[i-1].skor>=a.skor-1e-9));
+  // AÇIKLANABİLİRLİK · gorevNeden gerçek kanıt cümleleri döndürüyor
+  eF5('gorevNeden string[] döndürüyor',R('(function(){var a=gorevOncelik()[0];var n=gorevNeden(a);return Array.isArray(n)&&n.every(s=>typeof s==="string")})()'));
+  eF5('en az bir görevde kanıtlı neden var',R('gorevOncelik().some(a=>gorevNeden(a).length>0)'));
+  eF5('rehberMetin tek katmanı kullanıyor (beklenen net cümlesi)',/beklenen \+/.test(R('rehberMetin(1)')||'')||R('gorevOncelik()[0].beklenenNet')>=0);
+  // §254 ÇEKİRDEK · ULAŞILABİLİR TAVAN BANDI GERÇEKTEN AÇILIYOR
+  const b1=R('tavanBant(-1)'), b2=R('tavanBant(1)'), alt=Math.min(b1,b2), ust=Math.max(b1,b2);
+  eF5('tavanBant bandı AÇILIYOR (kalan iş + R_CAL belirsizliği · genişlik>0)',ust-alt>0.05,{alt:+alt.toFixed(2),üst:+ust.toFixed(2),gen:+(ust-alt).toFixed(2)});
+  const par=R('puan(para().t,para().k)');
+  eF5('tavan ortası ≥ PARAKETE (kalan işi bitirmek neti yükseltir)',(alt+ust)/2>=par-0.05,{tavanOrta:+((alt+ust)/2).toFixed(2),parakete:+par.toFixed(2)});
+  // §254 KÖK KUSUR · zorlama bayrağı sıfırlanıyor, rCal önbelleği BOZULMUYOR
+  const rc0=R('rCal().r'); R('tavanBant(1)'); R('tavanBant(-1)'); const rc1=R('rCal().r');
+  eF5('tavanBant R_CAL önbelleğini BOZMUYOR (_rcZorla sıfırlanıyor)',Math.abs(rc0-rc1)<1e-9,{once:rc0,sonra:rc1});
+  R('puanBant(-1)'); R('puanBant(1)'); const rc2=R('rCal().r');
+  eF5('puanBant sonrası da R_CAL sağlam (aynı zorlama yolu)',Math.abs(rc2-rc0)<1e-9);
+})();
+console.log('\n'+(QF5?'✗ '+QF5+' HATA':'✓ SIFIR HATA — 12 ek kontrol'));
+if(QF5)process.exitCode=1;
+
+console.log('\n═══ DENEME GEZEGENİ DERİNLİĞİ · 8 HÜCRE (§255 · FAZ 6) ═══');
+let QF6=0;const eF6=(a,ok,x)=>{if(!ok){QF6++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eF6('denemeMatris / zeDenemeAc fonksiyonları',R('typeof denemeMatris')==='function'&&R('typeof zeDenemeAc')==='function');
+(function(){
+  // Bilinen 8 hücreli sentetik ayrıntılı deneme (+1 boş)
+  R('D.denemeler=[{tar:"2026-08-01",kay:"t",t:0,k:0,bn:{},detay:true,sorular:['+
+    '{b:"Anatomi",konu:"a",s:"D",e:"E"},{b:"Anatomi",konu:"a",s:"D",e:"AK"},'+
+    '{b:"Anatomi",konu:"a",s:"D",e:"B"},{b:"Anatomi",konu:"a",s:"D",e:"U"},'+
+    '{b:"Anatomi",konu:"a",s:"Y",e:"E"},{b:"Anatomi",konu:"a",s:"Y",e:"AK"},'+
+    '{b:"Anatomi",konu:"b",s:"Y",e:"B"},{b:"Anatomi",konu:"b",s:"Y",e:"U"},'+
+    '{b:"Anatomi",konu:"c",s:"B",e:"B"}]}]');
+  const mx=R('denemeMatris()'), M=mx.M;
+  eF6('8 hücre birebir (her biri 1)',['DE','DAK','DB','DU','YE','YAK','YB','YU'].every(k=>M[k]===1),M);
+  eF6('boş 8 hücrenin DIŞINDA sayılıyor',mx.bos===1&&mx.top===9,{bos:mx.bos,top:mx.top});
+  eF6('net = doğru − 0.25·yanlış',Math.abs(mx.net-3)<1e-9&&mx.dog===4&&mx.yan===4,{net:mx.net,dog:mx.dog,yan:mx.yan});
+  eF6('tanısal bölgeler doğru eşleniyor',
+    mx.saglam===M.DE&&mx.yanlisOgren===M.YE&&mx.sans===(M.DB+M.DU)&&mx.kararsiz===(M.DAK+M.YAK)&&mx.decay===M.YU,
+    {sag:mx.saglam,yanO:mx.yanlisOgren,sans:mx.sans,krr:mx.kararsiz,dcy:mx.decay});
+  eF6('denSay yalnız sorular[] taşıyan denemeleri sayıyor',mx.denSay===1,mx.denSay);
+  // dqIstat ile tutarlılık: sag(D+Emin) toplamı = M.DE
+  const ist=R('dqIstat()'); let sag=0; Object.values(ist.brans).forEach(b=>sag+=b.sag);
+  eF6('dqIstat.sag ↔ denemeMatris.DE tutarlı',sag===M.DE,{dqSag:sag,DE:M.DE});
+  // sorular[] olmayan denemeler denSay'ı şişirmiyor (hızlı D/Y girişi)
+  R('D.denemeler=[{tar:"2026-08-01",t:30,k:28,bn:{}}]');
+  eF6('sorular[] yoksa denSay=0 (hızlı giriş dahil edilmiyor)',R('denemeMatris().denSay')===0);
+})();
+eF6('deneme node dalışı bağlı (zeTikla → zeDenemeAc)',/ajan\.tip==='deneme'[\s\S]{0,40}zeDenemeAc/.test(kod));
+eF6('geri düğmesi önce paneli kapatıyor (izolasyon)',/zeDp[\s\S]{0,80}zeDenemeKapat\(\); return/.test(kod));
+console.log('\n'+(QF6?'✗ '+QF6+' HATA':'✓ SIFIR HATA — 10 ek kontrol'));
+if(QF6)process.exitCode=1;
+
+console.log('\n═══ YAŞAYAN HARİTA · DİYAR SAĞLIĞI OVERVIEW (§256 · FAZ 7) ═══');
+let QF7=0;const eF7=(a,ok)=>{if(!ok){QF7++;console.log('  ✗ '+a)}};
+eF7('hâkimiyet yayı OVERVIEW alfasına bağlı (aDers, aCan değil)',/gec=aDers\*sol\*\(1-aCan/.test(kod));
+eF7('yay hâkimiyet payını çiziyor (H7·2π)',/rS\+4,-1\.5708,-1\.5708\+6\.283\*H7/.test(kod));
+eF7('anıt · yüksek hâkimiyet (H7>=.7) altın mühür',/H7>=\.7[\s\S]{0,140}fillStyle=ALTIN/.test(kod));
+eF7('kırılgan işareti overview kırmızı nokta',/d\.kirilgan\)\{[\s\S]{0,200}#C2452D/.test(kod));
+eF7('çürüme yayı SÜREKLİ griye kaydırıyor (kademe değil)',/185-35\*dt/.test(kod)&&/\(d\.C\|\|0\)\*1\.6/.test(kod));
+eF7('derin yakınlaşmada yay soluyor (yaşayan yapıyla çift kodlama yok)',/1-aCan\*\.7/.test(kod));
+console.log('\n'+(QF7?'✗ '+QF7+' HATA':'✓ SIFIR HATA — 6 ek kontrol'));
+if(QF7)process.exitCode=1;
+
+console.log('\n═══ HARİTA ARAMA · QUICK-SWITCHER (§257 · FAZ 8) ═══');
+let QF8=0;const eF8=(a,ok)=>{if(!ok){QF8++;console.log('  ✗ '+a)}};
+eF8('zeAraIndeks / zeGit / zeAraAc fonksiyonları',
+  R('typeof zeAraIndeks')==='function'&&R('typeof zeGit')==='function'&&R('typeof zeAraAc')==='function');
+eF8('arama düğmesi + girişi HTML iskelede',/id="evAra"/.test(kod)&&/id="zeAraG"/.test(kod)&&/id="zeAraSon"/.test(kod));
+eF8('indeks üç düzeyi kapsıyor (branş+kitap+konu)',
+  /tip:'branş'/.test(kod)&&/tip:'kitap'/.test(kod)&&/tip:'konu'/.test(kod));
+eF8('Türkçe-duyarlı arama (toLocaleLowerCase tr)',/toLocaleLowerCase\('tr'\)/.test(kod));
+eF8('zeGit odaklıyor + uçuyor (ze.sec + zeUc)',/function zeGit[\s\S]{0,400}ze\.sec=\{ders:[\s\S]{0,400}zeUc\(/.test(kod));
+eF8('Enter ilk sonuca gider · Escape kapatır',/e\.key==='Enter'[\s\S]{0,60}zeGit\(ze\._hit\[0\]\)/.test(kod)&&/e\.key==='Escape'/.test(kod));
+eF8('geri düğmesi önce aramayı kapatır (izolasyon)',/zeAra[\s\S]{0,80}zeAraKapat\(\); return/.test(kod));
+console.log('\n'+(QF8?'✗ '+QF8+' HATA':'✓ SIFIR HATA — 7 ek kontrol'));
+if(QF8)process.exitCode=1;

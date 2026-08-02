@@ -55,7 +55,7 @@ console.log('═══ ARAYÜZ ═══');
 chk('giriş paneli var',/id="dpanel"/.test(kod)&&/id="dpKay"/.test(kod));
 chk('menüde giriş düğmesi',/id="dnmB"/.test(kod));
 chk('havuz listesi ve silme',/data-dsil=/.test(kod));
-chk('üst şeritte BANT gösteriliyor',/puanBant\(-1\)/.test(kod)&&/puanBant\(1\)/.test(kod));
+chk('üst şeritte BANT gösteriliyor (§254 ulaşılabilir tavan)',/tavanBant\(-1\)/.test(kod)&&/tavanBant\(1\)/.test(kod));
 chk('D.kal senkronda korunuyor',/kal:\(o&&Array\.isArray\(o\.kal\)&&o\.kal\)\|\|\[\]/.test(kod));
 chk('binom varyansı kullanılıyor',/1\.5625\*pk\*\(1-pk\)\/q/.test(kod));
 chk('önbellek anahtarı içeriği kapsıyor',/JSON\.stringify\(D\.kal\|\|\[\]\)/.test(kod));

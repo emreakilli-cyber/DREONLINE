@@ -12605,6 +12605,295 @@ izlenebilir olsun. Mevcut sinyalleri sil me — ortak karar katmanında topla.
 
 ---
 
+## 252 · GERÇEK VERİ AUDİTİ · PARAKETE/POTANSİYEL/R_CAL (kod değişmedi · FAZ 5 öncesi)
+
+Kullanıcı gerçek 200 soruluk deneme girdi; FAZ 5'ten önce Parakete/Potansiyel/
+R_CAL/deneme analizi/görev motorunun doğru çalıştığını kanıtlı denetlememi
+istedi. ⚠ Kullanıcının GERÇEK cevapları tarayıcı localStorage'ında; buradan
+erişilemiyor. Bu yüzden TEMSİLİ 200 soru (branş dağılımı SORU.den ile birebir)
+kurup MEKANİĞİ denetledim (kaynak/audit_parakete.js). Motora DOKUNULMADI.
+
+**Kavram tanımları (koddan kesin):**
+- ölçülen = puan(son().t, son().k) — son denemenin ölçülen neti
+- PARAKETE = puan(para().t, para().k) — planı bitirirsem, decay + kalibre kazanç
+- POTANSİYEL ("Kalan potansiyel", tkV) = kalanKazanci().fark = puanVarsayim(tüm
+  kalan) − PARAKETE → EK NET (delta), skor DEĞİL. Tavan = PARAKETE + POTANSİYEL.
+
+**Doğrulanan (🟢):**
+- Veri bütünlüğü: 200 soru, her biri {b,konu,s,e}; dqIstat 8 hücreyi ayırıyor
+  (sağlam=D+Emin, kırılgan=D+güvensiz, unuttum, bilmiyorum).
+- PARAKETE motor değeri = bağımsız yeniden hesap (TABAN+KT·t+KK·k) BİREBİR aynı;
+  UI (hP) doğrudan bu fonksiyonu basıyor → UI↔motor ayrışması YOK (yapısal).
+- PARAKETE ≠ POTANSİYEL: biri skor, biri delta.
+- FAZ 2 konu-decay görev motorunda çalışıyor: çür=0.13(son 8g)/0.20(son 14g)/
+  0.07(son 4g) — konu-seviye ayrışıyor.
+
+**Açıklanabilirlik/UX bulguları (🟡 — düzeltme kullanıcı onayına bırakıldı):**
+1. **Tek 200’lük deneme R_CAL’i OYNATMIYOR** (ΔR_CAL=0, n=0). R_CAL kanalları:
+   24’lük D.kal (kd/ky/kb), deneme-içi kontrast (e.konular — 200’lükte bu şekilde
+   yok), ardışık deneme çifti (≥2 gerekir), konu çiftleri. Yani ilk 200’lük
+   deneme PARAKETE’yi (bn üzerinden) ve analizi (dqIstat) besler ama R_CAL
+   kalibrasyonu İKİNCİ denemeden itibaren devreye girer. Güven E/AK/B/U analizi/
+   görev önceliğini besliyor, R_CAL’i doğrudan DEĞİL.
+2. **Güven bandı 0.00’a çöküyor** (bu senaryoda): deneme en son olay, sonrasında
+   çalışma yok → projeksiyon ölçülenin decay’i, R_CAL belirsizliği uygulanacak
+   çalışma-kazancı yok → bant daralıyor. Doğru ama kullanıcıya açıklanmalı.
+3. **Görev önerisinde TEKRAR:** POWERUP 270 kayıt / 230 tekil (branş,konu); 31
+   konu birden çok kitaptan. rehberSec teklemiyor → aynı konu (ör. Biyokimya/
+   Lipidler) listede iki kez. Düzeltme: rehberSec çıktısını (branş,konu) bazında
+   tekilleştir (kararı kullanıcı).
+4. **bosluk konu-adı eşleşmesine bağlı** (sessiz-sıfır riski, CLAUDE.md §153):
+   deneme konu adı POWERUP konu adıyla birebir eşleşmezse bos=0 sessizce.
+
+**VERDİKT: 🟡 MOTOR DOĞRU AMA AÇIKLANABİLİRLİK EKSİK.** Hesaplar doğru, UI↔motor
+ayrışması yok; ama (a) R_CAL’in ne zaman devreye girdiği, (b) bant semantiği,
+(c) yinelenen öneri, (d) bosluk eşleşmesi kullanıcıya görünür/sağlam değil.
+Bunlar FAZ 5’in (açıklanabilir öneri) ve küçük düzeltmelerin konusu — kullanıcı
+onayı bekleniyor. Gerçek sayı denetimi için kullanıcının localStorage 'rota-veri'
+JSON'unu vermesi gerekiyor (rapor sonunda adımlar).
+
+**sürüm değişmedi (yalnız audit) · kaynak/audit_parakete.js eklendi**
+
+---
+
+## 253 · GERÇEK VERİ AUDİTİ · kullanıcı 200 soruluk denemesi (kod değişmedi)
+
+Kullanıcı gerçek localStorage 'rota-veri' verisini verdi (6 deneme, sonuncusu
+2026-08-02 · 200 soru · Ayrıntılı · t=41.5 k=40.75). Motor DEĞİŞMEDEN denetlendi
+(kaynak/audit_gercek.js; kullanıcı verisi repoya KOYULMADI, scratchpad'de).
+
+**Deploy audit:** `.github/workflows` YOK → otomatik deploy YOK; dağıtım elle
+(CLAUDE.md ile tutarlı). origin/main güncel (e03da6e · 2027-02-28a). Canlı Pages
+container'dan erişilemedi (HTTP 000, proxy github.io). Kullanıcı cihazda sürümü
+görüp 2027-02-28a ile karşılaştırmalı.
+
+**🟢 DOĞRULANAN (gerçek veriyle, birebir):**
+- 200 soru: dy(kayıtlı) ↔ sorular[] bağımsız sayım BİREBİR; dqBransNet T=41.5
+  K=40.75 = kayıtlı.
+- 8'li matris (gerçek): D+Emin 45 · D+Bilmiyorum 39 · Y+Bilmiyorum 51 · Y+Unuttum
+  16 · Y+Emin 6. dqIstat sağlam=45 kırılgan=58 = matris. → "Netin 82 ama sağlam
+  bilgi 45; 39 doğru şans/tanıma" içgörüsü VERİDEN çıkıyor.
+- PARAKETE: ölçülen puan(41.5,40.75)=60.15; para()→59.35; bağımsız yeniden hesap
+  BİREBİR. PARAKETE(59.35) < ölçülen(60.15): decay dürüstçe düşürüyor.
+- R_CAL: gerçek 6 denemeyle n=2, R_CAL=0.355 SD=0.092 (önsel 0.405'ten aşağı —
+  kişisel: bir tur çalışma ortalamadan AZ kapatıyor). Son deneme ΔR_CAL=-0.050
+  (aşırı oynatmıyor). ⚠ Düzeltme: §252'de "tek deneme R_CAL'i oynatmıyor" dedim;
+  DOĞRU ama kullanıcının 6 denemesi var → ardışık-çift kanalı çalışıyor, R_CAL
+  kalibre oluyor. İlk deneme oynatmaz, sonrakiler oynatır.
+- FAZ 3 denemeTrend(5): 53.2→52.8→55.2→57.6→60.1 · Δ +6.9 (gerçek yükseliş).
+- FAZ 4 tempoProjeksiyon: tempo 2.48 sa/gün · +0→60.1, +1→60.8, +3→61.8 (124/124);
+  MONOTON ✓. Kalibre tahmin (PARAKETE 59.35) ile senaryo (tempo) AYRI.
+
+**🟡 AÇIKLANABİLİRLİK/UX (FAZ 5 kapsamı, motor doğru):**
+1. Güven bandı PARAKETE'ye bağlı ve 0.00 çıkıyor (bu senaryoda deneme-sonrası
+   çalışma yok → R_CAL belirsizliği tabana yansımıyor). Bant, R_CAL belirsizliğinin
+   yaşadığı ULAŞILABİLİR TAVAN'a (PARAKETE+Potansiyel) taşınmalı.
+2. rehberSec yinelenen öneri: 270 kayıt / 230 tekil → 40 yinelenen. Tekilleştir.
+3. Export'ta D.pu yoktu (yalnız bitti/denemeler/guncel); power-up çalışma tarihleri
+   ayrı anahtarda olabilir — FAZ 2 decay program görevlerinden çalışıyor, power-up
+   tarafı eksik veriyle sınanamadı.
+
+**VERDİKT: 🟢 MOTOR DOĞRU · FAZ 5'e geçilebilir.** Çekirdek hesaplar (veri
+bütünlüğü, PARAKETE, R_CAL kalibrasyon, trend, tempo) gerçek veriyle birebir
+doğrulandı; UI↔motor ayrışması yok. 🟡 maddeler tam olarak FAZ 5'in (açıklanabilir
+birleşik öneri + net kartı) işi — orada bant yerleşimi + dedup + "neden" görünürlüğü
+ele alınacak.
+
+**sürüm değişmedi (audit) · kaynak/audit_gercek.js eklendi**
+
+---
+
+## §254 · FAZ 5 — tek açıklanabilir öncelik katmanı + ulaşılabilir tavan bandı
+
+**Ne yapıldı (üç iş, motor tek kaynak korunarak):**
+
+1. **`gorevOncelik()` / `gorevNeden()`** (index.html ~6934) — iki öneri motorunu
+   BİRLEŞTİRİR, YENİ MODEL DEĞİL: `rehberSec()` (zayıflık · CS) + `puEtki()`
+   (ekonomik beklenen net) tek skorda: `skor = CS + 1.2·min(1.5,beklenenNet)`.
+   Sonra `(branş§konu)` anahtarıyla TEKİLLEŞTİRİR. Gerçek veride 270 ham → 230
+   tekil (40 yinelenen ayıklandı, §253 bulgusu 🟡-2 kapandı). `gorevNeden()`
+   her öneriyi kanıt cümlelerine çevirir (boş soru, sezgi oranı, çürüme+son gün,
+   branş düşüşü, sınav ağırlığı, tekrar günü). `rehberMetin()` artık bunu kullanıyor;
+   eski `u._net "?"` hatası düzeldi.
+
+2. **Ulaşılabilir tavan bandı `tavanBant(yon)`** (§253 bulgusu 🟡-1). PARAKETE'nin
+   belirsizliği ~0 (ölçülen netin çürümesi, R_CAL'e bağlı değil — `curume()`
+   rCal çağırmıyor, doğrulandı). Asıl belirsizlik "kalan iş NE KADAR kazandıracak"
+   = R_CAL. Bant artık **tüm kalan iş bitince ulaşılacak skorun** R_CAL±1.96·sd
+   aralığı. Üst şerit `hN` bunu "→ 60.8–63.6" olarak gösteriyor; `puanBant`
+   (PARAKETE bandı, kal_test'in ölçtüğü) DEĞİŞMEDEN duruyor.
+
+   ⚠ **KÖK KUSUR (bu turda bulundu ve düzeltildi):** ilk uygulama `_rcOnb.v`'yi
+   geçici yazıp `puanVarsayim`'i çağırıyordu → bant 0.00 kalıyordu. Neden:
+   `puanVarsayim` D.bitti'yi geçici değiştirir; `rCal()` önbellek anahtarı
+   `Object.keys(D.bitti).length` içerdiği için anahtar değişir, rCal YENİDEN
+   HESAPLAR ve override'ı SİLER. Çözüm: ayrı `_rcZorla` bayrağı; `rCal()` EN
+   BAŞTA onu döndürür (önbellekten bağımsız), `puanBant`/`tavanBant` try/finally
+   ile sıfırlar. Düzeltme sonrası gerçek veride bant 60.78–63.56 (genişlik 2.78).
+
+**Kullanılan mevcut motor fonksiyonları:** rehberSec, puEtki, para, puanVarsayim,
+rCal, puan, curume, kalanKazanci. **Yeni paralel model:** yok (yalnız birleştirme
++ zorlama-bayrağı düzeltmesi).
+
+**Kapılar:** kal_test ✓ (stale iddia güncellendi: üst şerit bandı artık `tavanBant`
+arıyor, §254 tasarımı) · derin_test ✓ · kombo_test ✓ · cark_test ✓ · mola_test ✓ ·
+senk_etag/uc/rol ✓ · pu_test: yeni FAZ 5 bölümü 12 kontrol SIFIR HATA
+(tavanBant bandı açılıyor + _rcZorla sıfırlanıyor kanıtlı); toplam ✗ hâlâ 7 =
+DEĞİŞMEDEN §229 KONU TEKİLLİĞİ bloğu (dokunulmadı). kural_test.py/denet.py
+(app_gorev.json yok) · senk_poll (senk_test.js yok) — paket boşluğu, kod değil.
+
+**Görsel değişiklik:** üst şeritte `hN` artık "→ alt–üst" tavan bandı; rehber
+metninde "beklenen +X net" cümlesi. (Gerçek cihaz görsel doğrulaması yapılmadı —
+sadece motor+metin.)
+
+**Eksik / sonraki:** FAZ 6 (deneme gezegeni derinliği · 8'li matris UI),
+FAZ 7 (yaşayan harita görsel dili), FAZ 8 (Obsidian fonksiyonları), FAZ 9-11.
+
+**Bu turda yaptığım hatalar:**
+- İlk tanı betiğimdeki `paraWith` yardımcısı 61.83 vs 64.0 verip "override
+  çalışıyor" izlenimi yarattı; oysa bu bir **önbellek-sıra kazasıydı** (ilk
+  çağrı 25-anahtarla ıskaladı, ikinci çağrı 204-anahtarla tuttu). Sayıyı
+  olduğu gibi kabul etseydim yanlış teşhis koyardım; adım adım iz sürüp
+  gerçek kökü (D.bitti mutasyonu → önbellek anahtarı) buldum.
+- Önceki turda `tavanBant`'ı `_rcOnb.v` override'ıyla yazıp "bant açılır"
+  varsaymıştım; gerçek veriyle koşmadan doğru sandım. Ölçünce 0.00 çıktı.
+  Ders (yine): türetilmiş değeri gerçek veriyle ölçmeden "çalışıyor" deme.
+
+**sürüm 2027-03-01a ↔ rota-2027-03-01a**
+
+---
+
+## §255 · FAZ 6 — Deneme Gezegeni derinliği (8'li matris + tanı + konu kırılımı)
+
+**Ne yapıldı:** zihin evrenindeki **Deneme Gezegeni** artık dalış yapılabilir
+(eskiden tıklayınca "bu dilimde yalnız Görev Gezegeni gezilir" diyordu). Tıklayınca
+alttan açılan bir **derinlik paneli** (`#zeDp`) geliyor:
+
+1. **8 hücreli güven matrisi** — Doğru/Yanlış × Eminim/Arada/Bilmiyorum/Unuttum.
+   Gerçek veride: DE 45 · DAK 8 · DB 39 · DU 11 · YE 6 · YAK 10 · YB 51 · YU 16.
+2. **Tanısal bölgeler** — sağlam bilgi (DE 45) · yanlış öğrenilmiş (YE 6, "emindin
+   ama yanlış, en tehlikelisi") · şans/tanıma (DB+DU 50) · kararsız sınır (18) ·
+   unutma/decay (YU 16). Her biri renk noktalı, sayılı.
+3. **Vurgu** — "103 doğrunun 45'i (%44) sağlam · net 82.3 ama güvenebileceğin
+   çekirdek 45 soru." (§253'teki "net 82 ama bilgi 45" bulgusu artık UI'da.)
+4. **Konu kırılımı** — en çok boşluk verilen konular (Nöroanatomi 7, Aminoasit
+   metabolizması 3, …), ince çubuklu.
+
+**Yeni motor fonksiyonu:** `denemeMatris()` — ayrıntılı denemelerin `sorular[]`
+alanından 8 hücre + tanısal toplamları TÜRETİR (donmuş değer yok, paralel model yok;
+`dqIstat`'ın ham kaynağını 8 hücreye ayırır). Boş sorular 8 hücrenin dışında.
+net = doğru − 0.25·yanlış birebir tutuyor.
+
+**Kullanılan mevcut motor:** dqIstat (bosluk), D.denemeler. **Paralel model:** yok.
+
+**Görsel dil:** açık zemin (#FBFAF7), ince gri çizgiler, çok hafif tanısal tonlar
+(DE soft yeşil #EEF4EA, YE soft kırmızı #FaEDE9 — neon değil, akademik/tıbbi çizelge
+hissi). Panel alttan yay ile açılıyor; scrim tıklanınca ve × ile kapanıyor.
+
+**Geri izolasyonu (FAZ 10 ön-adımı):** panel açıkken `zeGeri()` önce paneli kapatır,
+haritaya dönmez; eski arayüze ASLA gitmez.
+
+**Kapılar:** kal_test/derin/kombo/cark/mola ✓ · pu_test yeni FAZ 6 bölümü 10 kontrol
+SIFIR HATA (8 hücre birebir, boş dışarıda, net doğru, tanısal bölge eşlemesi,
+dqIstat tutarlılığı, dalış+geri bağlantısı); toplam ✗ hâlâ 7 = değişmeden §229 bloğu.
+
+**Görsel doğrulama:** başsız Chromium (iPad 834px + telefon 390px), GERÇEK kullanıcı
+verisiyle (localStorage anahtarı `rota-tus-v6`) ekran görüntüsü alındı; panel her iki
+genişlikte de düzgün, matris ızgarası taşmıyor. (Kare-fark değil, tam-kare inceleme.)
+
+**Eksik / sonraki:** FAZ 7 (yaşayan harita görsel dili · mastery/decay renk-doku,
+anıt, canlanma), FAZ 8 (Obsidian: KOMBO yolları + arama/filtre/odak + backlink),
+FAZ 9-11.
+
+**Bu turda yaptığım hatalar:**
+- Görsel doğrulama betiğinde localStorage anahtarını **CLAUDE.md'ye güvenerek**
+  `rota-veri` yazdım; gerçek anahtar koddaki `rota-tus-v6` (Depo, satır ~2180).
+  İlk ekran görüntüsü bu yüzden BOŞ durumu (seed veri) gösterdi ve panelin
+  çalışmadığını sanabilirdim. Kod okununca (belge değil) anahtar düzeldi, gerçek
+  veri yüklendi. Ders (yine, CLAUDE.md §hafıza-2): durum bilgisini belgeden değil
+  KODDAN oku.
+- pu_test FAZ 6 regex'ini tırnak-birleştirmeyle bozuk yazdım (`'+"'deneme'"+'`),
+  yanlış "hata" verdi; temiz literal ile düzeldi. (Gerçek kusur değildi, test kusuru.)
+
+**sürüm 2027-03-02a ↔ rota-2027-03-02a**
+
+---
+
+## §256 · FAZ 7 — Yaşayan harita görsel dili (diyar sağlığı overview'da okunur)
+
+**Sorun (ekran görüntüsüyle saptandı):** zihin evreninde mastery/decay/kırılganlık
+zaten çiziliyordu AMA yalnız DERİN yakınlaşmada (aCan katmanı). Ders-overview'da
+(galaksinin bütününe bakış — asıl tarama yaptığın zoom) 11 diyar da BİRBİRİNİN AYNISI
+ince gri halkaydı; hangisi güçlü/zayıf/kırılgan uzaktan okunmuyordu.
+
+**Ne yapıldı (`zeCiz` ders döngüsüne eklenti, veri = `evrenVeri` H/C/kırılgan):**
+- **Hâkimiyet yayı** — her diyarın etrafında hâkimiyet payı kadar altın yay
+  (kitap tamamlama yayının kardeşi). Patoloji %79 ≈ tam tur, Anatomi %23 kısa yay.
+- **Çürüme → sürekli renk** — yay çürüdükçe altından griye kayıyor (kademe değil,
+  `dt=min(1,C·1.6)` sürekli; CLAUDE.md ayrık-eşik dersi). Bu veride C~0.05, yay altın.
+- **Anıt** — H≥0.7 diyar merkezine altın mühür (dolu nokta + ince dış halka).
+  Gerçek veride yalnız Patoloji (0.79) anıt alıyor: "tamamlanmış diyar".
+- **Kırılganlık** — kırılgan diyarın yay ucuna küçük kırmızı nokta (sezgi neti işareti).
+- **Çift kodlama yok** — yay `gec=aDers·sol·(1-aCan·0.7)` ile derin yakınlaşmada
+  soluyor; orada mevcut yaşayan yapı (mühür kareler) + iç kırmızı halka devralıyor.
+
+**Görsel dil:** altın + ince gri, çok hafif; neon/oyun yok. Uzaktan bakışta artık
+tüm manzaranın sağlığı tek bakışta okunuyor (güçlü Patoloji anıtı ↔ zayıf Anatomi).
+
+**Kullanılan mevcut motor:** evrenVeri (b.hakimiyet, b.curume, b.kirilgan). Paralel
+model yok, yeni veri yok — yalnız GÖRSEL katman.
+
+**Kapılar:** kal/derin/kombo/cark/mola ✓ · pu_test yeni FAZ 7 bölümü 6 kontrol SIFIR
+HATA (yay overview alfasına bağlı, anıt eşiği, kırılgan işareti, sürekli çürüme rengi,
+derin-zoomda solma); toplam ✗ hâlâ 7 = değişmeden §229 bloğu.
+
+**Görsel doğrulama:** başsız Chromium (1000px), GERÇEK veriyle iki zoom: (1) overview
+— 11 diyarın yayı okunur, Patoloji anıtı + kırılgan noktalar doğru; (2) derin (Anatomi
+odak) — yay soluyor, yaşayan yapı/iç halka/konu noktaları çakışmadan görünüyor.
+
+**Eksik / sonraki:** FAZ 8 (Obsidian: KOMBO yolları haritada + arama/filtre/odak +
+detay paneli + backlink), FAZ 9-11.
+
+**Bu turda yaptığım hatalar:** Önce "yaşayan harita zaten var, FAZ 7 gereksiz mi?"
+diye düşündüm; ama ekran görüntüsü alınca gerçek boşluğu (overview'da sağlık okunmuyor)
+gördüm. Ders: tasarım kararını ezberden değil, gerçek kareden ver (§141 kare-farkı
+dersinin akrabası). Kod tarafında hata çıkmadı; eklenti additive ve gate+görsel temiz.
+
+**sürüm 2027-03-03a ↔ rota-2027-03-03a**
+
+---
+
+## §257 · FAZ 8 (kısım 1) — Harita arama · Obsidian quick-switcher
+
+**Ne yapıldı:** zihin evrenine **arama** eklendi (üst şeritte büyüteç düğmesi).
+Branş/kitap/konu adıyla ara → sonuç listesi → tıkla, harita oraya UÇAR ve odaklar.
+- `zeAraIndeks()` — ze.dersler'den branş+kitap+konu indeksi (mevcut veri, yeni model yok).
+- `zeGit(h)` — hedefe göre ze.sec + zeUc (zeTikla navigasyonunun aynısı; branş→ders
+  zoom, kitap→satır yerleşimi, konu→konu satırı). Panel kapanır, odak kalır.
+- Türkçe-duyarlı filtre (`toLocaleLowerCase('tr')`), branş>kitap>konu sıralı, ilk 40.
+- Enter ilk sonuca gider · Escape/× kapatır · scrim tıklanınca kapanır.
+- Geri izolasyonu: arama açıkken `zeGeri()` önce aramayı kapatır.
+
+**Görsel dil:** üstten açılan beyaz kart, ince gri çizgi, KONU/KİTAP/BRANŞ etiketi,
+yol (branş · kitap) gri altmetin. Akademik, neon yok.
+
+**Kapılar:** kal/derin/kombo/cark/mola ✓ · pu_test yeni FAZ 8 bölümü 7 kontrol SIFIR
+HATA; toplam ✗ hâlâ 7 = değişmeden §229. **Görsel doğrulama:** başsız Chromium
+(iPad 834px) gerçek veriyle: "amino" → 3 konu (Amino Asitler / Aminoasitler /
+Aminoasitlerin Metabolizması), ilk sonuç → Biyokimya·Yavuz Şahin·konu 0'a uçtu,
+panel kapandı. Navigasyon kanıtlı.
+
+**⚠ FAZ 8'DE EKSİK KALAN (bilinçli, sonraki tur):** KOMBO yolları haritada + backlink.
+Neden ertelendi: **KOMBO çiftleri görev-ID (`gun|blok`) anahtarlı** (index.html ~6354),
+harita konuları ise kitap+konu anahtarlı — 1:1 değil. Rastgele eşleme "sessiz sıfır"
+tuzağına düşer (§153/§155). KOMBO backlink ZATEN brif (görev) panelinde çalışıyor
+(ROTA tarafı). Haritaya taşımak için görev↔konu köprüsü dikkatle kurulmalı; acele
+edilmedi. Detay paneli: konu L5 detayı haritada zaten var.
+
+**sürüm 2027-03-04a ↔ rota-2027-03-04a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
@@ -12612,6 +12901,10 @@ izlenebilir olsun. Mevcut sinyalleri sil me — ortak karar katmanında topla.
 §219–§226 · **FT serisi on kitap** power-up havuzuna işlendi (156 → 254 konu). `ft_katalog.py` tek kaynak, `ft_uret.py` hepsini yeniden üretiyor.
 
 §227–§228 · **Konu tekilliği · net havuzu paylaşımı.** Bir konu hangi kaynaktan okunursa okunsun ilk öğrenme getirisi bir kez; ikinci kaynak tekrar getirisi veriyor. Anahtar grup bazlı.
+
+§244–§253 · **AUDIT + FAZ 1–4.** Motor gerçek 6 deneme + 200 soru verisiyle birebir doğrulandı (`kaynak/audit_gercek.js`): veri bütünlüğü, PARAKETE, R_CAL kalibrasyon, 8'li matris, trend, tempo — UI↔motor ayrışması yok. FAZ 1 KOMBO kurtarma · FAZ 2 konu-seviye decay (`konuCurume`) · FAZ 3 `denemeTrend(5)` · FAZ 4 `tempoProjeksiyon` (hepsi motorun YANINDA, paralel model değil).
+
+§254 · **FAZ 5 · tek açıklanabilir öncelik katmanı + ulaşılabilir tavan bandı.** `gorevOncelik`/`gorevNeden` (rehberSec+puEtki birleşimi, branş§konu tekilleştirme, kanıt cümleleri) · `tavanBant` (kalan iş bitince R_CAL±1.96·sd bandı; kök kusur `_rcZorla` bayrağıyla düzeldi). Sürüm 2027-03-01a.
 
 ## ⚠ YARIM KALAN · TASARIM
 
