@@ -12120,6 +12120,29 @@ Başlangıç komutu: "Evren konseptine başla — §239".
 
 ---
 
+## 240 · EVREN AŞAMA 0 · PLAN + VERİ OMURGASI · `2027-02-19a`
+
+Kullanıcı /goal ile Evren vizyonunu OTURUM HEDEFİ yaptı (özü: mevcut sistemi
+bozmadan, mevcut öğrenme motorunun ÜZERİNE görsel/navigasyon katmanı; tek
+kamera; hâkimiyet=yaşam, decay=kararma; DRE=mevcut veriden nokta seçen
+navigasyon zekâsı, içerik UYDURMAZ).
+
+- **`EVREN_PLAN.md`** (repo kökü · YENİ): mimari plan — mevcut model özeti
+  (doğrulanmış semboller), kozmik eşleme tablosu, kamera durum makinesi,
+  6 aşama, performans (LOD, §103 kuralı), riskler + PR-başına geri dönüş.
+- **`evrenVeri()`** (index.html · aşama 0): kozmik katmanın TEK veri
+  kaynağı — her çağrıda mevcut modelden türetilir (bransDurum, bransCalisma,
+  dqIstat, curume, KONU_DAG, konuCalisildi). 11 bölge; bölge başına
+  hâkimiyet/beklenen/net/saat/çürüme/kırılgan/karaDelik + konu listesi
+  (pay, çalışıldı, boşluk). HİÇBİR ŞEYİ DEĞİŞTİRMEZ, yalnız okur.
+- `pu_test` +5 kontrol (EVREN bölümü). cark_test 0 · JS parse OK.
+- Sıradaki (aşama 1): gezegen kuş bakışı SVG + hâkimiyet boyama + bölgeye
+  kamera yakınlaşması — EVREN_PLAN.md aşama listesine göre, her aşama ayrı PR.
+
+**sürüm `2027-02-19a` ↔ `rota-2027-02-19a`**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)

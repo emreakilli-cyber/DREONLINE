@@ -1252,3 +1252,16 @@ eDX('hafif yenile yolu',kod.indexOf('yenile(true)')>=0);
 eDX('konu listesi getiri sıralı',(function(){const L=R('dqKonular("Kadın Doğum")');return L.length===4&&L[0]==='obstetri'})());
 console.log('\n'+(QDX?'✗ '+QDX+' HATA':'✓ SIFIR HATA — 16 ek kontrol'));
 if(QDX)process.exitCode=1;
+
+console.log('\n═══ EVREN VERİ OMURGASI (§240) ═══');
+let QEV=0;const eEV=(a,ok,x)=>{if(!ok){QEV++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eEV('evrenVeri fonksiyonu',R('typeof evrenVeri')==='function');
+(function(){const E=R('evrenVeri()');
+  eEV('11 bölge',E.bolgeler.length===11,E.bolgeler.length);
+  const d=E.bolgeler.find(x=>x.ad==='Dahiliye');
+  eEV('bölge alanları',d&&typeof d.hakimiyet==='number'&&typeof d.curume==='number'&&Array.isArray(d.konular));
+  eEV('konu payları KONU_DAG ile',d&&d.konular.length===Object.keys(R('KONU_DAG')['Dahiliye']).length);
+  eEV('sınava kalan sayısal',typeof E.sinavaKalan==='number'&&E.sinavaKalan>=0);
+})();
+console.log('\n'+(QEV?'✗ '+QEV+' HATA':'✓ SIFIR HATA — 5 ek kontrol'));
+if(QEV)process.exitCode=1;
