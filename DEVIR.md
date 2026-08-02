@@ -12053,6 +12053,27 @@ sürüm değil).
 
 ---
 
+## 238 · GENİŞ EKRAN VERİM DÜZENİ (iPad) · `2027-02-18a`
+
+Kullanıcı üç iPad görüntüsüyle A'dan Z'ye yenileme istedi. Görüntülerin
+teşhisi: ROTA liste kipinde içerik sol %38'e sıkışıyor, sağ yarı BOŞ
+(gizli brifing sütunu yer tutuyordu); ayrıntılı giriş tablet genişliğinde
+orantısız (dev segmentler, uçsuz altın bar).
+
+- ≥1000px: `#rota.gunKip{grid-template-columns:1fr 0px}` — boş sütun
+  kapandı; `#gunListe` padding'le ~920px odaklı kolona ortalandı
+  (transform'a bilinçli dokunulmadı: açılış geçişi onu kullanıyor).
+- ≥900px: `#detayIc` 960px'e ortalandı; segment/ekle/kaydet oranları
+  tablet için kalibre (Branş 1fr · Konu 1.4fr).
+- Doğrulama: 1200×900 gerçek tarayıcı — kitap listesi tam genişlik
+  dengeli. cark_test 0 · CSS dengesi 0.
+- ⚠ Dalga II devamı (sıradaki): kitap kipi master-detail (liste + seçili
+  kitap içeriği yan yana) · ÖLÇÜM hikâye katmanları · maskot-Rocky SVG.
+
+**sürüm `2027-02-18a` ↔ `rota-2027-02-18a` · 709347 bayt**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
