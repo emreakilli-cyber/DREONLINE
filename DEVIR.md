@@ -12021,6 +12021,38 @@ zinciri→maskot sevinci) CİHAZDA doğrulanmalı — kapılar bunu görmez.
 
 ---
 
+## 237 · AZALTILMIŞ HAREKET SOLMALARI · CAM SATIRLAR · `2027-02-17a`
+
+Kullanıcı cihazda karşılama animasyonunun OYNAMADIĞINI ve içerinin "hâlâ
+eski" göründüğünü bildirdi ("geç ✕" görünüyor → yeni sürüm CİHAZDA, sorun
+sürüm değil).
+
+- **Teşhis (varsayım, cihazda doğrulanacak):** iOS "Hareketi Azalt" açıksa
+  paket TÜM animasyonu atlıyordu (AZ→süreler 0 + animation:none). Apple'ın
+  kendi azaltılmış-hareket dili tam atlama değil YUMUŞAK SOLMA'dır.
+  Düzeltme: `karsiT` süreleri sıfırlamak yerine ~%45'e kısaltır; karşılama
+  reduce bloğu yalnız-opaklık `karsiHarfSade` solmasına döndü — sekans
+  (yazı→çözülme→kart) azaltılmış harekette de oynar.
+- **Cam satırlar:** `.glS` gün listesi satırları yüzen cam kartlara döndü
+  (gradyan zemin, specular iç kenar, yumuşak gölge, radius 13, bası tepkisi).
+  `gunOlcekle` yükseklik bütçesi ölçerek uyarlandığı için sığma korunuyor.
+- **Maskot yönü (kullanıcı önerisi, kayıt):** "Dre"nin sonraki iterasyonu
+  Project Hail Mary'deki Rocky karakterine benzeyebilir (taş dokulu,
+  örümceğimsi Eridian formu) — mevcut kıvılcım iskeleti üstüne SVG evrimi.
+- **Uyum sorusu (cevap verildi):** öneri kartı DAYATMA değil — "geç" ya da
+  "Başla"dan sonra listeden BAŞKA iş yapılabilir; her tamamlama kelebek
+  zincirini işletir, ertesi açılışta öneri yeni duruma göre yeniden doğar.
+  Cezasız-uyum böyle sağlanıyor; "önerileni yapmadı" sinyalinin kalibrasyona
+  ayrıca girmesi (öneri reddi öğrenimi) İLERİDE değerlendirilebilir — açık.
+- cark_test 0 · CSS dengesi 0 · JS parse OK · liste cam görünümü tarayıcıda
+  doğrulandı. ⚠ Karşılama sekansı azaltılmış-hareket kipiyle CİHAZDA
+  izlenmeli; "hâlâ eski" hissi sürerse iç sayfaların cesur yeniden çizimi
+  (dalga II) öne çekilmeli.
+
+**sürüm `2027-02-17a` ↔ `rota-2027-02-17a` · 708 428 bayt**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
