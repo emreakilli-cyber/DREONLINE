@@ -11974,6 +11974,53 @@ tasarımda nerede?" sorusuna cevap vermek zorunda).
 
 ---
 
+## 236 · TASARIM EVRİMİ I · KARŞILAMA + MASKOT + KATMAN AÇILIMI · `2027-02-16a`
+
+§235 vizyonunun ilk büyük dalgası. Ultracode atölyesi (1 keşif + 3 paralel
+tasarım ajanı) üretim-hazır paketleri üretti; entegrasyon tek geçişte,
+11 imza-doğrulamalı adımla (her biri count==1 assert) yapıldı.
+
+### Karşılama · "Hoşgeldin DRE" → tek önerilen görev kartı
+
+Her açılışta veri yerine dupduru gökyüzü: harf harf blur-in "Hoşgeldin
+DRE", çözülme, sonra TEK liquid glass görev kartı. Öneri motoru `karsiOner`:
+1) kaçırılanlardan gorevKazanc'a göre EN DEĞERLİ telafi · 2) plan sıradaki
+(`bul()`) · 3) gün kapandıysa power-up tepesi. Kartta: branş noktası+tip
+etiketi, sınava kalan gün, görev adı, neden-şimdi (`g.why`), +net/saat/blok
+çipleri, altın "Başla" (listeye iner, satır `karsiVurgu` ile yanıp söner)
+ve cam "Tamamlandı" (D.bitti + kelebek zinciri + SIRADAKİ kart akar).
+"geç ✕" oturum-içi (D'ye yazılmıyor — senkrona kalıcılaşmasın diye bilinçli).
+Ağır öneri hesabı yazı animasyonu penceresine erteleniyor (boot kilitlenmez).
+
+### Maskot · "Dre" — takımyıldız kıvılcımı
+
+Saf inline SVG (~2KB): yıldız noktaları + bağ çizgileri + parlak çekirdek.
+`maskotDurum('bekle'|'sevinc'|'gaz')` API'si; DÖRT tamamlama noktasına
+(kart düğmesi · gün listesi · power-up [geri-alma korumalı] · telafi)
+sevinç bağı. Karşılama kartının köşesine tüner — ⚠ entegrasyonda bulunan
+hata: kutu body'de mutlak kalınca ekran dışına düşüyordu; kart çiziminden
+SONRA karta appendChild ile taşındı (innerHTML silme sırası gözetildi).
+
+### Katman açılımı + hap nav + --gaz
+
+`katmanKur()`: IntersectionObserver ile .dis/.mini/.trBox bloklarına
+kademeli giriş (bir kez görünen tekrar oynamaz); sayfaGec sonuna ve boot'a
+bağlandı. Nav orb'ları salt CSS'le liquid glass hap görünümüne yükseldi.
+`--gaz` (0..1): son iki deneme K farkı pozitifse karşılama kartı ve aktif
+hapta altın→turuncu yoğunluk — performansa tepkili temanın ilk adımı.
+
+### Doğrulama
+
+Karşılama kartı gerçek tarayıcıda görüntülendi (öneri motoru doğru telafiyi
+seçti; animasyonlar sanal-zaman artefaktına karşı uç-durum kipiyle test
+edildi). cark_test 0 · kal_test 0 · CSS dengesi 0 · JS parse OK.
+⚠ Görsel akışın tam sekansı (harf→çözülme→kart→Başla vurgusu→Tamamlandı
+zinciri→maskot sevinci) CİHAZDA doğrulanmalı — kapılar bunu görmez.
+
+**sürüm `2027-02-16a` ↔ `rota-2027-02-16a` · 708 107 bayt**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
