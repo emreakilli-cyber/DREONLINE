@@ -11896,6 +11896,30 @@ verdiği için mevcut sıralama kontrolleri geçerliliğini koruyor.
 
 ---
 
+## 234 · LIQUID GLASS KATMANI · ODAK VURGUSU · `2027-02-14a`
+
+Kullanıcı: "Apple üretmiş gibi berrak, liquid glass; veri boğmasın,
+o an neyle uğraşıyorsam o öne çıksın."
+
+- **Cam dili:** kbox/trBox/mini/dqKompoz/sapKt yüzeylerine doygun bulanıklık
+  (`blur(28px) saturate(1.55)`) + üst kenar ışığı (specular inset) + derin
+  gölge; üst şerit metrik kartları, çipler, düğmeler aynı dilde. Anahtar
+  rayları (glAnh/puAnh/dqMod) içe oyuk cam oluk; altın kaydırıcılar üstten
+  ışıklı. Yerleşim ve çark geometrisi ellenmedi.
+- **Odak:** `.glS.simdi` (şu anki iş) mavi cam parlamasıyla kendiliğinden
+  yükseliyor — açılış listesinde göz doğrudan oraya düşüyor.
+- Doğrulama: gerçek tarayıcı görüntüsü; boot'ta çark kartı hayaleti
+  ÇIKTI ama `#sahne.gizli` opaklık GEÇİŞİ sanal zamanda koşmadığı için —
+  bilinen artefakt ailesi (üçüncü kayıt), cihazda yok. cark_test 0 ·
+  kal_test 0 · CSS dengesi 0 · JS parse OK.
+- **Sıradaki (devir):** derin aşamalı-açılım — bağlama göre panel önerisi
+  (deneme günü ÖLÇÜM çipi öne, mola anında mola kartı büyür), SEYİR
+  pelerin/harita cam yenilemesi, mikro-etkileşimler.
+
+**sürüm `2027-02-14a` ↔ `rota-2027-02-14a` · 678 561 bayt**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
