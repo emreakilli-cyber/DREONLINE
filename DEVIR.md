@@ -12703,6 +12703,66 @@ ele alınacak.
 
 ---
 
+## §254 · FAZ 5 — tek açıklanabilir öncelik katmanı + ulaşılabilir tavan bandı
+
+**Ne yapıldı (üç iş, motor tek kaynak korunarak):**
+
+1. **`gorevOncelik()` / `gorevNeden()`** (index.html ~6934) — iki öneri motorunu
+   BİRLEŞTİRİR, YENİ MODEL DEĞİL: `rehberSec()` (zayıflık · CS) + `puEtki()`
+   (ekonomik beklenen net) tek skorda: `skor = CS + 1.2·min(1.5,beklenenNet)`.
+   Sonra `(branş§konu)` anahtarıyla TEKİLLEŞTİRİR. Gerçek veride 270 ham → 230
+   tekil (40 yinelenen ayıklandı, §253 bulgusu 🟡-2 kapandı). `gorevNeden()`
+   her öneriyi kanıt cümlelerine çevirir (boş soru, sezgi oranı, çürüme+son gün,
+   branş düşüşü, sınav ağırlığı, tekrar günü). `rehberMetin()` artık bunu kullanıyor;
+   eski `u._net "?"` hatası düzeldi.
+
+2. **Ulaşılabilir tavan bandı `tavanBant(yon)`** (§253 bulgusu 🟡-1). PARAKETE'nin
+   belirsizliği ~0 (ölçülen netin çürümesi, R_CAL'e bağlı değil — `curume()`
+   rCal çağırmıyor, doğrulandı). Asıl belirsizlik "kalan iş NE KADAR kazandıracak"
+   = R_CAL. Bant artık **tüm kalan iş bitince ulaşılacak skorun** R_CAL±1.96·sd
+   aralığı. Üst şerit `hN` bunu "→ 60.8–63.6" olarak gösteriyor; `puanBant`
+   (PARAKETE bandı, kal_test'in ölçtüğü) DEĞİŞMEDEN duruyor.
+
+   ⚠ **KÖK KUSUR (bu turda bulundu ve düzeltildi):** ilk uygulama `_rcOnb.v`'yi
+   geçici yazıp `puanVarsayim`'i çağırıyordu → bant 0.00 kalıyordu. Neden:
+   `puanVarsayim` D.bitti'yi geçici değiştirir; `rCal()` önbellek anahtarı
+   `Object.keys(D.bitti).length` içerdiği için anahtar değişir, rCal YENİDEN
+   HESAPLAR ve override'ı SİLER. Çözüm: ayrı `_rcZorla` bayrağı; `rCal()` EN
+   BAŞTA onu döndürür (önbellekten bağımsız), `puanBant`/`tavanBant` try/finally
+   ile sıfırlar. Düzeltme sonrası gerçek veride bant 60.78–63.56 (genişlik 2.78).
+
+**Kullanılan mevcut motor fonksiyonları:** rehberSec, puEtki, para, puanVarsayim,
+rCal, puan, curume, kalanKazanci. **Yeni paralel model:** yok (yalnız birleştirme
++ zorlama-bayrağı düzeltmesi).
+
+**Kapılar:** kal_test ✓ (stale iddia güncellendi: üst şerit bandı artık `tavanBant`
+arıyor, §254 tasarımı) · derin_test ✓ · kombo_test ✓ · cark_test ✓ · mola_test ✓ ·
+senk_etag/uc/rol ✓ · pu_test: yeni FAZ 5 bölümü 12 kontrol SIFIR HATA
+(tavanBant bandı açılıyor + _rcZorla sıfırlanıyor kanıtlı); toplam ✗ hâlâ 7 =
+DEĞİŞMEDEN §229 KONU TEKİLLİĞİ bloğu (dokunulmadı). kural_test.py/denet.py
+(app_gorev.json yok) · senk_poll (senk_test.js yok) — paket boşluğu, kod değil.
+
+**Görsel değişiklik:** üst şeritte `hN` artık "→ alt–üst" tavan bandı; rehber
+metninde "beklenen +X net" cümlesi. (Gerçek cihaz görsel doğrulaması yapılmadı —
+sadece motor+metin.)
+
+**Eksik / sonraki:** FAZ 6 (deneme gezegeni derinliği · 8'li matris UI),
+FAZ 7 (yaşayan harita görsel dili), FAZ 8 (Obsidian fonksiyonları), FAZ 9-11.
+
+**Bu turda yaptığım hatalar:**
+- İlk tanı betiğimdeki `paraWith` yardımcısı 61.83 vs 64.0 verip "override
+  çalışıyor" izlenimi yarattı; oysa bu bir **önbellek-sıra kazasıydı** (ilk
+  çağrı 25-anahtarla ıskaladı, ikinci çağrı 204-anahtarla tuttu). Sayıyı
+  olduğu gibi kabul etseydim yanlış teşhis koyardım; adım adım iz sürüp
+  gerçek kökü (D.bitti mutasyonu → önbellek anahtarı) buldum.
+- Önceki turda `tavanBant`'ı `_rcOnb.v` override'ıyla yazıp "bant açılır"
+  varsaymıştım; gerçek veriyle koşmadan doğru sandım. Ölçünce 0.00 çıktı.
+  Ders (yine): türetilmiş değeri gerçek veriyle ölçmeden "çalışıyor" deme.
+
+**sürüm 2027-03-01a ↔ rota-2027-03-01a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
@@ -12710,6 +12770,10 @@ ele alınacak.
 §219–§226 · **FT serisi on kitap** power-up havuzuna işlendi (156 → 254 konu). `ft_katalog.py` tek kaynak, `ft_uret.py` hepsini yeniden üretiyor.
 
 §227–§228 · **Konu tekilliği · net havuzu paylaşımı.** Bir konu hangi kaynaktan okunursa okunsun ilk öğrenme getirisi bir kez; ikinci kaynak tekrar getirisi veriyor. Anahtar grup bazlı.
+
+§244–§253 · **AUDIT + FAZ 1–4.** Motor gerçek 6 deneme + 200 soru verisiyle birebir doğrulandı (`kaynak/audit_gercek.js`): veri bütünlüğü, PARAKETE, R_CAL kalibrasyon, 8'li matris, trend, tempo — UI↔motor ayrışması yok. FAZ 1 KOMBO kurtarma · FAZ 2 konu-seviye decay (`konuCurume`) · FAZ 3 `denemeTrend(5)` · FAZ 4 `tempoProjeksiyon` (hepsi motorun YANINDA, paralel model değil).
+
+§254 · **FAZ 5 · tek açıklanabilir öncelik katmanı + ulaşılabilir tavan bandı.** `gorevOncelik`/`gorevNeden` (rehberSec+puEtki birleşimi, branş§konu tekilleştirme, kanıt cümleleri) · `tavanBant` (kalan iş bitince R_CAL±1.96·sd bandı; kök kusur `_rcZorla` bayrağıyla düzeldi). Sürüm 2027-03-01a.
 
 ## ⚠ YARIM KALAN · TASARIM
 

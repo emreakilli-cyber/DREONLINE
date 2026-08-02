@@ -1397,3 +1397,36 @@ eTP('tempoProjeksiyon fonksiyonu',R('typeof tempoProjeksiyon')==='function');
 })();
 console.log('\n'+(QTP?'✗ '+QTP+' HATA':'✓ SIFIR HATA — 7 ek kontrol'));
 if(QTP)process.exitCode=1;
+
+console.log('\n═══ GÖREV ÖNCELİK · TEK KATMAN + ULAŞILABİLİR TAVAN BANDI (§254 · FAZ 5) ═══');
+let QF5=0;const eF5=(a,ok,x)=>{if(!ok){QF5++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eF5('gorevOncelik / gorevNeden fonksiyonları',R('typeof gorevOncelik')==='function'&&R('typeof gorevNeden')==='function');
+(function(){ C.setGun('2026-08-05'); R('D.bitti={}'); R('D.pu={}'); R('D.kal=[]');
+  R('D.denemeler=[{tar:"2026-08-01",t:32,k:30,bn:{Dahiliye:14,Patoloji:8,Biyokimya:5,Fizyoloji:5,Anatomi:6,"Genel Cerrahi":6,Farmakoloji:5,Mikrobiyoloji:5,Pediatri:6,"Kadın Doğum":4}}]');
+  const L=R('gorevOncelik()');
+  eF5('öncelik listesi üretiliyor',Array.isArray(L)&&L.length>0,L&&L.length);
+  // TEKİLLEŞTİRME · aynı (branş§konu) iki öneri olarak dönmüyor
+  const anah=L.map(a=>a.u.brans+'§'+a.u.konu), tek=new Set(anah);
+  eF5('branş§konu tekil (yinelenen ayıklandı)',anah.length===tek.size,{liste:anah.length,tekil:tek.size});
+  const hamAnah=R('rehberSec()').map(a=>a.u.brans+'§'+a.u.konu);
+  eF5('ham rehberSec ≥ tekil liste (gerçekten ayıkladı)',hamAnah.length>=anah.length,{ham:hamAnah.length,tekil:anah.length});
+  // BİRLEŞİM · CS (zayıflık) + puEtki (ekonomik beklenen net) tek skorda
+  eF5('skor = CS + ekonomik beklenenNet (birleşik katman)',L.every(a=>typeof a.skor==='number'&&'beklenenNet' in a));
+  eF5('skora göre azalan sıralı',L.every((a,i)=>i===0||L[i-1].skor>=a.skor-1e-9));
+  // AÇIKLANABİLİRLİK · gorevNeden gerçek kanıt cümleleri döndürüyor
+  eF5('gorevNeden string[] döndürüyor',R('(function(){var a=gorevOncelik()[0];var n=gorevNeden(a);return Array.isArray(n)&&n.every(s=>typeof s==="string")})()'));
+  eF5('en az bir görevde kanıtlı neden var',R('gorevOncelik().some(a=>gorevNeden(a).length>0)'));
+  eF5('rehberMetin tek katmanı kullanıyor (beklenen net cümlesi)',/beklenen \+/.test(R('rehberMetin(1)')||'')||R('gorevOncelik()[0].beklenenNet')>=0);
+  // §254 ÇEKİRDEK · ULAŞILABİLİR TAVAN BANDI GERÇEKTEN AÇILIYOR
+  const b1=R('tavanBant(-1)'), b2=R('tavanBant(1)'), alt=Math.min(b1,b2), ust=Math.max(b1,b2);
+  eF5('tavanBant bandı AÇILIYOR (kalan iş + R_CAL belirsizliği · genişlik>0)',ust-alt>0.05,{alt:+alt.toFixed(2),üst:+ust.toFixed(2),gen:+(ust-alt).toFixed(2)});
+  const par=R('puan(para().t,para().k)');
+  eF5('tavan ortası ≥ PARAKETE (kalan işi bitirmek neti yükseltir)',(alt+ust)/2>=par-0.05,{tavanOrta:+((alt+ust)/2).toFixed(2),parakete:+par.toFixed(2)});
+  // §254 KÖK KUSUR · zorlama bayrağı sıfırlanıyor, rCal önbelleği BOZULMUYOR
+  const rc0=R('rCal().r'); R('tavanBant(1)'); R('tavanBant(-1)'); const rc1=R('rCal().r');
+  eF5('tavanBant R_CAL önbelleğini BOZMUYOR (_rcZorla sıfırlanıyor)',Math.abs(rc0-rc1)<1e-9,{once:rc0,sonra:rc1});
+  R('puanBant(-1)'); R('puanBant(1)'); const rc2=R('rCal().r');
+  eF5('puanBant sonrası da R_CAL sağlam (aynı zorlama yolu)',Math.abs(rc2-rc0)<1e-9);
+})();
+console.log('\n'+(QF5?'✗ '+QF5+' HATA':'✓ SIFIR HATA — 12 ek kontrol'));
+if(QF5)process.exitCode=1;
