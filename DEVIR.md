@@ -12432,6 +12432,61 @@ denemesi, etiket çakışma-önleme (Görev/Küçük Stajlar örtüşmesi), ders
 
 ---
 
+## 248 · VERİ MOTORU AUDİT (kod değişmedi) · profesyonel öğrenme sistemi hedefi
+
+Kullanıcı yeni yön: ürün artık salt görsel değil — Obsidian+Anki+kişisel
+Wikipedia+deneme analizi+adaptif net projeksiyonu birleşimi profesyonel sistem.
+EN ÖNEMLİ KURAL: mevcut veri motorunu koru, PARALEL model kurma. Bölüm 19:
+kod değiştirmeden A–G audit çıkar; bölüm 18: canlı test (deneme→net→tahmin→
+çalışma→yeni deneme→kalibrasyon değişti mi). Bu tur SADECE audit yapıldı,
+motora dokunulmadı. Üç paralel okuma ajanı + canlı test (`kaynak/audit_test.js`).
+
+**Bulgular (hepsi koddan doğrulandı):**
+- **Kalibrasyon VAR ve çalışıyor** — `rCalHesap()` (2402) ters-varyans ağırlıklı
+  Bayes, önsel R_CAL0=0.405±0.0995, DÖRT gözlem kanalı: (1) 24'lü D.kal ayrık/
+  kapsam, (2) deneme-içi kontrast (çalışılan vs çalışılmayan konu — en güçlü,
+  deneme zorluğunu sadeleştirir), (3) ardışık tam deneme farkı (D_ORAN payı
+  çıkarılır), (4) konu çiftleri. `[0.15,0.85]` kırpma. `puan()` sabit; öğrenme
+  `para()` içindeki netlerde. İkincil `D_ORAN` (deneme→net) de kalibre.
+- **Projeksiyon zaten BANT** — `puanBant(±1)` = proj ± 1.96·sd; `ust()` içinde
+  "b1–b2" gösteriliyor (hN, ~3900). Az veri koruması = geniş bant (açık metin yok).
+- **Güven E/AK/B/U ayrı sinyal** — `dqIstat` sag(D+Emin)/kir(D+güvensiz)/unut/bilm
+  + bosluk; ham `{s,e}` her soruda `D.denemeler[].sorular[]`'de → 8'li matris TÜREVİ.
+- **Görev önerisi veri-güdümlü** — `rehberSec` CS=2.2·boş+1.6·yan+1.4·çür+1.2·düş+
+  0.35·soru+1.5·tekrar; `puEtki/puSirali` verim=etki/saat (beklenen net·zaman·Rr
+  unutma·soru ağırlığı·boşluk). Adaylar POWERUP kataloğundan (icat yok).
+- **Konu↔konu bağlantı tablosu YOK** — KONU_DAG hiyerarşi (branş→konu→pay);
+  §228 "grup anahtarı" = aynı konunun tekilliği, bağlantı değil. Uydurmadan
+  TÜRETİLEBİLİR: ortak-kitap (POWERUP hazır), aynı-ad/grup çakışması (konuOrtus),
+  birlikte-hata (yalnız Ayrıntılı deneme sorular[].konu; çift üretimi yok).
+  Önkoşul/klinik/mekanizma için VERİ YOK — elle kürasyon gerekir.
+
+**Canlı test sonuçları (kaynak/audit_test.js, gerçek sayı):**
+1) n=0 → 0.405±0.195, bant genişliği 1.00 · 2) kötü deneme → R_CAL 0.405→0.376
+(Δ−0.029, shrinkage) · 3) 30 iyi gözlem → 0.850, bant 1.00→0.18 (daraldı) ·
+4) Doğru+Emin sag=10 vs Doğru+Bilmiyorum kir=10 (ayrışıyor) · 5) düşük deneme +
+güçlü çalışılan-konu → 0.439 (tabana çekilmedi) · 6) CS decay ile değişiyor.
+
+**⚠ GERÇEK HATA (bu turda bulundu, düzeltilmedi — audit aşaması):** `rehberSec`
+CS'indeki `cur` bileşeni DEJENERE. `curume(br,bgun(),SINAV_G)` bir GÜN içinde
+tüm branşlarda AYNI değeri döndürür (g=sınava kalan gün, branştan bağımsız);
+zamanla değişir ama ADAYLAR ARASI sıralamayı ayrıştırmaz. Yorum (6796) onu
+ayrıştırıcı sanıyor. Gerçek konu-bazlı çürüme (son çalışma tarihinden bu yana)
+CS'e girmiyor. Düzeltme kararı kullanıcıya bırakıldı.
+
+**Eksikler (kullanıcı vizyonu vs mevcut):** (a) "son 5 deneme +3.1" kayan-pencere
+trend sayısı YOK. (b) tempo-bazlı (net/gün) ileri projeksiyon YOK — ileri
+projeksiyon plan+çürüme tabanlı. (c) iki öneri motoru (rehber CS · power-up verim)
+aynı faktör setini paylaşmıyor; birleştirme kararı açık. (d) konu-bazlı "son
+çalışma X gün önce" unutma önceliğe girmiyor.
+
+**Karar bekleyen (kullanıcıya sunuldu):** cur teriminin konu-bazlı çürümeye
+bağlanması; hangi konu-bağlantı tiplerinin (ortak-kitap/aynı-ad/birlikte-hata)
+etkinleştirileceği; trend/tempo sayılarının eklenmesi; iki öneri motorunun
+birleştirilip birleştirilmeyeceği. Motor DEĞİŞMEDEN audit tamamlandı.
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
