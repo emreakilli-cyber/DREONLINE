@@ -11743,6 +11743,74 @@ arıyordu; niyet korunarak yeni dizgilere çevrildi.
 
 ---
 
+## 231 · AYRINTILI DENEME GİRİŞİ · PANELLER HATASI · KİP GECİKMESİ · `2027-02-11a`
+
+Kullanıcı §230'da eklenen "Hata kaydı" düğmesinin ilk meyvesini getirdi:
+`ReferenceError: Can't find variable: PANELLER @ 3839 ×13`. Ayrıca üç istek:
+(1) soru-soru ayrıntılı deneme girişi, (2) gün listesi kip/kitap gezinme
+gecikmesi, (3) girişin tasarımı "harika" olsun.
+
+### ⚠ PANELLER tanımsızdı — dışarı-tıkla-kapat hiç çalışmıyordu
+
+`panelKapat()` ve belge tıklama dinleyicisi `PANELLER` dizisini kullanıyordu
+ama dizi hiçbir yerde tanımlı değildi (muhtemelen bir düzenlemede düştü).
+Her belge tıklamasında `ReferenceError` → panelleri dışarı tıklayarak kapatma
+bozuk, konsol her tıkta kirleniyor. `const PANELLER=['kpanel','dpanel',
+'ppanel','bpanel']` eklendi. **§230'un kalıcı hata kaydı bunu yakaladı** —
+altyapı işe yaradı, gerçek mesaj cihazdan geldi.
+
+### Gün listesi gezinme gecikmesi giderildi
+
+`glBagla().yenile()` her kip/tür/kitap seçiminde `carkCiz()+brifCiz()+ust()`
+koşuyordu — çark görev DURUMUNDAN bağımsız, salt görünüm değişiminde koca
+çarkı yeniden çizmek gecikmenin kendisiydi. `yenile(hafif)` parametresi
+eklendi; program↔kitap, tür ve kitap↔liste geçişleri artık `yenile(true)`
+(yalnız liste + ölçek), çark ellenmiyor. Görev tamamlama hâlâ tam yeniler.
+
+### Ayrıntılı deneme girişi (yeni · `detayCiz`)
+
+Deneme gir bölümüne kip anahtarı: **Hızlı** (mevcut 11 branş D/Y) ↔
+**Ayrıntılı · soru soru**. Ayrıntılı kipte kompozitör: Branş açılır menü
+(her branşın yanında işaretlenen/toplam sayaç) → Konu açılır menü
+(`KONU_DAG`'dan, getiri sırasına göre) → Sonuç segmenti (D/Y/Boş) → Çözerken
+segmenti (E/AK/B/U) → "Soruyu ekle" (seçim korunur, hızlı ardışık giriş).
+Eklenenler branşa göre gruplu çip listesi, tek tek silinebilir. Canlı özet:
+ilerleme rayı (N/200), güven×isabet satırı ("Eminim 40 · isabet %88",
+Eminim'de <%80 isabet kehribar uyarı), sağlam↔kırılgan doğru sayacı.
+
+- **Veri modeli:** taslak `D.dqTaslak={br,konu,s,e,q:[{b,konu,s,e}]}` kalıcı
+  (localStorage, yeniden açılışta sürüyor). Kaydet → `dqBransNet(q)` ile
+  hızlı girişle **aynı `bn/dy` biçimi** üretilir (projeksiyon/matris değişmez)
+  + `sorular` ham dizisi ve `detay:true` saklanır. Güven etiketleri
+  kalibrasyonun ham verisi (sağlam/kırılgan net, çürüme, konu boşluğu) —
+  §230'da tanımlanan format artık uygulamanın içinde toplanıyor.
+- **Tasarım:** altın gradyan kip anahtarı, cam kompozitör, segment düğmeleri
+  seçildiğinde renge boyanıyor (D yeşil · Y kırmızı · Boş gri · E altın ·
+  AK kehribar · B mavi · U mor), çipler renk kodlu. Gerçek tarayıcıda dar
+  görünümde doğrulandı.
+
+### ⚠ Bu turda dikkat edilen: kip ayrımında null işleyici
+
+Hızlı kip işleyicileri (`#ek`, `#hs`, `.dyD`) ayrıntılı kipte yok; `#ek.onclick`
+doğrudan çağrılınca null → tüm çizim kopardı. `ekBtn`/`hsEl` guard'landı,
+`gun()` yalnız `.dyD` varsa koşuyor. Kip anahtarı `D.dnKip` kalıcı.
+
+### Kapılar
+
+| Kapı | Sonuç |
+|---|---|
+| pu_test | benim alanlarım 0 · KONU TEKİLLİĞİ 7 (§229 açık maddesi, değişmedi) |
+| kal_test · derin_test · tarayici_test · cark_test · mola_test · kombo_test · senk_uc/rol/etag | **0** |
+| kural_test.py · senk_poll.js · kos.js | KOŞAMIYOR (§229 açık maddeleri) |
+
+⚠ **Ayrıntılı giriş için otomatik kapı YOK** — yeni `detayCiz`/`dqBransNet`
+mantığı test bataryasına eklenmedi (bu tur zaman). Gerçek tarayıcıda görsel
+doğrulandı ama regresyon koruması yok; sonraki turda `pu_test`e eklenmeli.
+
+**sürüm `2027-02-11a` ↔ `rota-2027-02-11a` · 671 423 bayt**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
