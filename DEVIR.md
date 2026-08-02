@@ -11858,6 +11858,44 @@ kal/cark/tarayici/derin: **0** · CSS dengesi 0 · JS parse OK.
 
 ---
 
+## 233 · BOŞLUK SIRALAMADA · AÇILIŞ GÜN LİSTESİ · `2027-02-13a`
+
+İki kullanıcı kararı uygulandı:
+
+### 1 · Kanıtlanmış boşluk power-up sıralamasına girdi
+
+`puSirali()` sıralama anahtarı: `_sk = verim × (1 + 0.15 × min(3, boşluk))`.
+Denemede "Bilmiyorum" deyip kaçırılan konu yukarı itilir; çarpan sınırlı,
+verim ana eksen kalır. ⚠ Kartta GÖRÜNEN net/sa değeri SAF verim — sıralama
+anahtarı ayrı tutuldu ki gösterilen sayı şişmesin (sayı dürüstlüğü).
+Ayrıntılı veri yokken `_sk === _v`, davranış birebir eski hali.
+
+### 2 · Uygulama artık gün listesiyle açılıyor (çark değil)
+
+Kullanıcı: to-do listesi esnek, çark karşılamasın. Açılışta `gunKipAc(true)`
+(60 ms gecikmeli, §148'in çok kaynaklı yükseklik/tazeleme mekanizması boot'ta
+da işliyor). Tercih hatırlanıyor: `gunKipAc` sarmalandı, kullanıcı çarka
+geçerse `D.acilis='cark'` yazılır ve sonraki açılış çarkla olur; listeye
+dönerse yine liste. Pinch/tekerlek/sınır sürükleme aynen çalışıyor.
+
+### Doğrulama notu (headless tuzağı — üçüncü kez aynı aile)
+
+Boot görüntüsünde liste "boş" göründü; DOM'da 14 satır tamdı. Sebep `.glS`
+GİRİŞ ANİMASYONU: sanal zamanda CSS animasyonu koşmuyor, satırlar opacity
+0'da yakalanıyor (§sayfaGec rAF artefaktının kardeşi). Animasyon CSS'le
+kapatılıp yeniden görüntülendi: liste tam — Program|Kitap anahtarı, tarih
+gezinme, blok gruplu satırlar, daire düğmeler. Cihazda animasyon normal.
+
+### Kapılar
+
+cark_test 0 · pu_test yeni kırık yok (KONU TEKİLLİĞİ 7 · §229) · kal_test 0 ·
+JS parse OK. Boost, ayrıntılı veri olmadığında bit-birebir eski sıralamayı
+verdiği için mevcut sıralama kontrolleri geçerliliğini koruyor.
+
+**sürüm `2027-02-13a` ↔ `rota-2027-02-13a` · 676 489 bayt**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
