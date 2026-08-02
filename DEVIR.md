@@ -12605,6 +12605,57 @@ izlenebilir olsun. Mevcut sinyalleri sil me — ortak karar katmanında topla.
 
 ---
 
+## 252 · GERÇEK VERİ AUDİTİ · PARAKETE/POTANSİYEL/R_CAL (kod değişmedi · FAZ 5 öncesi)
+
+Kullanıcı gerçek 200 soruluk deneme girdi; FAZ 5'ten önce Parakete/Potansiyel/
+R_CAL/deneme analizi/görev motorunun doğru çalıştığını kanıtlı denetlememi
+istedi. ⚠ Kullanıcının GERÇEK cevapları tarayıcı localStorage'ında; buradan
+erişilemiyor. Bu yüzden TEMSİLİ 200 soru (branş dağılımı SORU.den ile birebir)
+kurup MEKANİĞİ denetledim (kaynak/audit_parakete.js). Motora DOKUNULMADI.
+
+**Kavram tanımları (koddan kesin):**
+- ölçülen = puan(son().t, son().k) — son denemenin ölçülen neti
+- PARAKETE = puan(para().t, para().k) — planı bitirirsem, decay + kalibre kazanç
+- POTANSİYEL ("Kalan potansiyel", tkV) = kalanKazanci().fark = puanVarsayim(tüm
+  kalan) − PARAKETE → EK NET (delta), skor DEĞİL. Tavan = PARAKETE + POTANSİYEL.
+
+**Doğrulanan (🟢):**
+- Veri bütünlüğü: 200 soru, her biri {b,konu,s,e}; dqIstat 8 hücreyi ayırıyor
+  (sağlam=D+Emin, kırılgan=D+güvensiz, unuttum, bilmiyorum).
+- PARAKETE motor değeri = bağımsız yeniden hesap (TABAN+KT·t+KK·k) BİREBİR aynı;
+  UI (hP) doğrudan bu fonksiyonu basıyor → UI↔motor ayrışması YOK (yapısal).
+- PARAKETE ≠ POTANSİYEL: biri skor, biri delta.
+- FAZ 2 konu-decay görev motorunda çalışıyor: çür=0.13(son 8g)/0.20(son 14g)/
+  0.07(son 4g) — konu-seviye ayrışıyor.
+
+**Açıklanabilirlik/UX bulguları (🟡 — düzeltme kullanıcı onayına bırakıldı):**
+1. **Tek 200’lük deneme R_CAL’i OYNATMIYOR** (ΔR_CAL=0, n=0). R_CAL kanalları:
+   24’lük D.kal (kd/ky/kb), deneme-içi kontrast (e.konular — 200’lükte bu şekilde
+   yok), ardışık deneme çifti (≥2 gerekir), konu çiftleri. Yani ilk 200’lük
+   deneme PARAKETE’yi (bn üzerinden) ve analizi (dqIstat) besler ama R_CAL
+   kalibrasyonu İKİNCİ denemeden itibaren devreye girer. Güven E/AK/B/U analizi/
+   görev önceliğini besliyor, R_CAL’i doğrudan DEĞİL.
+2. **Güven bandı 0.00’a çöküyor** (bu senaryoda): deneme en son olay, sonrasında
+   çalışma yok → projeksiyon ölçülenin decay’i, R_CAL belirsizliği uygulanacak
+   çalışma-kazancı yok → bant daralıyor. Doğru ama kullanıcıya açıklanmalı.
+3. **Görev önerisinde TEKRAR:** POWERUP 270 kayıt / 230 tekil (branş,konu); 31
+   konu birden çok kitaptan. rehberSec teklemiyor → aynı konu (ör. Biyokimya/
+   Lipidler) listede iki kez. Düzeltme: rehberSec çıktısını (branş,konu) bazında
+   tekilleştir (kararı kullanıcı).
+4. **bosluk konu-adı eşleşmesine bağlı** (sessiz-sıfır riski, CLAUDE.md §153):
+   deneme konu adı POWERUP konu adıyla birebir eşleşmezse bos=0 sessizce.
+
+**VERDİKT: 🟡 MOTOR DOĞRU AMA AÇIKLANABİLİRLİK EKSİK.** Hesaplar doğru, UI↔motor
+ayrışması yok; ama (a) R_CAL’in ne zaman devreye girdiği, (b) bant semantiği,
+(c) yinelenen öneri, (d) bosluk eşleşmesi kullanıcıya görünür/sağlam değil.
+Bunlar FAZ 5’in (açıklanabilir öneri) ve küçük düzeltmelerin konusu — kullanıcı
+onayı bekleniyor. Gerçek sayı denetimi için kullanıcının localStorage 'rota-veri'
+JSON'unu vermesi gerekiyor (rapor sonunda adımlar).
+
+**sürüm değişmedi (yalnız audit) · kaynak/audit_parakete.js eklendi**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
