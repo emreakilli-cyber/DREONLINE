@@ -1520,3 +1520,35 @@ eF9('puEtki para önbelleği (_peP) · toplu çağrı hızlandırması',R('typeo
 eF9('gorevOncelik _peP ile sarılı (para tek geçiş)',/_peP=\(function\(\)\{try\{return para\(\)/.test(kod));
 console.log('\n'+(QF9?'✗ '+QF9+' HATA':'✓ SIFIR HATA — 9 ek kontrol'));
 if(QF9)process.exitCode=1;
+
+console.log('\n═══ ATLAS · SIFIRDAN HARİTA MOTORU + JARVIS (§261 · FAZ 1/1.5) ═══');
+let QAT=0;const eAT=(a,ok,x)=>{if(!ok){QAT++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eAT('atlasVeri/atlasYerlesim/atlasCiz/atlasAc/jarvis fonksiyonları',
+  R('typeof atlasVeri')==='function'&&R('typeof atlasYerlesim')==='function'&&
+  R('typeof atlasCiz')==='function'&&R('typeof atlasAc')==='function'&&R('typeof jarvis')==='function');
+eAT('koyu zemin (#0B0C0F) · Obsidian dili',/#atlasKat\{[^}]*background:#0B0C0F/.test(kod)&&kod.indexOf("c.fillStyle='#0B0C0F'")>=0);
+eAT('altın renk atlasta YOK (FAZ 3 Altın Yol rezervi)',(function(){
+  const i=kod.indexOf('function atlasVeri'), j=kod.indexOf('function atlasKur');
+  return i>0&&j>i&&kod.slice(i,j).indexOf('#D8B26A')<0&&kod.slice(i,j).indexOf('ALTIN')<0})());
+eAT('JARVIS satırı HTML + "efendim" üslubu',/id="jarvisSatir"/.test(kod)&&kod.indexOf('efendim')>=0);
+(function(){ C.setGun('2026-08-02'); R('D.bitti={}'); R('D.pu={}');
+  const v=R('(function(){const V=atlasYerlesim(atlasVeri(true),true);'+
+    'const s={kok:0,ders:0,kitap:0,konu:0};V.N.forEach(n=>s[n.tip]=(s[n.tip]||0)+1);'+
+    'const d1=V.N.find(n=>n.tip==="ders");'+
+    'return {s,yay:V.E.length,x1:+d1.x.toFixed(3),konumVar:V.N.every(n=>isFinite(n.x)&&isFinite(n.y))}})()');
+  eAT('düğüm sayıları: 1 kök + 11 ders + kitap + konu',v.s.kok===1&&v.s.ders===11&&v.s.kitap>10&&v.s.konu>100,v.s);
+  eAT('tüm konumlar sonlu',v.konumVar);
+  const v2=R('(function(){const V=atlasYerlesim(atlasVeri(true),true);'+
+    'return +V.N.find(n=>n.tip==="ders").x.toFixed(3)})()');
+  eAT('yerleşim DETERMİNİSTİK (aynı veri → aynı konum)',v.x1===v2,{a:v.x1,b:v2});
+  // hakimiyet düzeyi çalışılınca yükseliyor mu (motor: D.pu → lvl)
+  const l0=R('(function(){const V=atlasVeri(true);const n=V.N.find(x=>x.tip==="konu"&&x.br==="Biyokimya"&&x.key===bcKN("Amino Asitler"));return n?n.lvl:-1})()');
+  R('(function(){const u=POWERUP.find(u=>u.brans==="Biyokimya"&&u.konu==="Amino Asitler");D.pu[puAnh(u)]={al:bgun(),bit:bgun()}})()');
+  const l1=R('(function(){const V=atlasVeri(true);const n=V.N.find(x=>x.tip==="konu"&&x.br==="Biyokimya"&&x.key===bcKN("Amino Asitler"));return n?n.lvl:-1})()');
+  eAT('hakimiyet düzeyi MOTORDAN canlı (çalışınca 0→yüksek)',l0===0&&l1>=3,{once:l0,sonra:l1});
+  R('D.pu={}');
+})();
+eAT('semantic zoom eşikleri kaynakta (aKit/aKonu/eKonu)',/aKit=atSm\(/.test(kod)&&/aKonu=atSm\(/.test(kod)&&/eKonu=atSm\(/.test(kod));
+eAT('açılış atlas + eski Evren güvenli düşüş',/try\{ atlasAc\(\) \}catch/.test(kod)&&/ACILIS ATLAS/.test(kod));
+console.log('\n'+(QAT?'✗ '+QAT+' HATA':'✓ SIFIR HATA — 10 ek kontrol'));
+if(QAT)process.exitCode=1;

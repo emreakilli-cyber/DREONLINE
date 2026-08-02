@@ -13088,6 +13088,72 @@ alt başlık (veri yok, kullanıcıdan) · deneme/ölçüm açık tema · kamera
 
 ---
 
+## §261 · ATLAS — sıfırdan Obsidian-dili harita motoru + JARVIS (kullanıcı FAZ 1 + 1.5)
+
+**Yön (kullanıcının yeni brief'i + iPhone Obsidian ekran görüntüleri):** önceki
+tasarımlar "basit ve yetersiz" — hiçbiri cilalanmayacak, SIFIRDAN. Estetik referans
+GERÇEK Obsidian grafiği: siyaha yakın zemin, ince gri çizgiler, sade noktalar,
+yaklaştıkça beliren etiketler. ⚠ Bu, önceki "açık zemin" kuralının KULLANICI
+TARAFINDAN tersine çevrilmesidir (ekran görüntüleriyle) — §244 kuralı artık geçersiz.
+Liste/form/panel istenmiyor; her şey haritada yaşayacak (kademeli). "Tasarım
+sıfırdan, veri korunarak."
+
+**Yapılan (FAZ 1 · harita motoru):** `atlas*` — tümüyle YENİ modül (~18 KB), eski
+zeCiz/zeKur KULLANILMADI (kod duruyor, güvenli düşüş + kapılar için; gösterilmiyor):
+- `atlasVeri()`: bcIndeks + motor → 408 düğüm (1 kök TUS + 11 ders + 41 kitap +
+  355 konu) + 897 yay (kök-ders, ders-kitap, kaynak, dersKonu[yalnız yerleşim],
+  kombo). Konu hakimiyet düzeyi 0–4 MOTORDAN: D.pu/D.bitti + konuCurume (çalışılınca
+  yükselir, çürüdükçe düşer — testte kanıtlı 0→4). Öncelik etiketi = mevcut
+  konuRenk/RENK (pembe/turuncu/sarı/mavi) düğüm renginde ince vurgu.
+- `atlasYerlesim()`: DETERMİNİSTİK kuvvet benzetimi (ızgara-itmeli, 130 tur, sabit
+  tohum; testte iki koşu birebir aynı konum). Ders çapaları halka üstünde; küme
+  yarıçapı ~220 birim (ilk sürüm 600+ çıktı, yaylar sıkılaştırıldı).
+- `atlasCiz()`: koyu zemin #0B0C0F, ince gri çizgiler, sade daireler. SEMANTIC ZOOM:
+  uzak → yalnız ders düğümleri + etiketleri + konular "yıldız tozu" (ultra hafif,
+  tek tek düğüm iddiasız); orta → kitaplar belirir; yakın → konular + etiketler.
+  Hakimiyet = parlaklık + çevre nokta yoğunluğu (kademeli, süssüz; çürüme aynı dilin
+  tersi). Odak: düğüme dokun → komşular kalır, gerisi %14'e söner; kamera yay/easing
+  ile uçar. ⚠ ALTIN RENK ATLASTA HİÇ KULLANILMADI — FAZ 3 Altın Yol'a rezerve
+  (pu_test bunu kaynak düzeyinde denetliyor).
+- İlk karede KOMBO çizgileri uçları görünmeyen düğümlere bağlanıp karmaşa yaratıyordu
+  (gerçek karede görüldü) → kombo alfası konu görünürlüğüne bağlandı; uzak görünüm
+  berrak. Açılış ölçeği ekrana SIĞDIRILIYOR (sabit değil).
+
+**FAZ 1.5 · JARVIS:** `jarvis(metin)` — sohbet penceresi DEĞİL; altta beliren,
+kendiliğinden kaybolan tek satır. Açılışta motordan selam: "Hoş geldiniz efendim.
+Sınava 21 gün var; parakete 59.4. Anatomi bölgesi ilginizi bekliyor." (kalan gün =
+fark/SINAV, parakete = puan(para()), zayıf bölge = evrenVeri hakimiyet min).
+Yalnız anlamlı anlarda konuşacak (FAZ 3'te Altın Yol tetikleyecek).
+
+**Geçici köprü (bilinçli):** sağ üst "⋯" menüsü → Bugün/Deneme/Ölçüm/Power-up/Telafi
+mevcut panelleri atlas ÜSTÜNDE açıyor (paneller gövde düzeyine taşındı, z-index
+122-125). Menüde not: "FAZ 2'de bu akışlar haritanın içine gömülecek." Günlük akış
+kaybolmadı (Bugün paneli 11 satır, tamamlama çalışıyor — tarayıcıda doğrulandı).
+
+**Test ortamı keşfi:** derin_ortam VM'inde betik, atlastan önceki bir üst-düzey
+satırda ötedenberi ölüyormuş (karsilamaAc bile tanımsızmış) — bugüne dek test edilen
+her şey ölüm noktasından önceydi. Atlas modülü ölüm noktasının öncesine taşındı;
+ölüm noktasının kendisi ayrıca incelenmeli (açık madde).
+
+**Kapılar:** kal/derin/cark/mola/kombo ✓ · pu_test yeni §261 bölümü **10 kontrol
+SIFIR HATA** (fonksiyonlar, koyu zemin, altın-yok, JARVIS+efendim, 408 düğüm,
+konum sonlu, determinizm, hakimiyet motordan canlı 0→4, semantic zoom eşikleri,
+açılış+düşüş) · toplam ✗ **7** = değişmeden §229.
+**Gerçek tarayıcı (390px, gerçek veri):** açılış 3.6 sn'de atlas; 408 düğüm/897 yay;
+JARVIS motor değerleriyle konuştu; uzak/orta/yakın/odak kareleri alındı; köprü
+Bugün paneli çalışıyor; sayfa hatası yok.
+
+**SONRAKİ (kullanıcı onayı bekleniyor — akış onun şartı):**
+- FAZ 2: verinin haritada yaşaması (düğümde tamamlama mikro-etkileşimi, deneme
+  olayı düğümü, sparkline, çapraz-kitap bağları zaten var; not yüzeyinin haritaya
+  gömülmesi) + kamera OMR/OCR (kullanıcıdan: boş optik form fotoğrafı + cevap
+  anahtarı formatı + işaretli örnek sayfa).
+- FAZ 3: Altın Yol (gorevOncelik/puEtki → altın rota overlay, aç/kapa) + JARVIS bildirimi.
+
+**sürüm 2027-03-08a ↔ rota-2027-03-08a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
