@@ -13054,6 +13054,40 @@ motordan, DRE bağlı, _peP perf); toplam ✗ hâlâ **7** = değişmeden §229.
 
 ---
 
+## §260 · EVREN = ÇEKİRDEĞİN GÖRÜNÜMÜ — KOMBO bağlantıları haritada (öncelik 5)
+
+Kullanıcı "devam" dedi → öncelik 5–6: Bilgi Evreni bilgi çekirdeğinin mekânsal
+graph view'ı olsun. İlk adım: bilgi bağlantılarını haritaya çizmek.
+
+- `zeKur` artık `bcIndeks()`'ten `komboDers` üretiyor: 99 konu↔konu KOMBO kenarı
+  ders bölgelerine toplanıyor → **18 ders↔ders bağı** (Anatomi↔Genel Cerrahi w=12,
+  Patoloji↔Genel Cerrahi w=6…). Aynı ders içi bağlar atlanıyor (bölge içi). Kaynak
+  TEK: bcIndeks (harita ile çekirdek artık aynı bağlantı verisini kullanıyor).
+- `zeCiz` ders katmanında bu bağları **eğri** olarak çiziyor: uzakta hafif
+  (aDers·0.14, ağırlıkla ölçekli), bir ders **seçiliyken yalnız onun bağları**
+  altınla belirginleşiyor (aDers·0.5) — "ilişkiler uzakta hafif, odaklanınca
+  belirgin" (kullanıcı şartı). Ders çemberlerinin ARKASINDA çiziliyor.
+- Harita konusu tıklaması (§259'da) zaten `bcNotAc` açıyordu → harita ile çekirdek
+  tek akış.
+
+**Kapılar:** cark/derin/kombo/mola/kal ✓ · pu_test ✗ 7 = değişmeden §229.
+**Gerçek tarayıcı (1000px, gerçek veri):** komboDers 18 bağ; overview'da tüm bağlar
+hafif; Patoloji seçilince diğer dersler soluyor, onun bağları (→ Genel Cerrahi vb.)
+altınla beliriyor; sayfa hatası yok.
+
+**Bilinçli ödün / açık nokta:** overview'da KOMBO eğrileri mevcut radyal görev
+çizgileriyle (görev→ders kenarları) görsel olarak karışıyor — biraz yoğun. Odak
+görünümü net. Cihazda görülüp "berrak" değilse: overview'da yalnız en güçlü bağları
+(w≥N) göstermek ya da radyal spokes'u soldurmak seçenek. Kullanıcı kararı bekleniyor.
+
+**Sonraki (öncelik 6 + kalan):** yaşayan durum haritada (mastery/decay → anıt/
+solma zaten §256'da; bağlarla birleştir) · konu düğümleri de tek bcIndeks'ten ·
+alt başlık (veri yok, kullanıcıdan) · deneme/ölçüm açık tema · kamera OCR + golden.
+
+**sürüm 2027-03-07a ↔ rota-2027-03-07a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
