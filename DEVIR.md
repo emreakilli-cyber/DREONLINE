@@ -12989,6 +12989,71 @@ header/main opacity 0 · şerit dolu · Bugün paneli `#zeGunIc` içinde 11 sat�
 
 ---
 
+## §259 · BİLGİ ÇEKİRDEĞİ — Obsidian-benzeri kişisel bilgi sistemi
+
+Kullanıcı yön değiştirdi: önce **bilgi çekirdeği** (gerçek bilgi yönetim sistemi),
+sonra motor entegrasyonu, en son Evren bunun mekânsal görünümü. "Şık node graph"
+değil, "güçlü kişisel bilgi işletim sistemi" hissi hedef.
+
+### `bcIndeks()` — bilgi grafiği (yeni model YOK, hepsi türetme)
+- **Düğümler** mevcut veriden: RB (11 ders), POWERUP (41 kitap, konu+sayfa),
+  GOREVLER (program kitap/konu), KONU_DAG (deneme konu katalogu) → **355 konu**.
+  Kimlik = motorun kendi `renkAnh`/`konuSade` normali (ikinci kimlik uydurulmadı).
+- **Kenarlar yalnız gerçek veriden:** yapı (ders→konu), **kaynak (kitap→konu, 407
+  kenar)** — bir konuyu birden çok kitap anlatır, gerçek backlink ("Hormonlar 2
+  kaynak"); **kombo (99 kenar, 99/99 EŞLEŞTİ, komboAt=0)**.
+- ⚠ **KOMBO köprüsü KESİN:** KOMBO öğeleri tam görev-ID `gün|blok|branş|konu`
+  taşıyor; branş+konu doğrudan düğüm kimliğine çözülüyor. Önceki turlarda "sessiz
+  sıfır riski" diye ertelediğim köprü aslında güvenliymiş — çünkü ad tahmini yok,
+  ID parse'ı var. 99/99 eşleşme bunu kanıtladı.
+
+### Not yüzeyi `bcNotAc()` — içerik + metadata + bağlantılar tek yerde
+Bir konuya (haritada/aramada/görev satırında/graf düğümünde) tıklayınca:
+breadcrumb · başlık + tip · türetilmiş etiketler (#çalışıldı/#çürüyor/#boşluk-N/
+#kombo/#öncelik-N) · **Özellikler paneli "motordan canlı"** (soru ağırlığı, son
+çalışma, çürüme, denemede D/Y, güven E/AK/B/U, boşluk, DRE önceliği+skor, beklenen
+net, sayfa, süre) · "Neden öncelikli" (gorevNeden) · **Bağlantılar** (kaynak/kombo/
+yapı, hepsi tıklanır → o notun yüzeyi) · denemelerdeki gerçek sorular (D/Y+güven) ·
+ilgili görevler + **"Çalıştım"** (mevcut D.pu/D.bitti kaydı birebir) · **yerel graf**
+(canvas, komşu düğümler tıklanır) · Haritada göster · ‹ Önceki not (gezinme yığını).
+Tüm değerler panel açılırken motordan CANLI okunuyor (donmuş değer yok).
+
+### Arama + filtre yükseltildi
+`tip:konu|kitap|ders` · `ders:Ad` · `#etiket` (#çürüyor/#boşluk/#kombo/#çalışılmadı/
+#öncelik) · serbest metin. Çekirdeğin TAMAMINDA arıyor, sonuç NOT yüzeyini açıyor.
+Harita konusu tıklaması, görev satırı tıklaması ve arama sonucu artık hep aynı
+bilgi notunu açıyor — tek bilgi sistemi, çok giriş.
+
+### 🔴 GERÇEK PERF HATASI BULUNDU VE DÜZELTİLDİ (yayındaki sürümde de var)
+`gorevOncelik()` **9173 ms** sürüyordu (rehberSec 41 ms). Sebep: `puEtki()` her
+çağrıda `para()` (33 ms) hesaplıyor; gorevOncelik bunu ~270 aday için tek tek
+yapıyordu → 270×33 ≈ 9 sn. `para()` tek geçişte hep aynı. Çözüm: `_peP` kapsamlı
+önbelleği (`_rcZorla` deseni) — gorevOncelik para'yı bir kez hesaplayıp puEtki'ye
+veriyor. **9173 ms → 90 ms (100×).** DRE sıralaması BİREBİR AYNI (Aminoasitlerin
+Metabolizması skor=8.14, FAZ 5 testiyle aynı → davranış değişmedi). Bu, yayındaki
+rehber panelini ve harita açılışını da hızlandırdı.
+
+### Kapılar + doğrulama
+kal/derin/cark/mola/kombo ✓ · pu_test yeni §259 bölümü **9 kontrol SIFIR HATA**
+(11 ders + düğümler, KOMBO 99/99 kesin, kaynak backlink, çok-kaynaklı konu, özellik
+motordan, DRE bağlı, _peP perf); toplam ✗ hâlâ **7** = değişmeden §229.
+**Gerçek tarayıcı (telefon 390, gerçek veri):** indeks 11/41/355, KOMBO 99/99;
+"Şok travma" notu 9 özellik + 3 gerçek soru + kaynak backlink + graf ile açıldı;
+`#boşluk tip:konu` filtresi 40 sonuç 116 ms; sayfa hatası yok.
+
+### Eksik / sonraki (bu vizyonun kalanı)
+- **Alt başlık düzeyi:** veri katalogunda YOK (denetlendi — POWERUP kitap→konu,
+  KONU_DAG branş→konu, sorular konu adına). Ders→Kitap→Konu→Soru gerçek; alt başlık
+  UYDURULMADI. İstenirse kullanıcıdan alt başlık kaynağı gerekir.
+- **Evren = çekirdeğin görünümü:** harita konusu artık notu açıyor ama harita hâlâ
+  ayrı `zeVeri` türetiyor; ikisini tek indekse (`bcIndeks`) bağlamak sıradaki adım.
+- Deneme/ölçüm panelleri koyu tema (§258 açık kalan).
+- Kamera OCR + golden test.
+
+**sürüm 2027-03-06a ↔ rota-2027-03-06a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)

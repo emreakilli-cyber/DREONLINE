@@ -1486,3 +1486,37 @@ eF8('Enter ilk sonuca gider · Escape kapatır',/e\.key==='Enter'[\s\S]{0,60}zeG
 eF8('geri düğmesi önce aramayı kapatır (izolasyon)',/zeAra[\s\S]{0,80}zeAraKapat\(\); return/.test(kod));
 console.log('\n'+(QF8?'✗ '+QF8+' HATA':'✓ SIFIR HATA — 7 ek kontrol'));
 if(QF8)process.exitCode=1;
+
+console.log('\n═══ BİLGİ ÇEKİRDEĞİ · not/backlink/graf/filtre (§259) ═══');
+let QF9=0;const eF9=(a,ok,x)=>{if(!ok){QF9++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eF9('bcIndeks / bcNotAc / bcOzellik / bcOncelikMap fonksiyonları',
+  R('typeof bcIndeks')==='function'&&R('typeof bcNotAc')==='function'&&
+  R('typeof bcOzellik')==='function'&&R('typeof bcOncelikMap')==='function');
+(function(){ C.setGun('2026-08-02'); R('D.pu={}'); R('D.bitti={}');
+  R('D.denemeler=[{tar:"2026-08-01",kay:"t",t:0,k:0,bn:{},detay:true,sorular:['+
+    '{b:"Biyokimya",konu:"Amino Asitler",s:"D",e:"E"},{b:"Biyokimya",konu:"Amino Asitler",s:"Y",e:"B"}]}]');
+  const ix=R('(function(){const B=bcIndeks();const s={ders:0,kitap:0,konu:0};'+
+    'B.N.forEach(n=>s[n.tip]=(s[n.tip]||0)+1);'+
+    'return {ders:s.ders,kitap:s.kitap,konu:s.konu,komboEs:B.komboEs,komboAt:B.komboAt,'+
+    'kaynak:B.E.filter(e=>e.tip==="kaynak").length,kombo:B.E.filter(e=>e.tip==="kombo").length}})()');
+  eF9('11 ders + kitap + konu düğümleri var',ix.ders===11&&ix.kitap>10&&ix.konu>100,ix);
+  eF9('KOMBO köprüsü KESİN eşleşiyor (görev-ID → düğüm, sessiz sıfır yok)',ix.komboAt===0&&ix.komboEs>0,{es:ix.komboEs,at:ix.komboAt});
+  eF9('kaynak (kitap→konu) backlink kenarları var',ix.kaynak>50,ix.kaynak);
+  // çok kaynaklı konu = gerçek backlink (kitap↔konu, uydurma değil)
+  eF9('çok-kaynaklı konu var (gerçek backlink)',
+    R('[...bcIndeks().N.values()].some(n=>n.tip==="konu"&&n.kaynaklar&&n.kaynaklar.length>=2)'));
+  // özellik motordan geliyor mu (donmuş değer yok)
+  const oz=R('(function(){const n=[...bcIndeks().N.values()].find(x=>x.tip==="konu"&&x.br==="Biyokimya"&&x.key===bcKN("Amino Asitler"));'+
+    'if(!n)return null;const P=bcOzellik(n);return {soru:P.soru,sorular:(P.sorular||[]).length,dre:!!P.dre,dyD:P.dy&&P.dy.D}})()');
+  eF9('konu özelliği motordan: soru ağırlığı + gerçek deneme soruları',oz&&oz.soru>0&&oz.sorular===2&&oz.dyD===1,oz);
+  eF9('DRE önceliği bilgi notuna bağlı (rehberSec/puEtki)',oz&&oz.dre===true);
+  // KOMBO kenarları konu↔konu ve iki uç da gerçek düğüm
+  eF9('KOMBO kenarı iki gerçek konu düğümü bağlıyor',
+    R('(function(){const B=bcIndeks();const e=B.E.find(x=>x.tip==="kombo");if(!e)return false;'+
+      'return B.N.has(e.a)&&B.N.has(e.b)&&B.N.get(e.a).tip==="konu"&&B.N.get(e.b).tip==="konu"})()'));
+})();
+// PERF: puEtki para() önbelleği — gorevOncelik toplu çağrıda para'yı tekrar hesaplamıyor
+eF9('puEtki para önbelleği (_peP) · toplu çağrı hızlandırması',R('typeof _peP')!=='undefined'&&/_peP\|\|para\(\)/.test(kod));
+eF9('gorevOncelik _peP ile sarılı (para tek geçiş)',/_peP=\(function\(\)\{try\{return para\(\)/.test(kod));
+console.log('\n'+(QF9?'✗ '+QF9+' HATA':'✓ SIFIR HATA — 9 ek kontrol'));
+if(QF9)process.exitCode=1;
