@@ -1526,7 +1526,7 @@ let QAT=0;const eAT=(a,ok,x)=>{if(!ok){QAT++;console.log('  ✗ '+a+(x!==undefin
 eAT('atlasVeri/atlasYerlesim/atlasCiz/atlasAc/jarvis fonksiyonları',
   R('typeof atlasVeri')==='function'&&R('typeof atlasYerlesim')==='function'&&
   R('typeof atlasCiz')==='function'&&R('typeof atlasAc')==='function'&&R('typeof jarvis')==='function');
-eAT('koyu zemin (#0B0C0F) · Obsidian dili',/#atlasKat\{[^}]*background:#0B0C0F/.test(kod)&&kod.indexOf("c.fillStyle='#0B0C0F'")>=0);
+eAT('saf siyah zemin · Obsidian dili (§263)',/#atlasKat\{[^}]*background:#000/.test(kod)&&kod.indexOf("c.fillStyle='#000'")>=0);
 eAT('altın renk atlasta YOK (FAZ 3 Altın Yol rezervi)',(function(){
   const i=kod.indexOf('function atlasVeri'), j=kod.indexOf('function atlasKur');
   return i>0&&j>i&&kod.slice(i,j).indexOf('#D8B26A')<0&&kod.slice(i,j).indexOf('ALTIN')<0})());
