@@ -12162,6 +12162,27 @@ Goal koşulu gereği fiilen kuruldu (§240 omurga üstüne):
 
 ---
 
+## 242 · EVREN AŞAMA 1 · GEZEGEN KUŞ BAKIŞI · `2027-02-21a`
+
+Goal "bütün aşamaları gerçekleştir" — EVREN_PLAN.md aşama 1 yayında:
+- `#evrenKat` + `evrenCiz()`: 11 bölgeli SVG gezegen halkası; bölge dolgusu
+  SÜREKLİ fonksiyonla hâkimiyete bağlı ışık (0.06+0.6·H), çürüme doygunluğu
+  düşürür, kara delik ⚫ işareti. Merkezde sınava kalan gün.
+- `evYakinlas(i)`: tek kamera — sahne grubu transform'la bölgeye yaklaşır
+  (.8s), sağdan cam konu paneli açılır: konu başına pay, ✓ çalışıldı,
+  ⚠ denemede boşluk. `geri`: önce uzaklaş, sonra evrenden çık.
+- Giriş: karşılama kartındaki MASKOT Dre tıklanınca (kart kapanıp evren
+  açılır). DOM bir kez kurulur (§103), animasyon transform-only.
+- Doğrulama: gerçek tarayıcı 1100×760 — bölgeler hâkimiyetle ışıldadı
+  (Patoloji %65 parlak · Anatomi %15 karanlık). pu_test +4 · cark_test 0.
+- Sıradaki: aşama 2 (bölge→kitap→içindekiler) · 3 (DRE yıldız menüsü +
+  rehber kamera sürüşü) · 4 (çürüme/yaşam animasyonları · deneme uydusu) ·
+  5 (kara delik/galaksi/sayfa) — her biri ayrı PR.
+
+**sürüm `2027-02-21a` ↔ `rota-2027-02-21a`**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)

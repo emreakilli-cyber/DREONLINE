@@ -1280,3 +1280,12 @@ eR('rehberMetin fonksiyonu',R('typeof rehberMetin')==='function');
 })();
 console.log('\n'+(QR?'✗ '+QR+' HATA':'✓ SIFIR HATA — 6 ek kontrol'));
 if(QR)process.exitCode=1;
+
+console.log('\n═══ EVREN AŞAMA 1 (§242) ═══');
+let QV=0;const eV1=(a,ok)=>{if(!ok){QV++;console.log('  ✗ '+a)}};
+eV1('evrenAc',R('typeof evrenAc')==='function');
+eV1('evrenCiz',R('typeof evrenCiz')==='function');
+eV1('evYakinlas',R('typeof evYakinlas')==='function');
+eV1('sektor kaynakta',kod.indexOf('class="evSek"')>=0&&kod.indexOf('evGrup')>=0);
+console.log('\n'+(QV?'✗ '+QV+' HATA':'✓ SIFIR HATA — 4 ek kontrol'));
+if(QV)process.exitCode=1;
