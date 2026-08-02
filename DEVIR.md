@@ -12432,6 +12432,118 @@ denemesi, etiket çakışma-önleme (Görev/Küçük Stajlar örtüşmesi), ders
 
 ---
 
+## 248 · VERİ MOTORU AUDİT (kod değişmedi) · profesyonel öğrenme sistemi hedefi
+
+Kullanıcı yeni yön: ürün artık salt görsel değil — Obsidian+Anki+kişisel
+Wikipedia+deneme analizi+adaptif net projeksiyonu birleşimi profesyonel sistem.
+EN ÖNEMLİ KURAL: mevcut veri motorunu koru, PARALEL model kurma. Bölüm 19:
+kod değiştirmeden A–G audit çıkar; bölüm 18: canlı test (deneme→net→tahmin→
+çalışma→yeni deneme→kalibrasyon değişti mi). Bu tur SADECE audit yapıldı,
+motora dokunulmadı. Üç paralel okuma ajanı + canlı test (`kaynak/audit_test.js`).
+
+**Bulgular (hepsi koddan doğrulandı):**
+- **Kalibrasyon VAR ve çalışıyor** — `rCalHesap()` (2402) ters-varyans ağırlıklı
+  Bayes, önsel R_CAL0=0.405±0.0995, DÖRT gözlem kanalı: (1) 24'lü D.kal ayrık/
+  kapsam, (2) deneme-içi kontrast (çalışılan vs çalışılmayan konu — en güçlü,
+  deneme zorluğunu sadeleştirir), (3) ardışık tam deneme farkı (D_ORAN payı
+  çıkarılır), (4) konu çiftleri. `[0.15,0.85]` kırpma. `puan()` sabit; öğrenme
+  `para()` içindeki netlerde. İkincil `D_ORAN` (deneme→net) de kalibre.
+- **Projeksiyon zaten BANT** — `puanBant(±1)` = proj ± 1.96·sd; `ust()` içinde
+  "b1–b2" gösteriliyor (hN, ~3900). Az veri koruması = geniş bant (açık metin yok).
+- **Güven E/AK/B/U ayrı sinyal** — `dqIstat` sag(D+Emin)/kir(D+güvensiz)/unut/bilm
+  + bosluk; ham `{s,e}` her soruda `D.denemeler[].sorular[]`'de → 8'li matris TÜREVİ.
+- **Görev önerisi veri-güdümlü** — `rehberSec` CS=2.2·boş+1.6·yan+1.4·çür+1.2·düş+
+  0.35·soru+1.5·tekrar; `puEtki/puSirali` verim=etki/saat (beklenen net·zaman·Rr
+  unutma·soru ağırlığı·boşluk). Adaylar POWERUP kataloğundan (icat yok).
+- **Konu↔konu bağlantı tablosu YOK** — KONU_DAG hiyerarşi (branş→konu→pay);
+  §228 "grup anahtarı" = aynı konunun tekilliği, bağlantı değil. Uydurmadan
+  TÜRETİLEBİLİR: ortak-kitap (POWERUP hazır), aynı-ad/grup çakışması (konuOrtus),
+  birlikte-hata (yalnız Ayrıntılı deneme sorular[].konu; çift üretimi yok).
+  Önkoşul/klinik/mekanizma için VERİ YOK — elle kürasyon gerekir.
+
+**Canlı test sonuçları (kaynak/audit_test.js, gerçek sayı):**
+1) n=0 → 0.405±0.195, bant genişliği 1.00 · 2) kötü deneme → R_CAL 0.405→0.376
+(Δ−0.029, shrinkage) · 3) 30 iyi gözlem → 0.850, bant 1.00→0.18 (daraldı) ·
+4) Doğru+Emin sag=10 vs Doğru+Bilmiyorum kir=10 (ayrışıyor) · 5) düşük deneme +
+güçlü çalışılan-konu → 0.439 (tabana çekilmedi) · 6) CS decay ile değişiyor.
+
+**⚠ GERÇEK HATA (bu turda bulundu, düzeltilmedi — audit aşaması):** `rehberSec`
+CS'indeki `cur` bileşeni DEJENERE. `curume(br,bgun(),SINAV_G)` bir GÜN içinde
+tüm branşlarda AYNI değeri döndürür (g=sınava kalan gün, branştan bağımsız);
+zamanla değişir ama ADAYLAR ARASI sıralamayı ayrıştırmaz. Yorum (6796) onu
+ayrıştırıcı sanıyor. Gerçek konu-bazlı çürüme (son çalışma tarihinden bu yana)
+CS'e girmiyor. Düzeltme kararı kullanıcıya bırakıldı.
+
+**Eksikler (kullanıcı vizyonu vs mevcut):** (a) "son 5 deneme +3.1" kayan-pencere
+trend sayısı YOK. (b) tempo-bazlı (net/gün) ileri projeksiyon YOK — ileri
+projeksiyon plan+çürüme tabanlı. (c) iki öneri motoru (rehber CS · power-up verim)
+aynı faktör setini paylaşmıyor; birleştirme kararı açık. (d) konu-bazlı "son
+çalışma X gün önce" unutma önceliğe girmiyor.
+
+**Karar bekleyen (kullanıcıya sunuldu):** cur teriminin konu-bazlı çürümeye
+bağlanması; hangi konu-bağlantı tiplerinin (ortak-kitap/aynı-ad/birlikte-hata)
+etkinleştirileceği; trend/tempo sayılarının eklenmesi; iki öneri motorunun
+birleştirilip birleştirilmeyeceği. Motor DEĞİŞMEDEN audit tamamlandı.
+
+---
+
+## 249 · PROFESYONEL SİSTEM YOL HARİTASI · FAZ 1 (bağlantı kurtarma) + FAZ 2 (konu decay) · `2027-02-27a`
+
+Kullanıcı 11 fazlık yol haritası verdi (Obsidian+Wikipedia+Anki+mevcut TUS
+motoru = ciddi doktor bilgi haritası). DEĞİŞMEZ: paralel model YOK, mevcut
+motor tek kaynak, eski UI görsel olarak geri gelmez (yalnız veri). Her fazdan
+sonra 7-başlıklı rapor. Bu tur FAZ 1 + FAZ 2.
+
+**FAZ 1 · Eski Seyir Defteri konu bağlantıları KURTARILDI (kod değişmedi):**
+İki paralel arkeoloji ajanı + doğrudan okuma. Bulgu: bağlantılar kayıp değil —
+**KOMBO** (index.html ~2111, kaynak/kombo.json, 99 kayıt). Eski "Sefer"
+(seyirCiz/kordonCiz) sayfasında "yeşil halatlar" olarak çiziliyor: "bir konuyu
+öğrenince bağlı olduğunun maliyeti düşüyor". Yapı: `[kaynakGörevId, hedefId,
+gerekçe, kaynakEtiket, hedefEtiket, günFarkı(f)]`. İki tip: f=0 aynı gün
+"↔ kesişen konular pekiştiriyor" (40), f=1 ertesi gün "→ temel yarını
+hızlandırıyor" (59). ⚠ NÜANSLAR: (a) **kural-türevi**, elle çizilmiş değil —
+`yeniden.py` konuların `z` (organ-sistem zinciri) etiketinden üretiyor (aynı z,
+≤1 gün, farklı branş). Kullanıcının elle kurduğu = konuların `z` gruplaması.
+(b) **salt görsel** — gorevKazanc/bul/denemeDeger'e bağlı DEĞİL. (c) **üretici
+drift**: dağıtımdaki kombo.json'u üreten gerçek jeneratör kaynak/'ta YOK;
+boru hattı baştan koşulursa açıklamalar bozulur (pu/kural_test yalnız uç-geçerli
+denetliyor). (d) git geçmişi 2026-07-27'de başlıyor; KOMBO ilk commit'ten beri
+var, başka/daha eski konu↔konu yapısı git'te YOK (öncesi olsa tus_tamami.tar.gz
+devir paketinde olurdu). Yeni force-graph kenarları hiyerarşik (merkez→ders→
+kitap), KOMBO'yu kullanmıyor. → FAZ 8'de KOMBO yeni haritaya "yol" olarak
+taşınacak + türetilebilir tipler (ortak-kitap/aynı-ad/birlikte-hata) SİSTEM
+ETİKETLİ eklenecek (kullanıcı-kurulu gibi gösterilmeyecek).
+
+**FAZ 2 · Konu-seviye gerçek decay → görev önceliği (§248'de bulunan cur hatası
+düzeltildi):** rehberSec CS'indeki `cur` dejenereydi — `curume(br,bugün,SINAV_G)`
+bir gün içinde tüm branşlarda AYNI, sıralamayı ayrıştırmıyordu. Düzeltme (YENİ
+MODEL YOK):
+- `konuSonKume()` / `konuSon()` — bir konunun EN SON çalışma tarihi, mevcut
+  D.bitti (içerik görevleri) + D.pu (.tb/.bit power-up) tarihlerinden. konuKayit
+  EN ERKEN tutuyordu; bu EN SON tutuyor. Anahtar mevcut konuAnh şeması.
+- `konuCurume(brans,konu,grup,gün)` — son çalışmadan bu yana `1-Rr(g,S_TEK)`
+  (para()'nın taze-materyal modelinin aynısı). Hiç çalışılmadıysa cur=0
+  (bu decay değil, boşluk; bos/mastery taşır).
+- rehberSec artık konu-seviye cur kullanıyor + neden.sonGun ekli (açıklanabilirlik).
+- **Doğrulama (kaynak/audit_test yanında canlı test):** 18 gün önce çalışılan konu
+  cur=0.234 vs 2 gün önce cur=0.037 (ayrışıyor ✓); rehberSec cur değeri 1→çok
+  (dejenere düzeldi); hiç çalışılmamış 268/270 konu cur=0 (boşluk).
+
+**Bu turda yaptığım hatalar:** (1) §248 audit commit'imi branch reset'iyle geçici
+kaybettim; b3e7227'den geri aldım. (2) Test harness'ı /mnt/user-data/outputs'tan
+okuyor; index.html'i kopyalamadan koştum, konuCurume "tanımsız" çıktı — kopyalayıp
+tekrar koştum. (3) İlk connection-audit ajanı (§248) KOMBO'yu bağlantı olarak
+tanımadı; kullanıcının ısrarı üzerine yeniden arayınca bulundu.
+
+**Sonraki:** FAZ 3 (son 5 deneme kayan-pencere trendi, R_CAL'den AYRI gözlemsel
+katman). Sonra FAZ 4 (tempo-bazlı ileri projeksiyon), FAZ 5 (iki öneri motorunu
+birleştir), FAZ 6-11 (200 soru derinleştirme, yaşayan harita, Obsidian fonk.,
+ajanlar, geri izolasyon, polish). Görsel değişiklik FAZ 7'de başlıyor.
+
+**sürüm `2027-02-27a` ↔ `rota-2027-02-27a`**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
