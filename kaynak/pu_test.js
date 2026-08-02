@@ -1220,3 +1220,35 @@ eW2('golge grup bazlı',kod.indexOf('const M=konuKayit(), k=konuAnh(g.br,g.k,g.z
 })();
 console.log('\n'+(QW?'✗ '+QW+' HATA':'✓ SIFIR HATA — 9 ek kontrol'));
 if(QW)process.exitCode=1;
+
+console.log('\n═══ AYRINTILI GİRİŞ · SORU SORU (§231) ═══');
+let QDX=0;const eDX=(a,ok,x)=>{if(!ok){QDX++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eDX('detayCiz fonksiyonu',R('typeof detayCiz')==='function');
+eDX('dqBransNet fonksiyonu',R('typeof dqBransNet')==='function');
+eDX('dqTaslak fonksiyonu',R('typeof dqTaslak')==='function');
+eDX('dqKonular fonksiyonu',R('typeof dqKonular')==='function');
+eDX('dqGuvenOzet fonksiyonu',R('typeof dqGuvenOzet')==='function');
+eDX('dqIstat fonksiyonu',R('typeof dqIstat')==='function');
+eDX('PANELLER tanımlı (regresyon §231)',Array.isArray(R('PANELLER'))&&R('PANELLER.length')===4);
+eDX('kip anahtarı kaynakta',kod.indexOf('data-dnkip')>=0);
+eDX('hafif yenile yolu',kod.indexOf('yenile(true)')>=0);
+(function(){
+  const q=[{b:'Biyokimya',konu:'vitaminler',s:'D',e:'E'},
+           {b:'Biyokimya',konu:'lipidler',s:'Y',e:'AK'},
+           {b:'Dahiliye',konu:'kardiyoloji',s:'D',e:'B'},
+           {b:'Dahiliye',konu:'nefroloji',s:'B',e:'B'}];
+  const n=R('dqBransNet('+JSON.stringify(q)+')');
+  eDX('net = D − Y/4',Math.abs(n.bn['Biyokimya']-0.75)<0.001,n.bn);
+  eDX('temel/klinik ayrımı',Math.abs(n.t-0.75)<0.001&&Math.abs(n.k-1.0)<0.001,{t:n.t,k:n.k});
+  eDX('dy sayaçları',n.dy['Dahiliye'].d===1&&n.dy['Dahiliye'].b===1);
+  const g=R('dqGuvenOzet('+JSON.stringify(q)+')');
+  eDX('güven özeti',g.E[0]===1&&g.E[1]===1&&g.AK[1]===1&&g.B[1]===2);
+  R('D.denemeler.push({tar:"2026-08-01",t:0,k:0,bn:{},dy:{},detay:true,sorular:'+JSON.stringify(q)+'})');
+  const I=R('dqIstat()');
+  eDX('istat sağlam/kırılgan',I.brans['Biyokimya'].sag===1&&I.brans['Dahiliye'].kir===1,I.brans['Biyokimya']);
+  eDX('istat boşluk haritası',I.bosluk['nefroloji']===1,I.bosluk);
+  R('D.denemeler.pop()');
+})();
+eDX('konu listesi getiri sıralı',(function(){const L=R('dqKonular("Kadın Doğum")');return L.length===4&&L[0]==='obstetri'})());
+console.log('\n'+(QDX?'✗ '+QDX+' HATA':'✓ SIFIR HATA — 16 ek kontrol'));
+if(QDX)process.exitCode=1;
