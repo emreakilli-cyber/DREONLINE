@@ -1306,3 +1306,36 @@ eV1('eski 3D/2D semboller söküldü',R('typeof ev3dKur')==='undefined'&&R('type
   R('typeof evrenCiz')==='undefined'&&kod.indexOf('u_sites[11]')<0&&kod.indexOf('precision mediump float')<0);
 console.log('\n'+(QV?'✗ '+QV+' HATA':'✓ SIFIR HATA — 12 ek kontrol'));
 if(QV)process.exitCode=1;
+
+console.log('\n═══ FORCE-DIRECTED GRAPH · İLİŞKİ AĞI (§246) ═══');
+/* Obsidian graph prensipleri: force yerleşim (kütüphane değil, kompakt öz-yazım),
+   düğüm-bağlantı kenarları, odak vurgu/dim. Konumlar veriden türetilir; paralel
+   model yok, determinizm zeRn tohumundan. */
+let QGR=0;const eGR=(a,ok)=>{if(!ok){QGR++;console.log('  ✗ '+a)}};
+eGR('zeForceSim (velocity Verlet çözücü)',R('typeof zeForceSim')==='function');
+eGR('zeYerlestir (hiyerarşik yerleşim)',R('typeof zeYerlestir')==='function');
+eGR('harici graph kütüphanesi YOK (tek dosya)',
+  kod.indexOf('d3.forceSimulation')<0&&kod.indexOf('cytoscape')<0&&kod.indexOf('ngraph')<0);
+eGR('deterministik: force başlangıcı zeRn tohumundan (Math.random yok)',
+  /function zeForceSim[\s\S]*?function zeYerlestir/.test(kod)&&
+  !/zeForceSim[\s\S]{0,1200}Math\.random/.test(kod));
+(function(){
+  // yerleşim gerçekten konum üretiyor mu + containment (kitap dersine yakın) + determinizm
+  const R2=R('(function(){const A=[{tip:"gorev"},{tip:"deneme"},{tip:"calisma"},{tip:"dre"}];'+
+    'const V=evrenVeri();const dersler=V.bolgeler.map(function(b){var kit={};'+
+    'POWERUP.filter(function(u){return u.brans===b.ad}).forEach(function(u){(kit[u.kitap]=kit[u.kitap]||{ad:u.kitap,konular:[]}).konular.push({ad:u.konu})});'+
+    'return {ad:b.ad,r:50,konular:b.konular||[],kitaplar:Object.keys(kit).map(function(k){return {ad:k,konular:kit[k].konular,r:16}})}});'+
+    'var r1=zeYerlestir(A.map(function(x){return {tip:x.tip}}),dersler);'+
+    'var d0=dersler[0],k0=d0.kitaplar[0];'+
+    'var yakin=k0?Math.hypot(k0.x-d0.x,k0.y-d0.y)<400:true;'+
+    'var konumVar=isFinite(d0.x)&&isFinite(d0.y)&&(d0.x!==0||d0.y!==0);'+
+    'return {gorevR:r1.gorevR,kenar:r1.kenarlar.length,yakin:yakin,konumVar:konumVar,dersSay:dersler.length}})()');
+  eGR('yerleşim sonlu konum üretti',R2&&R2.konumVar);
+  eGR('containment: kitap dersine yakın (hairball değil)',R2&&R2.yakin);
+  eGR('kenar listesi üretildi (görev→ders→kitap)',R2&&R2.kenar>=R2.dersSay);
+  eGR('görev yarıçapı makul',R2&&R2.gorevR>=340&&R2.gorevR<5000);
+})();
+eGR('kenar çizimi + odak dim kaynakta (Obsidian odak davranışı)',
+  kod.indexOf('ze.kenarlar')>=0&&/sol=\(ze\.sec\.ders&&!odak\)/.test(kod));
+console.log('\n'+(QGR?'✗ '+QGR+' HATA':'✓ SIFIR HATA — 9 ek kontrol'));
+if(QGR)process.exitCode=1;

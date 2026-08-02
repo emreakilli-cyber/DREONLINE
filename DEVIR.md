@@ -12344,6 +12344,68 @@ ajanlar eklenir"). Kullanıcı görsel onayı bekleniyor.
 
 ---
 
+## 246 · FORCE-DIRECTED İLİŞKİ AĞI · OBSIDIAN PRENSİPLERİ · `2027-02-25a`
+
+Kullanıcı /goal ile "implementation özgürlüğü" verdi: graph katmanını sıfırdan
+icat etme, Obsidian graph *prensiplerini* (düğüm-bağlantı, force pan/zoom,
+kademeli detay, odak öne çıkar + çevre sadeleşir, düşük gürültü) ve uygun
+lisanslı hazır çözümleri kullan. Ama tek kısıt sabit: **tek dosya, çevrimdışı,
+harici CDN yasak** (§157). Ayrıca: veri motoru ADAPTER olarak bağlı kalsın,
+görsel katman verinin sahibi olmasın, paralel veri/decay modeli yok.
+
+**Karar (planlama workflow'u ile doğrulandı — 7 ajan: lisans/prensip/entegrasyon
++ 3 tasarım + jüri):** kütüphane GÖMME, **kompakt öz-yazım force-sim**. Gerekçe:
+bize yalnız LAYOUT algoritması lazım (render Canvas 2D'de bizde), force-directed
+kamuya açık algoritma (yay+itme+soğuma); kütüphane (d3-force ISC ~45KB, cytoscape
+MIT ~2.8MB) inline + ES-modül→IIFE paketleme + ikinci rAF döngüsü karmaşıklık
+ekler, stabilite eklemez. d3-force yedek olarak not edildi ama gerekmedi.
+
+**Kurulan:**
+- `zeForceSim(nodes,edges,opt)` — velocity Verlet: charge itme (dereceyle ölçekli) +
+  link yay + merkez çekim + yarıçaplı çarpışma; alpha 1→0.02 soğuma, ~320 tick.
+- `zeYerlestir(ajanlar,dersler)` — HİYERARŞİK iki seviye: (A) merkez(pinli)+11 ders+
+  ~40 kitap tam force (~55 düğüm), (B) ~250 konu kitabın etrafında yerel halka.
+  Böylece "hairball/node bulutu" yapısal olarak imkânsız (kullanıcı yasağı). ~70ms,
+  açılışta BİR KEZ, deterministik (`zeRn` tohumu — reload/senk aynı yerleşim).
+- Konumlar `dersler[].x/y`, `kitaplar[].x/y`, `konu._x/_y`'ye geri yazılır; per-frame
+  maliyet sıfır (mevcut `ze.kir` dirty-flag korundu). Veri sayıları her çizimde
+  nesneden CANLI okunur (donmuş değer tuzağı §72–85'ten kaçınıldı).
+- **Görünür kenarlar** (yalnız veriden — ilişki uydurma yok): görev-hub→ders (yörünge)
+  + ders→kitap (kapsam). İnce mürekkep; ağ bandında görünür, kitap okumaya (L4)
+  girince SÖNER. Merkez "Görev" hub düğümü.
+- **Odak davranışı (Obsidian — eksikti, eklendi):** bir ders/kitap seçiliyken odak +
+  dalı TAM opak, diğer ders/kitap/kenar/konu alpha ×0.14–0.28 (soluklaşır, silinmez).
+  DRE altın kesikli işaretçi korundu.
+
+**Görsel dil (goal):** açık zemin `#FBFAF7`, ince siyah çizgi, nokta kümeleri;
+uzaktan bilgi AĞI (Görev hub + ders yörüngeleri), yaklaşınca gerçek kitap/konu
+haritası + mastery/decay yaşayan katman; en yakında okunur içindekiler (gerçek sf).
+
+**Doğrulama:** başsız playwright + SwiftShader ile 6 düzey (evren·galaksi·ağ·ders
+odak·kitap·konu) — hepsi okunur; ders/kitap/konu hit-test tıklama simülasyonuyla
+doğrulandı (Fizyoloji tıkla → sec.ders=Fizyoloji). Layout izole testte 73ms,
+çakışmasız, containment korunuyor (kitap→konu ort ~27). Ekran görüntüleri gönderildi.
+
+**Bu turda yaptığım hatalar:**
+1. pu_test §246'da `eG`/`QG` adları dosyada zaten tanımlıydı (satır 758) — parse
+   kırıldı, `eGR`/`QGR`'ye çevirdim. (CLAUDE.md: yeni ad öncesi grep — bu kez
+   kontrolü test kodunda atladım.)
+2. Force layout ilk sürümü O(n²) 430 düğümde 372ms'ti (mobil için ağır);
+   hiyerarşik iki seviyeye geçince 73ms'e indi — ölçtüm, tahmin etmedim.
+3. İlk kitap yerleşiminde ders arası kitaplar çakışıyordu (-56px); çarpışma
+   geçişi ekleyip ölçerek 12px'e çıkardım.
+
+**Bilinçli DURULAN:** ders↔ders paylaşılan-havuz çapraz kenarları (§228) EKLENMEDİ —
+gürültü riski, dilim onayı sonrası. Deneme/Çalışma ajanlarına dalış + anıt görselleri
+de sonraki adım. Kullanıcı görsel onayı bekleniyor.
+
+**Kapılar:** pu_test §245 12/12 + §246 9/9 ✓; diğer kapılar bu turda koşuldu.
+Kırmızıların hepsi §229 KONU TEKİLLİĞİ 7 (bilinçli, bağımsız).
+
+**sürüm `2027-02-25a` ↔ `rota-2027-02-25a`**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
@@ -12372,5 +12434,5 @@ Bekleyen: kullanıcıdan etiketli deneme verisi (§230 formatı) · cihazdan "Ha
 - **D_ORAN belirsizliği** hâlâ ±0.57 · program bitse ~0.33'e iner, öncel baskın kalıyor
 - **Potansiyel ile gerçek artış** arasında ~0.42 net fark (§205'te belgeli, bilinçli muhafazakâr)
 - **Aynı kayıt iki kez girilirse** iki kez sayılıyor · yinelenen denetimi yok (bilinçli)
-- **Zihin evreni bilgi haritası (§245) kullanıcı görsel onayı bekliyor** · onaysız diğer ajanlara (Deneme/Çalışma) dalış + anıt görselleri eklenmeyecek
+- **Zihin evreni force-graph (§246) kullanıcı görsel onayı bekliyor** · onaysız ders↔ders çapraz kenarları + Deneme/Çalışma dalışı + anıt görselleri eklenmeyecek
 - **§229'un üç açık maddesi:** pu_test KONU TEKİLLİĞİ 7 hata (§227/228 davranışı yeniden incelenmeli) · kos.js sözdizimi kırık · paket boşlukları (eko.py, senk_test.js, senk_kos.js)
