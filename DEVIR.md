@@ -12074,6 +12074,52 @@ orantısız (dev segmentler, uçsuz altın bar).
 
 ---
 
+## 239 · ⚠ EVREN KONSEPTİ (kullanıcı vizyonu · DALGA III ANA İŞİ)
+
+Kullanıcının sözleriyle, uygulamanın nihai biçimi — TEK KAMERA, BÖLÜNMEYEN
+SAHNE, FETİH METAFORU:
+
+1. **Açılış:** Dre yıldızlarından birini büyütüp söndürür → GEZEGEN belirir.
+   Gezegen kuş bakışı: her KİTAP bir BÖLGE; bölgenin rengi/dokusu o kitaptaki
+   tamamlanma (hâkimiyet) oranını gösterir.
+2. **Dre = menü:** Dre'ye tıklayınca yıldızları YAZILARA dönüşür:
+   "deneme trendlerine bak" · "sıradaki görev ne olsun" · "tamamlananlar"…
+   Seçenek seçilince kamera gezegenden UZAKLAŞIR, o özelliğin dünyasına
+   YAKINLAŞIR (her özellik bir gök cismi: gezegen/kara delik/galaksi —
+   hangisi o özelliğe yakışıyorsa).
+3. **Kitaba dalış:** gezegendeki bölgeye tıkla → kamera O BÖLGEYE yaklaşır;
+   içindekiler ALT-BÖLGELER hâlinde, konu bazlı hâkimiyet oranıyla boyalı.
+   ÇÜRÜME animasyonları: unutulmaya yüz tutan konular solar/kurur.
+   Fethedilen yerde YAŞAM BAŞLAR (yeşerme/ışıklar). Hedef duygusu: tüm
+   gezegeni ele geçirmek = tüm konulara hâkim olmak.
+4. Görev yapmak isteyen kullanıcı bölgeden konuya tıklar (görev başlat /
+   tamamla) — mevcut yetenek sözleşmesi (§235) bire bir korunur.
+
+### Mimari taslak (sonraki oturum için)
+
+- **Sahne:** tek tam-ekran katman (mevcut #gok/#uzay üstüne `#evren`);
+  kamera = tek transform (scale+translate) durum makinesi:
+  `uzay → gezegen → bölge(kitap) → altBölge(konu)` ve `uzay → özellikDünyası`.
+  Mevcut sayfalar (ÖLÇÜM/SEYİR panelleri) İLK AŞAMADA özellik-dünyası
+  yakınlaşmasının vardığı yüzeyler olarak AYNEN kullanılır (kamera oraya
+  "iner", sayfa açılır) — köklü yeniden yazım riske edilmez.
+- **Veri:** bölgeler = kitap listesi (kaynak haritası); hâkimiyet =
+  kitap/konu bazlı tamamlanma (D.bitti + D.pu + konuCalisildi, grup
+  anahtarıyla); çürüme = unutma modeli tarihleri (curume/puTekrarGun).
+  TÜMÜ mevcut — yeni veri gerekmiyor, yalnız görselleştirme.
+- **Dre menüsü:** maskot SVG yıldızları → metin morph (mevcut maskotDurum
+  API'si genişler: 'menu' durumu).
+- **Aşamalandırma:** (a) gezegen kuş bakışı + hâkimiyet boyama + kitaba
+  yakınlaşma (SEYİR'in yerini almaya aday) → (b) Dre menüsü + kamera
+  özellik-dünyaları → (c) çürüme/yaşam animasyonları → (d) kara delik
+  (kör noktalar?) / galaksi (deneme geçmişi?) metaforları.
+- Performans: tek aktif yakınlaşma katmanı DOM'da tutulur (§103 dersi:
+  her geçişte yıkıp kurma YOK); animasyonlar transform/opacity-only.
+
+Başlangıç komutu: "Evren konseptine başla — §239".
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
