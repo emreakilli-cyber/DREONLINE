@@ -12819,6 +12819,50 @@ FAZ 9-11.
 
 ---
 
+## §256 · FAZ 7 — Yaşayan harita görsel dili (diyar sağlığı overview'da okunur)
+
+**Sorun (ekran görüntüsüyle saptandı):** zihin evreninde mastery/decay/kırılganlık
+zaten çiziliyordu AMA yalnız DERİN yakınlaşmada (aCan katmanı). Ders-overview'da
+(galaksinin bütününe bakış — asıl tarama yaptığın zoom) 11 diyar da BİRBİRİNİN AYNISI
+ince gri halkaydı; hangisi güçlü/zayıf/kırılgan uzaktan okunmuyordu.
+
+**Ne yapıldı (`zeCiz` ders döngüsüne eklenti, veri = `evrenVeri` H/C/kırılgan):**
+- **Hâkimiyet yayı** — her diyarın etrafında hâkimiyet payı kadar altın yay
+  (kitap tamamlama yayının kardeşi). Patoloji %79 ≈ tam tur, Anatomi %23 kısa yay.
+- **Çürüme → sürekli renk** — yay çürüdükçe altından griye kayıyor (kademe değil,
+  `dt=min(1,C·1.6)` sürekli; CLAUDE.md ayrık-eşik dersi). Bu veride C~0.05, yay altın.
+- **Anıt** — H≥0.7 diyar merkezine altın mühür (dolu nokta + ince dış halka).
+  Gerçek veride yalnız Patoloji (0.79) anıt alıyor: "tamamlanmış diyar".
+- **Kırılganlık** — kırılgan diyarın yay ucuna küçük kırmızı nokta (sezgi neti işareti).
+- **Çift kodlama yok** — yay `gec=aDers·sol·(1-aCan·0.7)` ile derin yakınlaşmada
+  soluyor; orada mevcut yaşayan yapı (mühür kareler) + iç kırmızı halka devralıyor.
+
+**Görsel dil:** altın + ince gri, çok hafif; neon/oyun yok. Uzaktan bakışta artık
+tüm manzaranın sağlığı tek bakışta okunuyor (güçlü Patoloji anıtı ↔ zayıf Anatomi).
+
+**Kullanılan mevcut motor:** evrenVeri (b.hakimiyet, b.curume, b.kirilgan). Paralel
+model yok, yeni veri yok — yalnız GÖRSEL katman.
+
+**Kapılar:** kal/derin/kombo/cark/mola ✓ · pu_test yeni FAZ 7 bölümü 6 kontrol SIFIR
+HATA (yay overview alfasına bağlı, anıt eşiği, kırılgan işareti, sürekli çürüme rengi,
+derin-zoomda solma); toplam ✗ hâlâ 7 = değişmeden §229 bloğu.
+
+**Görsel doğrulama:** başsız Chromium (1000px), GERÇEK veriyle iki zoom: (1) overview
+— 11 diyarın yayı okunur, Patoloji anıtı + kırılgan noktalar doğru; (2) derin (Anatomi
+odak) — yay soluyor, yaşayan yapı/iç halka/konu noktaları çakışmadan görünüyor.
+
+**Eksik / sonraki:** FAZ 8 (Obsidian: KOMBO yolları haritada + arama/filtre/odak +
+detay paneli + backlink), FAZ 9-11.
+
+**Bu turda yaptığım hatalar:** Önce "yaşayan harita zaten var, FAZ 7 gereksiz mi?"
+diye düşündüm; ama ekran görüntüsü alınca gerçek boşluğu (overview'da sağlık okunmuyor)
+gördüm. Ders: tasarım kararını ezberden değil, gerçek kareden ver (§141 kare-farkı
+dersinin akrabası). Kod tarafında hata çıkmadı; eklenti additive ve gate+görsel temiz.
+
+**sürüm 2027-03-03a ↔ rota-2027-03-03a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)

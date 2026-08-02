@@ -1461,3 +1461,14 @@ eF6('deneme node dalışı bağlı (zeTikla → zeDenemeAc)',/ajan\.tip==='denem
 eF6('geri düğmesi önce paneli kapatıyor (izolasyon)',/zeDp[\s\S]{0,80}zeDenemeKapat\(\); return/.test(kod));
 console.log('\n'+(QF6?'✗ '+QF6+' HATA':'✓ SIFIR HATA — 10 ek kontrol'));
 if(QF6)process.exitCode=1;
+
+console.log('\n═══ YAŞAYAN HARİTA · DİYAR SAĞLIĞI OVERVIEW (§256 · FAZ 7) ═══');
+let QF7=0;const eF7=(a,ok)=>{if(!ok){QF7++;console.log('  ✗ '+a)}};
+eF7('hâkimiyet yayı OVERVIEW alfasına bağlı (aDers, aCan değil)',/gec=aDers\*sol\*\(1-aCan/.test(kod));
+eF7('yay hâkimiyet payını çiziyor (H7·2π)',/rS\+4,-1\.5708,-1\.5708\+6\.283\*H7/.test(kod));
+eF7('anıt · yüksek hâkimiyet (H7>=.7) altın mühür',/H7>=\.7[\s\S]{0,140}fillStyle=ALTIN/.test(kod));
+eF7('kırılgan işareti overview kırmızı nokta',/d\.kirilgan\)\{[\s\S]{0,200}#C2452D/.test(kod));
+eF7('çürüme yayı SÜREKLİ griye kaydırıyor (kademe değil)',/185-35\*dt/.test(kod)&&/\(d\.C\|\|0\)\*1\.6/.test(kod));
+eF7('derin yakınlaşmada yay soluyor (yaşayan yapıyla çift kodlama yok)',/1-aCan\*\.7/.test(kod));
+console.log('\n'+(QF7?'✗ '+QF7+' HATA':'✓ SIFIR HATA — 6 ek kontrol'));
+if(QF7)process.exitCode=1;
