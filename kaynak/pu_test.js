@@ -997,18 +997,47 @@ eV('kitapYakin fonksiyonu',R('typeof kitapYakin')==='function');
   eV('envanter kaynakları listede',/klD">envanterde/.test(h));
   /* Gün etiketi */
   eV('kitapta gün etiketi',/klG">/.test(h));
-  /* TTS */
-  R('D.klKitap="TTS Patoloji / Mikrobiyoloji (34. baskı)"');
+  /* TTS · §280/§281 gerçek içindekiler (birleşik "Patoloji/Mikrobiyoloji"
+     placeholder'ı §281'de gerçek ayrı kitaplarla değiştirildi) */
+  R('D.klKitap="TTS Patoloji"');
   const t=R('gunListe()');
   const kz=[...t.matchAll(/kaz">\+([\d.]+)/g)].map(m=>parseFloat(m[1]));
   eV('TTS konuları listeleniyor',kz.length>10,kz.length);
-  eV("TTS getirileri pozitif",kz.filter(v=>v>0).length>=kz.length-2,kz.slice(-3));
+  /* Getiri akıyor mu: toplam pozitif + en az bir bölüm gösterimde >0.
+     (İnce taneli kitapta çok bölüm 18 neti paylaştığından tekil değerler
+     gösterimde 0'a yuvarlanır — §280 Dahiliye/Biyokimya ile aynı davranış.) */
+  eV("TTS getirileri pozitif",kz.filter(v=>v>0).length>0&&kz.reduce((a,b)=>a+b,0)>0,
+     {poz:kz.filter(v=>v>0).length,top:+kz.reduce((a,b)=>a+b,0).toFixed(3)});
   eV('tekrar etiketi',/klT">tekrar/.test(t));
+  eV('TTS grup başlıkları (gerçek içindekiler)',/glBlok">NEOPLAZİ/.test(t));
   const ta=(t.match(/data-kltts="([^"]+)"/)||[])[1];
   X.D.tts[ta]='2026-08-01';
   const t2=R('gunListe()');
   eV('TTS tamamlanabiliyor',/klB geri/.test(t2));
   eV('TTS hatırlama etiketi',/glHat/.test(t2));
+  X.D.tts={}; R('D.glKip=null; D.klKitap=null; D.klTur=null');
+  /* §281 · 6 yeni kitap TTS_ICERIK'te + kazanç korunumu (Σn = KONU_DAG toplamı) */
+  const TIK=R('Object.keys(TTS_ICERIK)');
+  eV('TTS_ICERIK 8 kitap',TIK.length===8,TIK.length);
+  ['TTS Farmakoloji','TTS Pediatri','TTS Genel Cerrahi','TTS Kadın Doğum','TTS Mikrobiyoloji','TTS Patoloji'].forEach(nm=>{
+    eV('içerik var: '+nm,TIK.indexOf(nm)>=0);
+    const kor=R('(function(){var T=TTS_ICERIK['+JSON.stringify(nm)+'];'
+      +'var e=TTS_KIT.find(x=>x[0]==='+JSON.stringify(nm)+');if(!e)return "TTS_KIT yok";'
+      +'var g=T.brans;if(!KONU_DAG[g])return "KONU_DAG yok";'
+      +'var s=T.b.reduce((a,r)=>a+r[1],0);if(s!==T.toplamSf)return "toplamSf!=Σlen";'
+      +'var tn=Object.keys(KONU_DAG[g]).reduce((a,k)=>a+KONU_DAG[g][k],0);'
+      +'var sn=T.b.reduce((a,r)=>a+(r[1]/T.toplamSf)*tn,0);'
+      +'return Math.abs(sn-tn)<1e-6?"ok":"korunum kırık:"+sn+"!="+tn})()');
+    eV('kazanç korunumu: '+nm,kor==='ok',kor);
+  });
+  /* konuKayit TTS tamamlamayı merkezî motora yazıyor mu (kredi kaybı yok) */
+  R('D.tts={}; D.glKip="kitap"; D.klTur="tts"; D.klKitap="TTS Farmakoloji"');
+  const tf=R('gunListe()'); const taf=(tf.match(/data-kltts="([^"]+)"/)||[])[1];
+  const kk=R('(function(){D.tts={};D.tts['+JSON.stringify(taf)+']="2026-08-01";'
+    +'var M=konuKayit();var p='+JSON.stringify(taf)+'.split("|");'
+    +'var e=TTS_KIT.find(x=>x[0]===p[1]);var br=e?e[1]:"";var gz=DEN_ESL[br]||br;'
+    +'var anh=konuAnh(br,p[2],gz);return M[anh]?"ok":"kayıt yok:"+anh})()');
+  eV('konuKayit TTS kredisi',/^ok/.test(kk),kk);
   X.D.tts={}; R('D.glKip=null; D.klKitap=null; D.klTur=null');
 })();
 console.log('\n'+(KV?'✗ '+KV+' HATA':'✓ SIFIR HATA — 26 ek kontrol'));

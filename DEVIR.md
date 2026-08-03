@@ -14033,9 +14033,58 @@ sayfa hatası 0 · batarya 0 hata.
 ⚠ **YARIM:** Kullanıcı 5 kitap daha verdi (TTS Pediatri, Farmakoloji, Kadın Doğum,
 Genel Cerrahi, Patoloji 34. baskı) — fotoğrafları okunup TTS_ICERIK'e eklenecek.
 Mimari hazır; kalan yalnız veri. Patoloji: mevcut "TTS Patoloji / Mikrobiyoloji
-(34. baskı)" ile ilişkisi netleşecek.
+(34. baskı)" ile ilişkisi netleşecek. → **§281'de TAMAMLANDI.**
 
 **sürüm 2027-02-18g ↔ rota-2027-02-18g**
+
+---
+
+## §281 · TTS altı kitap · gerçek içindekilerle eklendi (2027-02-18h)
+
+Kullanıcı altı fiziksel TTS kitabının içindekilerini fotoğrafladı; hepsi §280
+mimarisiyle (sayfa-payı ağırlığı) `TTS_ICERIK`e işlendi. Her kitapta toplam
+kazanç branşın KONU_DAG toplamına **birebir eşit** (Σn = toplamN, çift sayım yok):
+
+| kitap | branş | bölüm | toplamSf | toplamN |
+|---|---|---|---|---|
+| TTS Farmakoloji | Farmakoloji | 52 | 329 | 18.0 |
+| TTS Pediatri | Pediatri | 132 | 681 | 25.0 |
+| TTS Genel Cerrahi | Genel Cerrahi | 120 | 460 | 30.0 |
+| TTS Kadın Doğum | Kadın Doğum | 44 | 346 | 10.0 |
+| TTS Mikrobiyoloji | Mikrobiyoloji | 71 | 548 | 18.0 |
+| TTS Patoloji | Patoloji | 139 | 381 | 18.0 |
+
+- İçindekiler ajanlarla okundu (fotoğraf eğim/perspektif düzeltmesiyle); sayfa
+  numaraları monoton doğrulandı, hiç boş `sf` yok. Bölüm uzunluğu = ardışık sf
+  farkı (min 1). Son bölüm: sonSayfa bilinen üç kitapta (Farma/Pedia/Gen.Cer.)
+  sonSayfa−sonSf; bilinmeyen üçünde (Kad.Doğ./Mikro/Pato) medyan bölüm uzunluğu
+  — yalnız o tek bölümü etkiler, korunumu bozmaz (normalizasyon garanti).
+- Yoğun "son tekrar" kitabında aynı sayfada başlayan bölümler var (Patoloji
+  sf82×4, sf83×5 — gerçek veri, min-1 ile kırpıldı). İnce taneli kitapta tekil
+  getiri gösterimde 0.000'e yuvarlanır (Patoloji 139 bölüm 18 neti paylaşıyor);
+  §280 Dahiliye/Biyokimya ile aynı, dürüst davranış.
+- **Ad çakışması ÇÖZÜLDÜ.** Eski placeholder `["TTS Patoloji / Mikrobiyoloji
+  (34. baskı)","Patoloji"]` — tek kitap sanılıp Mikrobiyoloji'ye HİÇ kredi
+  vermiyordu — kaldırıldı; yerine ayrı `TTS Patoloji` + `TTS Mikrobiyoloji`
+  kondu. Patoloji ajanı da bağımsız uyardı: kapakta yalnız "Patoloji" yazıyor,
+  Mikrobiyoloji ayrı kitap (ikisi de TTS 34. baskı). `D.tts` verisi boş olduğu
+  için yeniden adlandırma güvenli (yetim veri yok). **Karar kullanıcıya açık.**
+- konuKayit yolu doğrulandı: yeni altı kitap TTS_KIT'te → tamamlama
+  `Branş grubu§renkAnh(konu)` anahtarıyla merkezî kayda kredi veriyor
+  (§271 power-up kusurunun tekrarı önlendi).
+
+Doğrulama: `node --check` temiz · pu_test (§281 blok: 8 kitap + kitap-başı
+korunum + konuKayit kredisi + gerçek grup başlığı) **0 hata** ·
+derin/cark/mola/kombo/kal/denet/senk(etag,uç,rol) **0 hata** · tarayıcı
+(Chromium, iPad 1180×820, gerçek veri): 3 ekran görüntüsü, **pageerror YOK** —
+Soru&Deneme listesinde 8 TTS kitabı, TTS Patoloji 139 bölüm + 6 grup başlığı,
+TTS Kadın Doğum 44 bölüm + 3 grup, tamamlama dairesi + TEKRAR etiketi yerinde.
+
+Koşamayan kapılar (repoda dosyası yok, `tus_tamami.tar.gz` gerekli, bu
+değişiklikle ilgisiz): kos.js (tam_test.js) · senk_kos/poll (senk_test.js) ·
+kural_test.py (eko.py).
+
+**sürüm 2027-02-18h ↔ rota-2027-02-18h**
 
 ---
 
