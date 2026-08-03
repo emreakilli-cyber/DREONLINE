@@ -295,6 +295,31 @@ const chk=(a,ok,x)=>{N++;if(!ok){H++;console.log('  ✗ '+a+(x!==undefined?' :: 
  chk('§292 · üst baloncuk çağrısı kaldırıldı',!kd.baloncukCagrisi,kd);
  chk('§291 · merkez şartı ve tek-parmak koruması var',kd.merkezSart&&kd.tekParmak,kd);
 
+ /* ══ §293 · GERÇEK FOTOĞRAFTAN ÇIKAN DÜZELTMELER ═════════════════ */
+ console.log('\n═══ DOM · §293 (gerçek fotoğraf) ═══');
+ const g93=await pg.evaluate(()=>{
+   const ist=denemePrompt('200',null);
+   const cev=cevapAnahtarPrompt([{no:101,b:'Dahiliye',metin:'x'}]);
+   /* karşılaştırmadan türetme */
+   const t=[{sec:'E',dogru:'E'},{sec:'B',dogru:'C'},{sec:null,dogru:'A'},{sec:'A',dogru:null}]
+     .map(o=>sonucHesapla(o));
+   return {solKenar:/SOL KENAR BOŞLUĞUNA/.test(ist),
+     kirmizi:/KIRMIZI/.test(ist),
+     konuEl:/konuEl/.test(ist),
+     dogruKalip:/Doğru cevap: \(E\)/.test(cev),
+     tabloEtiket:/Tablo \(Soru 107\)/.test(cev),
+     turet:t.join(','),
+     fn:typeof sonucHesapla==='function'&&typeof cakismaListesi==='function'};
+ });
+ chk('§293 · istem D/Y/B yerini SOL KENAR diye tarif ediyor',g93.solKenar,g93);
+ chk('§293 · istem kırmızı-Y ipucunu içeriyor',g93.kirmizi,g93);
+ chk('§293 · istem elle yazılan konu etiketini (konuEl) istiyor',g93.konuEl,g93);
+ chk('§293 · cevap anahtarı istemi "Doğru cevap: (X)" kalıbını biliyor',g93.dogruKalip,g93);
+ chk('§293 · cevap anahtarı istemi "Tablo (Soru N)" etiketini biliyor',g93.tabloEtiket,g93);
+ chk('§293 · sonuç anahtarla karşılaştırılarak türetiliyor (D,Y,B,null)',
+   g93.turet==='D,Y,B,'||g93.turet==='D,Y,B,null',g93.turet);
+ chk('§293 · türetme ve çakışma fonksiyonları var',g93.fn,g93);
+
  console.log('\n'+(H?('✗ '+H+' HATA / '+N+' kontrol'):('✓ SIFIR HATA — '+N+' DOM kontrolü')));
  console.log('SAYFA HATASI: '+(sayfaHata.length?JSON.stringify(sayfaHata.slice(0,3)):'(yok)'));
  if(sayfaHata.length)H++;

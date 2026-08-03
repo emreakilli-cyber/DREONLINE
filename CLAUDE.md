@@ -117,7 +117,7 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   varyantı atlanınca §112'nin düzeltmesi §117'ye kadar eksik kaldı; aynı kusur dört
   panelde birden vardı §151).
 
-## Güncel durum işaretçisi (sürüm `2027-02-19b`, DEVIR sonundaki devir notu)
+## Güncel durum işaretçisi (sürüm `2027-02-19c`, DEVIR sonundaki devir notu)
 
 - FT serisi 10 kitap power-up havuzuna işlendi (156 → 254 konu); konu tekilliği /
   net havuzu paylaşımı grup bazlı anahtarla tamamlandı (§219–§228).
@@ -149,6 +149,12 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
 - **§291–§292 · çarkın merkezini tutup SAĞA kaydır → deneme analizi** (her iki
   görünümde). Analiz hazır olunca üstten bildirim YOK; çark ritmik dürtüyor
   (`#cark.durt`), `D.analizBekliyor` ile kalıcı, senkron dışı.
+- **§293 · gerçek fotoğraflar üç varsayımı çürüttü.** D/Y/B soru numarasının altında
+  değil **sol kenarda** (Y kırmızı); konuyu kullanıcı **zaten elle yazıyor**. Cevap
+  anahtarı "Doğru cevap: (X)", tablolar "Tablo (Soru N)" etiketli. En önemlisi:
+  sonuç artık el yazısından değil **daireli şık ↔ anahtar karşılaştırmasından**
+  türetiliyor (`sonucHesapla`); çelişki `sCakisma`'da saklanıyor. EXIF sorun
+  çıkarmadı (ölçüldü: tarayıcı otomatik döndürüyor).
 - **YARIM KALAN · TASARIM:** power-up paneli, matris ve seyir sayfalarının görsel
   tasarımı (beğenilen referans: `.glAnh` altın gradyan anahtar, `.glS` satır düzeni,
   §217 daire tamamlama düğmesi).

@@ -14464,6 +14464,55 @@ niyet korunarak yeniden yazıldı. Tüm kapılar + 5 özellik testi **0 hata**.
 
 ---
 
+## §293 · Gerçek fotoğraflar üç varsayımı çürüttü (2027-02-19c)
+
+Kullanıcı 1 Ağustos denemesinin **gerçek** sayfalarını gönderdi: klinik bölümün
+ilk sayfası (101-108) + cevap anahtarının 101-110'u kapsayan iki sayfası.
+Boru hattı ilk kez gerçek malzemeyle sınandı. **Üç varsayım yanlış çıktı:**
+
+| §283'teki varsayım | GERÇEK |
+|---|---|
+| D/Y/B soru numarasının **altında** | **sol kenar boşluğunda**, iri el yazısıyla |
+| işaretler tek kalemle | **Y kırmızı**, D koyu/mavi — renk ayırt edici |
+| konuyu model çıkaracak | kullanıcı **zaten elle yazıyor** (Hemato/Onko/Nefro/Kanama) |
+
+Ayrıca iki kalıp doğrulandı: cevap anahtarı **"Doğru cevap: (E) …"** biçiminde,
+tablolar **"Tablo (Soru 107):"** diye açıkça etiketli. İstemler bunlara göre
+düzeltildi (`denemePrompt`, `cevapAnahtarPrompt`); `konuEl` alanı eklendi.
+
+### EN ÖNEMLİ KAZANIM · sonuç artık EL YAZISINDAN DEĞİL, KARŞILAŞTIRMADAN
+Elde iki bağımsız kaynak olduğu görüldü: kitapçıkta **daire içine alınan şık**
+ve cevap anahtarındaki **doğru şık**. `sonucHesapla(o)` ikisini karşılaştırıp
+D/Y/B'yi **hesaplıyor** — el yazısı okumaya gerek kalmıyor. El yazısı da
+okunduysa çapraz doğrulama yapılıyor: çelişirse **anahtar kazanıyor**, eski
+değer `sCakisma`'da saklanıyor ve `cakismaListesi()` ile görülebiliyor
+(sessizce üzerine yazılmıyor — uydurma yok).
+
+### EXIF · sorun ÇIKMADI (ölçüldü)
+Telefon fotoğraflarının hepsi `Orientation=6` (90° döndürülmüş). Ölçüm:
+tarayıcı EXIF'i otomatik uyguluyor — ham dosya 4032×3024, `naturalWidth/Height`
+3024×4032 ve `fotoKucult` çıktısı 1176×1568 **dik**. Gönderilen görüntü düz;
+kırpma koordinatları da aynı boru hattından geçtiği için tutarlı. Düzeltme
+gerekmedi — ama bu bir varsayım değil, üretilen JPEG'e bakılarak doğrulandı.
+
+### GOLDEN TEST · gerçek yer gerçeğiyle
+`gercek_test.js`: cevap anahtarından okunan doğru şıklar (101-110) ve soru
+sayfasından okunan daireli şıklar/konu etiketleri/güven kodları yer gerçeği
+olarak alındı. Boru hattı uçtan uca koştu ve **6 doğru · 2 yanlış · net 5.50**
+üretti; 103 ve 108'i yanlış olarak doğru saptadı. 109-110 sayfada olmadığı
+için "sahipsiz çözüm" kuyruğuna düştü (beklenen davranış). Çakışma senaryosu
+da sınandı.
+⚠ Bu yer gerçeği **incelemenin** ürünü, modelin değil — sınanan şey boru
+hattının MANTIĞI (eşleştirme · türetme · çakışma), Gemini'nin OCR başarısı DEĞİL.
+Gerçek API hâlâ hiç çağrılmadı.
+
+### Kapılar
+`kaynak/dom_test.js` **49 → 56 kontrol**. Tüm kapılar + 6 özellik testi 0 hata.
+
+**sürüm 2027-02-19c ↔ rota-2027-02-19c**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
