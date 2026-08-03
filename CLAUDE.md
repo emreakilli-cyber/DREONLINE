@@ -117,7 +117,7 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   varyantı atlanınca §112'nin düzeltmesi §117'ye kadar eksik kaldı; aynı kusur dört
   panelde birden vardı §151).
 
-## Güncel durum işaretçisi (sürüm `2027-02-19c`, DEVIR sonundaki devir notu)
+## Güncel durum işaretçisi (sürüm `2027-02-19d`, DEVIR sonundaki devir notu)
 
 - FT serisi 10 kitap power-up havuzuna işlendi (156 → 254 konu); konu tekilliği /
   net havuzu paylaşımı grup bazlı anahtarla tamamlandı (§219–§228).
@@ -155,6 +155,11 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   sonuç artık el yazısından değil **daireli şık ↔ anahtar karşılaştırmasından**
   türetiliyor (`sonucHesapla`); çelişki `sCakisma`'da saklanıyor. EXIF sorun
   çıkarmadı (ölçüldü: tarayıcı otomatik döndürüyor).
+- **§294 · analiz filtreleri.** Sayfa 0'da etiket+ders çip filtresi · sayfa 2'de bar
+  artık BAŞARI oranı (en zayıf ders en üstte, en boş, en kırmızı) ve ders satırı
+  tıklanınca o dersin haritası açılıyor (geri oku) · sayfa 3'te ders filtresi +
+  "etiket etiket grupla" (ikisi birlikte çalışır). Anahtar alanı artık anahtar
+  yokken üstte açık kutuda (`#dpAnahtarUyari`) — eskiden katlanmış başlıkta kaybolmuştu.
 - **YARIM KALAN · TASARIM:** power-up paneli, matris ve seyir sayfalarının görsel
   tasarımı (beğenilen referans: `.glAnh` altın gradyan anahtar, `.glS` satır düzeni,
   §217 daire tamamlama düğmesi).

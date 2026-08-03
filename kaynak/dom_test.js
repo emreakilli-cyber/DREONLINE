@@ -320,6 +320,76 @@ const chk=(a,ok,x)=>{N++;if(!ok){H++;console.log('  ✗ '+a+(x!==undefined?' :: 
    g93.turet==='D,Y,B,'||g93.turet==='D,Y,B,null',g93.turet);
  chk('§293 · türetme ve çakışma fonksiyonları var',g93.fn,g93);
 
+ /* ══ §294 · FİLTRELER / BAŞARI BARI / DERS→HARİTA ════════════════ */
+ console.log('\n═══ DOM · §294 ═══');
+ const f94=await pg.evaluate(async()=>{
+   D.denemeler=JSON.parse(JSON.stringify(TOHUM));
+   D.denemeler.push({tar:'2026-08-02',kay:'T',detay:true,sorular:[
+     {b:'Dahiliye',konu:'kardiyoloji',s:'Y',e:'E'},{b:'Dahiliye',konu:'kardiyoloji',s:'Y',e:'E'},
+     {b:'Dahiliye',konu:'nefroloji',s:'D',e:'B'},{b:'Dahiliye',konu:'nefroloji',s:'D',e:'B'},
+     {b:'Patoloji',konu:'neoplazi',s:'D',e:'E'},{b:'Patoloji',konu:'neoplazi',s:'D',e:'E'},
+     {b:'Patoloji',konu:'neoplazi',s:'Y',e:'B'}]});
+   AKIS.sec=D.denemeler.length-1; AKIS.ders=null; AKIS.etiket=null;
+   AKIS.grupla=false; AKIS.geri=null;
+   akisAc(2); await new Promise(r=>setTimeout(r,300));
+   const sat=[...document.querySelectorAll('#akS2 .akDsr')];
+   const oku=s=>{const t=(s.querySelector('.sy')||{}).textContent||'';
+     const m=t.match(/(\d+)\/(\d+) doğru · %(\d+)/);
+     const w=parseFloat(((s.querySelector('.akBar i')||{}).style||{}).width)||0;
+     return {ad:(s.querySelector('b')||{}).textContent,yuzde:m?+m[3]:null,bar:Math.round(w)}};
+   const L=sat.map(oku);
+   /* derse tıkla → sayfa 0 filtreli + geri oku */
+   sat[0].click(); await new Promise(r=>setTimeout(r,300));
+   const drillSay=AKIS.say, drillDers=AKIS.ders;
+   const grup=[...document.querySelectorAll('#akS0 .akGrupB b')].map(x=>x.textContent);
+   const geriVar=!!document.querySelector('#akS0 [data-akgeri]');
+   document.querySelector('#akS0 [data-akgeri]').click();
+   await new Promise(r=>setTimeout(r,300));
+   const geriSay=AKIS.say, geriDers=AKIS.ders;
+   /* sayfa 3 · ders + gruplama birlikte */
+   AKIS.ders=null; AKIS.grupla=false; akisGit(3);
+   await new Promise(r=>setTimeout(r,300));
+   const tum=document.querySelectorAll('#akS3 .akSk').length;
+   const dr=[...document.querySelectorAll('#akS3 [data-akders]')].filter(b=>b.dataset.akders);
+   const drAd=dr[0].dataset.akders; dr[0].click();
+   await new Promise(r=>setTimeout(r,300));
+   const filt=document.querySelectorAll('#akS3 .akSk').length;
+   document.querySelector('#akS3 [data-akgrup]').click();
+   await new Promise(r=>setTimeout(r,350));
+   const grupSayisi=document.querySelectorAll('#akS3 .akGrup').length;
+   const grupKart=document.querySelectorAll('#akS3 .akGrup .akSk').length;
+   const halaDers=[...document.querySelectorAll('#akS3 .akSk .akSkB i')]
+     .every(i=>i.textContent.trim()===drAd);
+   AKIS.ders=null; AKIS.grupla=false; akisKapat();
+   D.denemeler=JSON.parse(JSON.stringify(TOHUM));
+   return {L,tiklanabilir:sat.every(s=>s.tagName==='BUTTON'),
+     drillSay,drillDers,grupAd:grup,geriVar,geriSay,geriDers,
+     tum,drAd,filt,grupSayisi,grupKart,halaDers};
+ });
+ chk('§294 · bar doluluğu = başarı yüzdesi',
+   f94.L.every(x=>Math.abs(x.bar-x.yuzde)<=2),f94.L);
+ chk('§294 · en başarısız ders en üstte ve en az dolu',
+   f94.L[0].yuzde<=f94.L[f94.L.length-1].yuzde&&f94.L[0].bar<=f94.L[f94.L.length-1].bar,f94.L);
+ chk('§294 · ders satırı tıklanabilir',f94.tiklanabilir,f94.tiklanabilir);
+ chk('§294 · derse tıkla → sayfa 0, o derse filtreli',
+   f94.drillSay===0&&f94.drillDers&&f94.grupAd.length===1,f94);
+ chk('§294 · geri oku var ve sayfa 2ye dönüyor, filtreyi temizliyor',
+   f94.geriVar&&f94.geriSay===2&&f94.geriDers===null,f94);
+ chk('§294 · sayfa 3 ders filtresi daraltıyor',f94.filt>0&&f94.filt<f94.tum,f94);
+ chk('§294 · ders filtresi + etiket gruplama BİRLİKTE doğru',
+   f94.grupSayisi>0&&f94.grupKart===f94.filt&&f94.halaDers,f94);
+
+ /* anahtar alanı görünürlüğü */
+ const ak94=await pg.evaluate(()=>{
+   localStorage.removeItem('rota-gorus');
+   dpanelCiz();
+   const u=document.getElementById('dpAnahtarUyari');
+   const inp=document.getElementById('dpAnahtarHizli');
+   return {kutu:!!(u&&u.innerHTML.trim()),input:!!inp};
+ });
+ chk('§294 · anahtar yokken açık uyarı kutusu ve giriş alanı var',
+   ak94.kutu&&ak94.input,ak94);
+
  console.log('\n'+(H?('✗ '+H+' HATA / '+N+' kontrol'):('✓ SIFIR HATA — '+N+' DOM kontrolü')));
  console.log('SAYFA HATASI: '+(sayfaHata.length?JSON.stringify(sayfaHata.slice(0,3)):'(yok)'));
  if(sayfaHata.length)H++;

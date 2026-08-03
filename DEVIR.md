@@ -14513,6 +14513,53 @@ Gerçek API hâlâ hiç çağrılmadı.
 
 ---
 
+## §294 · Analiz filtreleri · başarı barı · ders→harita geçişi (2027-02-19d)
+
+Kullanıcının beş isteği.
+
+### 1 · API anahtar alanı görünmüyordu — KUSUR, düzeltildi
+Alan `<details class="dpAyar">` içinde KAPALI duruyordu ve iki büyük düğmenin
+arasına sıkışmış küçük gri bir başlıktı ("▸ GÖRÜŞ AYARLARI · ANAHTAR").
+Ölçüldü: `details.open=false`, kutu 82vh'de kayıyor. Kullanıcı bulamadı — haklı.
+Artık **anahtar YOKKEN** üstte açık, altın çerçeveli bir kutu çıkıyor
+(`#dpAnahtarUyari`): başlık + aistudio adresi + doğrudan giriş alanı.
+Anahtar girilince kutu kendiliğinden kapanıyor, ayrıntı katlanır bölümde kalıyor.
+
+### 2 · Ders barı artık BAŞARI oranı (kafa karışıklığı giderildi)
+Eskiden dolu bar "kötü" demekti — ters okunuyordu. Artık:
+doluluk = **doğru/toplam**; en başarısız ders **en az dolu** ve **en kırmızı**,
+ama sırada **en üstte** kalıyor (`dOran` artan sıralama). Gerçek veride:
+Anatomi %31 (üstte, kırmızı, en boş) … Patoloji %83 (altta, yeşil, en dolu).
+
+### 3 · Ders → o dersin zayıflık haritası + geri oku
+Sayfa 2'deki ders satırı artık `<button>`; dokununca `AKIS.ders` set edilip
+sayfa 0 o derse filtreli açılıyor, sol üstte "‹ ayrıntılı denemeye dön"
+düğmesi çıkıyor. Geri dönünce filtre temizleniyor.
+
+### 4 · Sayfa 0 · etiket ve ders filtresi
+Yorum etiketleri (kör nokta · şansa dayalı · sıfırdan · bilgi eksiği · yarım ·
+unutuyorsun · sezgi · sağlam · veri az) ve ders başlıkları çip olarak filtre.
+Yalnız gerçekten var olan etiketler, sayılarıyla gösteriliyor. İkisi birlikte
+çalışıyor (kesişim).
+
+### 5 · Sayfa 3 · ders filtresi + "etiket etiket grupla"
+Yanlış sorular ders çipleriyle süzülüyor; "etiket etiket grupla" açılınca
+konunun yorum etiketine göre kümeleniyor (etiketi bilinmeyenler sona).
+**İkisi birlikte** kullanılınca yalnız o dersin yanlışları, etiket etiket
+gösteriliyor — kapıda ayrıca doğrulandı (`grupKart===filt && halaDers`).
+Etiket eşlemesi `konuEtiketHarita()` ile `konuZayiflik()`ten geliyor
+(tek kaynak; ikinci bir yorum motoru YOK).
+
+### Kapılar
+`kaynak/dom_test.js` **56 → 64 kontrol**. Yeni `filtre_test` (18 kontrol,
+gerçek kullanıcı verisi, 4 ekran) + tüm kapılar **0 hata**.
+⚠ Kendi testimde bir iddia fazla katıydı ("kaydırma gerekmiyor"): ölçülmesi
+gereken kutunun kayması değil, alanın EKRANDA olmasıydı — düzeltildi.
+
+**sürüm 2027-02-19d ↔ rota-2027-02-19d**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
