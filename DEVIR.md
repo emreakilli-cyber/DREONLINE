@@ -13801,6 +13801,71 @@ içerikleri (2 sütun, sayılar) değişmedi · tüm batarya 0 hata · sayfa hat
 
 ---
 
+## §275 · KULLANICININ 4 ŞİKÂYETİ — 23.5 sn'lik sekme, ölü oklar, şişen satırlar, eski tuşlar
+
+Kullanıcı bildirimi: (1) pinch ile açılan Program–Kitap ve konu/soru-deneme
+geçişleri 15-20 sn; (2) gün okları "tıklıyorum tıklıyorum sayfa değişmiyor";
+(3) az görevli günde satırlar aşırı büyüyor, dolu günde son satır alt kenara
+değip yarı saydam oluyor — "pencerenin altından 1-2 parmak payı olsa";
+(4) telafi/tamamlananlar tuşları eski görünümde kaldı.
+
+### 1 · Sekme geçişi: 23 503 ms → 200 ms (4× kısıt)
+
+Yeniden üretildi (iPad yatık + gerçek veri, 4×: **23.5 sn**). CPU profili üç
+katman çıkardı, üçü de ayrı düzeltildi:
+
+- **`dOran` çağrı BAŞINA anahtar stringify'ı** (isabette bile): `curume` her
+  konu çarpanında `SORU_ORAN_VAR→dOran` çağırıyor; kitap görünümü konu×satır
+  başına on binlerce çağrı → tek geçişte 3.2 sn SADECE anahtar kurmak.
+  Önce stringify memoize edildi (referans+uzunluk korumalı), sonra anahtara
+  metin yerine **sürüm sayacı** (`denVer/kalVer`) kondu — sayaç yalnız içerik
+  değişince artar. İçerik türetimi korunuyor: push / filter-yeniden-atama /
+  splice / test `D.x=[...]` ataması — hepsi referans ya da uzunluk değiştirir;
+  yerinde kayıt düzenleme yolu kodda yok.
+- **`zeSerit` raftaki Evren şeridi için her sekme dokunuşunda ≥5 tam `para()`
+  geçişi ödetiyordu** (yenile(true)→zeSerit; tavanBant×2 + kalanKazanci).
+  Görünmüyorken (offsetParent===null) hesap atlanır.
+- **Soğuk ilk açılış** (gorevKazanc `_gkOnb` dolumu + konu eşleştirme + dOran
+  ≈ 1.4 sn; sonrakiler 80-90 ms): açılıştan 1.4 sn sonra **boşta ısındırma**,
+  4 parçaya bölünmüş (aralarda ana iş parçacığı dokunuşa açık).
+
+Ölçüm (4×, gerçek veri): Kitap **23 503→200 ms** · alt sekmeler 1 315→192 ·
+Program'a dönüş 991→126 · oklar 100 ms.
+
+### 2 · Ölü oklar — GERÇEK HATA (keşif ajanı buldu, tarayıcıda doğrulandı)
+
+`yenile()`→`bagla()` listeyi `innerHTML` ile yeniden kurarken `[data-gun]`
+oklarını **yeniden bağlamıyordu**: bir görev işaretlendikten ya da sekme
+değiştirildikten sonra ‹ › ölüyordu. §235'in yedek devresi de okları
+kapsamıyordu. İki taraflı düzeltme: `yenile` artık `gunBagla(gl)` çağırıyor
+VE yedek devre seçicisine `[data-gun]` dalı eklendi. Doğrulama: işaretten
+sonra `okBagliMi:true`, sekme değişiminden sonra gün ilerliyor.
+
+### 3 · Satır ölçekleme (ölçerek)
+
+Beğenilen dolu-gün boyu ölçüldü: **23.9-25.2 px**; seyrek gün **57.3 px'e**
+şişiyordu (tavan `h/7`→110). İçerik alt kenara 4 px kala bitip 16 px'lik maske
+bandına giriyordu (yarı saydamlığın sebebi).
+- Tavan: `max(46,min(110,h/7))` → **`max(26,min(34,h/18))`** — seyrek gün ≤34 px.
+- Alt pay: tolerans `h-2` → `h-PAY`, `PAY=max(28,min(76,round(h*0.09)))` —
+  iPad yatıkta 59 px, telefonda 61-69 px ("1-2 parmak"); maske bandına giren
+  satır kalmadı. Ölçüldü: dolu gün 21-22 px + altPay 59-69 ✓, seyrek 34 px ✓.
+
+### 4 · Tuşlar: eski ÇİP kuralları orb'u eziyordu
+
+HTML çoktan `.dOrb/.puOrb`'a geçmişti; `#kacir`/`#bitti` ID blokları (özgüllük)
+hap-çip stiliyle orb'u eziyordu. Bloklar silindi; yalnız görünürlük kapısı
+(`.gor`) ve ince renk kimliği kaldı (telafi altın, tamamlanan yeşil, rozet
+yeşil). Ölü `#bugun` kuralları (HTML'de eleman yok), 1525'teki dar-ekran çip
+ezmesi ve tek kullanıcısı silinen `nefes` keyframes'i de kaldırıldı.
+
+Kapılar: 6 bayat iddia güncellendi (anahtar-stringify ×3 · h-2 toleransı ·
+SAT_TAVAN ×2). Tüm batarya 0 hata; sayfa hatası 0.
+
+**sürüm 2027-02-18c ↔ rota-2027-02-18c**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
