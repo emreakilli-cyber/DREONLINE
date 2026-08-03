@@ -212,6 +212,21 @@ const chk=(a,ok,x)=>{N++;if(!ok){H++;console.log('  ✗ '+a+(x!==undefined?' :: 
  chk('akışta YATAY TAŞMA yok (sayfa 0 ve 3)',!a.tasma&&!a.t3,a);
  chk('4. sayfaya gidilebiliyor',a.say===3,a);
 
+ /* §285 · yanıt ayrıştırma sağlamlığı (thought parçası / MAX_TOKENS) */
+ const yp=await pg.evaluate(()=>{
+   const src=document.documentElement.outerHTML;
+   const i=src.indexOf('const c0=(j&&j.candidates');
+   const blok=src.slice(i,i+900);
+   return {thoughtFiltre:/!p\.thought/.test(blok),
+     bosBirlestir:/\.join\(''\)/.test(blok),
+     maxTokens:/MAX_TOKENS/.test(blok),
+     safBase64:/match\(\/\^data:\(\[\^;\]\+\);base64,\(\.\*\)\$\//.test(src)};
+ });
+ chk('yanıtta düşünme (thought) parçaları filtreleniyor',yp.thoughtFiltre,yp);
+ chk('metin parçaları araya ekleme yapmadan birleşiyor (JSON bölünmez)',yp.bosBirlestir,yp);
+ chk('MAX_TOKENS anlaşılır hataya çevriliyor',yp.maxTokens,yp);
+ chk('görsel SAF base64 gönderiliyor (data: öneki soyuluyor)',yp.safBase64,yp);
+
  console.log('\n'+(H?('✗ '+H+' HATA / '+N+' kontrol'):('✓ SIFIR HATA — '+N+' DOM kontrolü')));
  console.log('SAYFA HATASI: '+(sayfaHata.length?JSON.stringify(sayfaHata.slice(0,3)):'(yok)'));
  if(sayfaHata.length)H++;

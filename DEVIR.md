@@ -14363,6 +14363,17 @@ durduruyor ki çark kipi tetiklenmesin.
   sıralama kuralları, akış taşması, Gemini varsayılanı dahil).
 - Tüm kapılar (derin/pu/cark/mola/kombo/kal/**dom** + denet.py) **0 hata**.
 
+### Araştırmanın kendi kodumda bulduğu iki kusur (düzeltildi)
+Paralel koşan API araştırması bittiğinde iddialarını kendi koduma karşı denetledim:
+1. **`thought` parçaları filtrelenmiyordu.** Gemini yanıtında `parts[]` birden fazla
+   olabiliyor ve düşünme parçaları da `text` taşıyabiliyor; bunlar JSON'a karışınca
+   ayrıştırma çökerdi. Artık `!p.thought` süzgeci var.
+2. **Metin parçaları `'\n'` ile birleştiriliyordu** — çok parçalı bir JSON gövdesi
+   satır sonuyla bölünüp bozuluyordu. Artık araya hiçbir şey konmadan birleşiyor.
+Ayrıca `finishReason:'MAX_TOKENS'` artık anlaşılır hataya çevriliyor (yarım JSON'un
+sebebini söylemeyen ayrıştırma hatası yerine). `yanit_test` bu üçünü sınıyor;
+`data:` önekinin soyulduğu da doğrulandı (zaten doğruymuş).
+
 ### ⚠ AÇIK · KULLANICI KARARI BEKLEYEN
 1. **Şema ekleri.** `konu` için yeni alan gerekmedi (kullanıcı haklı). Ama sayfa 3'ün
    "senin cevabın / doğru cevap"ı ve cevap anahtarı eşleşmesi için `no`, `sec`, `metin`,
@@ -14373,6 +14384,14 @@ durduruyor ki çark kipi tetiklenmesin.
    fotoğrafta görülecek. Kutu koordinatı sapıyorsa kırpma payı ayarlanmalı.
 3. **Ücretsiz katman limiti doğrulanamadı** — `ai.google.dev` bu ortamdan engelli.
    Araştırmacı "emin değilim" dedi; uydurulmadı.
+4. **⚠ ANAHTAR KISITLAMASI · muhtemel engel.** Araştırma, Gemini API'nin bir tarihten
+   sonra **kısıtlanmamış (unrestricted) anahtarlardan gelen istekleri reddettiğini**
+   bildirdi: tarayıcıdan çağrı için anahtara Google Cloud Console'da **HTTP referrer
+   (Websites) kısıtlaması** gerekebilir, yoksa 403 gelir. Araştırmacı bunu resmî
+   sayfadan okuyamadı ("EMİN DEĞİLİM" — ai.google.dev engelliydi), WebSearch özetinden
+   geliyor. **Doğrulama yolu:** anahtarı alıp Cloud Console → API Keys → Application
+   restrictions → Websites'a GitHub Pages adresini eklemek ve gerçek cihazdan denemek.
+   403 alınırsa sebebi büyük olasılıkla budur, kod değil.
 
 **sürüm 2027-02-19a ↔ rota-2027-02-19a**
 

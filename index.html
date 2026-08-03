@@ -10191,8 +10191,18 @@ async function gorusCagir(istem,fotolar){
     metin=((j&&j.content)||[]).filter(c=>c&&c.type==='text').map(c=>c.text).join('\n');
   } else {
     const c0=(j&&j.candidates&&j.candidates[0])||null;
+    /* ⚠ parts BİRDEN FAZLA olabilir ve düşünme (thought) parçaları da metin
+       taşıyabilir — onlar JSON'a karışırsa ayrıştırma çöker. Yalnız gerçek
+       metin parçaları alınır ve ARAYA HİÇBİR ŞEY KONMADAN birleştirilir
+       (satır sonu eklemek JSON gövdesini bölüyordu). */
     metin=(((c0&&c0.content&&c0.content.parts)||[])
-      .map(p=>p&&p.text).filter(Boolean).join('\n'))||'';
+      .filter(p=>p&&typeof p.text==='string'&&!p.thought)
+      .map(p=>p.text).join(''))||'';
+    /* Yanıt kesilmişse JSON yarım kalır; anlaşılmaz ayrıştırma hatası yerine
+       ne olduğunu söyle. */
+    if(c0&&c0.finishReason==='MAX_TOKENS')
+      throw new Error('Gemini yanıtı uzunluk sınırına takıldı — sayfaları '+
+        'daha az fotoğrafla, parça parça gönder.');
     if(!metin&&c0&&c0.finishReason)
       throw new Error('Gemini yanıt vermedi (finishReason: '+c0.finishReason+').');
     if(!metin&&j&&j.promptFeedback&&j.promptFeedback.blockReason)
