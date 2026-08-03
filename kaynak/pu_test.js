@@ -1769,3 +1769,43 @@ let QJ=0;const eJ=(a,ok,x)=>{if(!ok){QJ++;console.log('  ✗ '+a+(x!==undefined?
 eJ('saygili hitap korunuyor (efendim)',(kod.match(/efendim/g)||[]).length>=6);
 console.log('\n'+(QJ?'✗ '+QJ+' HATA':'✓ SIFIR HATA — 8 ek kontrol'));
 if(QJ)process.exitCode=1;
+
+console.log('\n═══ ÇERÇEVE · içerikten ölçülen açılış + etiket kırpma (§269) ═══');
+let QCer=0;const eCer=(a,ok,x)=>{if(!ok){QCer++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eCer('atlasSigdir var (açılış çerçevesi fonksiyonu)',R('typeof atlasSigdir')==='function');
+eCer('GERİLEME: hiçbir yerde min(w,h)/1950 sihirli sabiti KULLANILMIYOR',
+  !/Math\.min\(atlas\.w,atlas\.h\)\/1950/.test(kod));
+eCer('"ortala" düğmesi açılışla AYNI çerçeveyi kullanıyor (ikiz kaynak yok)',
+  /atlasTikla\(null\); const F=atlasSigdir\(\)/.test(kod));
+eCer('açılış ölçeği düğümlerin GERÇEK sınır kutusundan türüyor',
+  /atlasSigdir[\s\S]{0,700}?x1-x0/.test(kod)&&/atlas\.w\*pay\/gw/.test(kod));
+(function(){
+  /* test VM'inde gerçek tuval yok — atlasSigdir yalnız V/w/h kullanır, stub yeter */
+  R('atlas={V:atlasYerlesim(atlasVeri(true)),w:390,h:844,cam:{x:0,y:0,s:.3},mik:null,sec:null}');
+  const f=R('(function(){const F=atlasSigdir();'+
+    'const N=atlas.V.N.filter(n=>n.tip===\'ders\'||n.tip===\'merkez\');'+
+    'let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;'+
+    'N.forEach(n=>{const r=(n.r||4)+30;'+
+    'if(n.x-r<x0)x0=n.x-r; if(n.x+r>x1)x1=n.x+r;'+
+    'if(n.y-r<y0)y0=n.y-r; if(n.y+r>y1)y1=n.y+r});'+
+    'return {s:F.s, cx:+F.cx.toFixed(1), cy:+F.cy.toFixed(1),'+
+    'gw:+(x1-x0).toFixed(0), gh:+(y1-y0).toFixed(0),'+
+    'enX:+((x0+x1)/2).toFixed(1), enY:+((y0+y1)/2).toFixed(1),'+
+    'sigar:((x1-x0)*F.s<=atlas.w+1)&&((y1-y0)*F.s<=atlas.h+1)}})()');
+  eCer('çerçeve merkezi içeriğin ORTASI (dünya orijini değil)',
+    Math.abs(f.cx-f.enX)<.01&&Math.abs(f.cy-f.enY)<.01,f);
+  eCer('içerik açılışta ekrana SIĞIYOR',f.sigar,f);
+  eCer('ölçek tavanı kitap eşiğini aşmıyor (açılış ders takımyıldızı kalsın)',f.s<=.40001,f.s);
+  eCer('ölçek tabanı korunuyor',f.s>=.16,f.s);
+})();
+/* Etiket kırpma: taşma ZOOM'a değil ÇİZİME yıkılıyor */
+eCer('halka etiketi ekran kenarına göre kırpılıyor (bütçe hesabı)',
+  /const butce=hiz===.left.\?\(W-6-lx\)/.test(kod));
+eCer('ortalı etiket de kırpılıyor (yaz yardımcısı)',
+  /const bosSol=x-3, bosSag=W-3-x, butce=Math\.min\(bosSol,bosSag\)\*2/.test(kod));
+eCer('dikey taşan etiket hiç yazılmıyor',/ly<9\|\|ly>H-4/.test(kod)&&/y<9\|\|y>H-4/.test(kod));
+eCer('GERİLEME: odak ölçeği artık etiket genişliğine göre KISILMIYOR',
+  kod.indexOf('const yatay=(atlas.w*.94/2-(L+14))/R')<0);
+eCer('odak ölçeği halkayı çerçeveliyor',/Math\.min\(atlas\.w\*\.80\/2, atlas\.h\*\.72\/2\)\/R/.test(kod));
+console.log('\n'+(QCer?'✗ '+QCer+' HATA':'✓ SIFIR HATA — 12 ek kontrol'));
+if(QCer)process.exitCode=1;

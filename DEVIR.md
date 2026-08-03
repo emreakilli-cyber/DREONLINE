@@ -13501,6 +13501,77 @@ gerekçesi yorum olarak kondu.
 
 ---
 
+## §269 · ÇERÇEVE — "sığdır" diyen kod hiçbir şey ölçmüyordu
+
+Telefon ekran görüntüsüne bakınca graf siyah denizde küçük bir ada gibi duruyordu.
+Ölçtüm — açılışta içerik ekranın **%57 eni / %24 boyu** kadardı.
+
+### Kusur 1 · açılış ölçeği
+
+```js
+/* açılış ölçeği ekrana SIĞDIRILIR (sabit değil — bayat ölçüm dersi) */
+const sSig=Math.max(.16,Math.min(.6,Math.min(atlas.w,atlas.h)/1950));
+```
+
+Yorum "sığdırılır" diyor, kod **içeriğe hiç bakmıyor**: viewport'u 1950 sihirli
+sabitine bölüyor. Kendi yazdığım yorum kendi kodumu yanlış anlatıyordu.
+
+`atlasSigdir()` yazıldı: üst düzey düğümlerin **gerçek sınır kutusundan** merkez ve
+ölçek türetiliyor. Tavan `.40`'ta — kitap düğümleri `atSm(.40,.72,s)` ile tam orada
+belirir, açılış her ekranda "ders takımyıldızı" kalsın diye.
+
+| cihaz | önce (en/boy) | sonra |
+|---|---|---|
+| iPhone 13 | %57 / %24 | **%83** / %35 |
+| iPhone SE | %57 / %29 | **%83** / %43 |
+
+Dikeyde boşluk kalması doğru: graf neredeyse kare, telefon 9:19.5 — **en** kısıtlıyor.
+
+### Kusur 2 · İKİZ KAYNAK — "ortala" düğmesi geride kalmıştı
+
+Kapı `/1950`'yi arayınca **ikinci bir kullanım** çıktı: `atOdakB` (ortala) düğmesi
+kendi kopyasını taşıyordu. Açılışı düzeltmiş, düğmeyi atlamıştım — kullanıcı ortala'ya
+bassa harita eski bozuk çerçeveye geri dönecekti. Düğme `atlasSigdir()`'e bağlandı.
+CLAUDE.md'nin "bir düzeltmeyi uygularken tüm varyantları tara" dersi (§112/§117/§151
+ile aynı aile) — bu kez kapı yakaladı.
+
+### Kusur 3 · odakta etiketler ekran dışına taşıyordu
+
+Odakta uzun konu adları iki yandan taşıyordu. İlk düzeltmem **ölçeği kısmaktı**
+(etiket genişliğini `measureText` ile ölçüp zoom'u ona göre daraltmak). Taşma bitti —
+ama **konu etiketleri bütünüyle kayboldu**.
+
+⚠ Sebep: etiket eşiklerini `atlasVur`'dan (isabet testi) okumuştum: `atSm(.72,1.18,s)`.
+Çizim bambaşka eşik kullanıyor: **`eKonu=atSm(1.8,2.7,s)`**. Ölçek 2.22 → 1.11'e
+düşünce eşiğin altına indi. **Kendi soktuğum gerileme.** İki kaynağı varsaydım,
+doğrulamadım.
+
+Doğru çözüm taşmayı **zoom'a değil çizime** yıkmak:
+- Halka etiketi ve ortalı etiket, yazının gideceği yöndeki **gerçek ekran boşluğuna**
+  göre ikili aramayla kısaltılıyor; dikeyde taşan satır hiç yazılmıyor.
+- Ölçek artık etiketi değil **halkayı** çerçeveliyor, böylece eşiği geçebiliyor.
+
+Doğrulama gerçek `fillText` çağrıları sarılarak yapıldı (kuralı taklit eden ölçüm
+değil — ilk ölçüm betiğim eski 20-karakter kesme kuralını yeniden yazıyordu ve
+uygulama kuralı değişince **yanlış alarm** veriyordu):
+
+```
+11 branş × 3 cihaz = 33 odak durumu   →  TAŞAN: 0
+çizilen yazı: 14–105 (önce odakta 9 idi, konu etiketi hiç yoktu)
+```
+
+Telefonda Dahiliye/Genel Cerrahi (81/84 konu) hâlâ 10-11 etiket çiziyor: ölçek 1.5,
+eşik 1.8. Bu **doğru davranış** — 84 konu telefona sığmaz, yakınlaşınca beliriyorlar
+(Obsidian aynısını yapar). iPad'de 3.15 ölçekte hepsi çiziliyor.
+
+`pu_test`'e §269 bölümü (**12 kontrol**): sınır kutusundan türetme · merkez içerikte ·
+açılışta sığma · tavan/taban · ikiz kaynak yok · ortala düğmesi aynı fonksiyonu
+kullanıyor · yatay/dikey kırpma · ölçeğin etikete göre kısılmadığı gerilemesi.
+
+**sürüm 2027-03-16a ↔ rota-2027-03-16a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
