@@ -680,9 +680,12 @@ cW("ikili arama tavanı alana bağlı",kod.indexOf("ust=SAT_TAVAN")>=0);
    olduğu için scrollHeight asla clientHeight'ın altına inmiyor; `h` de aynı
    kutudan geliyordu → `scrollHeight<=h-2` HİÇ sağlanmıyor, satır 11 px'te
    donuyordu (gerçek cihazda da böyleydi). Doğru ölçü: son çocuğun alt kenarı. */
-cW('gerçek yükseklik ölçülüyor (içerik alt kenarı)',kod.indexOf('icerikAlt()<=h-2')>=0);
+/* §275: tolerans h-2 → h-PAY (1-2 parmak alt boşluk; maske bandına dayanmasın) */
+cW('gerçek yükseklik ölçülüyor (içerik alt kenarı + alt PAY)',
+  kod.indexOf('icerikAlt()<=h-PAY')>=0&&
+  /const PAY=Math\.max\(28,Math\.min\(76,Math\.round\(h\*0\.09\)\)\)/.test(kod));
 cW('içerik alt kenarı son çocuktan türetiliyor',/c\.offsetTop\+c\.offsetHeight/.test(kod));
-cW('GERİLEME: sığma testi scrollHeight ile yapılmıyor',kod.indexOf('gl.scrollHeight<=h-2')<0);
+cW('GERİLEME: sığma testi scrollHeight ile yapılmıyor',kod.indexOf('gl.scrollHeight<=h-')<0);
 cW('en çok 9 tur',kod.indexOf('for(let t=0;t<9;t++)')>=0);
 cW('yakınsayınca duruyor',kod.indexOf('if(ust-alt<0.5)break')>=0);
 cW('en iyi değer uygulanıyor',kod.indexOf('uygula(enIyi)')>=0);
@@ -1125,7 +1128,9 @@ if(J2)process.exitCode=1;
 
 console.log('\n═══ GÜN LİSTESİ OKUNAKLILIĞI ═══');
 let J3=0;const d3=(a,ok,e)=>{if(!ok){J3++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
-d3('satır tavanı alana bağlı',kod.indexOf('const SAT_TAVAN=Math.max(46,Math.min(110,h/7))')>=0);
+/* §275: tavan kullanıcı geri bildirimiyle KÜÇÜLTÜLDÜ (seyrek gün 57px'e şişiyordu) */
+d3('satır tavanı alana bağlı (küçültülmüş tavan · §275)',
+  kod.indexOf('const SAT_TAVAN=Math.max(26,Math.min(34,h/18))')>=0);
 d3('yazı oranı %58',kod.indexOf('sat*0.58')>=0);
 d3('yazı tavanı alana bağlı',kod.indexOf('const YAZ_TAVAN=Math.max(16,Math.min(34,SAT_TAVAN*0.50))')>=0);
 d3('konu adı satırdan büyük',kod.indexOf('.glS .ko{font-size:calc(var(--gyaz,11px) + 1.5px)')>=0);
@@ -1192,7 +1197,8 @@ if(J4)process.exitCode=1;
 
 console.log('\n═══ ALANI DOLDURMA ═══');
 let J5=0;const d5=(a,ok,e)=>{if(!ok){J5++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
-d5('satır tavanı alana bağlı',kod.indexOf('const SAT_TAVAN=Math.max(46,Math.min(110,h/7))')>=0);
+d5('satır tavanı alana bağlı (küçültülmüş tavan · §275)',
+  kod.indexOf('const SAT_TAVAN=Math.max(26,Math.min(34,h/18))')>=0);
 d5('yazı tavanı satır tavanından',kod.indexOf('const YAZ_TAVAN=Math.max(16,Math.min(34,SAT_TAVAN*0.50))')>=0);
 d5('ikili arama tavanı değişken',kod.indexOf('let alt=11, ust=SAT_TAVAN, enIyi=11')>=0);
 d5('ResizeObserver bağlı',kod.indexOf('gl.__gozcu=new ResizeObserver')>=0);

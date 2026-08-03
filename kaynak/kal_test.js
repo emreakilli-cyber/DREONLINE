@@ -58,7 +58,11 @@ chk('havuz listesi ve silme',/data-dsil=/.test(kod));
 chk('üst şeritte BANT gösteriliyor (§254 ulaşılabilir tavan)',/tavanBant\(-1\)/.test(kod)&&/tavanBant\(1\)/.test(kod));
 chk('D.kal senkronda korunuyor',/kal:\(o&&Array\.isArray\(o\.kal\)&&o\.kal\)\|\|\[\]/.test(kod));
 chk('binom varyansı kullanılıyor',/1\.5625\*pk\*\(1-pk\)\/q/.test(kod));
-chk('önbellek anahtarı içeriği kapsıyor',/JSON\.stringify\(D\.kal\|\|\[\]\)/.test(kod));
+/* §275: anahtar artık SÜRÜM SAYACI (denVer/kalVer) — sayaç yalnız içerik
+   (referans/uzunluk) değişince artar; 50 bin çağrıda stringify maliyeti sıfır. */
+chk('önbellek anahtarı içerik türevli (denVer/kalVer sayaçları)',
+  /function denVer\(\)/.test(kod)&&/function kalVer\(\)/.test(kod)&&
+  /_dsDen\.r===d&&_dsDen\.n===d\.length/.test(kod));
 R('D.kal=[]'); X.D.bitti={};
 console.log('\n'+(H?'✗ '+H+' HATA / '+N:'✓ SIFIR HATA — '+N+' kontrol geçti'));
 process.exitCode=H?1:0;
@@ -620,8 +624,8 @@ if(NH)process.exitCode=1;
 console.log('\n═══ SİSTEM DENETİMİ ═══');
 let NI=0;const hI=(a,ok,e)=>{if(!ok){NI++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
 const KAYI=require('fs').readFileSync('/mnt/user-data/outputs/index.html','utf8');
-hI('rCal anahtarı tam',KAYI.indexOf("JSON.stringify(D.kal||[])+'|'+JSON.stringify(D.denemeler||[])")>=0);
-hI('dOran anahtarı tam',KAYI.indexOf("JSON.stringify(D.denemeler||[])+'|'+JSON.stringify(D.kal||[])")>=0);
+hI('rCal anahtarı tam (sürüm sayaçlı · §275)',KAYI.indexOf("const a=kalVer()+'|'+denVer()+")>=0);
+hI('dOran anahtarı tam (sürüm sayaçlı · §275)',KAYI.indexOf("const a=denVer()+'|'+kalVer()+")>=0);
 hI('özyineleme kilidi',KAYI.indexOf('let _rcMes=false, _doMes=false;')>=0);
 hI('kilit son bilineni döndürüyor',KAYI.indexOf('if(_rcMes)return _rcOnb.v||')>=0);
 const sf=()=>{C.setGun('2026-08-05'); X.D.bitti={}; X.D.kal=[]; X.D.denKaz={};
