@@ -1632,3 +1632,36 @@ eA3('ALTIN yalnız Altın Yol çiziminde (harita dili gri kalır)',(function(){
   return p===1&&blok.indexOf('ALTIN YOL')>0})());
 console.log('\n'+(QA3?'✗ '+QA3+' HATA':'✓ SIFIR HATA — 10 ek kontrol'));
 if(QA3)process.exitCode=1;
+
+console.log('\n═══ OMR/KAMERA BORU HATTI · İSKELET (§265) ═══');
+let QO=0;const eO=(a,ok,x)=>{if(!ok){QO++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eO('dört katman ayrık: isaretOku/omrEslestir/omrOnizle/omrKaydet',
+  R('typeof isaretOku')==='function'&&R('typeof omrEslestir')==='function'&&
+  R('typeof omrOnizle')==='function'&&R('typeof omrKaydet')==='function');
+(function(){ C.setGun('2026-08-02'); R('D.denemeler=[{tar:"2026-08-01",kay:"t",t:30,k:28,bn:{}}]');
+  const o=R('(function(){const once=D.denemeler.length;const r=omrOnizle();'+
+    'return {n:r.n,kayit:r.kayit,dusuk:r.dusuk,once:once,sonra:D.denemeler.length,'+
+    'bekleyen:!!OMR_DURUM.kayit}})()');
+  eO('önizleme 200 işaret okuyor',o.n===200,o.n);
+  eO('ÖNİZLEME KAYDA YAZMIYOR (onay bekliyor)',o.once===o.sonra&&o.kayit===false&&o.bekleyen,o);
+  eO('düşük güvenli işaretler ayrı işaretleniyor',o.dusuk>0,o.dusuk);
+  const k=R('(function(){const once=D.denemeler.length;const ok=omrKaydet();'+
+    'const son=D.denemeler[D.denemeler.length-1];'+
+    'return {ok:ok,once:once,sonra:D.denemeler.length,detay:!!(son&&son.detay),'+
+    'soru:(son&&son.sorular||[]).length,bekleyenKalmadi:!OMR_DURUM.kayit}})()');
+  eO('ONAY sonrası MEVCUT veri yoluna yazıyor (D.denemeler)',
+    k.ok&&k.sonra===k.once+1&&k.detay&&k.soru===200&&k.bekleyenKalmadi,k);
+  const k2=R('omrKaydet()');
+  eO('onaysız ikinci kayıt YOK (çift kayıt koruması)',k2===false);
+  /* eşleştirme yeni konu uydurmuyor */
+  const es=R('(function(){const h=isaretOku();const e=omrEslestir(h);'+
+    'return {hepsi:e.length,gerek:e.filter(o=>o.durum!=="ok").length,'+
+    'konuUydurma:e.every(o=>!o.konu||Object.keys(KONU_DAG[o.b]||{}).indexOf(o.konu)>=0)}})()');
+  eO('eşleşmeyen "Eşleştirme gerekli" olarak işaretleniyor',es.gerek>0,es);
+  eO('YENİ KONU UYDURULMUYOR (yalnız gerçek katalog)',es.konuUydurma,es);
+  R('D.denemeler=[]');
+})();
+eO('mock katmanı yalnız isaretOku içinde (değişecek tek yer)',
+  /1\) İŞARET OKUMA — MOCK/.test(kod));
+console.log('\n'+(QO?'✗ '+QO+' HATA':'✓ SIFIR HATA — 9 ek kontrol'));
+if(QO)process.exitCode=1;
