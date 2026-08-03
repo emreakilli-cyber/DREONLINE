@@ -117,7 +117,7 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   varyantı atlanınca §112'nin düzeltmesi §117'ye kadar eksik kaldı; aynı kusur dört
   panelde birden vardı §151).
 
-## Güncel durum işaretçisi (sürüm `2027-02-18j`, DEVIR sonundaki devir notu)
+## Güncel durum işaretçisi (sürüm `2027-02-18k`, DEVIR sonundaki devir notu)
 
 - FT serisi 10 kitap power-up havuzuna işlendi (156 → 254 konu); konu tekilliği /
   net havuzu paylaşımı grup bazlı anahtarla tamamlandı (§219–§228).
@@ -128,6 +128,12 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   200→D.denemeler / 24'lü→D.kal. Okuma motoru **kullanıcının Anthropic anahtarıyla
   tarayıcıdan doğrudan Claude görüşü** (anahtar `rota-gorus` yerel deposunda, gist'e
   senkronlanmaz, koda gömülü değil). Gerçek fotoğraf doğruluğu kullanıcıda denenecek.
+- **§284 · ölü tamamlama dairesi düzeltildi.** Gün listesini yeniden kuran yedi
+  koddan biri `glBagla()` atlıyordu → ‹ › ile gün değişince daireler bağsız kalıp
+  tıklama kullanıcıyı çarka ışınlıyordu. Artık tek yol: `glKur()` + düğme korumalı
+  `glSatirBagla()`. Power-up paneline de "başka kaynaktan" rozeti eklendi.
+  **Yeni kapı `kaynak/dom_test.js`** — gerçek Chromium'da gerçek dokunma; harness
+  (`derin_ortam.js`) olay bağlamayı GÖREMEZ, bu sınıf kusur ondan kaçıyordu.
 - **YARIM KALAN · TASARIM:** power-up paneli, matris ve seyir sayfalarının görsel
   tasarımı (beğenilen referans: `.glAnh` altın gradyan anahtar, `.glS` satır düzeni,
   §217 daire tamamlama düğmesi).

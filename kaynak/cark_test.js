@@ -1406,8 +1406,19 @@ f2('yeniden bağlama fonksiyonu',RG('typeof gunBagla')==='function');
 })();
 f2('kip kapanınca bugüne dönüyor',kod.indexOf("classList.remove('gizli'); gunGoster=null")>=0);
 f2('ok tıklaması olayı durduruyor',kod.indexOf('e.stopPropagation();\n    const d=x.dataset.gun')>=0);
-f2('görev tıklaması yeniden bağlanıyor',kod.indexOf("gunKipAc(false); gecis(+y.dataset.gi)")>=0);
-f2('ölçek de tazeleniyor',kod.indexOf('try{gunOlcekle(gl)}catch(er){}')>=0);
+/* §284 · Bu iki iddia eskiden `gunBagla` içindeki SATIR İÇİ kodun birebir
+   metnini arıyordu. Kopyalar tek yolda (`glKur`) birleştirilince metin
+   değişti; iddianın ARDINDAKİ NİYET aynı kaldı, o yüzden niyet üzerinden
+   yeniden yazıldı — kopya geri gelirse yine yakalanır. */
+f2('görev tıklaması yeniden bağlanıyor (glKur → glSatirBagla)',
+  /function glKur\([\s\S]{0,400}?glSatirBagla\(gl\)/.test(kod)&&
+  /function glSatirBagla\([\s\S]{0,400}?gunKipAc\(false\); gecis\(\+x\.dataset\.gi\)/.test(kod));
+f2('ölçek de tazeleniyor (glKur → gunOlcekle)',
+  /function glKur\([\s\S]{0,500}?gunOlcekle\(gl\)/.test(kod));
+f2('gün oku tek yoldan yeniden kuruyor (kopya yok)',
+  /function gunBagla\([\s\S]{0,400}?glKur\(gl,true\)/.test(kod));
+f2('satır işleyicisi düğme korumalı (ölü daire çarka ışınlamaz)',
+  /function glSatirBagla\([\s\S]{0,400}?closest\('button'\)\)return/.test(kod));
 f2('okların odak halkası',kod.indexOf('.glOk:focus-visible,.glBug:focus-visible{outline:2px solid var(--bilgi)')>=0);
 f2('kapalı ok soluk',kod.indexOf('.glOk[disabled]{opacity:.28;cursor:default}')>=0);
 console.log('\n'+(L2?'✗ '+L2+' HATA':'✓ SIFIR HATA — 22 ek kontrol'));

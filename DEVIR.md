@@ -14201,6 +14201,98 @@ fotoğraflarla doğruluk ayarı, gerekirse extended thinking, kart cilası.
 
 ---
 
+## §284 · Ölü tamamlama dairesi + power-up rozeti (2027-02-18k)
+
+**Kullanıcı bildirimi:** "pinch → program, 2 Ağustos Endokrin videosunun sağına
+tıklıyorum, tick olmuyor, beni çarka gönderiyor. Bu videolarla kitaplar arasında
+kurduğun refleks örgüsünü unuttun mu?"
+
+**ÜRETİLDİ (gerçek Chromium, gerçek dokunma, gerçek kullanıcı verisi):**
+```
+[3] Endokrin daire: {"daireIsleyici":false,"satirIsleyici":true}
+[3] tık ÖNCE bitti=false SONRA bitti=false        ← tik atmıyor
+[3] sonrası: {"gunKip":false,"gunGoster":null,"listeAc":false}  ← çarka ışınlandı
+```
+
+**KÖK SEBEP.** Gün listesini `innerHTML` ile yeniden kuran **yedi** nokta vardı;
+`gunKipAc` içindeki `[data-gun]` kopyası (eski 6438–6447) **`glBagla()` çağırmıyordu**.
+Gün oklarıyla (‹ ›) başka güne geçilince `[data-klgorev]` (tamamlama dairesi) dahil
+glBagla'nın bağladığı TÜM düğmeler bağsız kalıyor; daireye dokunuş satıra
+baloncuklanıyor ve satır işleyicisi `gunKipAc(false); gecis(i)` çalışıp kullanıcıyı
+çarka atıyordu. Satır işleyicilerinin hiçbirinde düğme koruması yoktu.
+⚠ Neden "bazen" oluyordu: ilk ok basışından sonra `gunBagla` okları KENDİ (sağlam)
+sürümüne yeniden bağlıyor — yani yalnız **gün kipi açıldıktan sonraki İLK ok
+basışı** kırık. Kapı da bunu birebir doğruladı (1. geçiş ✗, 2.–3. geçiş ✓).
+
+**DÜZELTME · tek yol:**
+- `glKur(gl,yenidenCiz)` — tek yeniden-kurulum yolu: `glBagla` + `gunBagla` +
+  `glSatirBagla` + `zeGunSatirBagla` + `gunOlcekle`. Kopya bırakılmadı.
+- `glSatirBagla(gl)` — satır işleyicisi artık **düğme korumalı**
+  (`ev.target.closest('button')` → satırı tetikleme). Savunma katmanı: bir düğme
+  ileride yine bağsız kalsa bile kullanıcı çarka ışınlanmaz.
+- `gunBagla`, `gunKipAc`, yedek olay devri ve `zeGunAc` hepsi `glKur`'a bağlandı.
+  Yeniden-kurulum noktası **7 → 3**; korumasız `[data-gi]` bağlaması **3 → 0**.
+
+**İKİNCİ KUSUR (aynı bildirimden çıktı) · power-up rozeti eksikti.**
+§282'de "başka kaynaktan" rozeti yalnız gün listesine ve kitap içindekilerine
+eklenmişti; **power-up paneli dışarıda kalmıştı** — kullanıcının §282 talebi bu
+yüzeyi de kapsıyordu. Ölçüldü: motor `konuBaskaKaynak('Endokrinoloji')`
+= "Atilla Uslu Dahiliye videoları · 1.5x" derken `#puListe`'de **0 rozet**.
+`ppanelCiz` satır şablonuna rozet + `.kit.bk` soluklaştırma eklendi → **0 → 8 rozet**.
+(`--gyaz` yalnız gün listesinde tanımlı olduğu için panele sabit ölçü verildi.)
+
+**YENİ KAPI · `kaynak/dom_test.js` (17 kontrol).** Mevcut kapıların hiçbiri bunu
+göremezdi: `derin_ortam.js` DOM'u taklit ediyor, `onclick` bağlama orada YOK.
+Bu kapı GERÇEK Chromium'da gerçek dokunmayla çalışır (kullanıcı verisi kullanmaz).
+Kapının gerçekten ayırt ettiği doğrulandı: düzeltme ÖNCESİ sürümde **4 hata**
+(ölü daire dahil, "Endokrinoloji videoları — 4/7" adıyla), SONRASINDA **0**.
+`cark_test`teki iki iddia eski kodun birebir metnini arıyordu (eskimiş iddia,
+uygulama kusuru değil) — niyet korunarak yeni tek yola göre yazıldı; onlar da
+düzeltme öncesi sürümde ✗, sonrasında ✓ veriyor.
+
+**KULLANICININ SORUSUNA CEVAP · refleks ağı (ölçüldü, gerçek veriyle):**
+| yüzey | durum |
+|---|---|
+| video tik → program görev kartı | ✓ çalışıyor |
+| video 7/7 bitince konu kitabı satırı | ✓ `✓ başka kaynaktan` (Atilla Uslu Dahiliye 2 · Endokrinoloji) |
+| power-up listesi | ✓ **§284'te eklendi** (öncesinde eksikti) |
+| kazanç tekliği (kitap ↔ kitap) | ✓ `renkAnh` havuzu ortak |
+| kazanç tekliği (**video ↔ kitap**) | ✗ **ortak DEĞİL** — aşağıya bak |
+
+**AÇIK · KARAR KULLANICIYA (düzeltilmedi, ölçüldü):**
+1. **Parça böleni yanlış alandan okunuyor.** `const parca=(g.sira&&g.sira[1]>1)?g.sira[1]:1`
+   — ama `g.sira[1]` "bu bloğun kaç işi var" demek (5260/5423 satırları bunu
+   böyle gösteriyor), parça sayısı değil. Doğru alan `g.ot[1]` (37/37 görevde
+   ad ile birebir uyuyor) ya da görev adı. **196 görevin 146'sında (%74) yanlış**
+   (ör. "Hematoloji videoları — 1/9" → bölen 9 yerine 4; tek parçalı "Kadın Genital
+   Sistem Hastalıkları" → bölen 1 yerine 2, kazancı yarıya iniyor).
+   Bugünkü etkisi **0.0000** — çünkü `para()` yalnız SON DENEMEDEN SONRA
+   tamamlanan işleri sayıyor (`b>o.tar`) ve tamamlanmış 17 işin hepsi öncesinde.
+   Çok parçalı işler bugün tamamlanırsa: PARAKETE **61.19 → 60.44 (Δ −0.74)**,
+   yani mevcut kod projeksiyonu **şişiriyor**.
+2. **Video ile kitap aynı kazanç havuzunu paylaşmıyor.** `para()` havuz anahtarı
+   `renkAnh`; `renkAnh("Hematoloji videoları — 1/9")="hematoloji videoları 1 9"`
+   ≠ `renkAnh("Hematoloji")="hematoloji"`. Dahası 9 videonun **9 ayrı havuzu** var.
+   §282'nin `konuKok`'u ikisini birleştiriyor ("hematoloji") ama konuKok yalnız
+   ROZET ve ÇÜRÜME için kullanılıyor, KAZANÇ için değil. Yani rozet/çürüme tek
+   sayıyor, kazanç video payını kitabın payına EK olarak yazıyor.
+   Ölçülen büyüklük küçük (4 video tiki → PARAKETE +0.0081) ama yön yanlış.
+
+Bu ikisi de **model değişikliği** (PARAKETE düşürür); sınava 20 gün kala kullanıcı
+onayı olmadan uygulanmadı. §0 ilkesi: kararı kullanıcı verir.
+
+**Kapılar:** derin/pu/cark/mola/kombo/kal/**dom** + denet.py — **0 hata**.
+node --check temiz. Sürüm eşleşmesi doğrulandı.
+
+⚠ **Ortam notu:** Bu tur sırasında kap yeniden kuruldu ve yerel klon §282'ye
+(1492a54) döndü; §283 kamera işi **origin'de duruyordu** (12f7499) ve oraya
+`merge --ff-only` + stash ile geri bindirildi. İş kaybı yok, doğrulandı
+(§283 izleri: BRANS_ARALIK/denemeGorusCagir/OMR_VIZYON mevcut).
+
+**sürüm 2027-02-18k ↔ rota-2027-02-18k**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
