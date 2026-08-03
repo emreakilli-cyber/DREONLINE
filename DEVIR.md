@@ -13916,6 +13916,37 @@ Kapılar: 10 bayat iddia §276'ya güncellendi (SAT_TAVAN/YAZ_TAVAN formülleri,
 
 ---
 
+## §277 · LİSTE YAZILARI + ANAHTAR DÜĞMELERİ BİR TIK KÜÇÜK, ALT PAY YUKARI
+
+Kullanıcı: liste görev yazıları ve üstteki Program/Kitap · Konu/Soru-Deneme
+anahtar düğmeleri "bir tık" küçülsün, aşağı uzanma payı bir tık yukarı çekilsin.
+İlk mesajda "üst panel" de geçiyordu; düzeltme mesajı kapsamı listeye daralttı —
+**üst şerit (ÖLÇÜLEN/PARAKETE kartları) bilerek DOKUNULMADI** (22/17/14.5
+kademeleri yerinde, ölçümle doğrulandı).
+
+⚠ Süreç kazası: bir önceki tur reddedilmişti ama toplu düzenlemenin bir kısmı
+dosyaya sızmış çıktı (üst panel küçülmeleri dahil). Dosya durumuna güvenip
+değil ÖLÇÜP ilerlendi; üst panel değerleri asıllarına geri alındı.
+
+Değerler (`gunOlcekle` §276 modeli içinde, yalnız sabitler):
+
+| değişken | önce | sonra | etki (iPad · tel) |
+|---|---|---|---|
+| `SAT` | clamp(24, h/24, 32) | clamp(22, **h/26**, 29) | satır 27.2→25.1 · 28.4→26.2 px |
+| `--gyaz` oranı | sat·0.58 | sat·**0.50** (taban 9.5) | görev yazısı 15.2→14.1 · 15.7→14.6 px |
+| `YAZ_TAVAN` | 16..34 · SAT·0.50 | 14..28 · SAT·0.46 | |
+| `PAY` (alt boşluk) | 28..76 · h·0.09 | **34..96 · h·0.11** | dolu günde liste bir tık yukarı |
+
+Anahtar düğmeleri ayrıca ellenMEdi: boyutları `--gsat/--gyaz` türevi olduğundan
+satırla birlikte kendiliğinden küçüldüler (27→26 px yükseklik, 12.9→11.6 px yazı).
+
+Doğrulama: iki cihazda ölçüm + görseller (`kucuk_ipad/tel.png`); üst panel
+birebir eski; batarya 0 hata (7 kapı sabiti yeni değerlere güncellendi).
+
+**sürüm 2027-02-18e ↔ rota-2027-02-18e**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
