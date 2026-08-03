@@ -820,7 +820,9 @@ let KZ=0;const eZ=(a,ok,x)=>{if(!ok){KZ++;console.log('  ✗ '+a+(x!==undefined?
 eZ('ölçek üç satır türünü sayıyor',kod.indexOf('[data-gi],[data-klkitap],.glS')>=0);
 eZ('kaydırma kaldırıldı',kod.indexOf('KAYDIRMA YOK · her iki kip')>=0);
 eZ('kayd CSS kalmadı',kod.indexOf('#gunListe.kayd{overflow-y:auto')<0);
-eZ('ölçek her iki kipte',kod.indexOf('let alt=11, ust=SAT_TAVAN, enIyi=11;')>=0);
+/* §276: boy artık pencereden SABİT; her iki kip aynı seçiciyle ölçekleniyor */
+eZ('ölçek her iki kipte',kod.indexOf("querySelectorAll('[data-gi],[data-klkitap],.glS')")>=0&&
+  kod.indexOf('const SAT=Math.max(24,Math.min(32,h/24))')>=0);
 (function(){
   C.setGun('2026-07-30'); X.D.bitti={}; X.D.pu={}; X.D.glKip=null; X.D.klKitap=null;
   X.D.denemeler=JSON.parse(JSON.stringify(X.TOHUM)); R('puSenkron()');

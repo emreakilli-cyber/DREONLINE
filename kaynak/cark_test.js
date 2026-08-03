@@ -651,7 +651,9 @@ cV('satır yüksekliği değişkene bağlı',kod.indexOf('height:var(--gsat,34px
 cV('yazı ölçüsü değişkene bağlı',kod.indexOf('font-size:var(--gyaz,11px)')>=0);
 cV('değişkenler hesaplanıp yazılıyor',kod.indexOf("gl.style.setProperty('--gsat'")>=0&&
    kod.indexOf("gl.style.setProperty('--gyaz'")>=0);
-cV("ikili arama tavanı alana bağlı",kod.indexOf("ust=SAT_TAVAN")>=0);
+cV("boy pencereden sabit + taşma sütuna bölünüyor (§276)",
+  kod.indexOf("const SAT=Math.max(24,Math.min(32,h/24))")>=0&&
+  kod.indexOf("classList.add('cift')")>=0);
 cV('sık kipte branş gizleniyor',kod.indexOf('#gunListe.sik .glS .br{display:none}')>=0);
 cV('kaydırma kapalı (hepsi sığıyor)',kod.indexOf('#gunListe{position:absolute;inset:0;z-index:2;overflow:hidden')>=0);
 cV('satırlar sırayla beliriyor',kod.indexOf('@keyframes glGel{')>=0);
@@ -675,7 +677,8 @@ if(HV)process.exitCode=1;
 
 console.log('\n═══ İKİLİ ARAMA · TAŞMA YOK ═══');
 let HW=0;const cW=(a,ok,e)=>{if(!ok){HW++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
-cW("ikili arama tavanı alana bağlı",kod.indexOf("ust=SAT_TAVAN")>=0);
+cW("boy pencereden sabit; küçültme yalnız çift sütunda da taşan istisnada (§276)",
+  kod.indexOf("let alt=15, ust=SAT, sat=SAT;")>=0);
 /* §258 · ölçü kaynağı DEĞİŞTİ. `gl` `position:absolute;inset:0;overflow:hidden`
    olduğu için scrollHeight asla clientHeight'ın altına inmiyor; `h` de aynı
    kutudan geliyordu → `scrollHeight<=h-2` HİÇ sağlanmıyor, satır 11 px'te
@@ -686,9 +689,9 @@ cW('gerçek yükseklik ölçülüyor (içerik alt kenarı + alt PAY)',
   /const PAY=Math\.max\(28,Math\.min\(76,Math\.round\(h\*0\.09\)\)\)/.test(kod));
 cW('içerik alt kenarı son çocuktan türetiliyor',/c\.offsetTop\+c\.offsetHeight/.test(kod));
 cW('GERİLEME: sığma testi scrollHeight ile yapılmıyor',kod.indexOf('gl.scrollHeight<=h-')<0);
-cW('en çok 9 tur',kod.indexOf('for(let t=0;t<9;t++)')>=0);
+cW('istisna araması en çok 8 tur',kod.indexOf('for(let t=0;t<8;t++)')>=0);
 cW('yakınsayınca duruyor',kod.indexOf('if(ust-alt<0.5)break')>=0);
-cW('en iyi değer uygulanıyor',kod.indexOf('uygula(enIyi)')>=0);
+cW('bulunan değer uygulanıyor',kod.indexOf('uygula(sat);')>=0);
 cW("düzen oturmadan hesaplamıyor",kod.indexOf("if(h<80)return;")>=0);
 cW('sınır inerken ölçek tazeleniyor',kod.indexOf('try{gunOlcekle(gl)}catch(e){}')>=0);
 cW("yedek tazeleme 2600 ms",kod.indexOf("Date.now())+2600")>=0);
@@ -1128,11 +1131,11 @@ if(J2)process.exitCode=1;
 
 console.log('\n═══ GÜN LİSTESİ OKUNAKLILIĞI ═══');
 let J3=0;const d3=(a,ok,e)=>{if(!ok){J3++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
-/* §275: tavan kullanıcı geri bildirimiyle KÜÇÜLTÜLDÜ (seyrek gün 57px'e şişiyordu) */
-d3('satır tavanı alana bağlı (küçültülmüş tavan · §275)',
-  kod.indexOf('const SAT_TAVAN=Math.max(26,Math.min(34,h/18))')>=0);
+/* §276: §275'in tavanı da güne bağlıydı; boy artık pencereden SABİT */
+d3('satır boyu pencereden sabit (§276)',
+  kod.indexOf('const SAT=Math.max(24,Math.min(32,h/24))')>=0);
 d3('yazı oranı %58',kod.indexOf('sat*0.58')>=0);
-d3('yazı tavanı alana bağlı',kod.indexOf('const YAZ_TAVAN=Math.max(16,Math.min(34,SAT_TAVAN*0.50))')>=0);
+d3('yazı tavanı satır boyundan (§276)',kod.indexOf('const YAZ_TAVAN=Math.max(16,Math.min(34,SAT*0.50))')>=0);
 d3('konu adı satırdan büyük',kod.indexOf('.glS .ko{font-size:calc(var(--gyaz,11px) + 1.5px)')>=0);
 d3('blok başlığı da ölçekli',kod.indexOf('.glBlok{font-size:calc(var(--gyaz,11px) - 2.5px)')>=0);
 d3('gün özeti de ölçekli',kod.indexOf('.glBas b{display:block;font-size:calc(var(--gyaz,11px) + 5px)')>=0);
@@ -1164,7 +1167,7 @@ if(J3)process.exitCode=1;
 console.log('\n═══ YAZI ÖNCELİĞİ ═══');
 let J4=0;const d4=(a,ok,e)=>{if(!ok){J4++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
 d4('yazı oranı %58',kod.indexOf('sat*0.58')>=0);
-d4('yazı tavanı alana bağlı',kod.indexOf('const YAZ_TAVAN=Math.max(16,Math.min(34,SAT_TAVAN*0.50))')>=0);
+d4('yazı tavanı satır boyundan (§276)',kod.indexOf('const YAZ_TAVAN=Math.max(16,Math.min(34,SAT*0.50))')>=0);
 d4("yazı tabanı 10px",kod.indexOf("Math.max(10,Math.min(YAZ_TAVAN")>=0);
 d4('satır metni sıkıştırılmış',kod.indexOf('height:var(--gsat,34px);line-height:1.2')>=0);
 (function(){
@@ -1197,10 +1200,11 @@ if(J4)process.exitCode=1;
 
 console.log('\n═══ ALANI DOLDURMA ═══');
 let J5=0;const d5=(a,ok,e)=>{if(!ok){J5++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
-d5('satır tavanı alana bağlı (küçültülmüş tavan · §275)',
-  kod.indexOf('const SAT_TAVAN=Math.max(26,Math.min(34,h/18))')>=0);
-d5('yazı tavanı satır tavanından',kod.indexOf('const YAZ_TAVAN=Math.max(16,Math.min(34,SAT_TAVAN*0.50))')>=0);
-d5('ikili arama tavanı değişken',kod.indexOf('let alt=11, ust=SAT_TAVAN, enIyi=11')>=0);
+d5('satır boyu pencereden sabit (§276)',
+  kod.indexOf('const SAT=Math.max(24,Math.min(32,h/24))')>=0);
+d5('yazı tavanı satır boyundan (§276)',kod.indexOf('const YAZ_TAVAN=Math.max(16,Math.min(34,SAT*0.50))')>=0);
+d5('boy güne göre DEĞİL pencereye göre (§276 · kullanıcı isteği)',
+  kod.indexOf('BOYUT YALNIZ PENCEREDEN')>=0);
 d5('ResizeObserver bağlı',kod.indexOf('gl.__gozcu=new ResizeObserver')>=0);
 d5('gözcü kip kapanınca bırakılıyor',kod.indexOf('if(gl.__gozcu){gl.__gozcu.disconnect(); gl.__gozcu=null}')>=0);
 d5("yedek tazeleme 2600 ms",kod.indexOf("Date.now())+2600")>=0);
