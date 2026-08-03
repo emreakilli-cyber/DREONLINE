@@ -117,7 +117,7 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   varyantı atlanınca §112'nin düzeltmesi §117'ye kadar eksik kaldı; aynı kusur dört
   panelde birden vardı §151).
 
-## Güncel durum işaretçisi (sürüm `2027-02-19d`, DEVIR sonundaki devir notu)
+## Güncel durum işaretçisi (sürüm `2027-02-19e`, DEVIR sonundaki devir notu)
 
 - FT serisi 10 kitap power-up havuzuna işlendi (156 → 254 konu); konu tekilliği /
   net havuzu paylaşımı grup bazlı anahtarla tamamlandı (§219–§228).
@@ -158,13 +158,27 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
 - **§294 · analiz filtreleri.** Sayfa 0'da etiket+ders çip filtresi · sayfa 2'de bar
   artık BAŞARI oranı (en zayıf ders en üstte, en boş, en kırmızı) ve ders satırı
   tıklanınca o dersin haritası açılıyor (geri oku) · sayfa 3'te ders filtresi +
-  "etiket etiket grupla" (ikisi birlikte çalışır). Anahtar alanı artık anahtar
-  yokken üstte açık kutuda (`#dpAnahtarUyari`) — eskiden katlanmış başlıkta kaybolmuştu.
+  "etiket etiket grupla" (ikisi birlikte çalışır).
+- **§295–§298 · ilk gerçek okuma denemesi "load failed" verdi.** İstek gidiyor,
+  yanıt dönmüyordu (Gemini panelinde RPM hareketi vardı). Ölçüm: 1568 px foto ≈
+  500 KB base64, üç sayfa tek istekte ≈ 1.5 MB. Çözüm: `GORUS_PARTI=2` ikişerli
+  partiler · `GORUS_ZAMAN` + `AbortController` · bir kez otomatik yeniden deneme ·
+  `wakeLock` · hata metni sebebi (telefonun uyuması) doğru söylüyor.
+  §296 ayarlar menüsü **yeniden katlanabilir** (`<details id="dpAyarDet">`), ama
+  anahtar yokken açık geliyor ve özette "anahtar gerekli/tanımlı" yazıyor —
+  §294'ün daima-açık kutusu kullanıcı isteğiyle geri alındı.
+  §297 okuma sonunda eksik E/AK/B/U kodları soru soru soruluyor.
+  §298 okuma sonrası özet: soru numarası aralığı + dersler + "kısmi yükleme"
+  bildirimi + "önce cevap anahtarı ekle" seçeneği.
 - **YARIM KALAN · TASARIM:** power-up paneli, matris ve seyir sayfalarının görsel
   tasarımı (beğenilen referans: `.glAnh` altın gradyan anahtar, `.glS` satır düzeni,
   §217 daire tamamlama düğmesi).
+- ⚠ **Gerçek API hiç çağrılmadı.** §285–§298 kanıtı tamamen sahte `fetch` ve elle
+  okunmuş yer gerçeği üzerinden. Sıradaki iş: kullanıcı anahtarı yenileyip gerçek
+  okuma denesin, istem doğruluğu gerçek çıktıya göre ayarlansın.
 - Bilinen açık noktalar: FT Geriatri 0.51 soru (kullanıcı onaylı varsayım) ·
   D_ORAN ±0.57 belirsizliği · potansiyel-gerçek ~0.42 net farkı (bilinçli muhafazakâr,
   §205) · yinelenen deneme kaydı denetimsiz (bilinçli) · Fizyoloji/Histo aralığı
-  kullanıcı beyanı ≠ SORU.den (net grubu ortak, etkisiz).
+  kullanıcı beyanı ≠ SORU.den (net grubu ortak, etkisiz) · `kural_test.py` ve
+  `kos.js` koşmuyor (`eko.py` / `tam_test.js` repoda yok).
 - Geçmiş oturumların süreç analizi ve otomasyon/düzeltme adayları: `icgoru.md`.

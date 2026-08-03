@@ -379,16 +379,69 @@ const chk=(a,ok,x)=>{N++;if(!ok){H++;console.log('  ✗ '+a+(x!==undefined?' :: 
  chk('§294 · ders filtresi + etiket gruplama BİRLİKTE doğru',
    f94.grupSayisi>0&&f94.grupKart===f94.filt&&f94.halaDers,f94);
 
- /* anahtar alanı görünürlüğü */
+ /* anahtar alanı erişilebilirliği · §296'da AYRI uyarı kutusu kaldırıldı
+    (kullanıcı katlanabilir menüyü tercih etti); ölçülen şey artık:
+    menü var mı, anahtar yokken açık geliyor mu, giriş alanı erişilebilir mi. */
  const ak94=await pg.evaluate(()=>{
    localStorage.removeItem('rota-gorus');
+   const d=document.getElementById('dpAyarDet'); if(d)d.dataset.k='';
    dpanelCiz();
-   const u=document.getElementById('dpAnahtarUyari');
-   const inp=document.getElementById('dpAnahtarHizli');
-   return {kutu:!!(u&&u.innerHTML.trim()),input:!!inp};
+   const det=document.getElementById('dpAyarDet');
+   const inp=document.getElementById('dpApiKey');
+   return {menu:!!det,acik:!!(det&&det.open),input:!!inp};
  });
- chk('§294 · anahtar yokken açık uyarı kutusu ve giriş alanı var',
-   ak94.kutu&&ak94.input,ak94);
+ chk('§296 · anahtar yokken ayar menüsü açık ve giriş alanı erişilebilir',
+   ak94.menu&&ak94.acik&&ak94.input,ak94);
+
+ /* ══ §295–§298 · DAYANIKLILIK / AKIŞ ═════════════════════════════ */
+ console.log('\n═══ DOM · §295–§298 ═══');
+ const d95=await pg.evaluate(()=>{
+   const src=document.documentElement.outerHTML;
+   return {
+     parti:(typeof GORUS_PARTI==='number')&&GORUS_PARTI>=1&&GORUS_PARTI<=3,
+     zaman:(typeof GORUS_ZAMAN==='number')&&GORUS_ZAMAN>=30000,
+     dizi:typeof gorusDizi==='function',
+     abort:/new AbortController\(\)/.test(src)&&/signal:ac\?ac\.signal:undefined/.test(src),
+     yenidenDene:/for\(let deneme=0;deneme<2;deneme\+\+\)/.test(src),
+     hataAyrim:/__ZAMAN__/.test(src)&&/__AG__/.test(src),
+     uyandir:/wakeLock/.test(src),
+     mesaj:(function(){ try{ return gorusHataMet(new Error('__AG__'),1,1) }catch(e){ return '' } })(),
+     mesajZ:(function(){ try{ return gorusHataMet(new Error('__ZAMAN__'),1,1) }catch(e){ return '' } })(),
+     /* §296 */
+     katlanabilir:!!document.getElementById('dpAyarDet'),
+     uyariKutusuYok:!/dpAnahtarUyari/.test(src),
+     /* §297 */
+     kodFn:typeof kodKuyrukAc==='function'&&typeof kodEksikler==='function'
+   };
+ });
+ chk('§295 · fotoğraflar partiler hâlinde gönderiliyor',d95.parti&&d95.dizi,d95);
+ chk('§295 · zaman aşımı AbortController ile kurulu',d95.abort&&d95.zaman,d95);
+ chk('§295 · kopan bağlantıda otomatik yeniden deneme var',d95.yenidenDene,d95);
+ chk('§295 · hata sebebi ayrıştırılıyor (zaman aşımı ≠ ağ)',d95.hataAyrim,d95);
+ chk('§295 · hata mesajı WiFi suçlamıyor, uyku/çıkışı söylüyor',
+   /uyursa|ekran açık/i.test(d95.mesaj)&&!/WiFi bağlı mı/i.test(d95.mesaj),d95.mesaj);
+ chk('§295 · zaman aşımı mesajı ayrı ve yönlendirici',
+   /zamanında gelmedi/i.test(d95.mesajZ)&&/daha az fotoğraf/i.test(d95.mesajZ),d95.mesajZ);
+ chk('§295 · işlem sırasında ekran açık tutuluyor (wakeLock)',d95.uyandir,d95);
+ chk('§296 · ayarlar katlanabilir (details) ve ayrı uyarı kutusu kaldırıldı',
+   d95.katlanabilir&&d95.uyariKutusuYok,d95);
+ chk('§297 · eksik güven kodu kuyruğu fonksiyonları var',d95.kodFn,d95);
+
+ /* §296 · anahtar durumuna göre açık/katlı */
+ const a96=await pg.evaluate(()=>{
+   localStorage.removeItem('rota-gorus');
+   const d=document.getElementById('dpAyarDet'); d.dataset.k=''; dpanelCiz();
+   const yokAcik=d.open, yokOzet=(d.querySelector('summary')||{}).textContent||'';
+   const c=Gorus.oku(); c.anahtar='AIzaX'; Gorus.yaz(c);
+   d.dataset.k=''; dpanelCiz();
+   const varAcik=d.open, varOzet=(d.querySelector('summary')||{}).textContent||'';
+   localStorage.removeItem('rota-gorus');
+   return {yokAcik,yokOzet,varAcik,varOzet};
+ });
+ chk('§296 · anahtar yokken AÇIK, varken KATLI',
+   a96.yokAcik===true&&a96.varAcik===false,a96);
+ chk('§296 · özet durumu yazıyor (gerekli / tanımlı)',
+   /gerekli/.test(a96.yokOzet)&&/tanımlı/.test(a96.varOzet),a96);
 
  console.log('\n'+(H?('✗ '+H+' HATA / '+N+' kontrol'):('✓ SIFIR HATA — '+N+' DOM kontrolü')));
  console.log('SAYFA HATASI: '+(sayfaHata.length?JSON.stringify(sayfaHata.slice(0,3)):'(yok)'));

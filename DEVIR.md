@@ -14560,6 +14560,86 @@ gereken kutunun kayması değil, alanın EKRANDA olmasıydı — düzeltildi.
 
 ---
 
+## §295–§298 · İlk gerçek okuma denemesi: "ağ hatası load failed" (2027-02-19e)
+
+Kullanıcı ilk kez gerçek API ile denedi (`gemini-3.6-flash`, klinik sayfaları).
+Dört ayrı bulgu bildirdi; dördü de karşılandı.
+
+### 1 · "ağ hatası load failed" — ama Gemini panelinde RPM hareketi VAR
+Bu iki gözlem çelişmiyor: **istek gitti, yanıt geri gelmedi.** `fetch` bu durumda
+tarayıcı katmanında `TypeError: Load failed` atıyor; ağın yokluğuyla ilgisi yok.
+Ölçülen büyüklükler: 1568 px kenarda bir fotoğraf ≈ **500 KB base64**; üç sayfa
+tek istekte ≈ **1.5 MB** ve `gemini-3.6-flash` bunu okurken uzun sürüyor.
+iOS bu sürede sekmeyi askıya alırsa bağlantı kopuyor.
+
+§295'te yapılanlar (hepsi ölçülebilir, tahmin değil):
+- `GORUS_PARTI=2` · fotoğraflar **ikişerli partiler** halinde ayrı isteklere
+  bölünüyor, sonuçlar `no` alanına göre tekilleştirilerek birleşiyor.
+- `GORUS_ZAMAN=100000` · `AbortController` ile **zaman aşımı**; asılı istek
+  sonsuza kadar beklemiyor, `__ZAMAN__` olarak yakalanıyor.
+- Kopan bağlantıda **bir kez otomatik yeniden deneme** (kapıda doğrulandı: 2 istek).
+- `ekranAcikTut()` · okuma sürerken `wakeLock` alınıyor (destekleyen cihazda).
+- Hata metni **sebebi doğru söylüyor**: "telefon uyursa / başka uygulamaya
+  geçilirse bağlantı kopar" — WiFi suçlanmıyor. Yanlış sebep yanlış çözüm ürettirir.
+- Model yardım metni: `gemini-3.6-flash` **daha güçlü ama daha yavaş**, çok sayfada
+  kopma riski yüksek; ara seçenek `gemini-3.1-flash-lite`.
+
+⚠ Bu düzeltmeler kopmayı **daha az olası** yapar, imkânsız yapmaz. Gerçek API ile
+hâlâ **denenmedi** — kullanıcı anahtarı yenileyip tekrar denemeli.
+
+### 2 · "cevap anahtarını beklemeden soruları okumaya başladı"
+Doğru gözlem, ama **kusur değil, sıralamanın kendisi**: soru sayfaları önce
+okunuyor (işaretli şık + konu + kod), cevap anahtarı **sonra** ayrı bir adımda
+eşleştiriliyor. Yanlışlığı arayüzün bunu söylememesiydi.
+§298'de okuma sonrası özet eklendi: okunan **soru numarası aralığı**
+("Soru 101–108"), tespit edilen dersler, ve üç düğme —
+**"Önce cevap anahtarı ekle"** · "Eksik kodları tamamla" · "İncele ve kaydet".
+
+### 3 · "sadece kliniği yüklediğimi anladı mı bilmiyorum"
+§298 özeti bunu açıkça yazıyor: numara aralığı 200'ün altındaysa
+"(kısmi yükleme — sorun değil, branş kaydı olarak işlenir)".
+Kısmi tarama zaten destekleniyordu; eksik olan **söylenmesiydi**.
+
+### 4 · "katlanabilir ayarlar menüsü güzeldi" — §294 GERİ ALINDI
+§294'te keşfedilebilirlik için katlanabilir menüyü söküp daima açık bir uyarı
+kutusu koymuştum (`#dpAnahtarUyari`). Kullanıcı asıl istediğinin **katlanabilirlik**
+olduğunu söyledi. §296: menü yine `<details id="dpAyarDet">`, ama
+(a) düğme görünümünde — gri küçük başlık değil, (b) **anahtar yokken açık geliyor**,
+(c) özet satırı durumu söylüyor: "anahtar gerekli" / "anahtar tanımlı".
+Böylece hem keşfedilebilir hem katlanabilir. §294'ün teşhisi (bulunamıyordu)
+doğruydu, **çözümü fazla ileri gitmişti**.
+
+### 5 · "bazı soruların kodunu yazmayı unutuyorum, en son sorabilirsen söylerim"
+§297 · kod kuyruğu. Okuma bittikten sonra `kodEksikler()` E/AK/B/U kodu boş kalan
+soruları buluyor; "N sorunun kodu eksik · tamamla" düğmesiyle **soru soru**
+soruluyor (numara + okunan metnin ilk satırı + işaretli şık gösteriliyor).
+Dört kod düğmesi + "Atla" + "Bitir". Kod yazılmayan soru **boş kalıyor** —
+uydurulmuyor.
+
+### Kapılar
+Yeni `dayanik_test` (17 kontrol · sahte `fetch` ile parti/zaman aşımı/kopma
+senaryoları) **0 hata**. `dom_test` 75 kontrol · `filtre_test` 19 kontrol ·
+diğer tüm kapılar 0 hata.
+⚠ `filtre_test`in ilk üç iddiası §294'te sildiğim öğelere bakıyordu — **bayat
+iddia**, uygulama kusuru değil; §296 modeline göre yeniden yazıldı.
+⚠ `kaynak/kural_test.py` (eko.py) ve `kaynak/kos.js` (tam_test.js) **hâlâ
+koşmuyor** — dosyalar repoda yok, `tus_tamami.tar.gz` gerekiyor.
+
+### Bu turda yaptığım hatalar
+- **§294'te fazla ileri gittim.** Kullanıcı "anahtar alanı gözükmüyor" dedi;
+  ben katlanabilirliği tamamen söktüm. Doğrusu katlanabilirliği koruyup
+  varsayılanı ve görünürlüğü değiştirmekmiş — §296'da bu yapıldı.
+- **Kendi testimi bayat bıraktım.** §296 öğeleri silince `filtre_test`
+  kırıldı; kapının kırmızı yanması uygulamayı değil testi işaret ediyordu.
+  (CLAUDE.md'de yazan tuzağa yine düştüm: "test kırıldı ≠ uygulama bozuk".)
+- **Gerçek API hâlâ hiç çağrılmadı.** Tüm dayanıklılık kanıtı sahte `fetch`
+  üzerinden; kopmanın gerçekte çözülüp çözülmediği ölçülmedi. Bunu "düzeltildi"
+  diye yazmıyorum.
+
+**sürüm 2027-02-19e ↔ rota-2027-02-19e**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
@@ -14606,9 +14686,20 @@ Bekleyen: kullanıcıdan etiketli deneme verisi (§230 formatı) · cihazdan "Ha
   6 düşük güvenli sorusu için **düzeltme aracı kuruldu (§272)** — kullanıcı kartın
   içinden D/Y/Boş kararını verebilir; içerik doğrulaması hâlâ kullanıcıda.
 - **§283 kamera ile deneme · Aşama 1 kuruldu.** Kullanıcı optik yerine **kitapçık
-  fotoğrafı** çekiyor; okuma motoru **kullanıcının Anthropic anahtarıyla, tarayıcıdan
-  doğrudan Claude görüşü**. Açık noktalar: (a) gerçek kitapçık fotoğraflarıyla okuma
-  doğruluğu (el yazısı D/Y/B + E/B/AK/U + konu) **henüz denenmedi** — kullanıcı ilk
-  denemede güven kodlarına bakmalı; (b) Fizyoloji/Histo aralığı kullanıcı beyanı
-  (14–20 / 21–28), SORU.den ile ters ama net grubu ortak olduğundan etkisiz; (c) her
-  deneme WiFi + anahtar başına maliyet (opus-5 varsayılan, sonnet-5'e düşürülebilir).
+  fotoğrafı** çekiyor; okuma motoru §285'te **Gemini**'ye taşındı (varsayılan
+  `gemini-flash-lite-latest`; Claude yolu duruyor, sağlayıcı seçilebilir).
+  Açık noktalar: (a) Fizyoloji/Histo aralığı kullanıcı beyanı (14–20 / 21–28),
+  SORU.den ile ters ama net grubu ortak olduğundan etkisiz.
+
+- ⚠ **GERÇEK API HÂLÂ HİÇ ÇAĞRILMADI.** §285–§298 arası tüm okuma/eşleştirme/
+  dayanıklılık kanıtı **sahte `fetch`** ve el ile okunmuş yer gerçeği üzerinden.
+  Kullanıcının ilk gerçek denemesi "ağ hatası load failed" ile bitti; §295
+  (parti parti gönderme · zaman aşımı · yeniden deneme · wakeLock) bunu **daha az
+  olası** yapar, imkânsız yapmaz. **Sıradaki iş: kullanıcı anahtarı yenileyip
+  tekrar denesin**, sonra istem doğruluğu (el yazısı D/Y/B · E/AK/B/U · konu)
+  gerçek çıktıya göre ayarlansın.
+
+- ⚠ **Anahtar sohbette açığa çıktı** (kullanıcı yapıştırdı). Koda gömülmedi,
+  commit edilmedi. Kullanıcı o anahtarı **iptal edip yenisini üretmeli** ve
+  yalnız uygulamanın ayar alanına girmeli (`localStorage: rota-gorus`,
+  gist senkronuna dahil değil).
