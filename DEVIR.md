@@ -13205,6 +13205,92 @@ cevap anahtarı formatı + işaretli örnek sayfa).
 
 ---
 
+## §263–§265 · GECE OTURUMU — Obsidian dili · denetimler · Altın Yol · OMR iskeleti
+
+Kullanıcı birleşik prompt + **56 sn ekran kaydı** (Obsidian mobil) verdi ve
+"durmadan, onay beklemeden ilerle, her adımda commit" dedi. Kayıt ffmpeg ile
+28 kareye ayrılıp çözümlendi.
+
+### §263 · Obsidian görsel dili + grafik denetimleri + gömülü kart (`2027-03-10a`)
+- **Saf siyah zemin (#000)**, açık-gri düğümler, etiket düğümün ALTINDA, seyrek düzen.
+  Sağ kenarda dikey ikon yığını. **JARVIS SAĞ ÜST'e taşındı** (kullanıcı şartı).
+- **Geçici "⋯" köprü menüsü KALDIRILDI** → Obsidian'ın kendi mekanizması:
+  **Filtreler / Gruplar / Göster / Güçler**. "Bugün/Telafi" panel akışları artık
+  haritada **renkli grup** (gerçek veride 11 bugün + 12 telafi düğümü boyandı).
+  Gruplar düzenlenebilir/kalıcı (`D.atGrup`), Güçler yerleşimi canlı yeniden kuruyor.
+- **Haritaya gömülü bilgi kartı**: düğüme dokununca alt kenarda zeminle karışan
+  katman; harita altında görünür kalıyor, kamera düğümü kartın üstünde tutuyor.
+  İçerik motordan canlı; bağlantılar tıklanır; "Çalıştım" mevcut D.pu/D.bitti yolu.
+
+### §264 · FAZ 3 · ALTIN YOL (`2027-03-11a`)
+Yeni algoritma yok: `gorevOncelik` (CS + beklenen net) + `puEtki().verim` (net/saat)
++ `tempoProjeksiyon` (kapasite). Sıra net/saat ekseninde azalan, kapasiteye kadar.
+Haritada **altın eğrilerle bağlı numaralı duraklar**; altın rengin TEK kullanımı
+burası (kapıyla denetleniyor). **Öneri katmanı** — ♦ düğmesiyle açılır/kapanır.
+JARVIS bildiriyor. Az veriyle "temkinli" etiketi. Gerçek veride: **14 durak,
+kapasite 52 sa, beklenen +5.93 net, güven "iyi"**, ilk durak Pediatrik Alerji
+(0.670 net/sa), hesap 250 ms.
+
+### §265 · OMR/kamera boru hattı — dört katmanlı iskelet (`2027-03-12a`)
+`isaretOku` [MOCK · değişecek tek katman] → `omrEslestir` (konu UYDURMAZ; güvensizi
+"Eşleştirme gerekli") → `omrOnizle` (harita dilinde onay kartı) → `omrKaydet`
+(MEVCUT dqBransNet → D.denemeler). **Önizleme kayda yazmıyor** (6→6), onayla
+yazıyor (6→7) — ikisi de tarayıcıda kanıtlandı. Onaydan sonra harita+gruplar+
+Altın Yol yeniden hesaplanıyor.
+
+**Kapılar:** kal/derin/cark/mola/kombo ✓ · pu_test'e §263/§264 (10) + §265 (9)
+kapıları eklendi, ikisi de SIFIR HATA · toplam ✗ **7** = değişmeden §229.
+
+**VARSAYIM (sabah doğrulanacak):** `claude-code-tus-obsidian-prompt.md` şartname
+dosyası bu oturuma ULAŞMADI (repoda ve dosya sisteminde yok). Şartname kullanıcının
+mesajlarından + önceki analiz özetinden alındı.
+
+---
+
+## ⚠ §229'un 7 HATASI — KÖK NEDEN BULUNDU (karar kullanıcıya ait)
+
+Yedi hata tek bir yerden geliyor; ikisi ayrı:
+
+**1 tanesi eskimiş kaynak-dizgi iddiası:** `konuCalisildi merkezi kayıttan` —
+fonksiyon ÇALIŞIYOR (`konuCalisildi("Meme Hastalıkları") === true` ölçüldü), test
+belirli bir kod dizgisini arıyor. Zararsız; iddia güncellenebilir.
+
+**6 tanesi TEK KÖKTEN:** `program görevi gölgeleniyor` · `potansiyel düşüyor` ·
+`ikinci kaynak daha az getiriyor` · `ikinci getiri pozitif ama küçük` ·
+`listede üstü çizili` · `kaynak adı yazıyor`.
+
+**Kök neden (ölçüldü):** Test şunu bekliyor — *Levent Kodal **Genel Cerrahi** SB'den
+"Meme Hastalıkları" çalışınca, programdaki **Patoloji** "Meme Hastalıkları" görevi
+gölgelensin (ikame sayılsın).* Ama §227/§228'de **bilinçli olarak** konu anahtarı
+**GRUP BAZLI** yapıldı:
+```
+konuAnh(görev)   = "Patoloji§meme hastalıkları"
+konuAnh(powerup) = "Genel Cerrahi grubu§meme hastalıkları"   → EŞLEŞMİYOR
+```
+Yani bu bir kod hatası değil, **iki bilinçli kararın çatışması**. Test §228'den
+önceki (ad-bazlı) davranışı bekliyor.
+
+**Kapsam ölçüldü:** 297 farklı konu adının **yalnız 8'i** birden çok grupta geçiyor:
+`hormonlar` (Biyokimya|Farmakoloji) · `meme hastalıkları`, `pankreas hastalıkları`,
+`deri hastalıkları` (Genel Cerrahi|Patoloji) · `ortopedi` (Dahiliye|Genel Cerrahi) ·
+`immünoloji` (Mikrobiyoloji|Patoloji) · `enfeksiyon hastalıkları`
+(Mikrobiyoloji|Dahiliye) · `beslenme` (Genel Cerrahi|Pediatri).
+
+**KARAR SENİN (ikisi de savunulabilir):**
+- **(A) Grup bazlı kalsın** (şu anki davranış): Genel Cerrahi'nin meme cerrahisi ile
+  Patoloji'nin meme patolojisi FARKLI bilgi/soru havuzu sayılır. Bu 8 konuda çift
+  çalışma "iki ayrı kazanç" verir. → Testin 6 iddiası **eskimiş**, güncellenir.
+- **(B) Ad bazlı çapraz gölgeleme dönsün**: aynı adlı konu hangi gruptan çalışılırsa
+  çalışılsın diğerini de ikame etsin. → §228 kararı geri alınır; net havuzu paylaşımı
+  8 konuda değişir, projeksiyon bir miktar düşer (çift sayım kalkar).
+
+Kararını bekliyorum; **kendiliğinden değiştirmedim** (CLAUDE.md: kullanıcının
+vermediği kuralı kural sanma).
+
+**sürüm 2027-03-12a ↔ rota-2027-03-12a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
