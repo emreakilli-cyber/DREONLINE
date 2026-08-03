@@ -1737,3 +1737,35 @@ eO('okuma katmanı yalnız isaretOku içinde (değişecek tek yer)',
 })();
 console.log('\n'+(QO?'✗ '+QO+' HATA':'✓ SIFIR HATA — 26 ek kontrol'));
 if(QO)process.exitCode=1;
+
+console.log('\n═══ JARVIS · KÖŞEDE TEK SATIR, SOHBET PENCERESİ DEĞİL (§268) ═══');
+let QJ=0;const eJ=(a,ok,x)=>{if(!ok){QJ++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+/* Yapısal koruma: kutu iki satırı asamaz, telefonda ekranin yarisini yutamaz. */
+(function(){
+  const i=kod.indexOf('#jarvisSatir{'); const blok=kod.slice(i,i+520);
+  eJ('kutu iki satira kirpiliyor (-webkit-line-clamp:2)',/-webkit-line-clamp:2/.test(blok));
+  eJ('tasan metin gizleniyor (overflow:hidden)',/overflow:hidden/.test(blok));
+  eJ('sag UST koseye sabit (position:fixed + top + right)',
+    /position:fixed/.test(blok)&&/top:\d/.test(blok)&&/right:\d/.test(blok));
+  const m=blok.match(/max-width:min\((\d+)px,(\d+)vw\)/);
+  eJ('telefonda ekran genisliginin cogunu YUTMUYOR (<=60vw)',!!m&&+m[2]<=60,m&&m[0]);
+  eJ('tiklamayi engellemiyor (pointer-events:none)',/pointer-events:none/.test(blok));
+})();
+/* Mesaj disiplini: hicbir cagri yeri uzun paragraf uretmemeli.
+   Ayrinti haritadaki kartta yasar - JARVIS yalniz duyurur (sartname). */
+(function(){
+  const duzMetin=(ifade)=>(ifade.match(/'[^']*'/g)||[]).map(x=>x.slice(1,-1)).join('').replace(/<[^>]*>/g,'');
+  const uzun=[], cok=[];
+  const re=/jarvis\(([\s\S]{0,600}?),\s*\d+\s*\)/g;
+  let m;
+  while((m=re.exec(kod))){
+    const g=duzMetin(m[1]);
+    if(g.length>150)uzun.push(g.slice(0,70)+'...('+g.length+')');
+    if((g.match(/[.!?]\s/g)||[]).length>=2)cok.push(g.slice(0,60)+'...');
+  }
+  eJ('hicbir JARVIS satiri paragraf degil (duz metin <=150 karakter)',uzun.length===0,uzun);
+  eJ('tek nefeslik (iki tam cumleden fazlasi yok)',cok.length===0,cok);
+})();
+eJ('saygili hitap korunuyor (efendim)',(kod.match(/efendim/g)||[]).length>=6);
+console.log('\n'+(QJ?'✗ '+QJ+' HATA':'✓ SIFIR HATA — 8 ek kontrol'));
+if(QJ)process.exitCode=1;

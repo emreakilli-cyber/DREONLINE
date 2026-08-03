@@ -13431,6 +13431,76 @@ kaymanın kalibrasyon ölçeğinde (<1 puan) kaldığını ölçüyor.
 
 ---
 
+## §268 · TELEFON TURU — JARVIS sohbet penceresine dönüşmüştü
+
+Kullanıcının birincil cihazı telefon; kapılar yerleşim görmüyor. Üç viewport'ta
+gerçek tarayıcı turu koştum (`scratchpad/telefon.js` · iPhone 13 390×844@3x ·
+iPhone SE 375×667@2x · iPad 820×1180@2x).
+
+**İyi çıkanlar:** yatay taşma **0** (üç cihazda da) · tuval DPR'ye göre doğru
+ölçekleniyor (375×667 @2x → 750×1334 arka tampon) · denetim paneli telefonda
+ekranın %25–33'ü, iPad'de %8 · 414 düğüm her cihazda kuruluyor · sayfa hatası yok.
+
+### Kusur · JARVIS ekranın %72'sini yutuyordu
+
+Şartname: *"sağ üst köşede, küçük, nadir, saygılı tek satır — sohbet penceresi
+değil."* Ölçüm:
+
+| mesaj | kutu (telefon) | satır | ekran yüksekliği |
+|---|---|---|---|
+| "İyi çalışmalar efendim." | 156×37 | 1 | %4.3 |
+| OMR kısmi tarama | **281×87** | **5** | %10.3 |
+| OMR kayıt | **281×87** | **5** | %10.3 |
+
+Kutu içeriğe göre küçülüyordu — yani **CSS değil, benim yazdığım mesajlar** uzundu.
+Beş satırlık balon köşe satırı değil, sohbet penceresidir.
+
+**İki taraflı düzeltme:**
+1. **Mesajlar kısaldı.** Ayrıntı zaten haritadaki kartta yaşıyor (şartname:
+   "her şey haritada yaşar"), JARVIS yalnız duyurur.
+   `"Kısmi tarama okundu efendim: Kadın Doğum · 4 soru sayıldı · 6 düşük güvenli.
+   Deneme değil branş kaydı olarak yazacağım."` → `"Kısmi tarama efendim ·
+   Kadın Doğum · 4/10 sayıldı."` Altın yol, açılış selamı ve kayıt mesajları da aynı
+   şekilde tek nefeslik hale getirildi.
+2. **Yapısal koruma.** `-webkit-line-clamp:2` + `max-width` 72vw → **58vw**. Gelecekte
+   uzun bir mesaj yazılsa bile kutu iki satırı aşamaz.
+
+Gerçek kod yollarıyla (hardcode metin değil) yeniden ölçüldü — dördü de sığıyor,
+kırpılma yok:
+
+```
+"Hoş geldiniz efendim · 20 gün · parakete 59.4 · Anatomi bekliyor."   tasti:false
+"Kısmi tarama efendim · Kadın Doğum · 4/10 sayıldı."                  tasti:false
+"1 branş kaydı yazıldı efendim · parakete değişmedi."                 tasti:false
+"Rota hazır efendim · Pediatrik Alerji ile başlayın · +6.0 net."      tasti:false
+```
+
+Altın yol satırı ilk denemede kırpıldı (`tasti:true`); durak sayısı zaten haritada
+görünüyor diye satırdan çıkarıldı — kırpma yerine kısaltma.
+
+`pu_test`'e §268 bölümü eklendi (**8 kontrol**): line-clamp · overflow · sağ üst
+konum · ≤60vw · pointer-events · hiçbir çağrı yerinin düz metni >150 karakter
+olmaması · iki tam cümleden fazlası olmaması · "efendim" hitabının korunması.
+
+### ⚠ Kendi ölçüm hatam — CLAUDE.md'nin tam da uyardığı tuzak
+
+Aynı turda "kart alttan 18 px taşıyor, üç cihazda da" diye bir bulgu üretmiştim.
+Taşma yoktu: `atKartUp` animasyonunun `from{transform:translateY(18px)}` değerini
+ölçmüşüm — **animasyon otururken ölçüm** (§120–§122, §127, §139, §146, §148, §158
+ile aynı hata, sekizincisi). 600 ms bekleyip yeniden ölçünce:
+
+```
+iphone13: altTasma 0 · sagTasma 0 · yükseklik 253 (ekranın %30) · iç taşma yok
+ipad    : altTasma 0 · sagTasma 0 · yükseklik 201 (ekranın %17) · iç taşma yok
+```
+
+Kartta kusur yok; bulgu benim hatamdı. Ölçüm betiğine `waitForTimeout(600)` ve
+gerekçesi yorum olarak kondu.
+
+**sürüm 2027-03-15a ↔ rota-2027-03-15a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
