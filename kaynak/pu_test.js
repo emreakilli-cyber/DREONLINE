@@ -1043,6 +1043,46 @@ eV('kitapYakin fonksiyonu',R('typeof kitapYakin')==='function');
 console.log('\n'+(KV?'✗ '+KV+' HATA':'✓ SIFIR HATA — 26 ek kontrol'));
 if(KV)process.exitCode=1;
 
+console.log('\n═══ §282 · BAŞKA KAYNAKTAN REFLEKSİ + KONU-KÖK DECAY ═══');
+let KRfx=0;const eRfx=(a,ok,x)=>{if(!ok){KRfx++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eRfx('konuKok fonksiyonu',R('typeof konuKok')==='function');
+eRfx('konuKapsamKume fonksiyonu',R('typeof konuKapsamKume')==='function');
+eRfx('konuBaskaKaynak fonksiyonu',R('typeof konuBaskaKaynak')==='function');
+/* konuKok: video parçası taban konuya iner, power-up "Hematoloji" ile eşleşir */
+eRfx('kök · video parçası → taban konu',
+   R('konuKok("Hematoloji videoları — 1/9")')===R('konuKok("Hematoloji")'));
+eRfx('kök · "· N/M. parça" da iner',
+   R('konuKok("Neoplazi · 1/2. parça")')===R('konuKok("Neoplazi")'));
+eRfx('kök · farklı konu AYNI köke inmez',
+   R('konuKok("Hematoloji")')!==R('konuKok("Anemiler")'));
+(function(){
+  C.setGun('2026-08-03'); X.D.bitti={}; X.D.pu={}; X.D.tts={};
+  /* Videolar bitmeden kapsam yok (9/9 kuralı) */
+  let c=0; X.GOREVLER.forEach(g=>{ if(/Hematoloji videoları/.test(g.k)&&c<5){X.D.bitti[X.id(g)]='2026-08-03';c++} });
+  eRfx('5/9 · kapsam TETİKLENMEZ',R('konuBaskaKaynak("Hematoloji")')===null,R('konuBaskaKaynak("Hematoloji")'));
+  eRfx('5/9 · video decay resetlendi (kök bazlı)',R('konuSon("Dahiliye","Hematoloji","Dahiliye grubu")')!==null);
+  /* 9/9 → kapsam var */
+  X.GOREVLER.forEach(g=>{ if(/Hematoloji videoları/.test(g.k))X.D.bitti[X.id(g)]='2026-08-03' });
+  eRfx('9/9 · konuBaskaKaynak kaynak döndürür',!!R('konuBaskaKaynak("Hematoloji")'),R('konuBaskaKaynak("Hematoloji")'));
+  /* Kitap satırında "başka kaynaktan" rozeti (klBK) render ediliyor */
+  R('D.glKip="kitap"; D.klTur="konu"; D.klKitap="Atilla Uslu Dahiliye 1"');
+  const t=R('gunListe()');
+  eRfx('kitap satırında klBK rozeti',/klBK[^>]*>✓ başka kaynaktan/.test(t));
+  eRfx('rozetli satır .bk sınıfı alıyor',/glS klS bk/.test(t));
+  R('D.glKip=null; D.klKitap=null; D.klTur=null');
+  /* TTS decay reset (D.tts konuSonKume'ye dahil) */
+  X.D.bitti={}; X.D.pu={}; X.D.tts={};
+  X.D.tts['tts|TTS Dahiliye|Hematopoez']='2026-08-03';
+  eRfx('TTS · decay resetliyor',R('konuSon("Dahiliye","Hematopoez","Dahiliye grubu")')!==null);
+  /* Power-up (kontrol) decay reset korunuyor */
+  X.D.tts={};
+  R('(function(){var u=POWERUP.find(x=>x.kitap==="Atilla Uslu Dahiliye 1"&&x.konu==="Hematoloji");D.pu[puAnh(u)]={al:"2026-08-03",bit:"2026-08-03"};})()');
+  eRfx('power-up · decay reset korunuyor',R('konuSon("Dahiliye","Hematoloji","Dahiliye grubu")')!==null);
+  X.D.bitti={}; X.D.pu={}; X.D.tts={};
+})();
+console.log('\n'+(KRfx?'✗ '+KRfx+' HATA':'✓ SIFIR HATA — 13 ek kontrol'));
+if(KRfx)process.exitCode=1;
+
 console.log('\n═══ KİTAP İÇERİĞİ TAM ═══');
 let KT=0;const eT=(a,ok,x)=>{if(!ok){KT++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
 eT('gizleme kitap içine daraltıldı',kod.indexOf('const ayniKitap=GOREVLER.some(g=>')>=0);

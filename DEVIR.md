@@ -14088,6 +14088,57 @@ kural_test.py (eko.py).
 
 ---
 
+## §282 · "Başka kaynaktan" refleksi + konu-kök decay (2027-02-18i)
+
+Kullanıcı: aynı konuyu (ör. Hematoloji) video/kitap/power-up/TTS'ten çalışınca
+tek kazanç sayılsın, bir yüzeye işaret koyunca DİĞER yüzeylerde "yapılmamış"
+görünmesin; başka kaynaktan da bakınca TEKRAR sayılsın ve o konunun
+(görevin değil) çürümesi kesilsin. Çok-parçalı konu 9/9 bitince "tam".
+
+**Önce ölçtüm (varsaymadan):**
+- Kazanç ZATEN tek sayılıyordu — motor kapsama-tavan mantığıyla mükerrer
+  saymıyor (power-up'ı videoların üstüne ekleyince +0.00). "3 kazanç" yoktu.
+- Tekrar sınıfı (S_ILK↔S_TEK) `konuCalisildi` (bulanık token eşleşmesi) ile
+  zaten çalışıyordu — her kaynaktan.
+- GERÇEK boşluk: (a) çürüme reset'i `konuSonKume` BİREBİR anahtar + yalnız
+  D.bitti/D.pu kullanıyordu → video ("Hematoloji videoları — 1/9" ≠ "Hematoloji")
+  ve TTS decay'i resetleMİYORDU; (b) kitap-içi satır yalnız kendi kaydına
+  bakıyordu, "başka kaynaktan" işareti yoktu.
+
+**Yapılan:**
+- `konuKok(ad)`: çok-parçalı görev adını taban konuya indirger ("videoları — N/M"
+  ekini de soyar; renkAnh "· N/M. parça"yı zaten soyuyordu). Gerçek veriyle
+  doğrulandı: video parçaları taban konuyla eşleşiyor, yanlış çakışma yok
+  (14 "çakışma" renkAnh'ın zaten yaptığı büyük/küçük + "Oldies/Genel" birleşmesi).
+- `konuSonKume` kök bazlı + D.tts dahil → çürüme HER kaynaktan (video/kitap/
+  power-up/TTS) resetleniyor.
+- `konuKapsamKume()` / `konuBaskaKaynak(ad)`: bir taban-konu HANGİ kaynaktan
+  TAM çalışıldı (çok-parçalıda 9/9). Memoize (0.03 ms sıcak).
+- Kitap-detay + gün-listesi satırında `.klBK` "✓ başka kaynaktan" altın rozeti
+  (üstü çizili değil — yapılmadı gibi durmasın); daire kalıyor, buradan da
+  işaretlenince tekrar sayılıyor. Gün-listesinde ikame'nin (birebir anahtar)
+  kaçırdığı video görevlerini kapsıyor; kapsanmış görev "kaçırılmış ⚠" göstermez.
+
+**Doğrulama:**
+- Gerçek veriyle ESKİ↔YENİ: PARAKETE 59.3504 = 59.3504, power-up toplam getiri
+  43.3447 = 43.3447 (Δ 0.0000). Decay düzeltmesi bugün uykuda (yakın tarihli
+  çalışma cur≈0); haftalar geçince video/TTS konuları doğru çürümeyi gösterir.
+  Bu, kullanıcının istediği "çalışınca çürümeyi kes" davranışının ta kendisi.
+- 9/9 kuralı: 5/9 videoda kapsam=null, 9/9'da kaynak dönüyor.
+- İki yön tarayıcıda (gerçek veri, pageerror yok): videolar→konu kitabı Hematoloji
+  rozetli; power-up→9 video parçası rozetli; gün-listesi 4/4 Hematoloji videosu
+  rozetli, "kaçırılmış" göstermiyor.
+- Kapılar: pu_test (§282: 13 kontrol — konuKok/kapsam/decay/rozet) + derin/cark/
+  mola/kombo/kal/denet **0 hata**. node --check temiz.
+
+Not: `golge/ikameMi` (gün-listesi eski coverage) DEĞİŞMEDİ — kök bazlıya çevirmek
+video parçalarını birbirine erken gölgeler (parça 1 bitince 2-9 "yapıldı" görünür).
+Bu yüzden ayrı `konuKapsamKume` (9/9) kuruldu, `konuKayit` birebir kaldı.
+
+**sürüm 2027-02-18i ↔ rota-2027-02-18i**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
