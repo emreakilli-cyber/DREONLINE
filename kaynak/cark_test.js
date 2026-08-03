@@ -652,7 +652,7 @@ cV('yazı ölçüsü değişkene bağlı',kod.indexOf('font-size:var(--gyaz,11px
 cV('değişkenler hesaplanıp yazılıyor',kod.indexOf("gl.style.setProperty('--gsat'")>=0&&
    kod.indexOf("gl.style.setProperty('--gyaz'")>=0);
 cV("boy pencereden sabit + taşma sütuna bölünüyor (§276)",
-  kod.indexOf("const SAT=Math.max(24,Math.min(32,h/24))")>=0&&
+  kod.indexOf("const SAT=Math.max(22,Math.min(29,h/26))")>=0&&
   kod.indexOf("classList.add('cift')")>=0);
 cV('sık kipte branş gizleniyor',kod.indexOf('#gunListe.sik .glS .br{display:none}')>=0);
 cV('kaydırma kapalı (hepsi sığıyor)',kod.indexOf('#gunListe{position:absolute;inset:0;z-index:2;overflow:hidden')>=0);
@@ -686,7 +686,7 @@ cW("boy pencereden sabit; küçültme yalnız çift sütunda da taşan istisnada
 /* §275: tolerans h-2 → h-PAY (1-2 parmak alt boşluk; maske bandına dayanmasın) */
 cW('gerçek yükseklik ölçülüyor (içerik alt kenarı + alt PAY)',
   kod.indexOf('icerikAlt()<=h-PAY')>=0&&
-  /const PAY=Math\.max\(28,Math\.min\(76,Math\.round\(h\*0\.09\)\)\)/.test(kod));
+  /const PAY=Math\.max\(34,Math\.min\(96,Math\.round\(h\*0\.11\)\)\)/.test(kod));
 cW('içerik alt kenarı son çocuktan türetiliyor',/c\.offsetTop\+c\.offsetHeight/.test(kod));
 cW('GERİLEME: sığma testi scrollHeight ile yapılmıyor',kod.indexOf('gl.scrollHeight<=h-')<0);
 cW('istisna araması en çok 8 tur',kod.indexOf('for(let t=0;t<8;t++)')>=0);
@@ -1133,9 +1133,9 @@ console.log('\n═══ GÜN LİSTESİ OKUNAKLILIĞI ═══');
 let J3=0;const d3=(a,ok,e)=>{if(!ok){J3++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
 /* §276: §275'in tavanı da güne bağlıydı; boy artık pencereden SABİT */
 d3('satır boyu pencereden sabit (§276)',
-  kod.indexOf('const SAT=Math.max(24,Math.min(32,h/24))')>=0);
-d3('yazı oranı %58',kod.indexOf('sat*0.58')>=0);
-d3('yazı tavanı satır boyundan (§276)',kod.indexOf('const YAZ_TAVAN=Math.max(16,Math.min(34,SAT*0.50))')>=0);
+  kod.indexOf('const SAT=Math.max(22,Math.min(29,h/26))')>=0);
+d3('yazı oranı %58',kod.indexOf('sat*0.50')>=0);
+d3('yazı tavanı satır boyundan (§276)',kod.indexOf('const YAZ_TAVAN=Math.max(14,Math.min(28,SAT*0.46))')>=0);
 d3('konu adı satırdan büyük',kod.indexOf('.glS .ko{font-size:calc(var(--gyaz,11px) + 1.5px)')>=0);
 d3('blok başlığı da ölçekli',kod.indexOf('.glBlok{font-size:calc(var(--gyaz,11px) - 2.5px)')>=0);
 d3('gün özeti de ölçekli',kod.indexOf('.glBas b{display:block;font-size:calc(var(--gyaz,11px) + 5px)')>=0);
@@ -1166,9 +1166,9 @@ if(J3)process.exitCode=1;
 
 console.log('\n═══ YAZI ÖNCELİĞİ ═══');
 let J4=0;const d4=(a,ok,e)=>{if(!ok){J4++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
-d4('yazı oranı %58',kod.indexOf('sat*0.58')>=0);
-d4('yazı tavanı satır boyundan (§276)',kod.indexOf('const YAZ_TAVAN=Math.max(16,Math.min(34,SAT*0.50))')>=0);
-d4("yazı tabanı 10px",kod.indexOf("Math.max(10,Math.min(YAZ_TAVAN")>=0);
+d4('yazı oranı %58',kod.indexOf('sat*0.50')>=0);
+d4('yazı tavanı satır boyundan (§276)',kod.indexOf('const YAZ_TAVAN=Math.max(14,Math.min(28,SAT*0.46))')>=0);
+d4("yazı tabanı 9.5px (§277: bir tık küçük)",kod.indexOf("Math.max(9.5,Math.min(YAZ_TAVAN")>=0);
 d4('satır metni sıkıştırılmış',kod.indexOf('height:var(--gsat,34px);line-height:1.2')>=0);
 (function(){
   const olc=(n,b,h)=>{
@@ -1201,8 +1201,8 @@ if(J4)process.exitCode=1;
 console.log('\n═══ ALANI DOLDURMA ═══');
 let J5=0;const d5=(a,ok,e)=>{if(!ok){J5++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
 d5('satır boyu pencereden sabit (§276)',
-  kod.indexOf('const SAT=Math.max(24,Math.min(32,h/24))')>=0);
-d5('yazı tavanı satır boyundan (§276)',kod.indexOf('const YAZ_TAVAN=Math.max(16,Math.min(34,SAT*0.50))')>=0);
+  kod.indexOf('const SAT=Math.max(22,Math.min(29,h/26))')>=0);
+d5('yazı tavanı satır boyundan (§276)',kod.indexOf('const YAZ_TAVAN=Math.max(14,Math.min(28,SAT*0.46))')>=0);
 d5('boy güne göre DEĞİL pencereye göre (§276 · kullanıcı isteği)',
   kod.indexOf('BOYUT YALNIZ PENCEREDEN')>=0);
 d5('ResizeObserver bağlı',kod.indexOf('gl.__gozcu=new ResizeObserver')>=0);
