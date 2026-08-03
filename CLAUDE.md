@@ -63,8 +63,9 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
 
 - Üretim sırası: `dizi3.py` → `yeniden.py` → `uret.py` (kural testi otomatik koşar)
   → `denet.py` → `kos.js`. FT/power-up tarafı: `ft_katalog.py` (tek kaynak) → `ft_uret.py`.
-- Tur sonu **on dört kapı**: `kural_test.py` · `denet.py` · `kos.js` · `derin_test.js` ·
+- Tur sonu **on yedi kapı**: `kural_test.py` · `denet.py` · `kos.js` · `derin_test.js` ·
   `kombo_test.js` · `cark_test.js` · `mola_test.js` · `pu_test.js` · `kal_test.js` ·
+  `dom_test.js` · `olcek_test.js` · `analiz_test.js` ·
   `senk_kos/poll/etag/uc/rol.js`. Hepsi koşulur, **çıktının tamamı okunur**.
 - ⚠ **Kapı geçmek "hata yok" demek değildir** — kapılar kendi yazdığın kontrollerdir
   (§87'de kapılar temizken 4 gerçek hata bulundu). Belgeyi de denetlemezler (§12.10).
@@ -117,7 +118,7 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   varyantı atlanınca §112'nin düzeltmesi §117'ye kadar eksik kaldı; aynı kusur dört
   panelde birden vardı §151).
 
-## Güncel durum işaretçisi (sürüm `2027-02-19b`, DEVIR sonundaki devir notu)
+## Güncel durum işaretçisi (sürüm `2027-02-19g`, DEVIR sonundaki devir notu)
 
 - FT serisi 10 kitap power-up havuzuna işlendi (156 → 254 konu); konu tekilliği /
   net havuzu paylaşımı grup bazlı anahtarla tamamlandı (§219–§228).
@@ -149,11 +150,59 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
 - **§291–§292 · çarkın merkezini tutup SAĞA kaydır → deneme analizi** (her iki
   görünümde). Analiz hazır olunca üstten bildirim YOK; çark ritmik dürtüyor
   (`#cark.durt`), `D.analizBekliyor` ile kalıcı, senkron dışı.
+- **§293 · gerçek fotoğraflar üç varsayımı çürüttü.** D/Y/B soru numarasının altında
+  değil **sol kenarda** (Y kırmızı); konuyu kullanıcı **zaten elle yazıyor**. Cevap
+  anahtarı "Doğru cevap: (X)", tablolar "Tablo (Soru N)" etiketli. En önemlisi:
+  sonuç artık el yazısından değil **daireli şık ↔ anahtar karşılaştırmasından**
+  türetiliyor (`sonucHesapla`); çelişki `sCakisma`'da saklanıyor. EXIF sorun
+  çıkarmadı (ölçüldü: tarayıcı otomatik döndürüyor).
+- **§294 · analiz filtreleri.** Sayfa 0'da etiket+ders çip filtresi · sayfa 2'de bar
+  artık BAŞARI oranı (en zayıf ders en üstte, en boş, en kırmızı) ve ders satırı
+  tıklanınca o dersin haritası açılıyor (geri oku) · sayfa 3'te ders filtresi +
+  "etiket etiket grupla" (ikisi birlikte çalışır).
+- **§295–§298 · ilk gerçek okuma denemesi "load failed" verdi.** İstek gidiyor,
+  yanıt dönmüyordu (Gemini panelinde RPM hareketi vardı). Ölçüm: 1568 px foto ≈
+  500 KB base64, üç sayfa tek istekte ≈ 1.5 MB. Çözüm: `GORUS_PARTI=2` ikişerli
+  partiler · `GORUS_ZAMAN` + `AbortController` · bir kez otomatik yeniden deneme ·
+  `wakeLock` · hata metni sebebi (telefonun uyuması) doğru söylüyor.
+  §296 ayarlar menüsü **yeniden katlanabilir** (`<details id="dpAyarDet">`), ama
+  anahtar yokken açık geliyor ve özette "anahtar gerekli/tanımlı" yazıyor —
+  §294'ün daima-açık kutusu kullanıcı isteğiyle geri alındı.
+  §297 okuma sonunda eksik E/AK/B/U kodları soru soru soruluyor.
+  §298 okuma sonrası özet: soru numarası aralığı + dersler + "kısmi yükleme"
+  bildirimi + "önce cevap anahtarı ekle" seçeneği.
+- **§299 · 75 fotoğraf / 375 MB ölçeği.** Kullanıcı denemenin tamamını + anahtarı
+  çekti. Ölçüldü: 75 foto = 556 MB data URL, 38 istek. Eski yol hepsini birden
+  bellekte tutup tek hatada her şeyi çöpe atıyordu. Artık **`fotoKaynak` tembel**
+  (foto sırası gelince okunur, orijinal hemen bırakılır — heap artışı 15 MB),
+  **`gorusAkis` kısmi başarı** döndürür (`{sorular, basarisiz[]}`), 429 geçici
+  sayılır, okunamayan gruplar sayfa numarasıyla bildirilip **yalnız onlar** tekrar
+  denenir. Karışık yığında cevap anahtarı sayfaları `sayfaTur:"anahtar"` ile
+  ayrılır. ⚠ Parti-içi foto numarası genel sıraya çevrilir — eskiden kırpma
+  ikinci partiden sonra yanlış fotoğrafa bakıyordu. Kapı: `kaynak/olcek_test.js`.
+- **§300 · ilk gerçek kullanımın üç kusuru.** (a) "İncele ve kaydet" kartı
+  `#atKart`'a çiziliyordu, o da `#atlasKat` İÇİNDE — katman kapalıyken 0×0,
+  görünmüyordu; artık panelin içinde (`#dpIncele`, `OMR_DURUM.hedef`).
+  (b) `#cark{touch-action:pan-x}` yüzünden sağa kaydırma gerçek dokunuşta
+  ölüyordu (tarayıcı `touchcancel` gönderiyor) → `none`. **Fare ile test etmek
+  dokunma hareketini doğrulamaz.** (c) Yeşil "analiz hazır" bildirimi hiç
+  üretilmemişti → `#carkAnaliz` çarkın iç bükey alanını dolduruyor, hem dokunma
+  hem sağa kaydırma açıyor. Ayrıca 200↔24 kip değişimi okunan sonucu siliyordu.
+  Kapı: `kaynak/analiz_test.js`.
+- **Gerçek cevap anahtarı sayfaları:** telefonla YAN çekiliyor (metin 90° dönük),
+  bir karede İKİ sayfa, etiketler `Tablo (Soru N)` **ve** `Şekil (Soru N)`,
+  soru kutusunda gömülü etiketsiz görseller (mikroskop/radyoloji), cilt
+  kıvrımında kesik sütunlar → istem "tamamlama, `[…]` ile işaretle" diyor.
 - **YARIM KALAN · TASARIM:** power-up paneli, matris ve seyir sayfalarının görsel
   tasarımı (beğenilen referans: `.glAnh` altın gradyan anahtar, `.glS` satır düzeni,
   §217 daire tamamlama düğmesi).
+- ⚠ **Gerçek API hiç çağrılmadı.** Bir isteğin kaç saniye sürdüğü bilinmiyor;
+  38 isteğin toplam süresi hakkında sayı verilmemeli. §285–§298 kanıtı tamamen sahte `fetch` ve elle
+  okunmuş yer gerçeği üzerinden. Sıradaki iş: kullanıcı anahtarı yenileyip gerçek
+  okuma denesin, istem doğruluğu gerçek çıktıya göre ayarlansın.
 - Bilinen açık noktalar: FT Geriatri 0.51 soru (kullanıcı onaylı varsayım) ·
   D_ORAN ±0.57 belirsizliği · potansiyel-gerçek ~0.42 net farkı (bilinçli muhafazakâr,
   §205) · yinelenen deneme kaydı denetimsiz (bilinçli) · Fizyoloji/Histo aralığı
-  kullanıcı beyanı ≠ SORU.den (net grubu ortak, etkisiz).
+  kullanıcı beyanı ≠ SORU.den (net grubu ortak, etkisiz) · `kural_test.py` ve
+  `kos.js` koşmuyor (`eko.py` / `tam_test.js` repoda yok).
 - Geçmiş oturumların süreç analizi ve otomasyon/düzeltme adayları: `icgoru.md`.

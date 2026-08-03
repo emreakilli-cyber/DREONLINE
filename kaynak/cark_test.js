@@ -85,7 +85,13 @@ c3('sürükleme sürekli akış',kod.indexOf('kayY=dy;')>=0);
 c3('bırakınca merkeze oturuyor',/function otur\(\)/.test(kod)&&/merkezEl\.dataset\.i/.test(kod));
 c3('sürüklerken geçiş kapalı',/#sahne\.sur \.sr[^{]*\{transition:none/.test(kod));
 c3('sürüklerken hepsi şerit',/!molaOdak&&!surukleKip/.test(kod));
-c3('yatay kaydırma engellenmiyor (touch-action:pan-x)',/#cark\{touch-action:pan-x\}/.test(kod));
+/* §300 · BU İDDİA KUSURU KORUYORDU. `pan-x` tarayıcıya yatay ekseni
+   veriyordu; §291'in "merkezi tutup sağa kaydır → deneme analizi" hareketi
+   bu yüzden GERÇEK DOKUNUŞTA çalışmıyordu (touchstart → tek touchmove →
+   touchcancel). Fare ile çalıştığı için fark edilmemişti.
+   Korunacak doğal yatay kaydırma YOK: görünümler (.vw) opaklıkla değişiyor,
+   #cark ve #gunListe overflow:hidden. Dikey sürükleme zaten JS'te. */
+c3('yatay eksen JS\'e ait (touch-action:none)',/#cark\{touch-action:none\}/.test(kod));
 // adım davranışı
 SIF(); G('2026-08-05'); S(700);
 const L0=(function(){return X.GOREVLER.map((g,i)=>i).filter(i=>{const g=X.GOREVLER[i];

@@ -14464,6 +14464,372 @@ niyet korunarak yeniden yazıldı. Tüm kapılar + 5 özellik testi **0 hata**.
 
 ---
 
+## §293 · Gerçek fotoğraflar üç varsayımı çürüttü (2027-02-19c)
+
+Kullanıcı 1 Ağustos denemesinin **gerçek** sayfalarını gönderdi: klinik bölümün
+ilk sayfası (101-108) + cevap anahtarının 101-110'u kapsayan iki sayfası.
+Boru hattı ilk kez gerçek malzemeyle sınandı. **Üç varsayım yanlış çıktı:**
+
+| §283'teki varsayım | GERÇEK |
+|---|---|
+| D/Y/B soru numarasının **altında** | **sol kenar boşluğunda**, iri el yazısıyla |
+| işaretler tek kalemle | **Y kırmızı**, D koyu/mavi — renk ayırt edici |
+| konuyu model çıkaracak | kullanıcı **zaten elle yazıyor** (Hemato/Onko/Nefro/Kanama) |
+
+Ayrıca iki kalıp doğrulandı: cevap anahtarı **"Doğru cevap: (E) …"** biçiminde,
+tablolar **"Tablo (Soru 107):"** diye açıkça etiketli. İstemler bunlara göre
+düzeltildi (`denemePrompt`, `cevapAnahtarPrompt`); `konuEl` alanı eklendi.
+
+### EN ÖNEMLİ KAZANIM · sonuç artık EL YAZISINDAN DEĞİL, KARŞILAŞTIRMADAN
+Elde iki bağımsız kaynak olduğu görüldü: kitapçıkta **daire içine alınan şık**
+ve cevap anahtarındaki **doğru şık**. `sonucHesapla(o)` ikisini karşılaştırıp
+D/Y/B'yi **hesaplıyor** — el yazısı okumaya gerek kalmıyor. El yazısı da
+okunduysa çapraz doğrulama yapılıyor: çelişirse **anahtar kazanıyor**, eski
+değer `sCakisma`'da saklanıyor ve `cakismaListesi()` ile görülebiliyor
+(sessizce üzerine yazılmıyor — uydurma yok).
+
+### EXIF · sorun ÇIKMADI (ölçüldü)
+Telefon fotoğraflarının hepsi `Orientation=6` (90° döndürülmüş). Ölçüm:
+tarayıcı EXIF'i otomatik uyguluyor — ham dosya 4032×3024, `naturalWidth/Height`
+3024×4032 ve `fotoKucult` çıktısı 1176×1568 **dik**. Gönderilen görüntü düz;
+kırpma koordinatları da aynı boru hattından geçtiği için tutarlı. Düzeltme
+gerekmedi — ama bu bir varsayım değil, üretilen JPEG'e bakılarak doğrulandı.
+
+### GOLDEN TEST · gerçek yer gerçeğiyle
+`gercek_test.js`: cevap anahtarından okunan doğru şıklar (101-110) ve soru
+sayfasından okunan daireli şıklar/konu etiketleri/güven kodları yer gerçeği
+olarak alındı. Boru hattı uçtan uca koştu ve **6 doğru · 2 yanlış · net 5.50**
+üretti; 103 ve 108'i yanlış olarak doğru saptadı. 109-110 sayfada olmadığı
+için "sahipsiz çözüm" kuyruğuna düştü (beklenen davranış). Çakışma senaryosu
+da sınandı.
+⚠ Bu yer gerçeği **incelemenin** ürünü, modelin değil — sınanan şey boru
+hattının MANTIĞI (eşleştirme · türetme · çakışma), Gemini'nin OCR başarısı DEĞİL.
+Gerçek API hâlâ hiç çağrılmadı.
+
+### Kapılar
+`kaynak/dom_test.js` **49 → 56 kontrol**. Tüm kapılar + 6 özellik testi 0 hata.
+
+**sürüm 2027-02-19c ↔ rota-2027-02-19c**
+
+---
+
+## §294 · Analiz filtreleri · başarı barı · ders→harita geçişi (2027-02-19d)
+
+Kullanıcının beş isteği.
+
+### 1 · API anahtar alanı görünmüyordu — KUSUR, düzeltildi
+Alan `<details class="dpAyar">` içinde KAPALI duruyordu ve iki büyük düğmenin
+arasına sıkışmış küçük gri bir başlıktı ("▸ GÖRÜŞ AYARLARI · ANAHTAR").
+Ölçüldü: `details.open=false`, kutu 82vh'de kayıyor. Kullanıcı bulamadı — haklı.
+Artık **anahtar YOKKEN** üstte açık, altın çerçeveli bir kutu çıkıyor
+(`#dpAnahtarUyari`): başlık + aistudio adresi + doğrudan giriş alanı.
+Anahtar girilince kutu kendiliğinden kapanıyor, ayrıntı katlanır bölümde kalıyor.
+
+### 2 · Ders barı artık BAŞARI oranı (kafa karışıklığı giderildi)
+Eskiden dolu bar "kötü" demekti — ters okunuyordu. Artık:
+doluluk = **doğru/toplam**; en başarısız ders **en az dolu** ve **en kırmızı**,
+ama sırada **en üstte** kalıyor (`dOran` artan sıralama). Gerçek veride:
+Anatomi %31 (üstte, kırmızı, en boş) … Patoloji %83 (altta, yeşil, en dolu).
+
+### 3 · Ders → o dersin zayıflık haritası + geri oku
+Sayfa 2'deki ders satırı artık `<button>`; dokununca `AKIS.ders` set edilip
+sayfa 0 o derse filtreli açılıyor, sol üstte "‹ ayrıntılı denemeye dön"
+düğmesi çıkıyor. Geri dönünce filtre temizleniyor.
+
+### 4 · Sayfa 0 · etiket ve ders filtresi
+Yorum etiketleri (kör nokta · şansa dayalı · sıfırdan · bilgi eksiği · yarım ·
+unutuyorsun · sezgi · sağlam · veri az) ve ders başlıkları çip olarak filtre.
+Yalnız gerçekten var olan etiketler, sayılarıyla gösteriliyor. İkisi birlikte
+çalışıyor (kesişim).
+
+### 5 · Sayfa 3 · ders filtresi + "etiket etiket grupla"
+Yanlış sorular ders çipleriyle süzülüyor; "etiket etiket grupla" açılınca
+konunun yorum etiketine göre kümeleniyor (etiketi bilinmeyenler sona).
+**İkisi birlikte** kullanılınca yalnız o dersin yanlışları, etiket etiket
+gösteriliyor — kapıda ayrıca doğrulandı (`grupKart===filt && halaDers`).
+Etiket eşlemesi `konuEtiketHarita()` ile `konuZayiflik()`ten geliyor
+(tek kaynak; ikinci bir yorum motoru YOK).
+
+### Kapılar
+`kaynak/dom_test.js` **56 → 64 kontrol**. Yeni `filtre_test` (18 kontrol,
+gerçek kullanıcı verisi, 4 ekran) + tüm kapılar **0 hata**.
+⚠ Kendi testimde bir iddia fazla katıydı ("kaydırma gerekmiyor"): ölçülmesi
+gereken kutunun kayması değil, alanın EKRANDA olmasıydı — düzeltildi.
+
+**sürüm 2027-02-19d ↔ rota-2027-02-19d**
+
+---
+
+## §295–§298 · İlk gerçek okuma denemesi: "ağ hatası load failed" (2027-02-19e)
+
+Kullanıcı ilk kez gerçek API ile denedi (`gemini-3.6-flash`, klinik sayfaları).
+Dört ayrı bulgu bildirdi; dördü de karşılandı.
+
+### 1 · "ağ hatası load failed" — ama Gemini panelinde RPM hareketi VAR
+Bu iki gözlem çelişmiyor: **istek gitti, yanıt geri gelmedi.** `fetch` bu durumda
+tarayıcı katmanında `TypeError: Load failed` atıyor; ağın yokluğuyla ilgisi yok.
+Ölçülen büyüklükler: 1568 px kenarda bir fotoğraf ≈ **500 KB base64**; üç sayfa
+tek istekte ≈ **1.5 MB** ve `gemini-3.6-flash` bunu okurken uzun sürüyor.
+iOS bu sürede sekmeyi askıya alırsa bağlantı kopuyor.
+
+§295'te yapılanlar (hepsi ölçülebilir, tahmin değil):
+- `GORUS_PARTI=2` · fotoğraflar **ikişerli partiler** halinde ayrı isteklere
+  bölünüyor, sonuçlar `no` alanına göre tekilleştirilerek birleşiyor.
+- `GORUS_ZAMAN=100000` · `AbortController` ile **zaman aşımı**; asılı istek
+  sonsuza kadar beklemiyor, `__ZAMAN__` olarak yakalanıyor.
+- Kopan bağlantıda **bir kez otomatik yeniden deneme** (kapıda doğrulandı: 2 istek).
+- `ekranAcikTut()` · okuma sürerken `wakeLock` alınıyor (destekleyen cihazda).
+- Hata metni **sebebi doğru söylüyor**: "telefon uyursa / başka uygulamaya
+  geçilirse bağlantı kopar" — WiFi suçlanmıyor. Yanlış sebep yanlış çözüm ürettirir.
+- Model yardım metni: `gemini-3.6-flash` **daha güçlü ama daha yavaş**, çok sayfada
+  kopma riski yüksek; ara seçenek `gemini-3.1-flash-lite`.
+
+⚠ Bu düzeltmeler kopmayı **daha az olası** yapar, imkânsız yapmaz. Gerçek API ile
+hâlâ **denenmedi** — kullanıcı anahtarı yenileyip tekrar denemeli.
+
+### 2 · "cevap anahtarını beklemeden soruları okumaya başladı"
+Doğru gözlem, ama **kusur değil, sıralamanın kendisi**: soru sayfaları önce
+okunuyor (işaretli şık + konu + kod), cevap anahtarı **sonra** ayrı bir adımda
+eşleştiriliyor. Yanlışlığı arayüzün bunu söylememesiydi.
+§298'de okuma sonrası özet eklendi: okunan **soru numarası aralığı**
+("Soru 101–108"), tespit edilen dersler, ve üç düğme —
+**"Önce cevap anahtarı ekle"** · "Eksik kodları tamamla" · "İncele ve kaydet".
+
+### 3 · "sadece kliniği yüklediğimi anladı mı bilmiyorum"
+§298 özeti bunu açıkça yazıyor: numara aralığı 200'ün altındaysa
+"(kısmi yükleme — sorun değil, branş kaydı olarak işlenir)".
+Kısmi tarama zaten destekleniyordu; eksik olan **söylenmesiydi**.
+
+### 4 · "katlanabilir ayarlar menüsü güzeldi" — §294 GERİ ALINDI
+§294'te keşfedilebilirlik için katlanabilir menüyü söküp daima açık bir uyarı
+kutusu koymuştum (`#dpAnahtarUyari`). Kullanıcı asıl istediğinin **katlanabilirlik**
+olduğunu söyledi. §296: menü yine `<details id="dpAyarDet">`, ama
+(a) düğme görünümünde — gri küçük başlık değil, (b) **anahtar yokken açık geliyor**,
+(c) özet satırı durumu söylüyor: "anahtar gerekli" / "anahtar tanımlı".
+Böylece hem keşfedilebilir hem katlanabilir. §294'ün teşhisi (bulunamıyordu)
+doğruydu, **çözümü fazla ileri gitmişti**.
+
+### 5 · "bazı soruların kodunu yazmayı unutuyorum, en son sorabilirsen söylerim"
+§297 · kod kuyruğu. Okuma bittikten sonra `kodEksikler()` E/AK/B/U kodu boş kalan
+soruları buluyor; "N sorunun kodu eksik · tamamla" düğmesiyle **soru soru**
+soruluyor (numara + okunan metnin ilk satırı + işaretli şık gösteriliyor).
+Dört kod düğmesi + "Atla" + "Bitir". Kod yazılmayan soru **boş kalıyor** —
+uydurulmuyor.
+
+### Kapılar
+Yeni `dayanik_test` (17 kontrol · sahte `fetch` ile parti/zaman aşımı/kopma
+senaryoları) **0 hata**. `dom_test` 75 kontrol · `filtre_test` 19 kontrol ·
+diğer tüm kapılar 0 hata.
+⚠ `filtre_test`in ilk üç iddiası §294'te sildiğim öğelere bakıyordu — **bayat
+iddia**, uygulama kusuru değil; §296 modeline göre yeniden yazıldı.
+⚠ `kaynak/kural_test.py` (eko.py) ve `kaynak/kos.js` (tam_test.js) **hâlâ
+koşmuyor** — dosyalar repoda yok, `tus_tamami.tar.gz` gerekiyor.
+
+### Bu turda yaptığım hatalar
+- **§294'te fazla ileri gittim.** Kullanıcı "anahtar alanı gözükmüyor" dedi;
+  ben katlanabilirliği tamamen söktüm. Doğrusu katlanabilirliği koruyup
+  varsayılanı ve görünürlüğü değiştirmekmiş — §296'da bu yapıldı.
+- **Kendi testimi bayat bıraktım.** §296 öğeleri silince `filtre_test`
+  kırıldı; kapının kırmızı yanması uygulamayı değil testi işaret ediyordu.
+  (CLAUDE.md'de yazan tuzağa yine düştüm: "test kırıldı ≠ uygulama bozuk".)
+- **Gerçek API hâlâ hiç çağrılmadı.** Tüm dayanıklılık kanıtı sahte `fetch`
+  üzerinden; kopmanın gerçekte çözülüp çözülmediği ölçülmedi. Bunu "düzeltildi"
+  diye yazmıyorum.
+
+**sürüm 2027-02-19e ↔ rota-2027-02-19e**
+
+---
+
+## §299 · 75 fotoğraf / 375 MB · okuma boru hattı ölçeğe çekildi (2027-02-19f)
+
+Kullanıcı bir denemenin TAMAMINI + cevap anahtarını çekti: **75 fotoğraf, 375 MB**.
+Boru hattı bu ölçek için tasarlanmamıştı.
+
+### Ölçüm (gerçek dosyalarla, tahmin değil)
+Kullanıcının gönderdiği fotoğraflar `5712×4284 px`, ortalama **5.41 MB**:
+
+| ne | değer | nasıl |
+|---|---|---|
+| 75 fotoğraf ham | 406 MB | 5.41 × 75 |
+| data URL (base64) | **556 MB** | ×1.37 |
+| 1568 px q0.85'e küçültülmüş | 620 KB/adet · 45 MB toplam | PIL ile ölçüldü |
+| çözülmüş bitmap (anlık) | 93 MB/adet | 5712·4284·4 |
+| istek sayısı (`GORUS_PARTI=2`) | **38** | ⌈75/2⌉ |
+| istek başına gövde | ~1.2 MB | 620 KB × 2 |
+
+### Bulunan kusurlar
+1. **556 MB aynı anda bellekte.** `denemeOtoBasla` bütün dosyaları `dosyaOku` ile
+   data URL'e çevirip `fotolar[]` içinde tutuyor, `DEN_OTO.fotolar`'a veriyor ve
+   ancak okuma BİTTİKTEN sonra bırakıyordu. Üstüne `gorusFotolar` hepsini önceden
+   küçültüp 45 MB daha ekliyordu. iOS Safari bunu taşımaz.
+2. **Hepsi-ya-da-hiç.** `gorusDizi` bir parti kalıcı hata verince `throw` ediyordu:
+   38 gruplu işte 30. grubun hatası önceki 29 grubu çöpe atıyordu.
+3. **429 kalıcı hata sayılıyordu** — dakikalık sınır bütün işi bitiriyordu.
+4. **Fotoğraf numarası parti içinde yerel.** İstemde "Fotoğraf 1/2" o PARTİNİN
+   fotoğrafı; `cozumGorselKaydet` ise GENEL diziye bakıyordu → ikinci partiden
+   sonra tablo kırpma **yanlış fotoğraftan** yapılıyordu. (§295'in getirdiği,
+   fark edilmemiş yan etki.)
+5. **Ön bulanıklık taraması** 75 fotoğrafın hepsini ilk API çağrısından önce
+   okuyup çözmeyi gerektiriyordu; üstelik bulanık önizlemeler DOM'a TAM BOYUT
+   data URL olarak basılıyordu.
+6. Deneme sayfaları ile cevap anahtarı sayfaları ayrı düğmelerde — kullanıcı
+   75 fotoğrafı galeride elle ayıklamak zorunda kalıyordu.
+
+### Yapılanlar
+- **`fotoKaynak(files, indeksler?)` · tembel kaynak.** `File` nesneleri diskte
+  kalır; her fotoğraf SIRASI GELİNCE okunur → küçültülür → orijinali hemen
+  bırakılır. Kapıda ölçüldü: 75 fotoğrafta **heap artışı 15 MB**.
+  `fotoKaynakDizi` eski `{ad,tur,data}` listelerini aynı arayüzle sarar
+  (geriye dönük uyum + testler).
+- **`gorusAkis()` · kısmi başarı.** Artık `{sorular, basarisiz[], toplam, sure}`
+  döndürür. Bir parti okunamazsa iş DURMAZ; `basarisiz`'a `{p, ilk, son, hata}`
+  yazılıp devam edilir. HİÇBİR parti okunamazsa (yalnız o zaman) hata fırlatır.
+  `se.partiler` ile yalnız belirli gruplar, `se.onceki` ile önceki sonuçların
+  üstüne devam edilebilir.
+- **429 geçici.** `__KOTA__<sn>` işaretiyle ayrıştırılıyor; `Retry-After` başlığı
+  ya da gövdedeki `retryDelay` okunuyor, o kadar beklenip 3 kez deneniyor.
+- **Foto numarası genel sıraya çevriliyor** (`G[yerel].ix+1`) — 4. kusur kapandı.
+- **`cozumGorselKaydet(kayit, kaynak, dnIndex)`** artık tam çözünürlüklü
+  fotoğrafı YALNIZ kırpma anında, tek tek okuyor.
+- **Ön tarama sınırı `ONTARAMA_SINIR=12`.** Üstünde tarama yapılmıyor ve
+  **sebebi ekranda yazıyor** (sessizce atlanmıyor); 12'ye kadar tarama duruyor
+  ama artık küçültülmüş kopyada ölçülüyor ve önizleme 300 px.
+- **İlerleme** (`okumaIlerleme`): grup x/y + çubuk + okunan soru sayısı +
+  **kalan süre**. Kalan süre tahmin değil, o ana kadar BİTEN grupların
+  ortalamasından; ilk grup bitene kadar hiç gösterilmiyor.
+- **Özet artık kaybı gizlemiyor:** kaç grup okunamadı, hangi fotoğraf numaraları,
+  hangi soru numaraları aradan atlandı — ve "okunamayan N grubu tekrar dene"
+  düğmesi yalnız o grupları gönderiyor.
+- **Karışık yığın ayrıştırılıyor.** İsteme `sayfaTur:"anahtar"` alanı eklendi:
+  cevap anahtarı/çözüm sayfası görülürse ondan SORU ÇIKARILMAZ, yalnız işaretlenir.
+  Özet "N fotoğraf cevap anahtarı sayfası görünüyor (#a–b)" der ve düğme aynı
+  dosyaların o alt kümesini **yeniden seçtirmeden** anahtar olarak okur
+  (`cevapAnahtarBasla(files, indeksler)`).
+- Okuma büyük yüklemede kendiliğinden başlamıyor; "38 istekte okunacak" yazıp
+  kullanıcının onayını bekliyor.
+
+### Kapılar
+Yeni kalıcı kapı **`kaynak/olcek_test.js` · 28 kontrol** (gerçek Chromium,
+taklit ağ, kullanıcı verisi YOK): 38 istek · akış ispatı (heap) · kısmi başarı ·
+sayfa numarası bildirimi · yalnız başarısız grubun tekrarı · 429 · foto numarası
+çevirisi · anahtar sayfası tespiti · alt küme kaynağı.
+Diğer tüm kapılar (derin/kombo/çark/mola/pu/kal/dom + denet.py + scratchpad
+bataryası) **0 hata**.
+
+### Ölçülemeyenler (dürüst liste)
+- **Bir isteğin gerçekte kaç saniye sürdüğü bilinmiyor** — gerçek API hiç
+  çağrılmadı. 38 isteğin toplam süresi hakkında sayı VERİLMEDİ.
+- Kapı ölçümü **Chromium masaüstünde**; hedef iOS Safari. Heap sayısı alt sınır.
+- Kapıdaki sahte fotoğraflar 1400 px canvas JPEG'i, 5.4 MB'lık gerçek dosya değil;
+  yapısal ispat (orijinaller tutulmuyor) geçerli, mutlak MB değeri değil.
+- Gemini'nin RPM/RPD/TPM sınırları ve tüketici "Gemini Pro" aboneliğinin API
+  kotasına yansıyıp yansımadığı bu turda RESMÎ belgeden doğrulanmadı.
+
+### Bu turda yaptığım hatalar
+- `olcek_test`in ilk üç iddiası **yanlıştı**: taklit ağdaki "istek numarası"nı
+  "grup numarası" sandım (grup başına iki deneme yapıldığı için 5. istek 5. grup
+  değil). Uygulama doğruydu, test yanlıştı — düzeltildi.
+- Testte sayacı sıfırlayınca tekrar denenen grup aynı soru numaralarını üretti ve
+  tekilleştirme onları eledi; "sonuç korunmuyor" diye okudum. Yine mock kusuru.
+
+**sürüm 2027-02-19f ↔ rota-2027-02-19f**
+
+---
+
+## §300 · İlk gerçek kullanımda çıkan üç kusur (2027-02-19g)
+
+Kullanıcı tek sayfa yükleyip akışı denedi. Okuma hızlı bitti, çark ritmi başladı;
+sonra üç şey bildirdi. **Üçü de gerçekti ve üçü de kapılardan temiz geçmişti.**
+
+### 1 · "İncele ve kaydet'e basınca beni ana ekrana atıyor"
+ÖLÇÜLDÜ (gerçek Chromium + gerçek dokunma):
+```
+kartAcSinifi: true   kartDisplay: "block"   kartIcerikVar: true
+katAcSinifi:  false  katDisplay:  "none"
+kartOlcu: {w:0, h:0, top:0}   →  kartEkrandaMi: false
+```
+Kök sebep: `denIncele()` paneli KAPATIP kartı `#atKart`'a çiziyordu. `#atKart`
+ise **`#atlasKat` katmanının İÇİNDE** yaşıyor; kullanıcı çark ekranındayken o
+katman `display:none` olduğu için kart `.ac` alıyor ama **0×0 kutuyla görünmez**
+kalıyordu. Kullanıcı çarka düşüyor, inceleme hiç açılmıyordu.
+
+Düzeltme: inceleme artık **panelin içinde** (`#dpIncele`) açılıyor, panel
+KAPANMIYOR. `OMR_DURUM.hedef` eklendi; `omrOnizle` hedefi oradan alıyor,
+`omrHedefKapat()` doğru kabı kapatıyor, `omrKaydet` panelde sonuç yazıyor.
+Panel yoksa eski yola düşüyor ama artık **katmanı da açıyor**.
+
+### 2 · "Çarkı sağa kaydıramadım"
+ÖLÇÜLDÜ (olay dizisi izlendi): `touchstart` geliyor → **BİR** `touchmove`
+(dx≈18 px) → sonra `touchcancel`. `sBirak` çalışıyor ama `sx==null` olduğu için
+hemen dönüyor.
+Kök sebep: **`#cark{touch-action:pan-x}`**. Tarayıcı yatay ekseni kendine alıp
+dokunuşu iptal ediyordu. **Fare ile çalışıyordu** (pointer olayları
+`touch-action`'dan etkilenmez) — §291 bu yüzden "çalışıyor" sanıldı.
+
+Düzeltme: `#cark{touch-action:none}`. Korunacak doğal yatay kaydırma YOK —
+görünümler (`.vw`) opaklıkla değişiyor, `#cark` ve `#gunListe` `overflow:hidden`,
+dikey sürükleme zaten JS'te. Ölçüldü: dikey sürükleme çalışmaya devam ediyor
+(aktif 58 → 60) ve yanlışlıkla analizi açmıyor.
+⚠ `cark_test.js`'te **kusuru koruyan bayat bir iddia** vardı
+(`'yatay kaydırma engellenmiyor (touch-action:pan-x)'`) — §290'daki `pu_test`
+olayının aynısı. Güncellendi.
+
+### 3 · "Yeşil bildirim gözükmedi"
+Doğru: **hiç üretilmemişti.** §292 üstten çıkan baloncuğu kaldırıp yerine yalnız
+ritmik itmeyi koymuştu. Kullanıcının tarifi: *"çarkın iç bükey alanını yeşil
+rengiyle bu bildirim dolduracak."*
+Eklendi: **`#carkAnaliz`** — ışık rayın yayının en sağ noktasından (sol kenar,
+dikey merkez) doğup çarkın iç boşluğunu dolduran yeşil radyal dolgu, itme
+ritmiyle aynı fazda nabız atıyor. Etiket: "DENEME ANALİZİ HAZIR · dokun ya da
+sağa kaydır ›". Etiket çarkın ÜST iç boşluğuna oturtuldu — ortada dururken
+etkin görev kartının yazısını örtüyordu (ekran görüntüsüyle ölçüldü).
+Katman aynı zamanda **hareketin tutamağı**: `touch-action:none` olduğundan
+tarayıcı yatay ekseni çalamıyor. Hem DOKUNMA hem SAĞA KAYDIRMA açıyor —
+hareketi bilmeyen kullanıcı kilitlenmesin.
+
+### 4 · "Bildirim 200 ↔ 24'lü arasında kaydırınca kayboldu"
+Kök sebep: kip düğmesinin işleyicisinde **koşulsuz `denOtoDurum('')`** vardı.
+Okunan sonuç ekrandan siliniyordu (bellekte duruyordu ama erişilemiyordu).
+Düzeltme: kip GERÇEKTEN değişmediyse hiçbir şey silinmiyor; değiştiyse okuma
+silinmiyor, **eskidiği söyleniyor** ve iki seçenek sunuluyor:
+"Okumaya dön ve kaydet" · "At, yeni okuma yapacağım".
+
+### 5 · Gerçek cevap anahtarı fotoğraflarından üç yeni gerçek
+Kullanıcı dört gerçek anahtar sayfası gönderdi. İstem buna göre düzeltildi:
+- Sayfalar telefonla **YAN** çekiliyor (metin 90° dönük) ve bir karede
+  **iki sayfa** birden oluyor. İstem artık bunu söylüyor.
+- Etiket yalnız `Tablo (Soru N)` değil, **`Şekil (Soru N)`** de oluyor
+  (ör. "Şekil (Soru 54): Klamidyanın yaşam döngüsü", "Şekil (Soru 63):
+  Kompleman Aktivasyon Yolları").
+- Soru kutusunun **İÇİNE gömülü etiketsiz görseller** var (soru 66'nın Kongo
+  kırmızısı preparatı gibi) — bunlar da kırpılıp saklanmalı.
+- Cilt kıvrımına yakın sütunlar kavisli/kesik. İstem artık **"tamamlama,
+  tahmin etme; okunamayan yeri `[…]` ile işaretle ve eşleşme güvenini düşür"**
+  diyor.
+
+### Kapılar
+Yeni kalıcı kapı **`kaynak/analiz_test.js` · 25 kontrol** (gerçek Chromium,
+gerçek dokunma, kullanıcı verisi YOK): touch-action · yeşil bildirim ·
+dokunma/kaydırma ile açılma · çark merkezinden kaydırma (iki görünümde) ·
+dikey sürüklemenin bozulmadığı · inceleme kartının EKRANDA olduğu · kaydetme ·
+kip değişiminde okumanın korunduğu.
+`cark_test` ve `dom_test`'teki iki bayat iddia güncellendi. Tüm kapılar 0 hata.
+
+### Bu turda yaptığım hatalar
+- **Üç kusuru da ben ürettim ve üçünü de kapılarım kaçırdı.** §291'i fare ile
+  doğrulayıp "çalışıyor" dedim — CLAUDE.md'de yazan "kapı geçmek hata yok
+  demek değildir" tuzağına yine düştüm. Gerçek dokunma olmadan dokunma
+  hareketi doğrulanamaz; §284'te öğrenilmişti, tekrar etti.
+- **§292'de "üstten bildirim çıkmasın" isteğini "bildirim olmasın" diye
+  uyguladım.** Kullanıcı bildirimin YERİNİ değiştirmemi istemişti, kaldırmamı
+  değil.
+- `cark_test`'teki iddia kusuru **koruyordu** — testin kendisi yanlış davranışı
+  sabitlemişti. Bu §290'da da olmuştu; kalıp tekrar ediyor.
+
+**sürüm 2027-02-19g ↔ rota-2027-02-19g**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
@@ -14510,9 +14876,20 @@ Bekleyen: kullanıcıdan etiketli deneme verisi (§230 formatı) · cihazdan "Ha
   6 düşük güvenli sorusu için **düzeltme aracı kuruldu (§272)** — kullanıcı kartın
   içinden D/Y/Boş kararını verebilir; içerik doğrulaması hâlâ kullanıcıda.
 - **§283 kamera ile deneme · Aşama 1 kuruldu.** Kullanıcı optik yerine **kitapçık
-  fotoğrafı** çekiyor; okuma motoru **kullanıcının Anthropic anahtarıyla, tarayıcıdan
-  doğrudan Claude görüşü**. Açık noktalar: (a) gerçek kitapçık fotoğraflarıyla okuma
-  doğruluğu (el yazısı D/Y/B + E/B/AK/U + konu) **henüz denenmedi** — kullanıcı ilk
-  denemede güven kodlarına bakmalı; (b) Fizyoloji/Histo aralığı kullanıcı beyanı
-  (14–20 / 21–28), SORU.den ile ters ama net grubu ortak olduğundan etkisiz; (c) her
-  deneme WiFi + anahtar başına maliyet (opus-5 varsayılan, sonnet-5'e düşürülebilir).
+  fotoğrafı** çekiyor; okuma motoru §285'te **Gemini**'ye taşındı (varsayılan
+  `gemini-flash-lite-latest`; Claude yolu duruyor, sağlayıcı seçilebilir).
+  Açık noktalar: (a) Fizyoloji/Histo aralığı kullanıcı beyanı (14–20 / 21–28),
+  SORU.den ile ters ama net grubu ortak olduğundan etkisiz.
+
+- ⚠ **GERÇEK API HÂLÂ HİÇ ÇAĞRILMADI.** §285–§298 arası tüm okuma/eşleştirme/
+  dayanıklılık kanıtı **sahte `fetch`** ve el ile okunmuş yer gerçeği üzerinden.
+  Kullanıcının ilk gerçek denemesi "ağ hatası load failed" ile bitti; §295
+  (parti parti gönderme · zaman aşımı · yeniden deneme · wakeLock) bunu **daha az
+  olası** yapar, imkânsız yapmaz. **Sıradaki iş: kullanıcı anahtarı yenileyip
+  tekrar denesin**, sonra istem doğruluğu (el yazısı D/Y/B · E/AK/B/U · konu)
+  gerçek çıktıya göre ayarlansın.
+
+- ⚠ **Anahtar sohbette açığa çıktı** (kullanıcı yapıştırdı). Koda gömülmedi,
+  commit edilmedi. Kullanıcı o anahtarı **iptal edip yenisini üretmeli** ve
+  yalnız uygulamanın ayar alanına girmeli (`localStorage: rota-gorus`,
+  gist senkronuna dahil değil).
