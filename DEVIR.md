@@ -13738,6 +13738,69 @@ sayfa hatası: 0 · tüm batarya: 0 hata (bayat açılış iddiası §273'e gün
 
 ---
 
+## §274 · KARŞILAMA KALDIRILDI + AKICILIK — 65 saniyelik panel, 87× hızlandı
+
+Kullanıcı: karşılama animasyonu gereksiz ve düzgün çalışmıyor; **"tıkladığım her
+şey çok akıcı lagsız çalışsın, önemli olan bu"** (iPhone + iPad).
+
+### Karşılama
+
+Açılış çağrısı kaldırıldı; uygulama doğrudan panoya iniyor. Kod uykuda
+(evrenKabukGeri'deki kopya dahil) — kapı, açılış bloğunun KENDİSİNİ denetliyor
+(uykudaki kopyayla yanlış-yeşile düşmüştü, düzeltildi).
+
+### Akıcılık — önce ölçüm (4× CPU kısıtı, iPhone vekili, gerçek veri)
+
+| etkileşim | önce | sonra |
+|---|---|---|
+| Power-up paneli açma | **65 114 ms** | 518 ms |
+| Görev tamamlama dokunuşu | 2 853 ms | 909 ms |
+| Deneme paneli açma | 157 ms | 106 ms |
+| Boşta / kaydırma ortancası | 16.6 ms | 16.5 ms (zaten temizdi) |
+
+Kısıtsız fonksiyon profili:
+
+| fonksiyon | önce | sonra | sebep |
+|---|---|---|---|
+| `ppanelCiz()` | 12 461 ms | **143 ms** | 254 kalem × ayrı `para()` + ayrı `grupNet()` |
+| `puSirali()` | 8 570 ms | 59 ms | aynı hastalık (§254'ün `gorevOncelik`te çözdüğü) |
+| `ust()` | 523 ms | 33 ms | bant/kazanç boyama SONRASINA ertelendi |
+| `konuCalisildi` (dokunuşta) | 372 ms | 4 ms | küme her çağrıda yeniden tokenize ediliyordu |
+
+### Yapılanlar (motor matematiğine DOKUNULMADI)
+
+1. **`pePKapsam(f)`** — §254'ün kanıtlı deseni fonksiyonlaştı: kapsam boyunca
+   `para()` ve `grupNet()` birer kez (`_peP` + `_gnP`). `puSirali`, `ppanelCiz`,
+   `kitapListe` sarıldı. ⚠ `puanVarsayim`'ın simüle `D.bitti` üzerindeki `para()`
+   çağrıları ETKİLENMEZ — `_peP` yalnız `_peP||para()` okuyan yerlere sızar.
+2. **`ust()` bölündü**: pahalı bant/kazanç (`kalanKazanci` 300 + `tavanBant`×2
+   200 ms) `ustBant()`'a taşındı, boyamadan 40 ms sonra koşuyor; ardışık
+   dokunuşlar tek hesapta birleşiyor. Matematik aynı, yalnız zamanlama.
+   (Test VM'inde `setTimeout` yok — eşzamanlı düşer, kapılar bandı anında görür.)
+3. **`konuCalisildi` ön-hesap + memo**: küme kurulurken tokenlar bir kez
+   (`konuTok` tek kaynak — `konuOrtus` da onu kullanıyor), sonuçlar küme sürümü
+   başına memoize. Kural birebir: eşitlik / iki yönlü alt-dizgi / token alt-kümesi.
+4. **Tam ekran panellerden blur kaldırıldı** (`#dpanel/#ppanel/#bpanel/#kpanel`):
+   %96 opak zeminin arkasında görünmüyordu ama iOS'ta her karede bedeli var;
+   opaklık .97'ye çıkarıldı. Görünür cam dokusuna (başlık vb.) DOKUNULMADI.
+
+### Reddedilen optimizasyon (ölçüm çürüttü)
+
+Önbellek anahtarlarındaki `JSON.stringify(D.denemeler)` şüphesi: ölçüm 0.04 ms
+dedi (gerçek veride 15 KB) — dokunulmadı. `dOran`'ın dokunuş başına 80 ms'lik
+yeniden hesabı da MEŞRU (bitti tarihleri gerçek girdi) — bırakıldı.
+
+### Doğrulama
+
+Karşılamasız açılış: başlık anında görünür, bant dolu (`→ 60.8–63.9`), değerler
+gerçek veriyle birebir · dokunuş işaret değiştirip geri alınabiliyor · panel
+içerikleri (2 sütun, sayılar) değişmedi · tüm batarya 0 hata · sayfa hatası 0.
+Üç bayat kapı iddiası güncellendi (opak+blur §229 · konuOrtus imzası · açılış).
+
+**sürüm 2027-02-18b ↔ rota-2027-02-18b**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
