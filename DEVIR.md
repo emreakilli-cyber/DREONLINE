@@ -13866,6 +13866,56 @@ SAT_TAVAN ×2). Tüm batarya 0 hata; sayfa hatası 0.
 
 ---
 
+## §276 · BOY PENCEREDEN SABİT + TAŞMA SÜTUNA BÖLÜNÜYOR — kullanıcının yeni düzen modeli
+
+Kullanıcı iki şey istedi: (1) kitap seçilince açılan liste sığmıyor, sığmayan
+satırlar GÖRÜNMÜYOR — "tek bakışta listenin tamamını görmek istiyorum, alanı
+ortadan bölüp sola ve sağa yerleştirebilirsin"; (2) "düğmelerin ve görevlerin
+boyutu tarihi değiştirince görev sayısına göre bile değişiyor ve bu kötü
+duruyor — boyut yalnız pencere boyutuna göre ölçeklenmeli".
+
+### Önce ölçüm
+
+- En yoğun program günü **15 satır**; en uzun kitap detayı **44 satır**
+  ("Atilla Uslu Dahiliye videoları") — taşan buydu, `overflow:hidden` altında
+  satırlar fiilen kayboluyordu.
+- Düğmeler de günle birlikte oynuyordu: `.glAnh` sekme anahtarı boyutlarını
+  `--gsat`'tan türetiyor; eski ikili arama `--gsat`'ı GÜNÜN İÇERİĞİNE göre
+  seçtiği için tarih değişince her şey büyüyüp küçülüyordu.
+
+### Yeni model (gunOlcekle baştan yazıldı)
+
+- **Boy yalnız pencereden:** `SAT=clamp(24, h/24, 32)` — güne/içeriğe bakmaz.
+  Ölçüldü: 8 gün boyunca iPad 27.2 px, telefon 28.4 px, hiç oynamıyor;
+  `--gsat` tüketen düğme/başlıklar da otomatik sabitlendi.
+- **Taşma sütunla çözülür:** başlık kümesi dışındaki gövde `.glGov`
+  sarmalayıcısına alınır; sığmıyorsa `#gunListe.cift` → `column-count:2`
+  (satır/blok başlığı sütun ortasında kırılmaz). Kullanıcının istediği yöntem.
+- **Dar pencere sıkılaştırması (`sikCift`, w<560):** branş/süre + ikincil
+  çipler (`klP/klG/kaz/glHat`) gizlenir — ölçüm bunları gizlemeden başlığa
+  **0 px** kaldığını göstermişti (çipler 97 px, sütun 167 px). Ayrıca klasik
+  flex tuzağı: `.ko`'ya `min-width:0` eklenmeden elips hiç devreye girmiyordu
+  (44 satırın 17'si yatay taşıyordu → 0).
+- **Tek istisna:** iki sütunda BİLE taşan liste (44 satırlık kitap) görünmez
+  satır bırakmamak için küçülür (17.1–17.3 px'e indi) — "tek bakışta tamamı"
+  boy sabitliğinden önce gelir; kodda gerekçesiyle işaretli.
+- KAYDIRMA YOK ilkesi korunuyor.
+
+### Doğrulama (gerçek tarayıcı, iki cihaz)
+
+```
+boylar 8 gün sabit: iPad 27.2 · telefon 28.4 (yoğun gün yalnız 2 sütuna geçiyor)
+44 satırlık kitap: gizli satır 0 · yatay taşan satır 0 · alt pay 61-64 px
+görseller: kitap44_tel/ipad.png — iki temiz sütun, elips düzgün
+```
+
+Kapılar: 10 bayat iddia §276'ya güncellendi (SAT_TAVAN/YAZ_TAVAN formülleri,
+9-tur, enIyi, KAYDIRMA YOK ilkesi yoruma geri kondu). Tüm batarya 0 hata.
+
+**sürüm 2027-02-18d ↔ rota-2027-02-18d**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
