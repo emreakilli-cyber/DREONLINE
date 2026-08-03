@@ -1004,7 +1004,7 @@ eV('kitapYakin fonksiyonu',R('typeof kitapYakin')==='function');
   eV('TTS hatırlama etiketi',/glHat/.test(t2));
   X.D.tts={}; R('D.glKip=null; D.klKitap=null; D.klTur=null');
 })();
-console.log('\n'+(KV?'✗ '+KV+' HATA':'✓ SIFIR HATA — 25 ek kontrol'));
+console.log('\n'+(KV?'✗ '+KV+' HATA':'✓ SIFIR HATA — 26 ek kontrol'));
 if(KV)process.exitCode=1;
 
 console.log('\n═══ KİTAP İÇERİĞİ TAM ═══');
@@ -1684,5 +1684,56 @@ eO('okuma katmanı yalnız isaretOku içinde (değişecek tek yer)',
   eO('gerçek tarama da onaysız YAZMIYOR',!gp.yazildiMi&&gp.kayit===false,gp);
   eO('güveni düşük satırlar nete katılmıyor',gp.dusuk>=5&&gp.dusuk<gp.n,gp);
 })();
-console.log('\n'+(QO?'✗ '+QO+' HATA':'✓ SIFIR HATA — 15 ek kontrol'));
+/* §267 · KAPSAM YÖNLENDİRMESİ · kısmi tarama TAM DENEME değildir.
+   D.denemeler kayıtları son()/para() üzerinden PARAKETE üretir; 10 soruluk
+   bir sayfa oraya yazılırsa parakete çöker. Kısmi tarama D.kal'a gider. */
+(function(){ C.setGun('2026-08-02');
+  R('D.denemeler=[{tar:"2026-08-01",kay:"t",t:32,k:30,bn:{Dahiliye:14,Patoloji:8,Biyokimya:5,'+
+    'Fizyoloji:5,Anatomi:6,"Genel Cerrahi":6,Farmakoloji:5,Mikrobiyoloji:5,Pediatri:6,"Kadın Doğum":4}}]');
+  R('D.kal=[]');
+  const kp=R('(function(){const t=omrKapsam(isaretOku());'+
+    'const g=omrKapsam(isaretOku("gercek"));'+
+    'return {tamOkunan:t.okunan,tamMi:t.tam,gercekOkunan:g.okunan,gercekTam:g.tam,'+
+    'gercekBrans:g.brans,beklenen:t.beklenen}})()');
+  eO('tam tarama TAM DENEME sayılıyor',kp.tamMi===true&&kp.tamOkunan>=180,kp);
+  eO('10 soruluk sayfa TAM DENEME SAYILMIYOR',kp.gercekTam===false&&kp.gercekOkunan===10,kp);
+  eO('beklenen soru sayısı katalogdan türetiliyor (sihirli sabit yok)',
+    kp.beklenen>=180&&kp.beklenen<=220&&/omrToplamSoru/.test(kod),kp);
+  /* kısmi tarama D.denemeler'e DEĞİL D.kal'a yazmalı; parakete oynamamalı */
+  const ks=R('(function(){omrOnizle("gercek");'+
+    'const pOnce=puan(para().t,para().k), dOnce=D.denemeler.length, kOnce=D.kal.length;'+
+    'const sOnce=JSON.stringify(son());'+
+    'const ok=omrKaydet();'+
+    'const pSonra=puan(para().t,para().k);'+
+    'return {ok:ok,denemeArtti:D.denemeler.length-dOnce,kalArtti:D.kal.length-kOnce,'+
+    'sonAyni:sOnce===JSON.stringify(son()),fark:+Math.abs(pOnce-pSonra).toFixed(3),'+
+    'pOnce:+pOnce.toFixed(2),pSonra:+pSonra.toFixed(2),'+
+    'sonKal:D.kal[D.kal.length-1]||null}})()');
+  eO('kısmi tarama D.denemeler’e YAZMIYOR',ks.denemeArtti===0,ks);
+  eO('kısmi tarama D.kal’a branş kaydı yazıyor',ks.kalArtti>=1,ks);
+  /* ⚠ son() DEĞİŞMEMELİ: parakete son denemeden türer; kısmi sayfa
+     "son deneme" olursa 10 soruluk örneklem 200 soru sanılır ve puan çöker. */
+  eO('son() kısmi taramayı SON DENEME sanmıyor',ks.sonAyni,ks);
+  /* R_CAL üzerinden küçük bir kayma MEŞRU (D.kal kalibrasyonu besler);
+     çöküş değil. Eski hatalı yolda düşüş ~19 puandı. */
+  eO('PARAKETE çökmüyor (yalnız kalibrasyon ölçeğinde kayma)',ks.fark<1,
+    {once:ks.pOnce,sonra:ks.pSonra,fark:ks.fark});
+  eO('branş kaydı dpanel ile aynı şekilde (tar/br/d/y/b)',
+    !!(ks.sonKal&&ks.sonKal.tar&&ks.sonKal.br&&typeof ks.sonKal.d==='number'&&
+       typeof ks.sonKal.y==='number'&&typeof ks.sonKal.b==='number'),ks.sonKal);
+  eO('branş kaydı motorun geçerlilik süzgecinden geçiyor (kayitGecerli)',
+    R('kayitGecerli(D.kal[D.kal.length-1])')===true,ks.sonKal);
+  /* konu kırılımı: yalnız GERÇEK katalogda karşılığı olan adlar (sessiz sıfır tuzağı) */
+  const kk=R('(function(){const L=D.kal.filter(k=>k.konular&&k.konular.length);'+
+    'const hepsiGercek=L.every(k=>k.konular.every(c=>KONU_DAG[k.br]&&KONU_DAG[k.br][c.k]!==undefined));'+
+    'return {kirilimliKayit:L.length,hepsiGercek:hepsiGercek}})()');
+  eO('konu kırılımı UYDURULMUYOR (yalnız gerçek katalog adları)',kk.hepsiGercek,kk);
+  /* tam tarama hâlâ deneme yolunda */
+  const tt=R('(function(){R:0;omrOnizle();'+
+    'const dOnce=D.denemeler.length;const ok=omrKaydet();'+
+    'return {ok:ok,denemeArtti:D.denemeler.length-dOnce}})()');
+  eO('TAM tarama hâlâ D.denemeler yoluna gidiyor',tt.ok&&tt.denemeArtti===1,tt);
+  R('D.denemeler=[];D.kal=[]');
+})();
+console.log('\n'+(QO?'✗ '+QO+' HATA':'✓ SIFIR HATA — 26 ek kontrol'));
 if(QO)process.exitCode=1;

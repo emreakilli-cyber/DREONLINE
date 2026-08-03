@@ -13358,6 +13358,79 @@ Koşan 11 kapı temiz; `pu_test` bilinen 7 §229 hatasında sabit kaldı, yeni h
 
 ---
 
+## §267 · KISMİ TARAMA "DENEME" DEĞİLDİR — kendi açtığım veri bütünlüğü deliği
+
+### Nasıl bulundu
+
+Kapılar temizken (§266) gerçek tarayıcıda gerçek veriyle bir sertlik turu koştum
+(`scratchpad/sertlik.js`: açılış · 6 zoom kademesi · odak · denetimler · altın yol ·
+OMR · 90 kare jank ölçümü). Çıktının çoğu iyiydi — kare ortancası **16.7 ms**
+(60 fps), odak mikro-yerleşimi sıkı (81 çocuk, en uzak 104 px), denetim paneli veriye
+dokunmuyor, geri tuşu eski UI'ı geri getirmiyor. Ama bir satır sırıttı:
+
+```
+"omr": { "okunan": 10, "dusuk": 6, "t": 0, "k": -1, "yazdiMi": false }
+```
+
+**k = −1.** Kadın Doğum'un 10 sorusundan güvenle okunan 4'ü de yanlıştı
+(0 − 4/4 = −1). Aritmetik doğru; **yönlendirme yanlıştı.**
+
+### Kusur
+
+`omrKaydet()` her taramayı `D.denemeler`'e yazıyordu. Ama `D.denemeler` kayıtları
+**200 soruluk TAM denemedir** ve `son()` bunların sonuncusunu alıp `para()`'ya verir —
+PARAKETE oradan doğar. 10 soruluk bir kitapçık sayfası oraya yazılsaydı motor onu
+"en son deneme" sanacak, `t:0 · k:−1` değerlerini 200 soruluk performans olarak
+okuyacaktı. **Ölçülen etki: parakete 59.35 → ~40.** Kullanıcı onayladığı anda
+altı denemelik gerçek geçmişin üstüne yazacaktı.
+
+⚠ Bunu motor yapmadı, **§265'te ben açtım**. Kapılar göremedi çünkü kapı da benim
+yazdığım beklentiydi (CLAUDE.md: "kapı geçmek hata yok demek değildir" — §87'nin
+aynısı, bu kez kendi kodumda).
+
+### Düzeltme · YENİ MODEL YOK, motorun zaten olan iki yolu
+
+Motorda kısmi/branş-bazlı örneklem için **`D.kal`** zaten var (dpanel'in yazdığı yer)
+ve `rCalHesap` onu **gerçek binom varyansıyla**, örneklem büyüklüğünün hak ettiği
+ağırlıkla kullanıyor ("4 soruluk bir gözlem çok belirsizdir" — kodun kendi notu).
+Doğru davranış yeni bir şey icat etmek değil, **doğru yola yönlendirmekti**:
+
+| tarama | koşul | yazılan yer | parakete |
+|---|---|---|---|
+| tam deneme | soru ≥ %90 **ve** branş ≥ tümü−2 | `D.denemeler` | güncellenir |
+| kısmi tarama | aksi | `D.kal` (branş başına bir kayıt) | **değişmez** |
+
+- `omrToplamSoru()` beklenen soru sayısını `SORU.den`'den **türetir** — sihirli
+  sabit 200 yazmadım (CLAUDE.md: tahmin değil ölçüm).
+- `omrKalKayit()` kaydı dpanel ile **birebir aynı şekilde** üretir
+  (`{tar,br,d,y,b,kap,konular}`), böylece `kayitGecerli` süzgecinden geçiyor.
+- Konu kırılımı **yalnız `KONU_DAG[br]`'de gerçekten karşılığı olan adlar** için
+  yazılıyor. Eşleşmeyen ad exception atmaz, sessizce 0 döner ve hata görünmez
+  (§153/§155 ailesi) — bu yüzden açık `!==undefined` kontrolü kondu.
+- Önizleme kartı kısmi taramada **toplam puan göstermiyor** (10 sorudan 200 soruluk
+  puan üretmek yanıltıcı olur); yerine "branş neti" ve açık uyarı var.
+
+### Gerçek tarayıcıda gerçek veriyle doğrulandı
+
+```
+pOnce 59.35 → pSonra 59.36   (fark 0.01)
+denemeArtti 0 · kalArtti 1 · sonAyni true
+kapsam {tam:false, okunan:10, beklenen:200, brans:["Kadın Doğum"]}
+konular: jinekolojik(1) · obstetri(2) · jinekolojik onkoloji(1)   ← üçü de gerçek katalogda
+sayfa hatası: yok
+```
+
+0.01'lik kayma **meşru ve istenen**: `D.kal` kalibrasyonu besler, R_CAL kıpırdar.
+Çöküş yok. Kapı bunu "parakete hiç değişmesin" diye ölçmeye kalkıştığımda haklı
+olarak kırıldı — iddia yanlıştı, düzeltildi: kapı artık `son()`'un değişmediğini ve
+kaymanın kalibrasyon ölçeğinde (<1 puan) kaldığını ölçüyor.
+
+`pu_test` OMR bölümü 9 → **26 kontrol**. Bilinen 7 §229 hatası sabit, yeni hata yok.
+
+**sürüm 2027-03-14a ↔ rota-2027-03-14a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
