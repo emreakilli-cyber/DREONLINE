@@ -900,7 +900,13 @@ let NP=0;const hP=(a,ok,e)=>{if(!ok){NP++;console.log('  ✗ '+a+(e!==undefined?
 const KAYP=require('fs').readFileSync('/mnt/user-data/outputs/index.html','utf8');
 hP("konuSade ayraçları temizliyor",KAYP.indexOf(String.fromCharCode(46)+"replace(/[")>=0&&RC('konuSade("a/b")')==="a b");
 hP('konuOrtus fonksiyonu',RC('typeof konuOrtus')==='function');
-hP('konuCalisildi konuOrtus kullanıyor',KAYP.indexOf('||konuOrtus(a,c))return true;')>=0);
+/* §274: tarama ön-hesaplı — aynı kural (eşitlik/alt-dizgi/token alt-kümesi),
+   tokenlar konuTok TEK kaynağından, küme sürümü başına memo. */
+hP('konuCalisildi bulanık eşleşme kullanıyor (konuTok tek kaynak + memo)',
+  KAYP.indexOf('function konuTok(')>=0&&
+  /uzn\.indexOf\(kis\[j\]\)<0/.test(KAYP)&&
+  /O\.memo\.set\(c,v\)/.test(KAYP)&&
+  KAYP.indexOf('const A=konuTok(a), B=konuTok(b);')>=0);
 hP('k24 bayrağı',KAYP.indexOf('function denemeKazHam(branslar,tar,k24)')>=0);
 hP('24lü çağrıları bayraklı',(KAYP.match(/denemeKazHam\(\[[ek]\.br\],[ek]\.tar,true\)/g)||[]).length===2);
 (function(){

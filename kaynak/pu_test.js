@@ -525,9 +525,14 @@ let KA=0;const eA=(a,ok,x)=>{if(!ok){KA++;console.log('  ✗ '+a+(x!==undefined?
   eA('süre ve verim satırı',/class="alt2">[\d.]+ sa · \d+ soru/.test(h));
   eA("çarka çek düğmesi",/data-dcek="/.test(h));
 })();
-eA('panel arka planı opak',/#ppanel\{[^}]*background:rgba\(2,3,6,\.96\)/.test(kod));
-eA('bulanıklık artırıldı',/#ppanel\{[^}]*backdrop-filter:blur\(18px\)/.test(kod));
-eA('dört panel de opak',(kod.match(/background:rgba\(2,3,6,\.96\)/g)||[]).length>=4);
+/* §274: opaklık .96→.97, tam ekran panellerden blur KALDIRILDI —
+   ~opak zeminin arkasında görünmüyordu ama iOS'ta her karede bedeli vardı.
+   Eski iddia "bulanıklık artırıldı" §229 dönemine aitti. */
+eA('panel arka planı opak',/#ppanel\{[^}]*background:rgba\(2,3,6,\.97\)/.test(kod));
+eA('tam ekran panellerde blur YOK (iOS maliyeti · §274)',
+  !/#ppanel\{[^}]*backdrop-filter/.test(kod)&&!/#dpanel\{[^}]*backdrop-filter/.test(kod)&&
+  !/#bpanel\{[^}]*backdrop-filter/.test(kod)&&!/#kpanel\{[^}]*backdrop-filter/.test(kod));
+eA('dört panel de opak',(kod.match(/background:rgba\(2,3,6,\.97\)/g)||[]).length>=4);
 eA('kit içindeki s üstü çizili değil',kod.indexOf('.kit s,.kit .ic s{display:block;text-decoration:none;')>=0);
 eA('puAlt italik değil',kod.indexOf('.puSut .puAlt,.puSut i.puAlt{display:block;font-style:normal;text-decoration:none}')>=0);
 console.log('\n'+(KA?'✗ '+KA+' HATA':'✓ SIFIR HATA — 11 ek kontrol'));
@@ -1579,9 +1584,14 @@ eAT('semantic zoom eşikleri kaynakta (aKit/aKonu/eKonu)',/aKit=atSm\(/.test(kod
 /* §273 · PROJE RAFTA (kullanıcı kararı, 2027-02-18a): açılış eski kabuk +
    karşılama; ATLAS kodu SİLİNMEDEN uykuda. Eski iddia (atlasAc açılışı)
    §258–§272 dönemine aitti — rafa kaldırma ile bilinçli olarak değişti. */
-eAT('açılış ESKİ KABUK (rafta): evrenKip kaldırılıyor + karşılama',
+/* §274: karşılama animasyonu açılıştan KALDIRILDI (kullanıcı: "gerek yok,
+   düzgün çalışmıyor"). Açılış doğrudan panoya iner. Uykudaki evrenKabukGeri
+   kopyası sayılmaz — açılış bloğunun KENDİSİ denetlenir. */
+eAT('açılış ESKİ KABUK (rafta): evrenKip kaldırılıyor, karşılama YOK',
   /PROJE RAFTA/.test(kod)&&/classList\.remove\('evrenKip'\)/.test(kod)&&
-  /try\{karsilamaAc\(\)\}catch/.test(kod)&&kod.indexOf('<body>')>=0&&kod.indexOf('<body class="evrenKip">')<0);
+  /karşılama animasyonu KALDIRILDI/.test(kod)&&
+  kod.indexOf('<body>')>=0&&kod.indexOf('<body class="evrenKip">')<0&&
+  !/KALDIRILDI[\s\S]{0,200}karsilamaAc\(\)/.test(kod.slice(kod.indexOf('PROJE RAFTA'))));
 eAT('ATLAS uykuda ama SİLİNMEDİ (geri dönüş bir satır)',
   R('typeof atlasAc')==='function'&&R('typeof atlasCiz')==='function'&&
   !/^try\{ atlasAc\(\) \}/m.test(kod));
