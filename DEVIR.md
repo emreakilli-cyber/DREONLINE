@@ -14293,6 +14293,91 @@ node --check temiz. Sürüm eşleşmesi doğrulandı.
 
 ---
 
+## §285–§289 · Gemini okuma motoru + cevap anahtarı + analiz akışı (2027-02-19a)
+
+Kullanıcı beş parça istedi. Hepsi yapıldı; ikisinde kullanıcıya bırakılan karar var.
+
+### §285 · Okuma motoru Anthropic → **Gemini** (varsayılan)
+API biçimi **ezberden değil, resmî kaynaktan** alındı ve **canlı ölçüldü**:
+`$discovery/rest?version=v1beta` (rev. 20260731) indirildi · `google-gemini/cookbook`
+`Prompting_REST.ipynb` gerçek istek/yanıt hücreleri · CORS bir gerçek istekle sınandı.
+- Uç: `POST generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent`
+- Anahtar **başlıkta** (`x-goog-api-key`) — URL'de değil (adres/geçmişe sızmasın).
+- Görsel `inlineData:{mimeType,data}` · yanıt `candidates[0].content.parts[0].text`
+- `generationConfig.responseMimeType:'application/json'` ile JSON zorlanıyor.
+- **Tarayıcıdan doğrudan çağrı CORS'a takılmıyor** (ölçüldü) — sunucusuz mimari korunuyor.
+- ⚠ **`gemini-2.5-flash-lite` EMEKLİ** (404 bildirimleri var). Varsayılan
+  `gemini-flash-lite-latest` — kalıcı takma ad; model emekliye ayrılsa da elle
+  dağıtılan tek dosyalık uygulama kırılmaz. Kullanıcı isterse `gemini-3.1-flash-lite`.
+- Sağlayıcı seçici eklendi: **Gemini varsayılan**, Claude ikinci seçenek olarak duruyor
+  (kullanıcının "ikisini de destekleyip varsayılanı Gemini yap" seçeneği).
+- Anahtar hâlâ yalnız cihazda (`rota-gorus`), senkron/gist dışı, koda gömülü değil.
+
+### §286 · Cevap anahtarı fotoğrafından çözüm (ÜRETME değil OKUMA)
+İsteme üç kısıt açıkça yazıldı: (1) "GÖREVİN ÜRETMEK DEĞİL, OKUMAKTIR — kendi tıbbi
+bilgini kullanma, yorum ekleme, eksik gördüğün yeri tamamlama", (2) sadeleştirirken
+"HİÇBİR TIBBİ BİLGİYİ, SONUCU VEYA MANTIK ZİNCİRİNİ değiştirme veya atlama",
+(3) eşleştirme öz-denetimi: "bu çözüm gerçekten bu numaraya mı ait, numara kaymış olabilir mi".
+- Beklenen soru listesi (no · ders · soru kökü) isteme gömülüyor → model kaymayı fark edebiliyor.
+- `eslesme≥0.75` → doğrudan kaydedilir; altı **kaydedilmez**, gözden geçirme kuyruğuna düşer
+  ("#X net eşleşmedi, kontrol eder misin?" + gerekçe). Eşleşmeyenler ayrı kuyrukta,
+  elle soru numarası girilerek bağlanabiliyor. Her ikisi de elle düzeltilebilir (override).
+- Tablo/şema: model `kutu` (normalize [sol,üst,sağ,alt]) + `foto` veriyor; kırpma
+  **uygulamada** yapılıyor (`gorselKirp`), en-boy oranı korunuyor (gerilme yok, ölçüldü).
+
+### §287 · Tek deneme · ders bazlı hata özeti
+Yanlış/toplam oranına göre azalan; yatay bar, oran arttıkça dolu ve kırmızıya yakın.
+Renk **sürekli fonksiyon** (kademe yok, §135–§158); gerçek oranlar %15–55 bandında
+toplandığı için gamma 0.7 ile orta band açıldı.
+
+### §288 · Tüm denemeler · ders → konu zayıflık haritası
+Mevcut şema (`b/konu/s/e`) üzerine kuruldu — **yeni alan eklenmedi** (kullanıcı haklıydı:
+gerçek veride `konu` 200/200, `e` 200/200 dolu). Konular soru sayısına göre azalan;
+D/Y/B sayıları; baskın E/B/AK/U + doğru/yanlış eğiliminden **kural tabanlı** yorum
+(8 kombinasyon + nötr), API çağrısı yok. `Eminim+Yanlış` = kör nokta, `Bilmiyorum+Doğru`
+= şansa dayalı ayrıca vurgulanıyor. Gerçek veride: **0 kör nokta, 5 şansa dayalı konu**.
+
+### §289 · Kaydırmalı 4 sayfalık akış + responsive
+Story tarzı ilerleme çizgileri; dokunmatik swipe (yön bir kez kararlaştırılır, dikey
+kaydırma serbest kalır), fare sürükleme, ok tuşları, Esc. Oklar ≥720px'de görünür,
+dar ekranda gizli (kullanıcı isteği). **Sabit piksel yok** — `clamp()` + flex/grid.
+⚠ Uygulamanın pinch dinleyicileri YAKALAMA evresinde; akış kendi dokunuşlarını
+durduruyor ki çark kipi tetiklenmesin.
+
+### DEPOLAMA · ölçüldü, mimari ona göre kuruldu
+- Mevcut `localStorage`: **16,7 KB** (bol yer).
+- ⚠ `Senk.gonder` `temiz(D)`'nin TAMAMINI gist'e yolluyor ve `denemeler` olduğu gibi
+  gidiyor → **görseller D'ye konsaydı her senkronda megabaytlar yüklenirdi.**
+- Ölçüm: 300×200 q70 kırpma = localStorage muhasebesiyle **33–42 KB**; ama **300×200
+  bir TUS tablosunu okunur kılmıyor** — okunur olması için uzun kenar 800–1200px
+  gerekiyor → 5 MB'a yalnız **13–41 görsel** sığar, **tek deneme bile doldurur.**
+- Karar: **çözüm METNİ D'de** (küçük, cihazlar arası senkronlanır) ·
+  **görseller IndexedDB'de** (`GorselDepo`, disk tabanlı, senkron DIŞI, cihazda kalır),
+  uzun kenar 1000px / q0.72, `IntersectionObserver` ile **lazy-load**.
+
+### Doğrulama
+- Yeni: `akis_test` (4 ekran genişliği × swipe/taşma), `gemini_test` (istek gövdesi
+  resmî şemaya uyuyor mu + cevap anahtarı zinciri, **fetch taklidiyle — para/ağ
+  harcanmadı**), `gorsel_test` (kırpma/oran/IndexedDB/senkron dışılık).
+- `kaynak/dom_test.js` **17 → 36 kontrol**e çıkarıldı (yorum mantığının 8 kombinasyonu,
+  sıralama kuralları, akış taşması, Gemini varsayılanı dahil).
+- Tüm kapılar (derin/pu/cark/mola/kombo/kal/**dom** + denet.py) **0 hata**.
+
+### ⚠ AÇIK · KULLANICI KARARI BEKLEYEN
+1. **Şema ekleri.** `konu` için yeni alan gerekmedi (kullanıcı haklı). Ama sayfa 3'ün
+   "senin cevabın / doğru cevap"ı ve cevap anahtarı eşleşmesi için `no`, `sec`, `metin`,
+   `coz`, `dogru`, `gor` alanları **eklendi** — hepsi isteğe bağlı ve geriye dönük
+   uyumlu (eski kayıtlarda yoklar, arayüz "kayıtlı değil" yazıyor, uydurmuyor).
+2. **Gerçek API hiç çağrılmadı.** Anahtar kullanıcıda; tüm testler taklit yanıtla.
+   Okuma doğruluğu (el yazısı, çözüm eşleşmesi, kutu koordinatları) ilk gerçek
+   fotoğrafta görülecek. Kutu koordinatı sapıyorsa kırpma payı ayarlanmalı.
+3. **Ücretsiz katman limiti doğrulanamadı** — `ai.google.dev` bu ortamdan engelli.
+   Araştırmacı "emin değilim" dedi; uydurulmadı.
+
+**sürüm 2027-02-19a ↔ rota-2027-02-19a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)

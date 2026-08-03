@@ -146,6 +146,72 @@ const chk=(a,ok,x)=>{N++;if(!ok){H++;console.log('  ✗ '+a+(x!==undefined?' :: 
  chk('Kitap kipine geçince kitap listesi geliyor',kip.kitapSayisi>0,kip);
  chk('Programa dönünce daire yine bağlı',kip.geriDaireBagli===true,kip);
 
+ /* ══ §285–§289 · GEMINI + ANALİZ AKIŞI ═══════════════════════════ */
+ console.log('\n═══ DOM · §285–§289 GEMİNİ / ANALİZ AKIŞI ═══');
+ const g=await pg.evaluate(()=>({
+   sag:(typeof gorusSaglayici==='function')?gorusSaglayici():null,
+   model:(typeof gorusModel==='function')?gorusModel():null,
+   uc:(typeof GEMINI_UC!=='undefined')?GEMINI_UC:null,
+   fn:['konuZayiflik','denemeDersOzet','akisAc','akisGit','cevapAnahtarPrompt',
+       'cevapEslestir','gorselKirp','GorselDepo','gorusCagir']
+      .map(n=>[n,typeof eval(n)]).filter(x=>x[1]==='undefined').map(x=>x[0])
+ }));
+ chk('varsayılan okuma motoru GEMINI',g.sag==='gemini',g);
+ chk('Gemini uç noktası doğru',/generativelanguage\.googleapis\.com\/v1beta\/models\//.test(g.uc||''),g.uc);
+ chk('emekli 2.5-flash-lite varsayılan değil',!/2\.5-flash-lite/.test(g.model||''),g.model);
+ chk('yeni katman fonksiyonlarının hepsi var',g.fn.length===0,g.fn);
+
+ /* yorum mantığı · 8 kombinasyon + nötr */
+ const y=await pg.evaluate(()=>{
+   const mk=(kod,d,y2)=>{const k={top:d+y2,d:d,y:y2,bos:0,
+     kod:{E:{d:0,y:0,bos:0,top:0},B:{d:0,y:0,bos:0,top:0},
+          AK:{d:0,y:0,bos:0,top:0},U:{d:0,y:0,bos:0,top:0}}};
+     k.kod[kod]={d:d,y:y2,bos:0,top:d+y2}; return konuYorum(k)};
+   return {Ed:mk('E',5,1).tur, Ey:mk('E',1,5).tur, Bd:mk('B',5,1).tur, By:mk('B',1,5).tur,
+     AKd:mk('AK',5,1).tur, AKy:mk('AK',1,5).tur, Ud:mk('U',5,1).tur, Uy:mk('U',1,5).tur,
+     az:mk('E',1,0).tur};
+ });
+ chk('Eminim+Doğru → sağlam',y.Ed==='saglam',y);
+ chk('Eminim+Yanlış → KÖR NOKTA',y.Ey==='kor',y);
+ chk('Bilmiyorum+Doğru → ŞANSA DAYALI',y.Bd==='sans',y);
+ chk('Bilmiyorum+Yanlış → sıfırdan',y.By==='bos',y);
+ chk('Arada+Doğru → yarım',y.AKd==='yari',y);
+ chk('Arada+Yanlış → bilgi eksiği',y.AKy==='eksik',y);
+ chk('Unuttum+Doğru → sezgi',y.Ud==='sezgi',y);
+ chk('Unuttum+Yanlış → unutuyorsun',y.Uy==='unut',y);
+ chk('az veri → nötr (uydurma yorum yok)',y.az==='notr',y);
+
+ /* sıralama kuralları */
+ const s=await pg.evaluate(()=>{
+   D.denemeler=[{tar:'2026-08-02',kay:'T',detay:true,sorular:[
+     {b:'Dahiliye',konu:'kardiyoloji',s:'Y',e:'E'},{b:'Dahiliye',konu:'kardiyoloji',s:'Y',e:'E'},
+     {b:'Dahiliye',konu:'nefroloji',s:'D',e:'B'},
+     {b:'Patoloji',konu:'neoplazi',s:'D',e:'E'},{b:'Patoloji',konu:'neoplazi',s:'D',e:'E'},
+     {b:'Patoloji',konu:'neoplazi',s:'D',e:'E'}]}];
+   const Z=konuZayiflik(), Dz=denemeDersOzet(D.denemeler[0]);
+   return {konuSirali:Z.every(x=>x.liste.every((k,i,a)=>i===0||a[i-1].top>=k.top)),
+     dersSirali:Dz.every((x,i,a)=>i===0||a[i-1].yOran>=x.yOran),
+     ilkDers:Dz[0]&&Dz[0].b, ilkOran:Dz[0]&&+Dz[0].yOran.toFixed(2),
+     dahKonu:(Z.find(x=>x.b==='Dahiliye')||{liste:[]}).liste.map(k=>k.konu)};
+ });
+ chk('konular soru sayısına göre AZALAN',s.konuSirali,s);
+ chk('dersler yanlış oranına göre AZALAN',s.dersSirali,s);
+ chk('en yanlış ders başta (Dahiliye %67)',s.ilkDers==='Dahiliye'&&s.ilkOran>0.6,s);
+
+ /* akış · 4 sayfa + responsive */
+ const a=await pg.evaluate(async()=>{
+   akisAc(0); await new Promise(r=>setTimeout(r,350));
+   const el=document.getElementById('akis');
+   const tasma=document.body.scrollWidth>document.body.clientWidth+1;
+   akisGit(3); await new Promise(r=>setTimeout(r,350));
+   const t3=document.body.scrollWidth>document.body.clientWidth+1;
+   const say=AKIS.say; akisKapat();
+   return {acik:el.classList.contains('ac')===false, cizgi:4, tasma, t3, say};
+ });
+ chk('akış açılıp kapanıyor',a.acik===true,a);
+ chk('akışta YATAY TAŞMA yok (sayfa 0 ve 3)',!a.tasma&&!a.t3,a);
+ chk('4. sayfaya gidilebiliyor',a.say===3,a);
+
  console.log('\n'+(H?('✗ '+H+' HATA / '+N+' kontrol'):('✓ SIFIR HATA — '+N+' DOM kontrolü')));
  console.log('SAYFA HATASI: '+(sayfaHata.length?JSON.stringify(sayfaHata.slice(0,3)):'(yok)'));
  if(sayfaHata.length)H++;
