@@ -1527,9 +1527,12 @@ eAT('atlasVeri/atlasYerlesim/atlasCiz/atlasAc/jarvis fonksiyonları',
   R('typeof atlasVeri')==='function'&&R('typeof atlasYerlesim')==='function'&&
   R('typeof atlasCiz')==='function'&&R('typeof atlasAc')==='function'&&R('typeof jarvis')==='function');
 eAT('saf siyah zemin · Obsidian dili (§263)',/#atlasKat\{[^}]*background:#000/.test(kod)&&kod.indexOf("c.fillStyle='#000'")>=0);
-eAT('altın renk atlasta YOK (FAZ 3 Altın Yol rezervi)',(function(){
-  const i=kod.indexOf('function atlasVeri'), j=kod.indexOf('function atlasKur');
-  return i>0&&j>i&&kod.slice(i,j).indexOf('#D8B26A')<0&&kod.slice(i,j).indexOf('ALTIN')<0})());
+/* §264: altın rezervi ARTIK KULLANILDI (Altın Yol). Kural değişti:
+   temel harita dili (veri türetme + yerleşim) altınsız kalmalı; altın
+   yalnız atlasCiz'deki Altın Yol bloğunda (o §264'te ayrıca denetleniyor). */
+eAT('temel harita dili altınsız (veri+yerleşim katmanı)',(function(){
+  const i=kod.indexOf('function atlasVeri'), j=kod.indexOf('function atlasCiz');
+  return i>0&&j>i&&kod.slice(i,j).indexOf('#D8B26A')<0})());
 eAT('JARVIS satırı HTML + "efendim" üslubu',/id="jarvisSatir"/.test(kod)&&kod.indexOf('efendim')>=0);
 (function(){ C.setGun('2026-08-02'); R('D.bitti={}'); R('D.pu={}');
   const v=R('(function(){const V=atlasYerlesim(atlasVeri(true),true);'+
@@ -1591,3 +1594,41 @@ eA2('gövde ışınları yalnız odakta (dersKonu çizimi mik koşullu)',/dersKo
 eA2('halka üyeleri soluklaşmıyor (odak gövdesi parlak)',/atlas\.mik\.map\.has\(n\)\)\)\?1:\.14/.test(kod));
 console.log('\n'+(QA2?'✗ '+QA2+' HATA':'✓ SIFIR HATA — 8 ek kontrol'));
 if(QA2)process.exitCode=1;
+
+console.log('\n═══ FAZ 3 · ALTIN YOL + GRAFİK DENETİMLERİ (§263/§264) ═══');
+let QA3=0;const eA3=(a,ok,x)=>{if(!ok){QA3++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eA3('altinYol/altinDugumler/altinAc + atEslesme/atGrupUygula/atKartCiz',
+  R('typeof altinYol')==='function'&&R('typeof altinDugumler')==='function'&&
+  R('typeof altinAc')==='function'&&R('typeof atEslesme')==='function'&&
+  R('typeof atGrupUygula')==='function'&&R('typeof atKartCiz')==='function');
+eA3('köprü menüsü KALDIRILDI (data-atgit yok)',kod.indexOf('data-atgit')<0);
+eA3('denetim bölümleri: Filtreler/Gruplar/Göster/Güçler',
+  /data-bol="filtre"/.test(kod)&&/data-bol="grup"/.test(kod)&&/data-bol="goster"/.test(kod)&&/data-bol="guc"/.test(kod));
+(function(){ C.setGun('2026-08-02'); R('D.pu={}'); R('D.bitti={}'); R('D.altinAcik=false');
+  R('D.denemeler=[{tar:"2026-08-01",kay:"t1",t:32,k:30,bn:{Dahiliye:14,Patoloji:8,Biyokimya:5,Fizyoloji:5,Anatomi:6,"Genel Cerrahi":6,Farmakoloji:5,Mikrobiyoloji:5,Pediatri:6,"Kadın Doğum":4}}]');
+  const Y=R('(function(){const Y=altinYol();return {n:Y.n,guven:Y.guven,net:+Y.toplamNet.toFixed(2),'+
+    'verimSirali:Y.sira.every((z,i)=>i===0||Y.sira[i-1].verim>=z.verim-1e-9),'+
+    'saatToplam:+Y.sira.reduce((a,z)=>a+z.saat,0).toFixed(1),kap:Y.kapasite}})()');
+  eA3('altın yol sıra üretiyor',Y.n>0,Y);
+  eA3('sıra VERİME göre azalan (net/saat ekseni)',Y.verimSirali,Y);
+  eA3('kapasiteyi aşmıyor (tempoProjeksiyon sınırı)',!Y.kap||Y.saatToplam<=Y.kap+.01,Y);
+  eA3('az veriyle temkinli güven etiketi',['düşük','orta','iyi'].indexOf(Y.guven)>=0,Y.guven);
+  /* öneri katmanı: açılıp kapanabilir, otomatik pilot değil */
+  const t=R('(function(){altinAc(true);const a=!!D.altinAcik;altinAc(false);'+
+    'return {acik:a,kapali:!D.altinAcik}})()');
+  eA3('altın yol AÇ/KAPA (öneri katmanı, zorunluluk değil)',t.acik&&t.kapali,t);
+  /* grup sorguları gerçek veriden eşleşiyor */
+  const g=R('(function(){const V=atlasVeri(true);'+
+    'const bug=V.N.filter(n=>atEslesme(n,"#bugün")).length;'+
+    'const kon=V.N.filter(n=>atEslesme(n,"tip:konu")).length;'+
+    'const bio=V.N.filter(n=>atEslesme(n,"ders:biyokimya tip:konu")).length;'+
+    'return {bug:bug,kon:kon,bio:bio}})()');
+  eA3('sorgu: tip:konu + ders: filtresi çalışıyor',g.kon>100&&g.bio>5&&g.bio<g.kon,g);
+})();
+eA3('ALTIN yalnız Altın Yol çiziminde (harita dili gri kalır)',(function(){
+  const i=kod.indexOf('function atlasCiz'), j=kod.indexOf('function atlasVur');
+  if(i<0||j<i)return false;
+  const blok=kod.slice(i,j), p=blok.split('#D8B26A').length-1;
+  return p===1&&blok.indexOf('ALTIN YOL')>0})());
+console.log('\n'+(QA3?'✗ '+QA3+' HATA':'✓ SIFIR HATA — 10 ek kontrol'));
+if(QA3)process.exitCode=1;
