@@ -1114,34 +1114,47 @@ console.log('\n'+(KX?'✗ '+KX+' HATA':'✓ SIFIR HATA — 21 ek kontrol'));
 if(KX)process.exitCode=1;
 
 console.log('\n═══ KONU TEKİLLİĞİ · NET HAVUZU ═══');
+/* §271 GÜNCELLEMESİ · Bu blok §228'in KULLANICI ONAYLI grup-bazlı anahtar
+   davranışını doğrular. Eski sürüm çapraz-grup gölgeleme bekliyordu (Patoloji
+   meme görevini Genel Cerrahi kitabı gölgelesin) — §228'den beri bu bilinçli
+   olarak YAPILMIYOR; iddialar eskimişti, uygulama bozuk değildi. Gölgeleme /
+   çift-sayım koruması / liste görünümü niyeti AYNI GRUP çiftiyle korunuyor:
+   Farmakoloji · Otonom Sinir Sistemi ↔ "Yavuz Şahin Farmakoloji SB".
+   İşaretleme GERÇEK yoldan (puIsaretle, §271) yapılır — çıplak D.pu yazmak
+   uygulamanın yolu değil ve krediyi vermiyordu.
+   ⚠ B seçeneği (ad bazlı çapraz gölgeleme) kullanıcı kararıyla hâlâ açılabilir;
+   o zaman bu blok yeniden yazılır. */
 let QQ=0;const eQ=(a,ok,x)=>{if(!ok){QQ++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
 eQ('konuKayit fonksiyonu',R('typeof konuKayit')==='function');
 eQ('golge fonksiyonu',R('typeof golge')==='function');
 eQ('bittiTar fonksiyonu',R('typeof bittiTar')==='function');
 eQ('ikameMi fonksiyonu',R('typeof ikameMi')==='function');
 eQ('kapsam gölgeyi sayıyor',kod.indexOf('const b=bittiTar(g); if(b&&b>tar)')>=0);
-eQ('konuCalisildi merkezi kayıttan',kod.indexOf('Object.keys(konuKayit()).forEach(k=>{ if(k)s.push(k) })')>=0);
+eQ('konuCalisildi merkezi kümeden (konuCalisildiKume)',
+  kod.indexOf('konuCalisildiKume')>=0&&/function konuCalisildi\(/.test(kod));
 eQ('üstü çizili sınıf',kod.indexOf('.glS.glg .ko{text-decoration:line-through')>=0);
 eQ("ikame etiketi",kod.indexOf(".klI::before{content:")>=0);
 eQ('ikame saatten düşülüyor',kod.indexOf('if(!ikameMi(g)){ top+=g.sure;')>=0);
 (function(){
   const oku=()=>{R('_kcOnb.a=null; _kkOnb.a=null; _gkOnb._a=null');
     const p=X.para(); return {K:X.puan(p.t,p.k),P:R('kalanKazanci().fark')}};
-  const sf=()=>{C.setGun('2026-08-01'); X.D.bitti={}; X.D.pu={}; X.D.tts={}; X.D.ikame={}};
+  const sf=()=>{C.setGun('2026-08-01'); X.D.bitti={}; X.D.pu={}; X.D.tts={}; X.D.ikame={};
+    R('puSenkron()')};
   sf();
   const a=oku();
-  const g=X.GOREVLER.find(x=>x.act==='oku'&&/Meme Hastalıkları/.test(x.k));
+  /* AYNI GRUP çifti: görev adı ve kitap konusu birebir aynı anahtara düşer */
+  const g=X.GOREVLER.find(x=>x.act==='oku'&&x.br==='Farmakoloji'&&/Otonom Sinir Sistemi/.test(x.k));
   const gi=X.GOREVLER.indexOf(g);
-  const anh=R('puAnh(POWERUP.find(x=>/meme/i.test(x.konu)&&x.kitap==="Levent Kodal Genel Cerrahi SB"))');
-  /* A · programdaki görevi kendisi */
+  const anh=R('puAnh(POWERUP.find(x=>/otonom/i.test(x.konu)&&x.kitap==="Yavuz Şahin Farmakoloji SB"))');
+  /* A · programdaki görevin kendisi */
   X.D.bitti[X.id(g)]='2026-08-01';
   const b=oku(); sf();
-  /* B · aynı konu başka kitaptan */
-  X.D.pu[anh]={al:'2026-08-01',bit:'2026-08-01'};
+  /* B · aynı konu aynı gruptan BAŞKA kitap — GERÇEK işaretleme yolu */
+  R('puIsaretle('+JSON.stringify(anh)+')');
   const c=oku();
-  eQ('başka kaynak paraketeyi artırıyor',c.K>a.K,{once:+a.K.toFixed(4),sonra:+c.K.toFixed(4)});
+  eQ('başka kaynak paraketeyi artırıyor',c.K>a.K+0.01,{once:+a.K.toFixed(4),sonra:+c.K.toFixed(4)});
   eQ('potansiyel düşüyor',c.P<a.P,{once:+a.P.toFixed(3),sonra:+c.P.toFixed(3)});
-  eQ('program görevi gölgeleniyor',!!R('golge(GOREVLER['+gi+'])'));
+  eQ('program görevi gölgeleniyor (aynı grup)',!!R('golge(GOREVLER['+gi+'])'));
   eQ('iki yol benzer getiri',Math.abs(b.K-c.K)<0.05,{kendisi:+b.K.toFixed(4),baska:+c.K.toFixed(4)});
   eQ('konu çalışılmış sayılıyor',R('konuCalisildi('+JSON.stringify(g.k)+')')===true);
   /* ÇİFT SAYIM · ikinci kaynak yalnız TEKRAR getirisi */
@@ -1151,25 +1164,36 @@ eQ('ikame saatten düşülüyor',kod.indexOf('if(!ikameMi(g)){ top+=g.sure;')>=0
   const ikinci=d.K-c.K;
   eQ('ikinci kaynak daha az getiriyor (tekrar)',ikinci<ilk,
      {ilk:+ilk.toFixed(4),ikinci:+ikinci.toFixed(4)});
-  eQ('ikinci getiri pozitif ama küçük',ikinci>0&&ikinci<ilk*0.6);
-  /* Tavan · hepsi tamamlanınca */
+  eQ('ikinci getiri pozitif ama küçük',ikinci>0&&ikinci<ilk*0.6,
+     {ilk:+ilk.toFixed(4),ikinci:+ikinci.toFixed(4)});
+  /* GERİ ALMA birebir dönüyor (puIsaretle çifte çağrı) */
+  sf(); R('puIsaretle('+JSON.stringify(anh)+')'); R('puIsaretle('+JSON.stringify(anh)+')');
+  const gA=oku();
+  eQ('işaret geri alınınca parakete birebir dönüyor',Math.abs(gA.K-a.K)<1e-9,
+     {once:+a.K.toFixed(4),sonra:+gA.K.toFixed(4)});
+  /* Tavan · hepsi GERÇEK yolla tamamlanınca */
   sf();
   X.GOREVLER.forEach(x=>{if(['oku','video','soru','tekrar'].indexOf(x.act)>=0)X.D.bitti[X.id(x)]='2026-08-01'});
-  R('POWERUP.forEach(u=>{D.pu[puAnh(u)]={al:"2026-08-01",bit:"2026-08-01"}})');
+  R('POWERUP.forEach(u=>puIsaretle(puAnh(u)))');
   const e=oku();
   eQ('tavan aşılmıyor',e.K<88.7,+e.K.toFixed(3));
   eQ('parakete makul',e.K>55&&e.K<75,+e.K.toFixed(3));
   sf();
-  /* Liste görünümü */
-  X.D.pu[anh]={al:'2026-08-01',bit:'2026-08-01'};
+  /* Liste görünümü · gölgelenen görev üstü çizili + kaynak adı */
+  R('puIsaretle('+JSON.stringify(anh)+')');
   R('_kcOnb.a=null; _kkOnb.a=null');
   R('gunGoster='+JSON.stringify(g.d)+'; D.glKip=null');
   const h=R('gunListe()');
   eQ('listede üstü çizili',/glS[^"]*glg/.test(h));
-  eQ('kaynak adı yazıyor',/klI">Levent Kodal/.test(h));
+  eQ('kaynak adı yazıyor',/klI">Yavuz Şahin/.test(h));
   sf();
 })();
-console.log('\n'+(QQ?'✗ '+QQ+' HATA':'✓ SIFIR HATA — 20 ek kontrol'));
+/* §271 · işaretleme TEK yoldan: üç çağrı yeri de puIsaretle kullanıyor */
+eQ('puIsaretle fonksiyonu',R('typeof puIsaretle')==='function');
+eQ('klpu işleyicisi ortak yolda',/puIsaretle\(a,geri\)/.test(kod));
+eQ('haritanın Çalıştım’ı ortak yolda',/if\(u\)\{ puIsaretle\(puAnh\(u\)\) \}/.test(kod));
+eQ('bcCal ortak yolda',(kod.match(/puIsaretle\(puAnh\(u\)\)/g)||[]).length>=2);
+console.log('\n'+(QQ?'✗ '+QQ+' HATA':'✓ SIFIR HATA — 25 ek kontrol'));
 if(QQ)process.exitCode=1;
 
 console.log('\n═══ GRUP BAZLI KONU ANAHTARI ═══');
@@ -1841,3 +1865,36 @@ eGir('kapatınca harita yeniden kuruluyor (atHaritaTazele)',
   /function atHaritaTazele/.test(kod)&&/atlasYerlesim\(atlasVeri\(true\),true\)/.test(kod));
 console.log('\n'+(QGir?'✗ '+QGir+' HATA':'✓ SIFIR HATA — 10 ek kontrol'));
 if(QGir)process.exitCode=1;
+
+console.log('\n═══ OMR DÜZELTME AKIŞI · düşük güvenli okuma karara bağlanır (§272) ═══');
+let QDz=0;const eDz=(a,ok,x)=>{if(!ok){QDz++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eDz('düzeltme okumadan SONRA, eşleştirmeden ÖNCE uygulanıyor',
+  /const DZ=OMR_DURUM\.duzelt\|\|\{\};[\s\S]{0,400}const esl=omrEslestir\(ham\)/.test(kod));
+eDz('kart çipleri tıklanabilir (data-omrsec) + karar düğmeleri (data-omrdz)',
+  /data-omrsec/.test(kod)&&/data-omrdz/.test(kod));
+eDz('yeniden hesaplama SESSİZ (jarvis tekrar konuşmuyor)',
+  /omrOnizle\(kip,true\)/.test(kod)&&/if\(!sessiz\)jarvis/.test(kod));
+eDz('vazgeç ve kaydet düzeltme durumunu TEMİZLİYOR',
+  (kod.match(/OMR_DURUM\.duzelt=\{\}/g)||[]).length>=2);
+(function(){ C.setGun('2026-08-02');
+  R('D.denemeler=[{tar:"2026-08-01",kay:"t",t:32,k:30,bn:{Dahiliye:14,Patoloji:8,Biyokimya:5,'+
+    'Fizyoloji:5,Anatomi:6,"Genel Cerrahi":6,Farmakoloji:5,Mikrobiyoloji:5,Pediatri:6,"Kadın Doğum":4}}]');
+  R('D.kal=[]; OMR_DURUM.duzelt={}; OMR_DURUM.acikSoru=null; OMR_DURUM.kayit=null');
+  const once=R('omrOnizle("gercek")');
+  /* #192 fotoğrafta D/Y okunamıyordu — kullanıcı Y der */
+  R('OMR_DURUM.duzelt={"192":{s:"Y"}}');
+  const sonra=R('omrOnizle("gercek",true)');
+  eDz('düzeltme düşük sayısını düşürüyor (6→5)',once.dusuk===6&&sonra.dusuk===5,
+    {once:once.dusuk,sonra:sonra.dusuk});
+  const kayit=R('(function(){ omrKaydet(); const k=D.kal[D.kal.length-1];'+
+    'return {y:k&&k.y, temiz:Object.keys(OMR_DURUM.duzelt||{}).length===0} })()');
+  eDz('düzeltilen cevap kayda GİRİYOR (4Y→5Y)',kayit.y===5,kayit);
+  eDz('kayıt sonrası düzeltme durumu temiz',kayit.temiz===true,kayit);
+  /* boş bırakılan nete GİRMEZ */
+  R('D.kal=[]; OMR_DURUM.duzelt={"193":{s:null}}; OMR_DURUM.kayit=null');
+  const bos=R('omrOnizle("gercek",true)');
+  eDz('boş bırakılan soru nete katılmıyor (uydurma yok)',bos.dusuk===6,bos.dusuk);
+  R('D.denemeler=[];D.kal=[];OMR_DURUM.duzelt={}');
+})();
+console.log('\n'+(QDz?'✗ '+QDz+' HATA':'✓ SIFIR HATA — 8 ek kontrol'));
+if(QDz)process.exitCode=1;
