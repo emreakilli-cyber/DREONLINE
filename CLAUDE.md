@@ -117,14 +117,22 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   varyantı atlanınca §112'nin düzeltmesi §117'ye kadar eksik kaldı; aynı kusur dört
   panelde birden vardı §151).
 
-## Güncel durum işaretçisi (sürüm `2027-02-08a`, DEVIR sonundaki devir notu)
+## Güncel durum işaretçisi (sürüm `2027-02-18j`, DEVIR sonundaki devir notu)
 
 - FT serisi 10 kitap power-up havuzuna işlendi (156 → 254 konu); konu tekilliği /
   net havuzu paylaşımı grup bazlı anahtarla tamamlandı (§219–§228).
+- **§280–§282 TTS + refleks:** 8 kitap TTS içeriği · "başka kaynaktan" rozeti
+  (video↔konu kitabı↔power-up tek tik) · konu-kök bazlı decay (9/9 kapsama).
+- **§283 KAMERA İLE DENEME · Aşama 1:** kitapçık fotoğrafından ayrıntılı deneme
+  girişi — sabit numara→ders eşlemesi, el yazısı D/Y/B + E/B/AK/U + konu okuma,
+  200→D.denemeler / 24'lü→D.kal. Okuma motoru **kullanıcının Anthropic anahtarıyla
+  tarayıcıdan doğrudan Claude görüşü** (anahtar `rota-gorus` yerel deposunda, gist'e
+  senkronlanmaz, koda gömülü değil). Gerçek fotoğraf doğruluğu kullanıcıda denenecek.
 - **YARIM KALAN · TASARIM:** power-up paneli, matris ve seyir sayfalarının görsel
   tasarımı (beğenilen referans: `.glAnh` altın gradyan anahtar, `.glS` satır düzeni,
   §217 daire tamamlama düğmesi).
 - Bilinen açık noktalar: FT Geriatri 0.51 soru (kullanıcı onaylı varsayım) ·
   D_ORAN ±0.57 belirsizliği · potansiyel-gerçek ~0.42 net farkı (bilinçli muhafazakâr,
-  §205) · yinelenen deneme kaydı denetimsiz (bilinçli).
+  §205) · yinelenen deneme kaydı denetimsiz (bilinçli) · Fizyoloji/Histo aralığı
+  kullanıcı beyanı ≠ SORU.den (net grubu ortak, etkisiz).
 - Geçmiş oturumların süreç analizi ve otomasyon/düzeltme adayları: `icgoru.md`.

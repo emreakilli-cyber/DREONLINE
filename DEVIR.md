@@ -14139,6 +14139,68 @@ Bu yüzden ayrı `konuKapsamKume` (9/9) kuruldu, `konuKayit` birebir kaldı.
 
 ---
 
+## §283 · Kamera ile ayrıntılı deneme girişi · Aşama 1 (2027-02-18j)
+
+**İstek (kullanıcı, kelimesi kelimesine özet):** Deneme kitapçığının (optik form
+DEĞİL — elinde optik yok) sayfasının fotoğrafını çekince sistem: (1) her sorunun
+numarasını belirlesin, (2) **değişmez numara→ders eşlemesiyle** dersini atasın
+(aynı sayfada iki ders olsa bile numaradan ayırsın), (3) numaranın altındaki el
+yazısı **D/Y/B**'yi ve şıkların sağındaki **E/B/AK/U** güven kodunu okusun,
+(4) soru+şıkları okuyup **konu**yu bulsun. 24'lü için başta "24 ayrıntılı" + ders
+seçilsin. Önce **bulanık fotoğraf** kontrolü + "tekrar çek" uyarısı, sonra
+"işliyorum" kartı, hazır olunca üstte "analizin hazır" baloncuğu (Bevel mantığı).
+Sonuç bitince fotoğraflar silinsin. Okuma çevrimdışı olmazsa WiFi ile yapay zeka.
+**Seçim (AskUserQuestion):** "Uygulama içi · Claude görüş (senin anahtarın)".
+
+**Yapılan — motor mevcut OMR borusuna bağlandı, yeni kayıt yolu YOK:**
+- `BRANS_ARALIK` (kullanıcının sabiti, kanonik adlar) + `soruDers(no,mod,ders24)`.
+  ⚠ Kullanıcı Fizyoloji 14–20 (7) / Histo 21–28 (8); `SORU.den`'de ters (8/7).
+  İkisi de `DEN_ESL`→'Fizyoloji+Histo' net grubuna gittiğinden **net etkilenmez**;
+  bu özellik için kullanıcının aralığı esas alındı (koda not düşüldü).
+- `denemePrompt(mod,ders24)` — sabit eşleme + işaret sözleşmeleri + **konu katalogu
+  KONU_DAG'dan** (yeni ad uydurma yasağı, §153/§155) + katı JSON çıktı şartı.
+- `denemeGorusCagir` — **tarayıcıdan doğrudan** `api.anthropic.com` (`x-api-key`,
+  `anthropic-version`, `anthropic-dangerous-direct-browser-access:true`), fotoğraflar
+  1568px'e küçültülüp base64. Varsayılan model `claude-opus-5` (doğruluk), ayarlanabilir.
+- `denemeGorusEsle` — görüş JSON'ı → `ham` şekli; **ders SABİT eşlemeden** (görüşün
+  branş tahmini geçersiz), s/e normalize, konu yalnız katalogda karşılığı varsa taşınır.
+- `isaretOku('vision')` yeni dal → `omrEslestir → omrOnizle('vision') → omrKaydet`
+  ZATEN var olan önizleme/onay/düzeltme yolunu kullanır. `omrKapsam`: ~200 soru + çok
+  branş → **tam deneme (D.denemeler)**; kısmi/24'lü → **branş kaydı (D.kal)**, parakete
+  çökmez.
+- `bulanikMi` (çevrimdışı Laplacian varyansı, muhafazakâr eşik, engel değil uyarı) +
+  `fotoKucult` + `dosyaOku`.
+- Anahtar **D'de DEĞİL** — ayrı yerel depo `Gorus` (`rota-gorus`), gist ile
+  senkronlanmaz, koda gömülmez (§33).
+- UI: dpanel yeniden düzenlendi — üstte **otomatik giriş** (200/24 mod düğmeleri,
+  24 için ders seçici, fotoğraf butonu, durum kartları, görüş ayarları), altta
+  gizli **manuel gir**. Üst **`#denBildirim`** "analiz hazır" baloncuğu (dokun→incele,
+  ✕→kapat). Fotoğraflar işlem sonrası bellekten atılıyor.
+- `omrKalKayit` düzeltmesi: **boş (B) artık branş düzeyinde sayılıyor** (eskiden
+  G.b hep 0'dı; kamera kaydında soru toplamı eksik çıkardı) — konu D/Y kırılımını
+  kirletmeden.
+
+**Doğrulama:**
+- pu_test **§283 golden bloğu** (harness): sabit eşleme 1..200 boşluksuz/örtüşmesiz
+  toplam 200 · soruDers sınırları · istem içeriği · JSON ayıklama savunması · eşleme
+  (ders sabit, s/e normalize, konu katalog süzgeci) · golden 200→D.denemeler ·
+  golden 24→D.kal (parakete korunur) · güvenlik (anahtar koda/D'ye gömülü değil).
+- **Tarayıcı golden** (`scratchpad/kamera_golden.js`, fetch taklidiyle): bulanıklık
+  net↔bulanık ayrımı · 200 akış (çağrı→bildirim→foto silme→incele kartı "mock değil"→
+  D.denemeler +1) · 24 akış (hepsi tek branş→D.kal +1, D.denemeler değişmez) · UI
+  kablolaması (mod/ders/manuel geçişleri). **Sayfa hatası yok.** Ekran görüntüleriyle
+  görsel doğrulandı (oto UI · işliyor · hazır+baloncuk · 24+bulanık · manuel).
+- Tüm kapılar (derin/pu/cark/mola/kombo/kal + denet.py) **0 hata**. node --check temiz.
+
+**Aşama 1 sınırı:** Gerçek API çağrısı kullanıcının anahtarı + WiFi ile telefonda
+çalışır (burada taklit fetch ile test edildi — para/ağ harcanmadı). Okuma doğruluğu
+gerçek kitapçık fotoğraflarıyla henüz kullanıcıda denenmedi. Aşama 2: gerçek
+fotoğraflarla doğruluk ayarı, gerekirse extended thinking, kart cilası.
+
+**sürüm 2027-02-18j ↔ rota-2027-02-18j**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
@@ -14184,3 +14246,10 @@ Bekleyen: kullanıcıdan etiketli deneme verisi (§230 formatı) · cihazdan "Ha
   kitap içindekiler tabloları (alt başlık seviyesi için). Kadın Doğum 191–200'ün
   6 düşük güvenli sorusu için **düzeltme aracı kuruldu (§272)** — kullanıcı kartın
   içinden D/Y/Boş kararını verebilir; içerik doğrulaması hâlâ kullanıcıda.
+- **§283 kamera ile deneme · Aşama 1 kuruldu.** Kullanıcı optik yerine **kitapçık
+  fotoğrafı** çekiyor; okuma motoru **kullanıcının Anthropic anahtarıyla, tarayıcıdan
+  doğrudan Claude görüşü**. Açık noktalar: (a) gerçek kitapçık fotoğraflarıyla okuma
+  doğruluğu (el yazısı D/Y/B + E/B/AK/U + konu) **henüz denenmedi** — kullanıcı ilk
+  denemede güven kodlarına bakmalı; (b) Fizyoloji/Histo aralığı kullanıcı beyanı
+  (14–20 / 21–28), SORU.den ile ters ama net grubu ortak olduğundan etkisiz; (c) her
+  deneme WiFi + anahtar başına maliyet (opus-5 varsayılan, sonnet-5'e düşürülebilir).

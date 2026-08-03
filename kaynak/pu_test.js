@@ -1851,6 +1851,135 @@ eO('okuma katmanı yalnız isaretOku içinde (değişecek tek yer)',
 console.log('\n'+(QO?'✗ '+QO+' HATA':'✓ SIFIR HATA — 26 ek kontrol'));
 if(QO)process.exitCode=1;
 
+console.log('\n═══ §283 · KAMERA İLE DENEME · GOLDEN TEST ═══');
+let QK=0;const eK=(a,ok,x)=>{if(!ok){QK++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+/* fonksiyonlar var */
+eK('yeni katman fonksiyonları var (soruDers/denemePrompt/denemeGorusEsle/denemeGorusCagir/bulanikMi/denOtoKur)',
+  R('typeof soruDers')==='function'&&R('typeof denemePrompt')==='function'&&
+  R('typeof denemeGorusEsle')==='function'&&R('typeof denemeGorusCagir')==='function'&&
+  R('typeof bulanikMi')==='function'&&R('typeof denOtoKur')==='function'&&
+  R('typeof denemeJsonAyikla')==='function'&&R('typeof denIncele')==='function');
+/* SABİT ders eşlemesi · 1..200 boşluksuz/örtüşmesiz, toplam 200, kanonik adlar */
+(function(){
+  const g=R('(function(){const A=BRANS_ARALIK;let bos=[],ort=[],top=0,prev=0;'+
+    'const gorulen={};A.forEach(x=>{gorulen[x.br]=1});'+
+    'for(let n=1;n<=200;n++){const hit=A.filter(x=>n>=x.a&&n<=x.z);'+
+    ' if(hit.length===0)bos.push(n); if(hit.length>1)ort.push(n);}'+
+    'A.forEach(x=>{top+=(x.z-x.a+1);});'+
+    'const kanon=A.every(x=>KONU_DAG[x.br]&&Object.keys(KONU_DAG[x.br]).length>0);'+
+    'return {bos:bos.length,ort:ort.length,top:top,kanon:kanon,say:A.length}})()');
+  eK('numara→ders: 1..200 boşluksuz',g.bos===0,g.bos);
+  eK('numara→ders: örtüşme yok',g.ort===0,g.ort);
+  eK('numara→ders: toplam 200 soru',g.top===200,g.top);
+  eK('11 branş, hepsi KONU_DAG kanonik adı',g.kanon&&g.say===11,g);
+  const sd=R('[soruDers(1,"200"),soruDers(13,"200"),soruDers(14,"200"),soruDers(200,"200"),'+
+    'soruDers(201,"200"),soruDers(0,"200"),soruDers(9,"24","Patoloji")]');
+  eK('soruDers sınırları doğru (1→Anatomi,14→Fizyoloji,200→Kadın Doğum,201→null,24-mod→ders24)',
+    sd[0]==='Anatomi'&&sd[1]==='Anatomi'&&sd[2]==='Fizyoloji'&&sd[3]==='Kadın Doğum'&&
+    sd[4]===null&&sd[5]===null&&sd[6]==='Patoloji',sd);
+})();
+/* İSTEM (prompt) içeriği */
+(function(){
+  const p200=R('denemePrompt("200",null)'), p24=R('denemePrompt("24","Dahiliye")');
+  eK('200 istemi sabit eşlemeyi içeriyor (1–13 Anatomi … 191–200 Kadın Doğum)',
+    /1–13: Anatomi/.test(p200)&&/191–200: Kadın Doğum/.test(p200));
+  eK('200 istemi konu katalogunu içeriyor (Dahiliye: kardiyoloji)',/kardiyoloji/.test(p200));
+  eK('istem "UYDURMA" ve JSON çıktı şartını içeriyor',/UYDURMA/.test(p200)&&/JSON/.test(p200)&&/"no"/.test(p200));
+  eK('24 istemi tek ders (Dahiliye), 200 eşlemesini içermiyor',
+    /tek dersin/.test(p24)&&/Dahiliye/.test(p24)&&!/161–190/.test(p24));
+})();
+/* JSON ayıklama savunmacı */
+(function(){
+  const a=R('denemeJsonAyikla("```json\\n[{\\"no\\":1}]\\n```")');
+  const b=R('denemeJsonAyikla("işte sonuç: [{\\"no\\":5,\\"s\\":\\"D\\"}] bitti")');
+  const c=R('(function(){try{denemeJsonAyikla("hiç json yok");return "yok"}catch(e){return "atti"}})()');
+  eK('JSON ayıklama: ```json çiti soyuluyor',Array.isArray(a)&&a[0].no===1,a);
+  eK('JSON ayıklama: gömülü dizi çıkarılıyor',Array.isArray(b)&&b[0].no===5,b);
+  eK('JSON ayıklama: geçersiz metin HATA atıyor (sessiz uydurma yok)',c==='atti',c);
+})();
+/* EŞLEME · ders SABİT eşlemeden, s/e normalize, konu katalog süzgeci */
+(function(){
+  const nm=R('denemeGorusEsle([{no:1,b:"YANLIS",s:"d",e:"e",konu:"",guven:0.9},'+
+    '{no:14,b:"YANLIS",s:"boş",e:"XX",konu:"",guven:0.5}],"200",null)');
+  eK('eşleme: ders görüşün tahminini değil SABİT eşlemeyi kullanıyor',
+    nm[0].b==='Anatomi'&&nm[1].b==='Fizyoloji',nm.map(o=>o.b));
+  eK('eşleme: geçerli s/e büyütülüyor (d→D, e→E)',nm[0].s==='D'&&nm[0].e==='E',nm[0]);
+  eK('eşleme: geçersiz s/e null (uydurma yok)',nm[1].s===null&&nm[1].e===null,nm[1]);
+  const kv=R('denemeGorusEsle([{no:101,b:"x",s:"D",e:"E",konu:"kardiyoloji",guven:0.9},'+
+    '{no:102,b:"x",s:"D",e:"E",konu:"ZZZ-yok",guven:0.9},'+
+    '{no:103,b:"x",s:"D",e:"E",konu:"Kardiyoloji",guven:0.9}],"200",null)');
+  eK('eşleme: geçerli konu katalogdan taşınıyor',kv[0].konu==='kardiyoloji',kv[0]);
+  eK('eşleme: katalogda olmayan konu DÜŞÜRÜLÜYOR (sessiz sıfır engeli §153/§155)',kv[1].konu==='',kv[1]);
+  eK('eşleme: konu büyük/küçük harf duyarsız eşleşiyor',kv[2].konu==='kardiyoloji',kv[2]);
+})();
+/* isaretOku('vision') OMR_VIZYON kopyası döndürüyor */
+(function(){
+  const r=R('(function(){OMR_VIZYON.ham=[{no:1,b:"Anatomi",konu:"",s:"D",e:"E",guven:0.9}];'+
+    'const x=isaretOku("vision");return {len:x.length,kopya:x[0]!==OMR_VIZYON.ham[0],b:x[0].b}})()');
+  eK("isaretOku('vision') OMR_VIZYON'u kopyalayarak okuyor",r.len===1&&r.kopya&&r.b==='Anatomi',r);
+})();
+/* GOLDEN · 200 soruluk vision fixture → TAM deneme → D.denemeler */
+(function(){
+  R('D.denemeler=[{tar:"2026-08-01",kay:"t",t:30,k:28,bn:{}}];D.kal=[]');
+  const g=R('(function(){const q=[];for(let no=1;no<=200;no++){'+
+    'q.push({no:no,b:"Anatomi",s:["Y","B","D"][no%3],e:["E","B","AK","U"][no%4],konu:"",guven:0.92})}'+
+    'const ham=denemeGorusEsle(q,"200",null);OMR_VIZYON.ham=ham;OMR_VIZYON.mod="200";'+
+    'const brans=new Set(ham.map(o=>o.b)).size;'+
+    'const dOnce=D.denemeler.length;omrOnizle("vision");'+
+    'const kap=OMR_DURUM.kapsam,yol=OMR_DURUM.kayit&&OMR_DURUM.kayit.yol,'+
+    'etk=OMR_DURUM.kayit&&OMR_DURUM.kayit.kay&&OMR_DURUM.kayit.kay.kay;'+
+    'const ok=omrKaydet();'+
+    'return {n:ham.length,brans:brans,tam:kap.tam,yol:yol,etk:etk,ok:ok,'+
+    'artti:D.denemeler.length-dOnce,ilk:ham[0].b,son:ham[ham.length-1].b}})()');
+  eK('golden 200: eşleme 200 soru, 11 branş üretiyor',g.n===200&&g.brans===11,g);
+  eK('golden 200: sınırlar doğru (soru1→Anatomi, soru200→Kadın Doğum)',
+    g.ilk==='Anatomi'&&g.son==='Kadın Doğum',{ilk:g.ilk,son:g.son});
+  eK('golden 200: TAM deneme kapsamı → deneme yolu',g.tam===true&&g.yol==='deneme',g);
+  eK('golden 200: kayıt etiketi "mock" DEĞİL, kamera fotoğrafı',
+    /deneme fotoğraf/.test(g.etk||''),g.etk);
+  eK('golden 200: onayla → D.denemeler +1',g.ok===true&&g.artti===1,g);
+})();
+/* GOLDEN · 24 soruluk tek branş vision fixture → KISMİ → D.kal (parakete korunur) */
+(function(){
+  R('D.denemeler=[{tar:"2026-08-01",kay:"t",t:30,k:28,bn:{}}];D.kal=[]');
+  const g=R('(function(){const q=[];for(let i=1;i<=24;i++){'+
+    'q.push({no:i,b:"YANLIS",s:(i%4===0?"Y":(i%7===0?"B":"D")),e:"E",konu:"",guven:0.9})}'+
+    'const ham=denemeGorusEsle(q,"24","Dahiliye");OMR_VIZYON.ham=ham;OMR_VIZYON.mod="24";'+
+    'const allDah=ham.every(o=>o.b==="Dahiliye");'+
+    'const dOnce=D.denemeler.length,kOnce=D.kal.length;omrOnizle("vision");'+
+    'const kap=OMR_DURUM.kapsam,yol=OMR_DURUM.kayit&&OMR_DURUM.kayit.yol;'+
+    'const ok=omrKaydet();'+
+    'return {n:ham.length,allDah:allDah,tam:kap.tam,yol:yol,ok:ok,'+
+    'denArtti:D.denemeler.length-dOnce,kalArtti:D.kal.length-kOnce,'+
+    'kalKayit:D.kal[D.kal.length-1]}})()');
+  eK('golden 24: tüm sorular seçilen derse (Dahiliye) atanıyor',g.allDah===true,g.allDah);
+  eK('golden 24: TAM deneme DEĞİL → kal (branş) yolu',g.tam===false&&g.yol==='kal',g);
+  eK('golden 24: onayla → D.kal +1, D.denemeler DEĞİŞMİYOR (parakete korunur)',
+    g.ok===true&&g.kalArtti===1&&g.denArtti===0,g);
+  eK('golden 24: kal kaydı dpanel şeklinde (tar/br/d/y/b) ve boş sayılıyor',
+    !!g.kalKayit&&g.kalKayit.br==='Dahiliye'&&typeof g.kalKayit.d==='number'&&
+    typeof g.kalKayit.b==='number'&&(g.kalKayit.b>=1),g.kalKayit);
+  R('D.denemeler=[];D.kal=[];OMR_VIZYON.ham=null');
+})();
+/* GÜVENLİK · anahtar koda gömülü değil, D'de değil, ayrı yerel depoda */
+(function(){
+  eK('anahtar D içinde tutulmuyor (senkron/gist dışı)',kod.indexOf('D.apiAnahtar')<0);
+  eK('anahtar ayrı yerel depoda (rota-gorus)',kod.indexOf("'rota-gorus'")>=0);
+  eK('koda gömülü gerçek anahtar YOK (yalnız placeholder)',!/sk-ant-[A-Za-z0-9_-]{18,}/.test(kod));
+  eK('görüş çağrısı tarayıcı-doğrudan başlığını kullanıyor',
+    /anthropic-dangerous-direct-browser-access/.test(kod)&&/x-api-key/.test(kod));
+})();
+/* GİRİŞ UI · otomatik/manuel + bildirim */
+(function(){
+  eK('dpanel otomatik giriş UI (fotoğraf girişi + mod düğmeleri + manuel aç)',
+    /id="dpFoto"/.test(kod)&&/data-dpmod="200"/.test(kod)&&/data-dpmod="24"/.test(kod)&&
+    /id="dpManuelAc"/.test(kod));
+  eK('üst "analiz hazır" bildirim baloncuğu var',/id="denBildirim"/.test(kod)&&/analiz.{0,6}hazır/i.test(kod));
+  eK('bulanık ön-kontrol Laplacian tabanlı',/Laplacian|lap=4\*g/.test(kod));
+})();
+console.log('\n'+(QK?'✗ '+QK+' HATA':'✓ SIFIR HATA — §283 golden'));
+if(QK)process.exitCode=1;
+
 console.log('\n═══ JARVIS · KÖŞEDE TEK SATIR, SOHBET PENCERESİ DEĞİL (§268) ═══');
 let QJ=0;const eJ=(a,ok,x)=>{if(!ok){QJ++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
 /* Yapısal koruma: kutu iki satırı asamaz, telefonda ekranin yarisini yutamaz. */
