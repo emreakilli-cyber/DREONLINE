@@ -297,9 +297,13 @@ g3('para() çürümeyi TEKRAR uygulamıyor',KAY.indexOf('const r=Rr(fark(b,SINAV
   /* 1. oturum yalnız TEMEL branşlar (6), 2. oturum yalnız KLİNİK (4) */
   g3('PreTUS200 oturumu tek yarıyı kapsıyor',new Set(pa.dagilim.map(d=>d.br)).size<=7,
      new Set(pa.dagilim.map(d=>d.br)).size);
-  g3("24lü soru toplamı KİTAPÇIK sayısı",Math.abs(krediSoru-RK('DEN24')['Genel Cerrahi'])<0.5,{bulunan:krediSoru,kitapcik:RK('DEN24')['Genel Cerrahi']});
-     Math.abs(a.yeni+a.tekrar-RK('SORU.den')[X.GOREVLER[j].br])<0.05,
-     {krediSoru:+(a.yeni+a.tekrar).toFixed(1),tusAnaliz:RK('SORU.den')[X.GOREVLER[j].br]});
+  /* ⚠ §266 ONARIM: bu çağrının başlığı bir düzenlemede değiştirilirken ESKİ argüman
+     satırları silinmemiş, dosya sözdizimi hatasıyla hiç açılmıyordu (kapı ölüydü).
+     krediSoru hiç tanımlanmamıştı; eski detay nesnesinden türetildi. */
+  const krediSoru=a.yeni+a.tekrar;
+  g3("24lü soru toplamı KİTAPÇIK sayısı",
+     Math.abs(krediSoru-RK('DEN24')['Genel Cerrahi'])<0.5,
+     {bulunan:+krediSoru.toFixed(1),kitapcik:RK('DEN24')['Genel Cerrahi']});
   g3('PreTUS200 oturumu ~100 soru',Math.abs(pa.yeni+pa.tekrar-100)<12,
      +(pa.yeni+pa.tekrar).toFixed(1));
   g3('başta hepsi yeni öğrenme',a.tekrar===0);

@@ -1649,8 +1649,13 @@ eO('dört katman ayrık: isaretOku/omrEslestir/omrOnizle/omrKaydet',
     'const son=D.denemeler[D.denemeler.length-1];'+
     'return {ok:ok,once:once,sonra:D.denemeler.length,detay:!!(son&&son.detay),'+
     'soru:(son&&son.sorular||[]).length,bekleyenKalmadi:!OMR_DURUM.kayit}})()');
+  /* ⚠ soru sayısı 200 DEĞİL: düşük güvenli okumalar bilerek nete/kayda girmiyor
+     (uydurma yok — §266). Beklenen: okunan − düşük güvenli. */
   eO('ONAY sonrası MEVCUT veri yoluna yazıyor (D.denemeler)',
-    k.ok&&k.sonra===k.once+1&&k.detay&&k.soru===200&&k.bekleyenKalmadi,k);
+    k.ok&&k.sonra===k.once+1&&k.detay&&k.soru===o.n-o.dusuk&&k.bekleyenKalmadi,
+    Object.assign({bekOnen:o.n-o.dusuk},k));
+  eO('düşük güvenli okumalar KAYDA GİRMİYOR (uydurma yok)',k.soru<o.n&&k.soru>0,
+    {yazilan:k.soru,okunan:o.n,dusuk:o.dusuk});
   const k2=R('omrKaydet()');
   eO('onaysız ikinci kayıt YOK (çift kayıt koruması)',k2===false);
   /* eşleştirme yeni konu uydurmuyor */
@@ -1661,7 +1666,23 @@ eO('dört katman ayrık: isaretOku/omrEslestir/omrOnizle/omrKaydet',
   eO('YENİ KONU UYDURULMUYOR (yalnız gerçek katalog)',es.konuUydurma,es);
   R('D.denemeler=[]');
 })();
-eO('mock katmanı yalnız isaretOku içinde (değişecek tek yer)',
-  /1\) İŞARET OKUMA — MOCK/.test(kod));
-console.log('\n'+(QO?'✗ '+QO+' HATA':'✓ SIFIR HATA — 9 ek kontrol'));
+eO('okuma katmanı yalnız isaretOku içinde (değişecek tek yer)',
+  /1\) İŞARET OKUMA/.test(kod)&&/DEĞİŞECEK TEK KATMAN BURASI/.test(kod));
+/* §266 · gerçek kitapçık fixture'ı: fotoğraftan OKUNAN işaretler, uydurma yok */
+(function(){
+  const g=R('(function(){const h=isaretOku("gercek");'+
+    'return {n:h.length,brans:h[0]&&h[0].b,'+
+    'guvenli:h.filter(o=>o.guven>=.6).length,'+
+    'bosBirakilan:h.filter(o=>o.s===null).length,'+
+    'notluHepsi:h.every(o=>typeof o.guven==="number")}})()');
+  eO('gerçek fixture okunuyor (10 soru · Kadın Doğum)',g.n===10&&g.brans==='Kadın Doğum',g);
+  eO('okunamayan işaret null bırakılıyor (tahmin edilmiyor)',g.bosBirakilan>0,g);
+  eO('her satırda okuma güveni var',g.notluHepsi,g);
+  const gp=R('(function(){const once=D.denemeler.length;const r=omrOnizle("gercek");'+
+    'const res={n:r.n,dusuk:r.dusuk,kayit:r.kayit,yazildiMi:D.denemeler.length!==once};'+
+    'OMR_DURUM.kayit=null;return res})()');
+  eO('gerçek tarama da onaysız YAZMIYOR',!gp.yazildiMi&&gp.kayit===false,gp);
+  eO('güveni düşük satırlar nete katılmıyor',gp.dusuk>=5&&gp.dusuk<gp.n,gp);
+})();
+console.log('\n'+(QO?'✗ '+QO+' HATA':'✓ SIFIR HATA — 15 ek kontrol'));
 if(QO)process.exitCode=1;

@@ -13291,6 +13291,73 @@ vermediği kuralı kural sanma).
 
 ---
 
+## §266 · GERÇEK OMR MALZEMESİ + şartnamenin üç eksik maddesi + ölü kapı onarımı
+
+### 1 · Gerçek kitapçık fixture'ı (mock'un yanına, mock'un yerine değil)
+
+Kullanıcı 8. Cilt 1. Deneme Sınavı kitapçığının **sf 38-39** fotoğraflarını verdi
+(Kadın Doğum, soru 191–200). `kaynak/omr_gercek_kd.json` bu sayfalardan **okunan**
+işaretleri tutar; `isaretOku('gercek')` bunu okur, `isaretOku()` eski sentetik
+mock'u döndürür. Değişen tek katman yine `isaretOku` — eşleştirme/önizleme/kayıt
+katmanları dokunulmadı.
+
+⚠ **Uydurma yok, en önemli tasarım kararı bu:** her satırın bir `guven` değeri var
+ve okunamayan işaret `null` bırakıldı. 10 sorunun **yalnız 4'ü** güvenli okundu
+(191 · 0.88, 196 · 0.72, 199 · 0.75, 200 · 0.85); kalan 6'sı 0.30–0.45 aralığında ve
+"Eşleştirme gerekli" akışına düştü. Bunlar **nete katılmadı ve `D.denemeler`'e
+yazılmadı**. Sol taraftaki el yazısı D/Y işaretleri fotoğrafta D↔B karışıyor;
+sabah birlikte düzeltilmesi gerekiyor.
+
+Bu davranış mock tarafını da değiştirdi: 200 işaretin 11'i düşük güvenli olduğu için
+onay sonrası kayda **189 soru** yazılıyor (200 değil). `pu_test`'in "soru===200"
+iddiası bu yüzden kırıldı — **uygulama bozuk değil, iddia eskimişti**; kapı
+`okunan − düşük güvenli` beklentisine güncellendi ve "düşük güvenli okumalar kayda
+girmiyor" ayrı bir kontrol olarak eklendi.
+
+### 2 · Şartnamenin uygulanmamış üç maddesi
+
+- **Aynı konunun farklı kitaplardaki karşılığı** (şartname sat. 54) — `esKonu`
+  kenarı: aynı `key`'e sahip konu düğümleri ince bir hatla zincirleniyor
+  (36 bağlantı). Çizim ağırlığı `.14·aKonu`, yani yapı/kaynak kenarlarından belirgin
+  şekilde silik — Obsidian'daki "aynı not, başka klasör" hissi.
+- **Yeni düğüm belirme animasyonu** (sat. 7) — `n.yeni` zaman damgası; 900 ms'lik
+  tek halka, `1-(1-t)²` yumuşamasıyla sönüyor. Ayrık kademe yok (CLAUDE.md sürekli
+  fonksiyon dersi).
+- **Açılışta en zayıf bölgeye yönelme** (sat. 82) — en düşük hakimiyetli **ders**
+  düğümü seçilip 1.5 sn sonra kameranın o yöne %42 kayması. Kullanıcı bu arada
+  bir düğüm seçtiyse hareket iptal. Ölçümde seçilen: **Anatomi**.
+
+Tarayıcıda doğrulandı: `{"esKonu":36,"zayif":"Anatomi","kaydi":true,"dugum":414}`,
+sayfa hatası yok.
+
+### 3 · Ölü kapının onarımı (§229'un açık maddesi)
+
+`kaynak/kos.js` **sözdizimi hatasıyla hiç açılmıyordu**: bir düzenlemede
+`g3("24lü soru toplamı KİTAPÇIK sayısı", …)` çağrısının başlığı değiştirilmiş ama
+**eski argüman satırları silinmemişti** (satır 300–302 öksüz kalmış), üstelik
+`krediSoru` hiç tanımlanmamıştı. Öksüz satırlar kaldırıldı, `krediSoru` eski detay
+nesnesinden (`a.yeni+a.tekrar`) türetildi. Dosya artık ayrıştırılıyor.
+
+⚠ Kapı **yine de koşmuyor**, ama artık başka bir sebeple: `./tam_test.js` repoda yok.
+
+### Repoda hiç var olmamış üç dosya (kapılar bu yüzden koşmuyor)
+
+`git log --all` ile doğrulandı — bunlar bir kez bile commit edilmemiş, yalnız
+`tus_tamami.tar.gz` devir paketinde yaşıyorlar:
+
+| eksik dosya | ölü kapı |
+|---|---|
+| `tam_test.js` | `kos.js` |
+| `senk_test.js` | `senk_poll.js` |
+| `eko.py` | `kural_test.py` |
+
+**Yeniden KURMADIM** (CLAUDE.md §30: bağlamdan/ezberden kurma, kullanıcıdan iste).
+Koşan 11 kapı temiz; `pu_test` bilinen 7 §229 hatasında sabit kaldı, yeni hata yok.
+
+**sürüm 2027-03-13a ↔ rota-2027-03-13a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
@@ -13324,4 +13391,13 @@ Bekleyen: kullanıcıdan etiketli deneme verisi (§230 formatı) · cihazdan "Ha
 - **Potansiyel ile gerçek artış** arasında ~0.42 net fark (§205'te belgeli, bilinçli muhafazakâr)
 - **Aynı kayıt iki kez girilirse** iki kez sayılıyor · yinelenen denetimi yok (bilinçli)
 - **Zihin evreni force-graph (§246) kullanıcı görsel onayı bekliyor** · onaysız ders↔ders çapraz kenarları + Deneme/Çalışma dalışı + anıt görselleri eklenmeyecek
-- **§229'un üç açık maddesi:** pu_test KONU TEKİLLİĞİ 7 hata (§227/228 davranışı yeniden incelenmeli) · kos.js sözdizimi kırık · paket boşlukları (eko.py, senk_test.js, senk_kos.js)
+- **§229'un üç açık maddesi (§266 durumu):**
+  - pu_test KONU TEKİLLİĞİ **7 hata** — kök sebep bulundu (grup bazlı `konuAnh` ↔ testin
+    ad bazlı gölgeleme beklentisi), kapsam 297 konudan 8'i. **A/B kararı kullanıcıda**,
+    kendiliğinden değiştirilmedi.
+  - kos.js sözdizimi **onarıldı** (§266) — ama `tam_test.js` repoda olmadığı için hâlâ koşmuyor.
+  - Paket boşlukları **sürüyor**: `eko.py` · `senk_test.js` · `tam_test.js` hiç commit
+    edilmemiş; `tus_tamami.tar.gz` gerekiyor.
+- **OMR gerçek malzeme eksikleri:** boş optik form fotoğrafı · cevap anahtarı formatı ·
+  kitap içindekiler tabloları (alt başlık seviyesi için). Kadın Doğum 191–200'ün
+  **6 sorusu düşük güvenle okundu**, kullanıcı doğrulaması bekliyor (§266).
