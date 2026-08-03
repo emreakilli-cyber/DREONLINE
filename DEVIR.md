@@ -14640,6 +14640,102 @@ koşmuyor** — dosyalar repoda yok, `tus_tamami.tar.gz` gerekiyor.
 
 ---
 
+## §299 · 75 fotoğraf / 375 MB · okuma boru hattı ölçeğe çekildi (2027-02-19f)
+
+Kullanıcı bir denemenin TAMAMINI + cevap anahtarını çekti: **75 fotoğraf, 375 MB**.
+Boru hattı bu ölçek için tasarlanmamıştı.
+
+### Ölçüm (gerçek dosyalarla, tahmin değil)
+Kullanıcının gönderdiği fotoğraflar `5712×4284 px`, ortalama **5.41 MB**:
+
+| ne | değer | nasıl |
+|---|---|---|
+| 75 fotoğraf ham | 406 MB | 5.41 × 75 |
+| data URL (base64) | **556 MB** | ×1.37 |
+| 1568 px q0.85'e küçültülmüş | 620 KB/adet · 45 MB toplam | PIL ile ölçüldü |
+| çözülmüş bitmap (anlık) | 93 MB/adet | 5712·4284·4 |
+| istek sayısı (`GORUS_PARTI=2`) | **38** | ⌈75/2⌉ |
+| istek başına gövde | ~1.2 MB | 620 KB × 2 |
+
+### Bulunan kusurlar
+1. **556 MB aynı anda bellekte.** `denemeOtoBasla` bütün dosyaları `dosyaOku` ile
+   data URL'e çevirip `fotolar[]` içinde tutuyor, `DEN_OTO.fotolar`'a veriyor ve
+   ancak okuma BİTTİKTEN sonra bırakıyordu. Üstüne `gorusFotolar` hepsini önceden
+   küçültüp 45 MB daha ekliyordu. iOS Safari bunu taşımaz.
+2. **Hepsi-ya-da-hiç.** `gorusDizi` bir parti kalıcı hata verince `throw` ediyordu:
+   38 gruplu işte 30. grubun hatası önceki 29 grubu çöpe atıyordu.
+3. **429 kalıcı hata sayılıyordu** — dakikalık sınır bütün işi bitiriyordu.
+4. **Fotoğraf numarası parti içinde yerel.** İstemde "Fotoğraf 1/2" o PARTİNİN
+   fotoğrafı; `cozumGorselKaydet` ise GENEL diziye bakıyordu → ikinci partiden
+   sonra tablo kırpma **yanlış fotoğraftan** yapılıyordu. (§295'in getirdiği,
+   fark edilmemiş yan etki.)
+5. **Ön bulanıklık taraması** 75 fotoğrafın hepsini ilk API çağrısından önce
+   okuyup çözmeyi gerektiriyordu; üstelik bulanık önizlemeler DOM'a TAM BOYUT
+   data URL olarak basılıyordu.
+6. Deneme sayfaları ile cevap anahtarı sayfaları ayrı düğmelerde — kullanıcı
+   75 fotoğrafı galeride elle ayıklamak zorunda kalıyordu.
+
+### Yapılanlar
+- **`fotoKaynak(files, indeksler?)` · tembel kaynak.** `File` nesneleri diskte
+  kalır; her fotoğraf SIRASI GELİNCE okunur → küçültülür → orijinali hemen
+  bırakılır. Kapıda ölçüldü: 75 fotoğrafta **heap artışı 15 MB**.
+  `fotoKaynakDizi` eski `{ad,tur,data}` listelerini aynı arayüzle sarar
+  (geriye dönük uyum + testler).
+- **`gorusAkis()` · kısmi başarı.** Artık `{sorular, basarisiz[], toplam, sure}`
+  döndürür. Bir parti okunamazsa iş DURMAZ; `basarisiz`'a `{p, ilk, son, hata}`
+  yazılıp devam edilir. HİÇBİR parti okunamazsa (yalnız o zaman) hata fırlatır.
+  `se.partiler` ile yalnız belirli gruplar, `se.onceki` ile önceki sonuçların
+  üstüne devam edilebilir.
+- **429 geçici.** `__KOTA__<sn>` işaretiyle ayrıştırılıyor; `Retry-After` başlığı
+  ya da gövdedeki `retryDelay` okunuyor, o kadar beklenip 3 kez deneniyor.
+- **Foto numarası genel sıraya çevriliyor** (`G[yerel].ix+1`) — 4. kusur kapandı.
+- **`cozumGorselKaydet(kayit, kaynak, dnIndex)`** artık tam çözünürlüklü
+  fotoğrafı YALNIZ kırpma anında, tek tek okuyor.
+- **Ön tarama sınırı `ONTARAMA_SINIR=12`.** Üstünde tarama yapılmıyor ve
+  **sebebi ekranda yazıyor** (sessizce atlanmıyor); 12'ye kadar tarama duruyor
+  ama artık küçültülmüş kopyada ölçülüyor ve önizleme 300 px.
+- **İlerleme** (`okumaIlerleme`): grup x/y + çubuk + okunan soru sayısı +
+  **kalan süre**. Kalan süre tahmin değil, o ana kadar BİTEN grupların
+  ortalamasından; ilk grup bitene kadar hiç gösterilmiyor.
+- **Özet artık kaybı gizlemiyor:** kaç grup okunamadı, hangi fotoğraf numaraları,
+  hangi soru numaraları aradan atlandı — ve "okunamayan N grubu tekrar dene"
+  düğmesi yalnız o grupları gönderiyor.
+- **Karışık yığın ayrıştırılıyor.** İsteme `sayfaTur:"anahtar"` alanı eklendi:
+  cevap anahtarı/çözüm sayfası görülürse ondan SORU ÇIKARILMAZ, yalnız işaretlenir.
+  Özet "N fotoğraf cevap anahtarı sayfası görünüyor (#a–b)" der ve düğme aynı
+  dosyaların o alt kümesini **yeniden seçtirmeden** anahtar olarak okur
+  (`cevapAnahtarBasla(files, indeksler)`).
+- Okuma büyük yüklemede kendiliğinden başlamıyor; "38 istekte okunacak" yazıp
+  kullanıcının onayını bekliyor.
+
+### Kapılar
+Yeni kalıcı kapı **`kaynak/olcek_test.js` · 28 kontrol** (gerçek Chromium,
+taklit ağ, kullanıcı verisi YOK): 38 istek · akış ispatı (heap) · kısmi başarı ·
+sayfa numarası bildirimi · yalnız başarısız grubun tekrarı · 429 · foto numarası
+çevirisi · anahtar sayfası tespiti · alt küme kaynağı.
+Diğer tüm kapılar (derin/kombo/çark/mola/pu/kal/dom + denet.py + scratchpad
+bataryası) **0 hata**.
+
+### Ölçülemeyenler (dürüst liste)
+- **Bir isteğin gerçekte kaç saniye sürdüğü bilinmiyor** — gerçek API hiç
+  çağrılmadı. 38 isteğin toplam süresi hakkında sayı VERİLMEDİ.
+- Kapı ölçümü **Chromium masaüstünde**; hedef iOS Safari. Heap sayısı alt sınır.
+- Kapıdaki sahte fotoğraflar 1400 px canvas JPEG'i, 5.4 MB'lık gerçek dosya değil;
+  yapısal ispat (orijinaller tutulmuyor) geçerli, mutlak MB değeri değil.
+- Gemini'nin RPM/RPD/TPM sınırları ve tüketici "Gemini Pro" aboneliğinin API
+  kotasına yansıyıp yansımadığı bu turda RESMÎ belgeden doğrulanmadı.
+
+### Bu turda yaptığım hatalar
+- `olcek_test`in ilk üç iddiası **yanlıştı**: taklit ağdaki "istek numarası"nı
+  "grup numarası" sandım (grup başına iki deneme yapıldığı için 5. istek 5. grup
+  değil). Uygulama doğruydu, test yanlıştı — düzeltildi.
+- Testte sayacı sıfırlayınca tekrar denenen grup aynı soru numaralarını üretti ve
+  tekilleştirme onları eledi; "sonuç korunmuyor" diye okudum. Yine mock kusuru.
+
+**sürüm 2027-02-19f ↔ rota-2027-02-19f**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)

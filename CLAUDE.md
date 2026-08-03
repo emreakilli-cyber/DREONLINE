@@ -63,8 +63,9 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
 
 - Üretim sırası: `dizi3.py` → `yeniden.py` → `uret.py` (kural testi otomatik koşar)
   → `denet.py` → `kos.js`. FT/power-up tarafı: `ft_katalog.py` (tek kaynak) → `ft_uret.py`.
-- Tur sonu **on dört kapı**: `kural_test.py` · `denet.py` · `kos.js` · `derin_test.js` ·
+- Tur sonu **on altı kapı**: `kural_test.py` · `denet.py` · `kos.js` · `derin_test.js` ·
   `kombo_test.js` · `cark_test.js` · `mola_test.js` · `pu_test.js` · `kal_test.js` ·
+  `dom_test.js` · `olcek_test.js` ·
   `senk_kos/poll/etag/uc/rol.js`. Hepsi koşulur, **çıktının tamamı okunur**.
 - ⚠ **Kapı geçmek "hata yok" demek değildir** — kapılar kendi yazdığın kontrollerdir
   (§87'de kapılar temizken 4 gerçek hata bulundu). Belgeyi de denetlemezler (§12.10).
@@ -117,7 +118,7 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   varyantı atlanınca §112'nin düzeltmesi §117'ye kadar eksik kaldı; aynı kusur dört
   panelde birden vardı §151).
 
-## Güncel durum işaretçisi (sürüm `2027-02-19e`, DEVIR sonundaki devir notu)
+## Güncel durum işaretçisi (sürüm `2027-02-19f`, DEVIR sonundaki devir notu)
 
 - FT serisi 10 kitap power-up havuzuna işlendi (156 → 254 konu); konu tekilliği /
   net havuzu paylaşımı grup bazlı anahtarla tamamlandı (§219–§228).
@@ -170,10 +171,20 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   §297 okuma sonunda eksik E/AK/B/U kodları soru soru soruluyor.
   §298 okuma sonrası özet: soru numarası aralığı + dersler + "kısmi yükleme"
   bildirimi + "önce cevap anahtarı ekle" seçeneği.
+- **§299 · 75 fotoğraf / 375 MB ölçeği.** Kullanıcı denemenin tamamını + anahtarı
+  çekti. Ölçüldü: 75 foto = 556 MB data URL, 38 istek. Eski yol hepsini birden
+  bellekte tutup tek hatada her şeyi çöpe atıyordu. Artık **`fotoKaynak` tembel**
+  (foto sırası gelince okunur, orijinal hemen bırakılır — heap artışı 15 MB),
+  **`gorusAkis` kısmi başarı** döndürür (`{sorular, basarisiz[]}`), 429 geçici
+  sayılır, okunamayan gruplar sayfa numarasıyla bildirilip **yalnız onlar** tekrar
+  denenir. Karışık yığında cevap anahtarı sayfaları `sayfaTur:"anahtar"` ile
+  ayrılır. ⚠ Parti-içi foto numarası genel sıraya çevrilir — eskiden kırpma
+  ikinci partiden sonra yanlış fotoğrafa bakıyordu. Kapı: `kaynak/olcek_test.js`.
 - **YARIM KALAN · TASARIM:** power-up paneli, matris ve seyir sayfalarının görsel
   tasarımı (beğenilen referans: `.glAnh` altın gradyan anahtar, `.glS` satır düzeni,
   §217 daire tamamlama düğmesi).
-- ⚠ **Gerçek API hiç çağrılmadı.** §285–§298 kanıtı tamamen sahte `fetch` ve elle
+- ⚠ **Gerçek API hiç çağrılmadı.** Bir isteğin kaç saniye sürdüğü bilinmiyor;
+  38 isteğin toplam süresi hakkında sayı verilmemeli. §285–§298 kanıtı tamamen sahte `fetch` ve elle
   okunmuş yer gerçeği üzerinden. Sıradaki iş: kullanıcı anahtarı yenileyip gerçek
   okuma denesin, istem doğruluğu gerçek çıktıya göre ayarlansın.
 - Bilinen açık noktalar: FT Geriatri 0.51 soru (kullanıcı onaylı varsayım) ·
