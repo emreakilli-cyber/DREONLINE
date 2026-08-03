@@ -13947,6 +13947,51 @@ birebir eski; batarya 0 hata (7 kapı sabiti yeni değerlere güncellendi).
 
 ---
 
+## §278 · İKİ SÜTUNDA BLOK BAŞLIĞI TAM GENİŞLİKTE (kullanıcı: "başlığı kitapların üstüne al")
+
+Kullanıcı: konu kitapları görünümünde iki-sütun (§276) devredeyken blok başlığı
+("Diğer konu kitapları" vb.) bir sütunda kalıp ait olduğu kitaplar öbür sütuna
+kaçıyordu — "başlığı da kitapların üstüne al".
+
+Sebep: `column-count:2` masonry gibi öğeleri sırayla iki sütuna böler; blok
+başlığı (`.glBlok`) ile altındaki kitaplar AYRI öğeler, aralarında kolon kırılması
+olabiliyordu (`break-after:avoid` yeterli değildi).
+
+Düzeltme: `.glBlok`'a **`column-span:all`** — başlık iki sütunun üstünde tam
+genişlikte durur, başlıktan sonra kolonlar sıfırlanır, her blok kendi başlığının
+altında yeniden iki sütuna bölünür. iOS Safari `-webkit-column-span:all` uzun
+süredir destekliyor.
+
+Doğrulama (gerçek tarayıcı, iki cihaz): FT · HIZLI TEKRAR / DİĞER KONU KİTAPLARI
+/ TUSTIME başlıkları tam genişlik, kitapları temiz iki sütun (`blok_ipad/tel.png`).
+Batarya 0 hata.
+
+## §279 · GÖREV TAMAMLAMA DAİRESİ ÇARKA IŞINLIYORDU — gerçek dokunuş regresyonu
+
+Kullanıcı: "pinch→program, görevlerin sağındaki kutucuğa (tamamlama dairesi ○)
+tıklayınca görevi tamamlamıyor, çarka ışınlıyor beni."
+
+Fare tıklamasıyla (Playwright `.click()`) ÜRETİLEMEDİ — daire çalışıyordu. Sorun
+gerçek DOKUNUŞTA: `#gunListe`, `#cark`'ın çocuğu (§275 keşif ajanı bulgu 4). Çark
+sürükleme makinesinin `pointerdown`/`pointermove` dinleyicilerinde **gunKip
+denetimi yoktu** (satır 6682). Gün kipi açıkken (liste görünür) daireye dokunup
+parmak **6 px** kayınca → `surukleBasla()` → parmak kalkınca `bitir()` →
+`gecis()` **çarka ışınlıyor**; üstelik `bitir()` click'i yutup (`yut`, 6696)
+dairenin tamamlama onclick'ini engelliyor. İki şikâyet (tamamlamıyor + ışınlıyor)
+tek kök nedenden.
+
+Düzeltme: `#cark` `pointerdown`'a ve `wheel`'e `if(gunKip)return`. Gün kipinde
+dikey sürükleme zaten işe yaramıyor (kaydırma yok, §276) — güvenli.
+
+Doğrulama gerçek dokunuşla (CDP touch, 9 px kaymalı): temiz tap → tamamlıyor;
+9 px kaymalı dokunuş → **tamamlıyor, çarka gitmiyor** (`carkaGitti:false`,
+`gunKip:true`). Kapıya §279 kontrolü eklendi (cark_test 14 kontrol). Batarya
+0 hata.
+
+**sürüm 2027-02-18f ↔ rota-2027-02-18f**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)

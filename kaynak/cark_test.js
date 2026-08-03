@@ -223,7 +223,11 @@ cA('yakalama evresinde dinleniyor',(kod.match(/capture:true/g)||[]).length>=4,
 cA('gün kipinde de touch-action kilitleniyor',/const g=document\.getElementById\('gunListe'\); if\(g\)g\.style\.touchAction/.test(kod));
 cA('pinch-out da preventDefault ediyor',/if\(e\.touches\.length!==2\)return;\s*if\(e\.cancelable\)e\.preventDefault\(\)/.test(kod));
 cA('pinchD0 yoksa kurtarılıyor',/if\(!pinchD0\)\{pinchD0=mes\(e\.touches\);return\}/.test(kod));
-console.log('\n'+(HA?'✗ '+HA+' HATA':'✓ SIFIR HATA — 12 ek kontrol'));
+/* §279 · gün kipinde çark sürüklemesi tıklamayı yutup görev tamamlamayı çarka
+   ışınlıyordu (gerçek dokunuşta 6px kayma → surukleBasla → gecis). */
+cA('gün kipinde çark pointerdown DEVRE DIŞI',/GÜN KİPİ AÇIKKEN çark sürüklemesi DEVRE DIŞI/.test(kod)&&/if\(gunKip\)return;\s*if\(e\.pointerType===.mouse./.test(kod));
+cA('gün kipinde tekerlek çarkı döndürmüyor',/if\(e\.ctrlKey\)return;[\s\S]{0,80}if\(gunKip\)return/.test(kod));
+console.log('\n'+(HA?'✗ '+HA+' HATA':'✓ SIFIR HATA — 14 ek kontrol'));
 if(HA)process.exitCode=1;
 
 console.log('\n═══ DOM SÜREKLİLİĞİ ═══');
