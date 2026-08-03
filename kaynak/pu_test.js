@@ -1576,8 +1576,16 @@ eAT('JARVIS satırı HTML + "efendim" üslubu',/id="jarvisSatir"/.test(kod)&&kod
   R('D.pu={}');
 })();
 eAT('semantic zoom eşikleri kaynakta (aKit/aKonu/eKonu)',/aKit=atSm\(/.test(kod)&&/aKonu=atSm\(/.test(kod)&&/eKonu=atSm\(/.test(kod));
-eAT('açılış atlas + eski Evren güvenli düşüş',/try\{ atlasAc\(\) \}catch/.test(kod)&&/ACILIS ATLAS/.test(kod));
-console.log('\n'+(QAT?'✗ '+QAT+' HATA':'✓ SIFIR HATA — 10 ek kontrol'));
+/* §273 · PROJE RAFTA (kullanıcı kararı, 2027-02-18a): açılış eski kabuk +
+   karşılama; ATLAS kodu SİLİNMEDEN uykuda. Eski iddia (atlasAc açılışı)
+   §258–§272 dönemine aitti — rafa kaldırma ile bilinçli olarak değişti. */
+eAT('açılış ESKİ KABUK (rafta): evrenKip kaldırılıyor + karşılama',
+  /PROJE RAFTA/.test(kod)&&/classList\.remove\('evrenKip'\)/.test(kod)&&
+  /try\{karsilamaAc\(\)\}catch/.test(kod)&&kod.indexOf('<body>')>=0&&kod.indexOf('<body class="evrenKip">')<0);
+eAT('ATLAS uykuda ama SİLİNMEDİ (geri dönüş bir satır)',
+  R('typeof atlasAc')==='function'&&R('typeof atlasCiz')==='function'&&
+  !/^try\{ atlasAc\(\) \}/m.test(kod));
+console.log('\n'+(QAT?'✗ '+QAT+' HATA':'✓ SIFIR HATA — 11 ek kontrol'));
 if(QAT)process.exitCode=1;
 
 console.log('\n═══ ATLAS · ODAK MİKRO-YERLEŞİMİ + FAZ 2 VERİ (§262) ═══');

@@ -13697,6 +13697,47 @@ miras alıyordu) — kalıcılık yalnız sessiz yeniden-çizime daraltıldı.
 
 ---
 
+## §273 · PROJE RAFTA — kullanıcı kararıyla eski uygulama görünümüne dönüş
+
+Kullanıcı: *"projeyi şimdilik rafa kaldırıp eski uygulama görünümüne dönüyoruz.
+sürüm: 2027-02-18a"*. ("şimdilik" — kalıcı iptal değil, park.)
+
+### Ne yapıldı
+
+- **Açılış eski kabuğa çevrildi**, 2027-02-18a dönemiyle (`699f823`, DEVIR §238)
+  birebir: üst-düzey init + `karsilamaAc()`. `<body>` üzerindeki `evrenKip`
+  sınıfı kaldırıldı; `atlasAc()` açılış çağrısı çıkarıldı.
+- **ATLAS / Bilgi Evreni kodu SİLİNMEDİ** — uykuda duruyor. Geri dönüş: body'ye
+  `evrenKip` sınıfını ve açılışa `atlasAc()` çağrısını geri koymak (tek yer,
+  kodda §273 yorumuyla işaretli).
+- **Motor korunmuş durumda** (kullanıcının değişmez kuralı): §254–§272'nin tüm
+  düzeltmeleri — `tavanBant` bandı, `gunOlcekle` satır ölçekleme, `gorevOncelik`
+  100× hızlanma, `puIsaretle` kredi düzeltmesi, OMR kapsam yönlendirmesi —
+  eski görünümün ALTINDA aynen çalışıyor.
+- Sürüm istendiği gibi **2027-02-18a** yapıldı. ⚠ Etiket "geriye" gidiyor ama
+  sorun değil: sw.js önbelleği eşitlik/farklılıkla kırar, sıralamayla değil;
+  HTML için önce-ağ olduğundan telefon "sürüm yenile"de bunu alır.
+
+### Doğrulama (gerçek tarayıcı + gerçek veri)
+
+```
+evrenKip: false · ATLAS çalışmıyor · karşılama açılıyor
+karşılama kapatılınca: header/main görünür · dnmB OK · puOrb OK · dpanel açılıyor
+çark çizili · ÖLÇÜLEN 60.15 · PARAKETE 59.35 · 6 deneme · sürüm 2027-02-18a
+sayfa hatası: 0 · tüm batarya: 0 hata (bayat açılış iddiası §273'e güncellendi)
+```
+
+### Açık kalanlar (raf sırasında da geçerli)
+
+- Rafa kalkan işin durumu §259–§272'de belgeli; **B seçeneği (ad bazlı gölgeleme)**
+  ve OMR malzemeleri beklemede.
+- Eski görünümde güncel motor değerleri doğal olarak görünür (parakete/band
+  güncel) — bu istenen davranış, motor korunuyor.
+
+**sürüm 2027-02-18a ↔ rota-2027-02-18a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
