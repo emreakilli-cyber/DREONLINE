@@ -1004,7 +1004,7 @@ eV('kitapYakin fonksiyonu',R('typeof kitapYakin')==='function');
   eV('TTS hatırlama etiketi',/glHat/.test(t2));
   X.D.tts={}; R('D.glKip=null; D.klKitap=null; D.klTur=null');
 })();
-console.log('\n'+(KV?'✗ '+KV+' HATA':'✓ SIFIR HATA — 25 ek kontrol'));
+console.log('\n'+(KV?'✗ '+KV+' HATA':'✓ SIFIR HATA — 26 ek kontrol'));
 if(KV)process.exitCode=1;
 
 console.log('\n═══ KİTAP İÇERİĞİ TAM ═══');
@@ -1486,3 +1486,358 @@ eF8('Enter ilk sonuca gider · Escape kapatır',/e\.key==='Enter'[\s\S]{0,60}zeG
 eF8('geri düğmesi önce aramayı kapatır (izolasyon)',/zeAra[\s\S]{0,80}zeAraKapat\(\); return/.test(kod));
 console.log('\n'+(QF8?'✗ '+QF8+' HATA':'✓ SIFIR HATA — 7 ek kontrol'));
 if(QF8)process.exitCode=1;
+
+console.log('\n═══ BİLGİ ÇEKİRDEĞİ · not/backlink/graf/filtre (§259) ═══');
+let QF9=0;const eF9=(a,ok,x)=>{if(!ok){QF9++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eF9('bcIndeks / bcNotAc / bcOzellik / bcOncelikMap fonksiyonları',
+  R('typeof bcIndeks')==='function'&&R('typeof bcNotAc')==='function'&&
+  R('typeof bcOzellik')==='function'&&R('typeof bcOncelikMap')==='function');
+(function(){ C.setGun('2026-08-02'); R('D.pu={}'); R('D.bitti={}');
+  R('D.denemeler=[{tar:"2026-08-01",kay:"t",t:0,k:0,bn:{},detay:true,sorular:['+
+    '{b:"Biyokimya",konu:"Amino Asitler",s:"D",e:"E"},{b:"Biyokimya",konu:"Amino Asitler",s:"Y",e:"B"}]}]');
+  const ix=R('(function(){const B=bcIndeks();const s={ders:0,kitap:0,konu:0};'+
+    'B.N.forEach(n=>s[n.tip]=(s[n.tip]||0)+1);'+
+    'return {ders:s.ders,kitap:s.kitap,konu:s.konu,komboEs:B.komboEs,komboAt:B.komboAt,'+
+    'kaynak:B.E.filter(e=>e.tip==="kaynak").length,kombo:B.E.filter(e=>e.tip==="kombo").length}})()');
+  eF9('11 ders + kitap + konu düğümleri var',ix.ders===11&&ix.kitap>10&&ix.konu>100,ix);
+  eF9('KOMBO köprüsü KESİN eşleşiyor (görev-ID → düğüm, sessiz sıfır yok)',ix.komboAt===0&&ix.komboEs>0,{es:ix.komboEs,at:ix.komboAt});
+  eF9('kaynak (kitap→konu) backlink kenarları var',ix.kaynak>50,ix.kaynak);
+  // çok kaynaklı konu = gerçek backlink (kitap↔konu, uydurma değil)
+  eF9('çok-kaynaklı konu var (gerçek backlink)',
+    R('[...bcIndeks().N.values()].some(n=>n.tip==="konu"&&n.kaynaklar&&n.kaynaklar.length>=2)'));
+  // özellik motordan geliyor mu (donmuş değer yok)
+  const oz=R('(function(){const n=[...bcIndeks().N.values()].find(x=>x.tip==="konu"&&x.br==="Biyokimya"&&x.key===bcKN("Amino Asitler"));'+
+    'if(!n)return null;const P=bcOzellik(n);return {soru:P.soru,sorular:(P.sorular||[]).length,dre:!!P.dre,dyD:P.dy&&P.dy.D}})()');
+  eF9('konu özelliği motordan: soru ağırlığı + gerçek deneme soruları',oz&&oz.soru>0&&oz.sorular===2&&oz.dyD===1,oz);
+  eF9('DRE önceliği bilgi notuna bağlı (rehberSec/puEtki)',oz&&oz.dre===true);
+  // KOMBO kenarları konu↔konu ve iki uç da gerçek düğüm
+  eF9('KOMBO kenarı iki gerçek konu düğümü bağlıyor',
+    R('(function(){const B=bcIndeks();const e=B.E.find(x=>x.tip==="kombo");if(!e)return false;'+
+      'return B.N.has(e.a)&&B.N.has(e.b)&&B.N.get(e.a).tip==="konu"&&B.N.get(e.b).tip==="konu"})()'));
+})();
+// PERF: puEtki para() önbelleği — gorevOncelik toplu çağrıda para'yı tekrar hesaplamıyor
+eF9('puEtki para önbelleği (_peP) · toplu çağrı hızlandırması',R('typeof _peP')!=='undefined'&&/_peP\|\|para\(\)/.test(kod));
+eF9('gorevOncelik _peP ile sarılı (para tek geçiş)',/_peP=\(function\(\)\{try\{return para\(\)/.test(kod));
+console.log('\n'+(QF9?'✗ '+QF9+' HATA':'✓ SIFIR HATA — 9 ek kontrol'));
+if(QF9)process.exitCode=1;
+
+console.log('\n═══ ATLAS · SIFIRDAN HARİTA MOTORU + JARVIS (§261 · FAZ 1/1.5) ═══');
+let QAT=0;const eAT=(a,ok,x)=>{if(!ok){QAT++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eAT('atlasVeri/atlasYerlesim/atlasCiz/atlasAc/jarvis fonksiyonları',
+  R('typeof atlasVeri')==='function'&&R('typeof atlasYerlesim')==='function'&&
+  R('typeof atlasCiz')==='function'&&R('typeof atlasAc')==='function'&&R('typeof jarvis')==='function');
+eAT('saf siyah zemin · Obsidian dili (§263)',/#atlasKat\{[^}]*background:#000/.test(kod)&&kod.indexOf("c.fillStyle='#000'")>=0);
+/* §264: altın rezervi ARTIK KULLANILDI (Altın Yol). Kural değişti:
+   temel harita dili (veri türetme + yerleşim) altınsız kalmalı; altın
+   yalnız atlasCiz'deki Altın Yol bloğunda (o §264'te ayrıca denetleniyor). */
+eAT('temel harita dili altınsız (veri+yerleşim katmanı)',(function(){
+  const i=kod.indexOf('function atlasVeri'), j=kod.indexOf('function atlasCiz');
+  return i>0&&j>i&&kod.slice(i,j).indexOf('#D8B26A')<0})());
+eAT('JARVIS satırı HTML + "efendim" üslubu',/id="jarvisSatir"/.test(kod)&&kod.indexOf('efendim')>=0);
+(function(){ C.setGun('2026-08-02'); R('D.bitti={}'); R('D.pu={}');
+  const v=R('(function(){const V=atlasYerlesim(atlasVeri(true),true);'+
+    'const s={kok:0,ders:0,kitap:0,konu:0};V.N.forEach(n=>s[n.tip]=(s[n.tip]||0)+1);'+
+    'const d1=V.N.find(n=>n.tip==="ders");'+
+    'return {s,yay:V.E.length,x1:+d1.x.toFixed(3),konumVar:V.N.every(n=>isFinite(n.x)&&isFinite(n.y))}})()');
+  eAT('düğüm sayıları: 1 kök + 11 ders + kitap + konu',v.s.kok===1&&v.s.ders===11&&v.s.kitap>10&&v.s.konu>100,v.s);
+  eAT('tüm konumlar sonlu',v.konumVar);
+  const v2=R('(function(){const V=atlasYerlesim(atlasVeri(true),true);'+
+    'return +V.N.find(n=>n.tip==="ders").x.toFixed(3)})()');
+  eAT('yerleşim DETERMİNİSTİK (aynı veri → aynı konum)',v.x1===v2,{a:v.x1,b:v2});
+  // hakimiyet düzeyi çalışılınca yükseliyor mu (motor: D.pu → lvl)
+  const l0=R('(function(){const V=atlasVeri(true);const n=V.N.find(x=>x.tip==="konu"&&x.br==="Biyokimya"&&x.key===bcKN("Amino Asitler"));return n?n.lvl:-1})()');
+  R('(function(){const u=POWERUP.find(u=>u.brans==="Biyokimya"&&u.konu==="Amino Asitler");D.pu[puAnh(u)]={al:bgun(),bit:bgun()}})()');
+  const l1=R('(function(){const V=atlasVeri(true);const n=V.N.find(x=>x.tip==="konu"&&x.br==="Biyokimya"&&x.key===bcKN("Amino Asitler"));return n?n.lvl:-1})()');
+  eAT('hakimiyet düzeyi MOTORDAN canlı (çalışınca 0→yüksek)',l0===0&&l1>=3,{once:l0,sonra:l1});
+  R('D.pu={}');
+})();
+eAT('semantic zoom eşikleri kaynakta (aKit/aKonu/eKonu)',/aKit=atSm\(/.test(kod)&&/aKonu=atSm\(/.test(kod)&&/eKonu=atSm\(/.test(kod));
+eAT('açılış atlas + eski Evren güvenli düşüş',/try\{ atlasAc\(\) \}catch/.test(kod)&&/ACILIS ATLAS/.test(kod));
+console.log('\n'+(QAT?'✗ '+QAT+' HATA':'✓ SIFIR HATA — 10 ek kontrol'));
+if(QAT)process.exitCode=1;
+
+console.log('\n═══ ATLAS · ODAK MİKRO-YERLEŞİMİ + FAZ 2 VERİ (§262) ═══');
+let QA2=0;const eA2=(a,ok,x)=>{if(!ok){QA2++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eA2('atlasMikro/atlasCocuklar/atlasKonuToggle/omrMock fonksiyonları',
+  R('typeof atlasMikro')==='function'&&R('typeof atlasCocuklar')==='function'&&
+  R('typeof atlasKonuToggle')==='function'&&R('typeof omrMock')==='function');
+(function(){ C.setGun('2026-08-02'); R('D.pu={}'); R('D.bitti={}');
+  R('D.denemeler=[{tar:"2026-08-01",kay:"t1",t:30,k:28,bn:{}},{tar:"2026-08-02",kay:"t2",t:32,k:30,bn:{}}]');
+  /* mikro: çocuklar SIKI halkada — global fizik değil */
+  const mk=R('(function(){const V=atlasYerlesim(atlasVeri(true),true);'+
+    'const d=V.N.find(n=>n.tip==="ders"&&n.ad==="Biyokimya");const mk=atlasMikro(d,V);'+
+    'let max=0,min=1e9;mk.map.forEach(h=>{const u=Math.hypot(h.mx-d.x,h.my-d.y);'+
+    'max=Math.max(max,u);min=Math.min(min,u)});'+
+    'return {n:mk.map.size,min:Math.round(min),max:Math.round(max),maxR:Math.round(mk.maxR)}})()');
+  eA2('çocuklar ebeveyn çevresinde SIKI halkada (≤ maxR, dağınık değil)',
+    mk.n>10&&mk.max<=mk.maxR+1&&mk.maxR<160,mk);
+  eA2('halka yarıçapları dar bantta (radyal kabuk)',mk.min>=25&&mk.max-mk.min<80,mk);
+  /* deneme düğümleri gerçek kayıtlardan */
+  const dn=R('(function(){const V=atlasVeri(true);return V.N.filter(n=>n.tip==="deneme").length})()');
+  eA2('deneme düğümleri = D.denemeler sayısı',dn===2,dn);
+  /* omrMock: boru hattı çalışır ama GERÇEK KAYDA YAZMAZ */
+  const om=R('(function(){const once=D.denemeler.length;const r=omrMock();'+
+    'return {n:r.n,kayit:r.kayit,once:once,sonra:D.denemeler.length}})()');
+  eA2('mock OMR 200 işareti motor yolundan geçiriyor',om.n===200,om.n);
+  eA2('mock OMR GERÇEK KAYDA YAZMIYOR (kalibrasyon temiz)',om.kayit===false&&om.once===om.sonra,om);
+  /* konu tamamlama: mevcut D.pu yolu + düzey canlı */
+  const tg=R('(function(){const V=atlasVeri(true);'+
+    'const n=V.N.find(x=>x.tip==="konu"&&x.br==="Biyokimya"&&x.key===bcKN("Amino Asitler"));'+
+    'const l0=n.lvl;atlasKonuToggle(n);const p1=Object.keys(D.pu).length;const l1=n.lvl;'+
+    'atlasKonuToggle(n);const p2=Object.keys(D.pu).length;'+
+    'return {l0:l0,l1:l1,p1:p1,p2:p2,l2:n.lvl}})()');
+  eA2('düğümde tamamlama D.pu yazıyor + düzey canlı (0→4→0)',
+    tg.l0===0&&tg.l1>=3&&tg.p1===1&&tg.p2===0&&tg.l2===0,tg);
+  R('D.pu={}');
+})();
+eA2('gövde ışınları yalnız odakta (dersKonu çizimi mik koşullu)',/dersKonu[\s\S]{0,200}mk3&&mk3\.t>\.05&&sec/.test(kod));
+eA2('halka üyeleri soluklaşmıyor (odak gövdesi parlak)',/atlas\.mik\.map\.has\(n\)\)\)\?1:\.14/.test(kod));
+console.log('\n'+(QA2?'✗ '+QA2+' HATA':'✓ SIFIR HATA — 8 ek kontrol'));
+if(QA2)process.exitCode=1;
+
+console.log('\n═══ FAZ 3 · ALTIN YOL + GRAFİK DENETİMLERİ (§263/§264) ═══');
+let QA3=0;const eA3=(a,ok,x)=>{if(!ok){QA3++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eA3('altinYol/altinDugumler/altinAc + atEslesme/atGrupUygula/atKartCiz',
+  R('typeof altinYol')==='function'&&R('typeof altinDugumler')==='function'&&
+  R('typeof altinAc')==='function'&&R('typeof atEslesme')==='function'&&
+  R('typeof atGrupUygula')==='function'&&R('typeof atKartCiz')==='function');
+eA3('köprü menüsü KALDIRILDI (data-atgit yok)',kod.indexOf('data-atgit')<0);
+eA3('denetim bölümleri: Filtreler/Gruplar/Göster/Güçler',
+  /data-bol="filtre"/.test(kod)&&/data-bol="grup"/.test(kod)&&/data-bol="goster"/.test(kod)&&/data-bol="guc"/.test(kod));
+(function(){ C.setGun('2026-08-02'); R('D.pu={}'); R('D.bitti={}'); R('D.altinAcik=false');
+  R('D.denemeler=[{tar:"2026-08-01",kay:"t1",t:32,k:30,bn:{Dahiliye:14,Patoloji:8,Biyokimya:5,Fizyoloji:5,Anatomi:6,"Genel Cerrahi":6,Farmakoloji:5,Mikrobiyoloji:5,Pediatri:6,"Kadın Doğum":4}}]');
+  const Y=R('(function(){const Y=altinYol();return {n:Y.n,guven:Y.guven,net:+Y.toplamNet.toFixed(2),'+
+    'verimSirali:Y.sira.every((z,i)=>i===0||Y.sira[i-1].verim>=z.verim-1e-9),'+
+    'saatToplam:+Y.sira.reduce((a,z)=>a+z.saat,0).toFixed(1),kap:Y.kapasite}})()');
+  eA3('altın yol sıra üretiyor',Y.n>0,Y);
+  eA3('sıra VERİME göre azalan (net/saat ekseni)',Y.verimSirali,Y);
+  eA3('kapasiteyi aşmıyor (tempoProjeksiyon sınırı)',!Y.kap||Y.saatToplam<=Y.kap+.01,Y);
+  eA3('az veriyle temkinli güven etiketi',['düşük','orta','iyi'].indexOf(Y.guven)>=0,Y.guven);
+  /* öneri katmanı: açılıp kapanabilir, otomatik pilot değil */
+  const t=R('(function(){altinAc(true);const a=!!D.altinAcik;altinAc(false);'+
+    'return {acik:a,kapali:!D.altinAcik}})()');
+  eA3('altın yol AÇ/KAPA (öneri katmanı, zorunluluk değil)',t.acik&&t.kapali,t);
+  /* grup sorguları gerçek veriden eşleşiyor */
+  const g=R('(function(){const V=atlasVeri(true);'+
+    'const bug=V.N.filter(n=>atEslesme(n,"#bugün")).length;'+
+    'const kon=V.N.filter(n=>atEslesme(n,"tip:konu")).length;'+
+    'const bio=V.N.filter(n=>atEslesme(n,"ders:biyokimya tip:konu")).length;'+
+    'return {bug:bug,kon:kon,bio:bio}})()');
+  eA3('sorgu: tip:konu + ders: filtresi çalışıyor',g.kon>100&&g.bio>5&&g.bio<g.kon,g);
+})();
+eA3('ALTIN yalnız Altın Yol çiziminde (harita dili gri kalır)',(function(){
+  const i=kod.indexOf('function atlasCiz'), j=kod.indexOf('function atlasVur');
+  if(i<0||j<i)return false;
+  const blok=kod.slice(i,j), p=blok.split('#D8B26A').length-1;
+  return p===1&&blok.indexOf('ALTIN YOL')>0})());
+console.log('\n'+(QA3?'✗ '+QA3+' HATA':'✓ SIFIR HATA — 10 ek kontrol'));
+if(QA3)process.exitCode=1;
+
+console.log('\n═══ OMR/KAMERA BORU HATTI · İSKELET (§265) ═══');
+let QO=0;const eO=(a,ok,x)=>{if(!ok){QO++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eO('dört katman ayrık: isaretOku/omrEslestir/omrOnizle/omrKaydet',
+  R('typeof isaretOku')==='function'&&R('typeof omrEslestir')==='function'&&
+  R('typeof omrOnizle')==='function'&&R('typeof omrKaydet')==='function');
+(function(){ C.setGun('2026-08-02'); R('D.denemeler=[{tar:"2026-08-01",kay:"t",t:30,k:28,bn:{}}]');
+  const o=R('(function(){const once=D.denemeler.length;const r=omrOnizle();'+
+    'return {n:r.n,kayit:r.kayit,dusuk:r.dusuk,once:once,sonra:D.denemeler.length,'+
+    'bekleyen:!!OMR_DURUM.kayit}})()');
+  eO('önizleme 200 işaret okuyor',o.n===200,o.n);
+  eO('ÖNİZLEME KAYDA YAZMIYOR (onay bekliyor)',o.once===o.sonra&&o.kayit===false&&o.bekleyen,o);
+  eO('düşük güvenli işaretler ayrı işaretleniyor',o.dusuk>0,o.dusuk);
+  const k=R('(function(){const once=D.denemeler.length;const ok=omrKaydet();'+
+    'const son=D.denemeler[D.denemeler.length-1];'+
+    'return {ok:ok,once:once,sonra:D.denemeler.length,detay:!!(son&&son.detay),'+
+    'soru:(son&&son.sorular||[]).length,bekleyenKalmadi:!OMR_DURUM.kayit}})()');
+  /* ⚠ soru sayısı 200 DEĞİL: düşük güvenli okumalar bilerek nete/kayda girmiyor
+     (uydurma yok — §266). Beklenen: okunan − düşük güvenli. */
+  eO('ONAY sonrası MEVCUT veri yoluna yazıyor (D.denemeler)',
+    k.ok&&k.sonra===k.once+1&&k.detay&&k.soru===o.n-o.dusuk&&k.bekleyenKalmadi,
+    Object.assign({bekOnen:o.n-o.dusuk},k));
+  eO('düşük güvenli okumalar KAYDA GİRMİYOR (uydurma yok)',k.soru<o.n&&k.soru>0,
+    {yazilan:k.soru,okunan:o.n,dusuk:o.dusuk});
+  const k2=R('omrKaydet()');
+  eO('onaysız ikinci kayıt YOK (çift kayıt koruması)',k2===false);
+  /* eşleştirme yeni konu uydurmuyor */
+  const es=R('(function(){const h=isaretOku();const e=omrEslestir(h);'+
+    'return {hepsi:e.length,gerek:e.filter(o=>o.durum!=="ok").length,'+
+    'konuUydurma:e.every(o=>!o.konu||Object.keys(KONU_DAG[o.b]||{}).indexOf(o.konu)>=0)}})()');
+  eO('eşleşmeyen "Eşleştirme gerekli" olarak işaretleniyor',es.gerek>0,es);
+  eO('YENİ KONU UYDURULMUYOR (yalnız gerçek katalog)',es.konuUydurma,es);
+  R('D.denemeler=[]');
+})();
+eO('okuma katmanı yalnız isaretOku içinde (değişecek tek yer)',
+  /1\) İŞARET OKUMA/.test(kod)&&/DEĞİŞECEK TEK KATMAN BURASI/.test(kod));
+/* §266 · gerçek kitapçık fixture'ı: fotoğraftan OKUNAN işaretler, uydurma yok */
+(function(){
+  const g=R('(function(){const h=isaretOku("gercek");'+
+    'return {n:h.length,brans:h[0]&&h[0].b,'+
+    'guvenli:h.filter(o=>o.guven>=.6).length,'+
+    'bosBirakilan:h.filter(o=>o.s===null).length,'+
+    'notluHepsi:h.every(o=>typeof o.guven==="number")}})()');
+  eO('gerçek fixture okunuyor (10 soru · Kadın Doğum)',g.n===10&&g.brans==='Kadın Doğum',g);
+  eO('okunamayan işaret null bırakılıyor (tahmin edilmiyor)',g.bosBirakilan>0,g);
+  eO('her satırda okuma güveni var',g.notluHepsi,g);
+  const gp=R('(function(){const once=D.denemeler.length;const r=omrOnizle("gercek");'+
+    'const res={n:r.n,dusuk:r.dusuk,kayit:r.kayit,yazildiMi:D.denemeler.length!==once};'+
+    'OMR_DURUM.kayit=null;return res})()');
+  eO('gerçek tarama da onaysız YAZMIYOR',!gp.yazildiMi&&gp.kayit===false,gp);
+  eO('güveni düşük satırlar nete katılmıyor',gp.dusuk>=5&&gp.dusuk<gp.n,gp);
+})();
+/* §267 · KAPSAM YÖNLENDİRMESİ · kısmi tarama TAM DENEME değildir.
+   D.denemeler kayıtları son()/para() üzerinden PARAKETE üretir; 10 soruluk
+   bir sayfa oraya yazılırsa parakete çöker. Kısmi tarama D.kal'a gider. */
+(function(){ C.setGun('2026-08-02');
+  R('D.denemeler=[{tar:"2026-08-01",kay:"t",t:32,k:30,bn:{Dahiliye:14,Patoloji:8,Biyokimya:5,'+
+    'Fizyoloji:5,Anatomi:6,"Genel Cerrahi":6,Farmakoloji:5,Mikrobiyoloji:5,Pediatri:6,"Kadın Doğum":4}}]');
+  R('D.kal=[]');
+  const kp=R('(function(){const t=omrKapsam(isaretOku());'+
+    'const g=omrKapsam(isaretOku("gercek"));'+
+    'return {tamOkunan:t.okunan,tamMi:t.tam,gercekOkunan:g.okunan,gercekTam:g.tam,'+
+    'gercekBrans:g.brans,beklenen:t.beklenen}})()');
+  eO('tam tarama TAM DENEME sayılıyor',kp.tamMi===true&&kp.tamOkunan>=180,kp);
+  eO('10 soruluk sayfa TAM DENEME SAYILMIYOR',kp.gercekTam===false&&kp.gercekOkunan===10,kp);
+  eO('beklenen soru sayısı katalogdan türetiliyor (sihirli sabit yok)',
+    kp.beklenen>=180&&kp.beklenen<=220&&/omrToplamSoru/.test(kod),kp);
+  /* kısmi tarama D.denemeler'e DEĞİL D.kal'a yazmalı; parakete oynamamalı */
+  const ks=R('(function(){omrOnizle("gercek");'+
+    'const pOnce=puan(para().t,para().k), dOnce=D.denemeler.length, kOnce=D.kal.length;'+
+    'const sOnce=JSON.stringify(son());'+
+    'const ok=omrKaydet();'+
+    'const pSonra=puan(para().t,para().k);'+
+    'return {ok:ok,denemeArtti:D.denemeler.length-dOnce,kalArtti:D.kal.length-kOnce,'+
+    'sonAyni:sOnce===JSON.stringify(son()),fark:+Math.abs(pOnce-pSonra).toFixed(3),'+
+    'pOnce:+pOnce.toFixed(2),pSonra:+pSonra.toFixed(2),'+
+    'sonKal:D.kal[D.kal.length-1]||null}})()');
+  eO('kısmi tarama D.denemeler’e YAZMIYOR',ks.denemeArtti===0,ks);
+  eO('kısmi tarama D.kal’a branş kaydı yazıyor',ks.kalArtti>=1,ks);
+  /* ⚠ son() DEĞİŞMEMELİ: parakete son denemeden türer; kısmi sayfa
+     "son deneme" olursa 10 soruluk örneklem 200 soru sanılır ve puan çöker. */
+  eO('son() kısmi taramayı SON DENEME sanmıyor',ks.sonAyni,ks);
+  /* R_CAL üzerinden küçük bir kayma MEŞRU (D.kal kalibrasyonu besler);
+     çöküş değil. Eski hatalı yolda düşüş ~19 puandı. */
+  eO('PARAKETE çökmüyor (yalnız kalibrasyon ölçeğinde kayma)',ks.fark<1,
+    {once:ks.pOnce,sonra:ks.pSonra,fark:ks.fark});
+  eO('branş kaydı dpanel ile aynı şekilde (tar/br/d/y/b)',
+    !!(ks.sonKal&&ks.sonKal.tar&&ks.sonKal.br&&typeof ks.sonKal.d==='number'&&
+       typeof ks.sonKal.y==='number'&&typeof ks.sonKal.b==='number'),ks.sonKal);
+  eO('branş kaydı motorun geçerlilik süzgecinden geçiyor (kayitGecerli)',
+    R('kayitGecerli(D.kal[D.kal.length-1])')===true,ks.sonKal);
+  /* konu kırılımı: yalnız GERÇEK katalogda karşılığı olan adlar (sessiz sıfır tuzağı) */
+  const kk=R('(function(){const L=D.kal.filter(k=>k.konular&&k.konular.length);'+
+    'const hepsiGercek=L.every(k=>k.konular.every(c=>KONU_DAG[k.br]&&KONU_DAG[k.br][c.k]!==undefined));'+
+    'return {kirilimliKayit:L.length,hepsiGercek:hepsiGercek}})()');
+  eO('konu kırılımı UYDURULMUYOR (yalnız gerçek katalog adları)',kk.hepsiGercek,kk);
+  /* tam tarama hâlâ deneme yolunda */
+  const tt=R('(function(){R:0;omrOnizle();'+
+    'const dOnce=D.denemeler.length;const ok=omrKaydet();'+
+    'return {ok:ok,denemeArtti:D.denemeler.length-dOnce}})()');
+  eO('TAM tarama hâlâ D.denemeler yoluna gidiyor',tt.ok&&tt.denemeArtti===1,tt);
+  R('D.denemeler=[];D.kal=[]');
+})();
+console.log('\n'+(QO?'✗ '+QO+' HATA':'✓ SIFIR HATA — 26 ek kontrol'));
+if(QO)process.exitCode=1;
+
+console.log('\n═══ JARVIS · KÖŞEDE TEK SATIR, SOHBET PENCERESİ DEĞİL (§268) ═══');
+let QJ=0;const eJ=(a,ok,x)=>{if(!ok){QJ++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+/* Yapısal koruma: kutu iki satırı asamaz, telefonda ekranin yarisini yutamaz. */
+(function(){
+  const i=kod.indexOf('#jarvisSatir{'); const blok=kod.slice(i,i+520);
+  eJ('kutu iki satira kirpiliyor (-webkit-line-clamp:2)',/-webkit-line-clamp:2/.test(blok));
+  eJ('tasan metin gizleniyor (overflow:hidden)',/overflow:hidden/.test(blok));
+  eJ('sag UST koseye sabit (position:fixed + top + right)',
+    /position:fixed/.test(blok)&&/top:\d/.test(blok)&&/right:\d/.test(blok));
+  const m=blok.match(/max-width:min\((\d+)px,(\d+)vw\)/);
+  eJ('telefonda ekran genisliginin cogunu YUTMUYOR (<=60vw)',!!m&&+m[2]<=60,m&&m[0]);
+  eJ('tiklamayi engellemiyor (pointer-events:none)',/pointer-events:none/.test(blok));
+})();
+/* Mesaj disiplini: hicbir cagri yeri uzun paragraf uretmemeli.
+   Ayrinti haritadaki kartta yasar - JARVIS yalniz duyurur (sartname). */
+(function(){
+  const duzMetin=(ifade)=>(ifade.match(/'[^']*'/g)||[]).map(x=>x.slice(1,-1)).join('').replace(/<[^>]*>/g,'');
+  const uzun=[], cok=[];
+  const re=/jarvis\(([\s\S]{0,600}?),\s*\d+\s*\)/g;
+  let m;
+  while((m=re.exec(kod))){
+    const g=duzMetin(m[1]);
+    if(g.length>150)uzun.push(g.slice(0,70)+'...('+g.length+')');
+    if((g.match(/[.!?]\s/g)||[]).length>=2)cok.push(g.slice(0,60)+'...');
+  }
+  eJ('hicbir JARVIS satiri paragraf degil (duz metin <=150 karakter)',uzun.length===0,uzun);
+  eJ('tek nefeslik (iki tam cumleden fazlasi yok)',cok.length===0,cok);
+})();
+eJ('saygili hitap korunuyor (efendim)',(kod.match(/efendim/g)||[]).length>=6);
+console.log('\n'+(QJ?'✗ '+QJ+' HATA':'✓ SIFIR HATA — 8 ek kontrol'));
+if(QJ)process.exitCode=1;
+
+console.log('\n═══ ÇERÇEVE · içerikten ölçülen açılış + etiket kırpma (§269) ═══');
+let QCer=0;const eCer=(a,ok,x)=>{if(!ok){QCer++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eCer('atlasSigdir var (açılış çerçevesi fonksiyonu)',R('typeof atlasSigdir')==='function');
+eCer('GERİLEME: hiçbir yerde min(w,h)/1950 sihirli sabiti KULLANILMIYOR',
+  !/Math\.min\(atlas\.w,atlas\.h\)\/1950/.test(kod));
+eCer('"ortala" düğmesi açılışla AYNI çerçeveyi kullanıyor (ikiz kaynak yok)',
+  /atlasTikla\(null\); const F=atlasSigdir\(\)/.test(kod));
+eCer('açılış ölçeği düğümlerin GERÇEK sınır kutusundan türüyor',
+  /atlasSigdir[\s\S]{0,700}?x1-x0/.test(kod)&&/atlas\.w\*pay\/gw/.test(kod));
+(function(){
+  /* test VM'inde gerçek tuval yok — atlasSigdir yalnız V/w/h kullanır, stub yeter */
+  R('atlas={V:atlasYerlesim(atlasVeri(true)),w:390,h:844,cam:{x:0,y:0,s:.3},mik:null,sec:null}');
+  const f=R('(function(){const F=atlasSigdir();'+
+    'const N=atlas.V.N.filter(n=>n.tip===\'ders\'||n.tip===\'merkez\');'+
+    'let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;'+
+    'N.forEach(n=>{const r=(n.r||4)+30;'+
+    'if(n.x-r<x0)x0=n.x-r; if(n.x+r>x1)x1=n.x+r;'+
+    'if(n.y-r<y0)y0=n.y-r; if(n.y+r>y1)y1=n.y+r});'+
+    'return {s:F.s, cx:+F.cx.toFixed(1), cy:+F.cy.toFixed(1),'+
+    'gw:+(x1-x0).toFixed(0), gh:+(y1-y0).toFixed(0),'+
+    'enX:+((x0+x1)/2).toFixed(1), enY:+((y0+y1)/2).toFixed(1),'+
+    'sigar:((x1-x0)*F.s<=atlas.w+1)&&((y1-y0)*F.s<=atlas.h+1)}})()');
+  eCer('çerçeve merkezi içeriğin ORTASI (dünya orijini değil)',
+    Math.abs(f.cx-f.enX)<.01&&Math.abs(f.cy-f.enY)<.01,f);
+  eCer('içerik açılışta ekrana SIĞIYOR',f.sigar,f);
+  eCer('ölçek tavanı kitap eşiğini aşmıyor (açılış ders takımyıldızı kalsın)',f.s<=.40001,f.s);
+  eCer('ölçek tabanı korunuyor',f.s>=.16,f.s);
+})();
+/* Etiket kırpma: taşma ZOOM'a değil ÇİZİME yıkılıyor */
+eCer('halka etiketi ekran kenarına göre kırpılıyor (bütçe hesabı)',
+  /const butce=hiz===.left.\?\(W-6-lx\)/.test(kod));
+eCer('ortalı etiket de kırpılıyor (yaz yardımcısı)',
+  /const bosSol=x-3, bosSag=W-3-x, butce=Math\.min\(bosSol,bosSag\)\*2/.test(kod));
+eCer('dikey taşan etiket hiç yazılmıyor',/ly<9\|\|ly>H-4/.test(kod)&&/y<9\|\|y>H-4/.test(kod));
+eCer('GERİLEME: odak ölçeği artık etiket genişliğine göre KISILMIYOR',
+  kod.indexOf('const yatay=(atlas.w*.94/2-(L+14))/R')<0);
+eCer('odak ölçeği halkayı çerçeveliyor',/Math\.min\(atlas\.w\*\.80\/2, atlas\.h\*\.72\/2\)\/R/.test(kod));
+console.log('\n'+(QCer?'✗ '+QCer+' HATA':'✓ SIFIR HATA — 12 ek kontrol'));
+if(QCer)process.exitCode=1;
+
+console.log('\n═══ VERİ GİRİŞİ HARİTADAN · deneme/24lü/power-up (§270) ═══');
+let QGir=0;const eGir=(a,ok,x)=>{if(!ok){QGir++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eGir('köprüler var: atOlcumAc/atOlcumKapat/atDeneme24Ac/atPowerAc',
+  R('typeof atOlcumAc')==='function'&&R('typeof atOlcumKapat')==='function'&&
+  R('typeof atDeneme24Ac')==='function'&&R('typeof atPowerAc')==='function');
+eGir('kart eylemleri bağlı: data-akolc + data-ak24 + data-akpu',
+  /data-akolc/.test(kod)&&/data-ak24/.test(kod)&&/data-akpu/.test(kod)&&
+  /\[data-akolc\]/.test(kod)&&/\[data-ak24\]/.test(kod)&&/\[data-akpu\]/.test(kod));
+/* İKİZ FORM YOK: köprüler kayıt YAZMAZ — kayıt yalnız mevcut form işleyicilerinde */
+(function(){
+  const al=(ad)=>{ const i=kod.indexOf('function '+ad);
+    return i<0?'':kod.slice(i,kod.indexOf('\nfunction ',i+10)) };
+  const govde=al('atOlcumAc')+al('atOlcumKapat')+al('atDeneme24Ac')+al('atPowerAc');
+  eGir('köprüler D.denemeler/D.kal YAZMIYOR (tek doğruluk kaynağı formlar)',
+    govde.indexOf('D.denemeler.push')<0&&govde.indexOf('D.kal.push')<0);
+  eGir('Ölçüm DOM düğümü TAŞINIYOR, kopyalanmıyor',
+    /hed\.appendChild\(ic\)/.test(govde)&&govde.indexOf('innerHTML=ic')<0);
+  eGir('kapatınca eski yuvasına İADE ediliyor',/yuva\.appendChild\(ic\)/.test(govde));
+  eGir('açılışta giriş formuna kaydırılıyor (form ~4000px altta, ölçüldü)',
+    /scrollIntoView/.test(govde));
+  eGir('24lü önseçim kullanıcı yoluyla birebir (dataset.el + yeniden çizim)',
+    /s\.dataset\.el='1'; dpanelCiz\(\)/.test(al('atDeneme24Ac')));
+})();
+eGir('geri tuşu önce Ölçüm/dpanel/ppanel katmanını kapatıyor',
+  /atOlcumKapat\(\); return/.test(kod)&&/'dpanel','ppanel','zeNot'/.test(kod));
+eGir('eski ✕ düğmeleri haritayı tazeliyor (dinleyici)',
+  /data-kapat="dpanel".*data-kapat="ppanel"/.test(kod)&&/setTimeout\(atHaritaTazele/.test(kod));
+eGir('kapatınca harita yeniden kuruluyor (atHaritaTazele)',
+  /function atHaritaTazele/.test(kod)&&/atlasYerlesim\(atlasVeri\(true\),true\)/.test(kod));
+console.log('\n'+(QGir?'✗ '+QGir+' HATA':'✓ SIFIR HATA — 10 ek kontrol'));
+if(QGir)process.exitCode=1;

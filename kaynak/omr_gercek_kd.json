@@ -1,0 +1,28 @@
+{
+  "_kaynak": "Kullanıcının 8. Cilt 1. Deneme Sınavı kitapçığı · sf 38-39 · IMG_4682 + IMG_4684",
+  "_aciklama": "GERÇEK malzeme. İşaretler Claude tarafından fotoğraftan OKUNDU; her satırda okuma güveni var. Güveni düşük olanlar 'Eşleştirme gerekli' akışına düşer — uydurma YOK. Sabah kullanıcı doğrulayıp düzeltecek.",
+  "_uyari": "Bu dosya bir GOLDEN FIXTURE'dır; gerçek OMR/OCR yazılana kadar isaretOku('gercek') bunu okur. D.denemeler'e YALNIZ kullanıcı onayıyla yazılır.",
+  "brans": "Kadın Doğum",
+  "sorular": [
+    {"no":191,"konu":"jinekolojik","s":"Y","e":"B","guven":0.88,
+     "not":"solda kırmızı Y net; seçenekler yanında yeşil B; C şıkkı işaretli"},
+    {"no":192,"konu":"jinekolojik","s":"?","e":"B","guven":0.45,
+     "not":"yeşil B okunuyor; sol taraftaki D/Y işareti okunamadı (D ile B karışıyor)"},
+    {"no":193,"konu":"jinekolojik onkoloji","s":"?","e":"?","guven":0.30,
+     "not":"sol işaret belirsiz; iki şık (B ve D) işaretli görünüyor"},
+    {"no":194,"konu":"reproduktif endokrinoloji","s":"?","e":"B","guven":0.42,
+     "not":"sağda yeşil B; sol işaret belirsiz"},
+    {"no":195,"konu":"reproduktif endokrinoloji","s":"?","e":"?","guven":0.32,
+     "not":"sol işaret belirsiz; B şıkkı işaretli ve üstü çizili"},
+    {"no":196,"konu":"obstetri","s":"Y","e":"?","guven":0.72,
+     "not":"solda kırmızı Y okunuyor; güven işareti bulunamadı"},
+    {"no":197,"konu":"obstetri","s":"?","e":"B","guven":0.40,
+     "not":"sağda yeşil B; sol işaret belirsiz; iki şık işaretli"},
+    {"no":198,"konu":"obstetri","s":"?","e":"?","guven":0.35,
+     "not":"sol işaret belirsiz; A şıkkı işaretli"},
+    {"no":199,"konu":"obstetri","s":"Y","e":"?","guven":0.75,
+     "not":"solda kırmızı Y okunuyor; D şıkkı (Eklampsi) işaretli"},
+    {"no":200,"konu":"jinekolojik onkoloji","s":"Y","e":"AK","guven":0.85,
+     "not":"solda kırmızı Y; sağda AK yazısı net"}
+  ]
+}

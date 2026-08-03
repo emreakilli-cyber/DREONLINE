@@ -12989,6 +12989,649 @@ header/main opacity 0 · şerit dolu · Bugün paneli `#zeGunIc` içinde 11 sat�
 
 ---
 
+## §259 · BİLGİ ÇEKİRDEĞİ — Obsidian-benzeri kişisel bilgi sistemi
+
+Kullanıcı yön değiştirdi: önce **bilgi çekirdeği** (gerçek bilgi yönetim sistemi),
+sonra motor entegrasyonu, en son Evren bunun mekânsal görünümü. "Şık node graph"
+değil, "güçlü kişisel bilgi işletim sistemi" hissi hedef.
+
+### `bcIndeks()` — bilgi grafiği (yeni model YOK, hepsi türetme)
+- **Düğümler** mevcut veriden: RB (11 ders), POWERUP (41 kitap, konu+sayfa),
+  GOREVLER (program kitap/konu), KONU_DAG (deneme konu katalogu) → **355 konu**.
+  Kimlik = motorun kendi `renkAnh`/`konuSade` normali (ikinci kimlik uydurulmadı).
+- **Kenarlar yalnız gerçek veriden:** yapı (ders→konu), **kaynak (kitap→konu, 407
+  kenar)** — bir konuyu birden çok kitap anlatır, gerçek backlink ("Hormonlar 2
+  kaynak"); **kombo (99 kenar, 99/99 EŞLEŞTİ, komboAt=0)**.
+- ⚠ **KOMBO köprüsü KESİN:** KOMBO öğeleri tam görev-ID `gün|blok|branş|konu`
+  taşıyor; branş+konu doğrudan düğüm kimliğine çözülüyor. Önceki turlarda "sessiz
+  sıfır riski" diye ertelediğim köprü aslında güvenliymiş — çünkü ad tahmini yok,
+  ID parse'ı var. 99/99 eşleşme bunu kanıtladı.
+
+### Not yüzeyi `bcNotAc()` — içerik + metadata + bağlantılar tek yerde
+Bir konuya (haritada/aramada/görev satırında/graf düğümünde) tıklayınca:
+breadcrumb · başlık + tip · türetilmiş etiketler (#çalışıldı/#çürüyor/#boşluk-N/
+#kombo/#öncelik-N) · **Özellikler paneli "motordan canlı"** (soru ağırlığı, son
+çalışma, çürüme, denemede D/Y, güven E/AK/B/U, boşluk, DRE önceliği+skor, beklenen
+net, sayfa, süre) · "Neden öncelikli" (gorevNeden) · **Bağlantılar** (kaynak/kombo/
+yapı, hepsi tıklanır → o notun yüzeyi) · denemelerdeki gerçek sorular (D/Y+güven) ·
+ilgili görevler + **"Çalıştım"** (mevcut D.pu/D.bitti kaydı birebir) · **yerel graf**
+(canvas, komşu düğümler tıklanır) · Haritada göster · ‹ Önceki not (gezinme yığını).
+Tüm değerler panel açılırken motordan CANLI okunuyor (donmuş değer yok).
+
+### Arama + filtre yükseltildi
+`tip:konu|kitap|ders` · `ders:Ad` · `#etiket` (#çürüyor/#boşluk/#kombo/#çalışılmadı/
+#öncelik) · serbest metin. Çekirdeğin TAMAMINDA arıyor, sonuç NOT yüzeyini açıyor.
+Harita konusu tıklaması, görev satırı tıklaması ve arama sonucu artık hep aynı
+bilgi notunu açıyor — tek bilgi sistemi, çok giriş.
+
+### 🔴 GERÇEK PERF HATASI BULUNDU VE DÜZELTİLDİ (yayındaki sürümde de var)
+`gorevOncelik()` **9173 ms** sürüyordu (rehberSec 41 ms). Sebep: `puEtki()` her
+çağrıda `para()` (33 ms) hesaplıyor; gorevOncelik bunu ~270 aday için tek tek
+yapıyordu → 270×33 ≈ 9 sn. `para()` tek geçişte hep aynı. Çözüm: `_peP` kapsamlı
+önbelleği (`_rcZorla` deseni) — gorevOncelik para'yı bir kez hesaplayıp puEtki'ye
+veriyor. **9173 ms → 90 ms (100×).** DRE sıralaması BİREBİR AYNI (Aminoasitlerin
+Metabolizması skor=8.14, FAZ 5 testiyle aynı → davranış değişmedi). Bu, yayındaki
+rehber panelini ve harita açılışını da hızlandırdı.
+
+### Kapılar + doğrulama
+kal/derin/cark/mola/kombo ✓ · pu_test yeni §259 bölümü **9 kontrol SIFIR HATA**
+(11 ders + düğümler, KOMBO 99/99 kesin, kaynak backlink, çok-kaynaklı konu, özellik
+motordan, DRE bağlı, _peP perf); toplam ✗ hâlâ **7** = değişmeden §229.
+**Gerçek tarayıcı (telefon 390, gerçek veri):** indeks 11/41/355, KOMBO 99/99;
+"Şok travma" notu 9 özellik + 3 gerçek soru + kaynak backlink + graf ile açıldı;
+`#boşluk tip:konu` filtresi 40 sonuç 116 ms; sayfa hatası yok.
+
+### Eksik / sonraki (bu vizyonun kalanı)
+- **Alt başlık düzeyi:** veri katalogunda YOK (denetlendi — POWERUP kitap→konu,
+  KONU_DAG branş→konu, sorular konu adına). Ders→Kitap→Konu→Soru gerçek; alt başlık
+  UYDURULMADI. İstenirse kullanıcıdan alt başlık kaynağı gerekir.
+- **Evren = çekirdeğin görünümü:** harita konusu artık notu açıyor ama harita hâlâ
+  ayrı `zeVeri` türetiyor; ikisini tek indekse (`bcIndeks`) bağlamak sıradaki adım.
+- Deneme/ölçüm panelleri koyu tema (§258 açık kalan).
+- Kamera OCR + golden test.
+
+**sürüm 2027-03-06a ↔ rota-2027-03-06a**
+
+---
+
+## §260 · EVREN = ÇEKİRDEĞİN GÖRÜNÜMÜ — KOMBO bağlantıları haritada (öncelik 5)
+
+Kullanıcı "devam" dedi → öncelik 5–6: Bilgi Evreni bilgi çekirdeğinin mekânsal
+graph view'ı olsun. İlk adım: bilgi bağlantılarını haritaya çizmek.
+
+- `zeKur` artık `bcIndeks()`'ten `komboDers` üretiyor: 99 konu↔konu KOMBO kenarı
+  ders bölgelerine toplanıyor → **18 ders↔ders bağı** (Anatomi↔Genel Cerrahi w=12,
+  Patoloji↔Genel Cerrahi w=6…). Aynı ders içi bağlar atlanıyor (bölge içi). Kaynak
+  TEK: bcIndeks (harita ile çekirdek artık aynı bağlantı verisini kullanıyor).
+- `zeCiz` ders katmanında bu bağları **eğri** olarak çiziyor: uzakta hafif
+  (aDers·0.14, ağırlıkla ölçekli), bir ders **seçiliyken yalnız onun bağları**
+  altınla belirginleşiyor (aDers·0.5) — "ilişkiler uzakta hafif, odaklanınca
+  belirgin" (kullanıcı şartı). Ders çemberlerinin ARKASINDA çiziliyor.
+- Harita konusu tıklaması (§259'da) zaten `bcNotAc` açıyordu → harita ile çekirdek
+  tek akış.
+
+**Kapılar:** cark/derin/kombo/mola/kal ✓ · pu_test ✗ 7 = değişmeden §229.
+**Gerçek tarayıcı (1000px, gerçek veri):** komboDers 18 bağ; overview'da tüm bağlar
+hafif; Patoloji seçilince diğer dersler soluyor, onun bağları (→ Genel Cerrahi vb.)
+altınla beliriyor; sayfa hatası yok.
+
+**Bilinçli ödün / açık nokta:** overview'da KOMBO eğrileri mevcut radyal görev
+çizgileriyle (görev→ders kenarları) görsel olarak karışıyor — biraz yoğun. Odak
+görünümü net. Cihazda görülüp "berrak" değilse: overview'da yalnız en güçlü bağları
+(w≥N) göstermek ya da radyal spokes'u soldurmak seçenek. Kullanıcı kararı bekleniyor.
+
+**Sonraki (öncelik 6 + kalan):** yaşayan durum haritada (mastery/decay → anıt/
+solma zaten §256'da; bağlarla birleştir) · konu düğümleri de tek bcIndeks'ten ·
+alt başlık (veri yok, kullanıcıdan) · deneme/ölçüm açık tema · kamera OCR + golden.
+
+**sürüm 2027-03-07a ↔ rota-2027-03-07a**
+
+---
+
+## §261 · ATLAS — sıfırdan Obsidian-dili harita motoru + JARVIS (kullanıcı FAZ 1 + 1.5)
+
+**Yön (kullanıcının yeni brief'i + iPhone Obsidian ekran görüntüleri):** önceki
+tasarımlar "basit ve yetersiz" — hiçbiri cilalanmayacak, SIFIRDAN. Estetik referans
+GERÇEK Obsidian grafiği: siyaha yakın zemin, ince gri çizgiler, sade noktalar,
+yaklaştıkça beliren etiketler. ⚠ Bu, önceki "açık zemin" kuralının KULLANICI
+TARAFINDAN tersine çevrilmesidir (ekran görüntüleriyle) — §244 kuralı artık geçersiz.
+Liste/form/panel istenmiyor; her şey haritada yaşayacak (kademeli). "Tasarım
+sıfırdan, veri korunarak."
+
+**Yapılan (FAZ 1 · harita motoru):** `atlas*` — tümüyle YENİ modül (~18 KB), eski
+zeCiz/zeKur KULLANILMADI (kod duruyor, güvenli düşüş + kapılar için; gösterilmiyor):
+- `atlasVeri()`: bcIndeks + motor → 408 düğüm (1 kök TUS + 11 ders + 41 kitap +
+  355 konu) + 897 yay (kök-ders, ders-kitap, kaynak, dersKonu[yalnız yerleşim],
+  kombo). Konu hakimiyet düzeyi 0–4 MOTORDAN: D.pu/D.bitti + konuCurume (çalışılınca
+  yükselir, çürüdükçe düşer — testte kanıtlı 0→4). Öncelik etiketi = mevcut
+  konuRenk/RENK (pembe/turuncu/sarı/mavi) düğüm renginde ince vurgu.
+- `atlasYerlesim()`: DETERMİNİSTİK kuvvet benzetimi (ızgara-itmeli, 130 tur, sabit
+  tohum; testte iki koşu birebir aynı konum). Ders çapaları halka üstünde; küme
+  yarıçapı ~220 birim (ilk sürüm 600+ çıktı, yaylar sıkılaştırıldı).
+- `atlasCiz()`: koyu zemin #0B0C0F, ince gri çizgiler, sade daireler. SEMANTIC ZOOM:
+  uzak → yalnız ders düğümleri + etiketleri + konular "yıldız tozu" (ultra hafif,
+  tek tek düğüm iddiasız); orta → kitaplar belirir; yakın → konular + etiketler.
+  Hakimiyet = parlaklık + çevre nokta yoğunluğu (kademeli, süssüz; çürüme aynı dilin
+  tersi). Odak: düğüme dokun → komşular kalır, gerisi %14'e söner; kamera yay/easing
+  ile uçar. ⚠ ALTIN RENK ATLASTA HİÇ KULLANILMADI — FAZ 3 Altın Yol'a rezerve
+  (pu_test bunu kaynak düzeyinde denetliyor).
+- İlk karede KOMBO çizgileri uçları görünmeyen düğümlere bağlanıp karmaşa yaratıyordu
+  (gerçek karede görüldü) → kombo alfası konu görünürlüğüne bağlandı; uzak görünüm
+  berrak. Açılış ölçeği ekrana SIĞDIRILIYOR (sabit değil).
+
+**FAZ 1.5 · JARVIS:** `jarvis(metin)` — sohbet penceresi DEĞİL; altta beliren,
+kendiliğinden kaybolan tek satır. Açılışta motordan selam: "Hoş geldiniz efendim.
+Sınava 21 gün var; parakete 59.4. Anatomi bölgesi ilginizi bekliyor." (kalan gün =
+fark/SINAV, parakete = puan(para()), zayıf bölge = evrenVeri hakimiyet min).
+Yalnız anlamlı anlarda konuşacak (FAZ 3'te Altın Yol tetikleyecek).
+
+**Geçici köprü (bilinçli):** sağ üst "⋯" menüsü → Bugün/Deneme/Ölçüm/Power-up/Telafi
+mevcut panelleri atlas ÜSTÜNDE açıyor (paneller gövde düzeyine taşındı, z-index
+122-125). Menüde not: "FAZ 2'de bu akışlar haritanın içine gömülecek." Günlük akış
+kaybolmadı (Bugün paneli 11 satır, tamamlama çalışıyor — tarayıcıda doğrulandı).
+
+**Test ortamı keşfi:** derin_ortam VM'inde betik, atlastan önceki bir üst-düzey
+satırda ötedenberi ölüyormuş (karsilamaAc bile tanımsızmış) — bugüne dek test edilen
+her şey ölüm noktasından önceydi. Atlas modülü ölüm noktasının öncesine taşındı;
+ölüm noktasının kendisi ayrıca incelenmeli (açık madde).
+
+**Kapılar:** kal/derin/cark/mola/kombo ✓ · pu_test yeni §261 bölümü **10 kontrol
+SIFIR HATA** (fonksiyonlar, koyu zemin, altın-yok, JARVIS+efendim, 408 düğüm,
+konum sonlu, determinizm, hakimiyet motordan canlı 0→4, semantic zoom eşikleri,
+açılış+düşüş) · toplam ✗ **7** = değişmeden §229.
+**Gerçek tarayıcı (390px, gerçek veri):** açılış 3.6 sn'de atlas; 408 düğüm/897 yay;
+JARVIS motor değerleriyle konuştu; uzak/orta/yakın/odak kareleri alındı; köprü
+Bugün paneli çalışıyor; sayfa hatası yok.
+
+**SONRAKİ (kullanıcı onayı bekleniyor — akış onun şartı):**
+- FAZ 2: verinin haritada yaşaması (düğümde tamamlama mikro-etkileşimi, deneme
+  olayı düğümü, sparkline, çapraz-kitap bağları zaten var; not yüzeyinin haritaya
+  gömülmesi) + kamera OMR/OCR (kullanıcıdan: boş optik form fotoğrafı + cevap
+  anahtarı formatı + işaretli örnek sayfa).
+- FAZ 3: Altın Yol (gorevOncelik/puEtki → altın rota overlay, aç/kapa) + JARVIS bildirimi.
+
+**sürüm 2027-03-08a ↔ rota-2027-03-08a**
+
+---
+
+## §262 · ODAK MİKRO-YERLEŞİMİ + ATLAS FAZ 2 (veri haritada yaşıyor) + mock-OMR
+
+**Kullanıcı düzeltmesi (birebir):** "Bir düğüme odaklanınca çocuk düğümler global
+force simülasyonuyla değil, parent'ın etrafında sabit, sıkı bir dairesel düzende
+konumlanmalı — parent'ın gövdesini oluşturuyormuş gibi durmalı, dağınık değil."
+
+**1) Odak mikro-yerleşimi (`atlasMikro`):** odaklanınca çocuklar (kök→dersler+
+denemeler · ders→kitaplar+konular · kitap→konuları) global fizikten çıkıp ebeveyn
+çevresinde eş-aralıklı dairesel KABUKLARA dizilir (halka kapasitesi çevre/17 birim;
+kitaplar içte, hakimiyeti yüksek konular içte — gövdenin sağlam çekirdeği). Geçiş
+animasyonlu (t 0↔1, smoothstep); odak dağılınca aynı yoldan global konuma süzülür.
+Kamera halkayı ekrana SIĞDIRIR (sabit ölçek değil). Halka üyeleri soluklaşmaz;
+ebeveyn→çocuk "gövde ışınları" yalnız odakta çizilir; halka etiketleri açı yönünde
+DIŞA yelpazelenir (üst üste binme kırıldı — ilk karede binmişti, gerçek karede
+görülüp düzeltildi). Gerçek ölçüm: Biyokimya odağında 21 çocuk, halka bandı 32–56
+birim, maxR 56; testte "sıkı halka + dar bant" kontrolü var.
+
+**2) FAZ 2 · veri haritada:**
+- **Deneme düğümleri:** D.denemeler'deki 6 gerçek deneme haritada düğüm (kök
+  yörüngesi, mavi-gri — altın değil). Dokununca JARVIS özetler: tarih · T/K · puan ·
+  soru-soru işaretli mi. Yeni deneme kaydında bir sonraki tazelemede kendiliğinden belirir.
+- **Düğümde tamamlama (form yok):** konuya odaklanınca düğümün üstünde ○/✓ dairesi;
+  dokununca MEVCUT kayıt yolu (D.pu / power-up karşılığı yoksa son ilgili görevin
+  D.bitti'si) çalışır, düzey YERİNDE tazelenir (0→4→0 testli), nokta bulutu değişir.
+- **Branş sparkline:** derse odaklanınca düğümün yanında sade gri eğri — denemeBrNet
+  serisi (ayrı grafik sayfası yok; "5.0 net" ucuyla).
+
+**3) Mock-OMR borusu (`omrMock`):** optik form malzemesi gelene dek boru hattı
+sentetik işaretlerle: 200 işaret → dqBransNet (mevcut motor) → JARVIS önizleme.
+⚠ **GERÇEK KAYITLARA YAZMAZ** (kayit:false; D.denemeler değişmiyor — testli).
+Kalibrasyon kirlenmez. Gerçek OMR geldiğinde yalnız işaret-okuma katmanı değişecek.
+Menüde "Kamera · Tara (mock)".
+
+**Düzeltme (test VM):** jarvis() clearTimeout'suz ortamda patlıyordu → try/catch.
+
+**Kapılar:** kal/derin/cark/mola/kombo ✓ · pu_test yeni §262 bölümü **8 kontrol
+SIFIR HATA** (sıkı halka, dar bant, deneme düğümü=kayıt sayısı, mock 200 işaret,
+mock kayda yazmıyor, tamamlama D.pu+canlı düzey, gövde ışını koşulu, halka
+solukluk istisnası) · toplam ✗ **7** = değişmeden §229.
+**Gerçek tarayıcı (390px, gerçek veri):** 6 deneme düğümü adlarıyla; Biyokimya
+odağı gövde-halka görünümü kare alındı; toggle localStorage'a yazdı (sonra geri
+alındı); mock OMR D.denemeler 6→6; sayfa hatası yok.
+
+**Sonraki:** FAZ 2 devamı (bilgi panelinin haritaya gömülmesi, yeni-düğüm beliriş
+animasyonu) · FAZ 3 Altın Yol · gerçek OMR malzemesi bekleniyor (boş optik form +
+cevap anahtarı formatı + işaretli örnek sayfa).
+
+**sürüm 2027-03-09a ↔ rota-2027-03-09a**
+
+---
+
+## §263–§265 · GECE OTURUMU — Obsidian dili · denetimler · Altın Yol · OMR iskeleti
+
+Kullanıcı birleşik prompt + **56 sn ekran kaydı** (Obsidian mobil) verdi ve
+"durmadan, onay beklemeden ilerle, her adımda commit" dedi. Kayıt ffmpeg ile
+28 kareye ayrılıp çözümlendi.
+
+### §263 · Obsidian görsel dili + grafik denetimleri + gömülü kart (`2027-03-10a`)
+- **Saf siyah zemin (#000)**, açık-gri düğümler, etiket düğümün ALTINDA, seyrek düzen.
+  Sağ kenarda dikey ikon yığını. **JARVIS SAĞ ÜST'e taşındı** (kullanıcı şartı).
+- **Geçici "⋯" köprü menüsü KALDIRILDI** → Obsidian'ın kendi mekanizması:
+  **Filtreler / Gruplar / Göster / Güçler**. "Bugün/Telafi" panel akışları artık
+  haritada **renkli grup** (gerçek veride 11 bugün + 12 telafi düğümü boyandı).
+  Gruplar düzenlenebilir/kalıcı (`D.atGrup`), Güçler yerleşimi canlı yeniden kuruyor.
+- **Haritaya gömülü bilgi kartı**: düğüme dokununca alt kenarda zeminle karışan
+  katman; harita altında görünür kalıyor, kamera düğümü kartın üstünde tutuyor.
+  İçerik motordan canlı; bağlantılar tıklanır; "Çalıştım" mevcut D.pu/D.bitti yolu.
+
+### §264 · FAZ 3 · ALTIN YOL (`2027-03-11a`)
+Yeni algoritma yok: `gorevOncelik` (CS + beklenen net) + `puEtki().verim` (net/saat)
++ `tempoProjeksiyon` (kapasite). Sıra net/saat ekseninde azalan, kapasiteye kadar.
+Haritada **altın eğrilerle bağlı numaralı duraklar**; altın rengin TEK kullanımı
+burası (kapıyla denetleniyor). **Öneri katmanı** — ♦ düğmesiyle açılır/kapanır.
+JARVIS bildiriyor. Az veriyle "temkinli" etiketi. Gerçek veride: **14 durak,
+kapasite 52 sa, beklenen +5.93 net, güven "iyi"**, ilk durak Pediatrik Alerji
+(0.670 net/sa), hesap 250 ms.
+
+### §265 · OMR/kamera boru hattı — dört katmanlı iskelet (`2027-03-12a`)
+`isaretOku` [MOCK · değişecek tek katman] → `omrEslestir` (konu UYDURMAZ; güvensizi
+"Eşleştirme gerekli") → `omrOnizle` (harita dilinde onay kartı) → `omrKaydet`
+(MEVCUT dqBransNet → D.denemeler). **Önizleme kayda yazmıyor** (6→6), onayla
+yazıyor (6→7) — ikisi de tarayıcıda kanıtlandı. Onaydan sonra harita+gruplar+
+Altın Yol yeniden hesaplanıyor.
+
+**Kapılar:** kal/derin/cark/mola/kombo ✓ · pu_test'e §263/§264 (10) + §265 (9)
+kapıları eklendi, ikisi de SIFIR HATA · toplam ✗ **7** = değişmeden §229.
+
+**VARSAYIM (sabah doğrulanacak):** `claude-code-tus-obsidian-prompt.md` şartname
+dosyası bu oturuma ULAŞMADI (repoda ve dosya sisteminde yok). Şartname kullanıcının
+mesajlarından + önceki analiz özetinden alındı.
+
+---
+
+## ⚠ §229'un 7 HATASI — KÖK NEDEN BULUNDU (karar kullanıcıya ait)
+
+Yedi hata tek bir yerden geliyor; ikisi ayrı:
+
+**1 tanesi eskimiş kaynak-dizgi iddiası:** `konuCalisildi merkezi kayıttan` —
+fonksiyon ÇALIŞIYOR (`konuCalisildi("Meme Hastalıkları") === true` ölçüldü), test
+belirli bir kod dizgisini arıyor. Zararsız; iddia güncellenebilir.
+
+**6 tanesi TEK KÖKTEN:** `program görevi gölgeleniyor` · `potansiyel düşüyor` ·
+`ikinci kaynak daha az getiriyor` · `ikinci getiri pozitif ama küçük` ·
+`listede üstü çizili` · `kaynak adı yazıyor`.
+
+**Kök neden (ölçüldü):** Test şunu bekliyor — *Levent Kodal **Genel Cerrahi** SB'den
+"Meme Hastalıkları" çalışınca, programdaki **Patoloji** "Meme Hastalıkları" görevi
+gölgelensin (ikame sayılsın).* Ama §227/§228'de **bilinçli olarak** konu anahtarı
+**GRUP BAZLI** yapıldı:
+```
+konuAnh(görev)   = "Patoloji§meme hastalıkları"
+konuAnh(powerup) = "Genel Cerrahi grubu§meme hastalıkları"   → EŞLEŞMİYOR
+```
+Yani bu bir kod hatası değil, **iki bilinçli kararın çatışması**. Test §228'den
+önceki (ad-bazlı) davranışı bekliyor.
+
+**Kapsam ölçüldü:** 297 farklı konu adının **yalnız 8'i** birden çok grupta geçiyor:
+`hormonlar` (Biyokimya|Farmakoloji) · `meme hastalıkları`, `pankreas hastalıkları`,
+`deri hastalıkları` (Genel Cerrahi|Patoloji) · `ortopedi` (Dahiliye|Genel Cerrahi) ·
+`immünoloji` (Mikrobiyoloji|Patoloji) · `enfeksiyon hastalıkları`
+(Mikrobiyoloji|Dahiliye) · `beslenme` (Genel Cerrahi|Pediatri).
+
+**KARAR SENİN (ikisi de savunulabilir):**
+- **(A) Grup bazlı kalsın** (şu anki davranış): Genel Cerrahi'nin meme cerrahisi ile
+  Patoloji'nin meme patolojisi FARKLI bilgi/soru havuzu sayılır. Bu 8 konuda çift
+  çalışma "iki ayrı kazanç" verir. → Testin 6 iddiası **eskimiş**, güncellenir.
+- **(B) Ad bazlı çapraz gölgeleme dönsün**: aynı adlı konu hangi gruptan çalışılırsa
+  çalışılsın diğerini de ikame etsin. → §228 kararı geri alınır; net havuzu paylaşımı
+  8 konuda değişir, projeksiyon bir miktar düşer (çift sayım kalkar).
+
+Kararını bekliyorum; **kendiliğinden değiştirmedim** (CLAUDE.md: kullanıcının
+vermediği kuralı kural sanma).
+
+**sürüm 2027-03-12a ↔ rota-2027-03-12a**
+
+---
+
+## §266 · GERÇEK OMR MALZEMESİ + şartnamenin üç eksik maddesi + ölü kapı onarımı
+
+### 1 · Gerçek kitapçık fixture'ı (mock'un yanına, mock'un yerine değil)
+
+Kullanıcı 8. Cilt 1. Deneme Sınavı kitapçığının **sf 38-39** fotoğraflarını verdi
+(Kadın Doğum, soru 191–200). `kaynak/omr_gercek_kd.json` bu sayfalardan **okunan**
+işaretleri tutar; `isaretOku('gercek')` bunu okur, `isaretOku()` eski sentetik
+mock'u döndürür. Değişen tek katman yine `isaretOku` — eşleştirme/önizleme/kayıt
+katmanları dokunulmadı.
+
+⚠ **Uydurma yok, en önemli tasarım kararı bu:** her satırın bir `guven` değeri var
+ve okunamayan işaret `null` bırakıldı. 10 sorunun **yalnız 4'ü** güvenli okundu
+(191 · 0.88, 196 · 0.72, 199 · 0.75, 200 · 0.85); kalan 6'sı 0.30–0.45 aralığında ve
+"Eşleştirme gerekli" akışına düştü. Bunlar **nete katılmadı ve `D.denemeler`'e
+yazılmadı**. Sol taraftaki el yazısı D/Y işaretleri fotoğrafta D↔B karışıyor;
+sabah birlikte düzeltilmesi gerekiyor.
+
+Bu davranış mock tarafını da değiştirdi: 200 işaretin 11'i düşük güvenli olduğu için
+onay sonrası kayda **189 soru** yazılıyor (200 değil). `pu_test`'in "soru===200"
+iddiası bu yüzden kırıldı — **uygulama bozuk değil, iddia eskimişti**; kapı
+`okunan − düşük güvenli` beklentisine güncellendi ve "düşük güvenli okumalar kayda
+girmiyor" ayrı bir kontrol olarak eklendi.
+
+### 2 · Şartnamenin uygulanmamış üç maddesi
+
+- **Aynı konunun farklı kitaplardaki karşılığı** (şartname sat. 54) — `esKonu`
+  kenarı: aynı `key`'e sahip konu düğümleri ince bir hatla zincirleniyor
+  (36 bağlantı). Çizim ağırlığı `.14·aKonu`, yani yapı/kaynak kenarlarından belirgin
+  şekilde silik — Obsidian'daki "aynı not, başka klasör" hissi.
+- **Yeni düğüm belirme animasyonu** (sat. 7) — `n.yeni` zaman damgası; 900 ms'lik
+  tek halka, `1-(1-t)²` yumuşamasıyla sönüyor. Ayrık kademe yok (CLAUDE.md sürekli
+  fonksiyon dersi).
+- **Açılışta en zayıf bölgeye yönelme** (sat. 82) — en düşük hakimiyetli **ders**
+  düğümü seçilip 1.5 sn sonra kameranın o yöne %42 kayması. Kullanıcı bu arada
+  bir düğüm seçtiyse hareket iptal. Ölçümde seçilen: **Anatomi**.
+
+Tarayıcıda doğrulandı: `{"esKonu":36,"zayif":"Anatomi","kaydi":true,"dugum":414}`,
+sayfa hatası yok.
+
+### 3 · Ölü kapının onarımı (§229'un açık maddesi)
+
+`kaynak/kos.js` **sözdizimi hatasıyla hiç açılmıyordu**: bir düzenlemede
+`g3("24lü soru toplamı KİTAPÇIK sayısı", …)` çağrısının başlığı değiştirilmiş ama
+**eski argüman satırları silinmemişti** (satır 300–302 öksüz kalmış), üstelik
+`krediSoru` hiç tanımlanmamıştı. Öksüz satırlar kaldırıldı, `krediSoru` eski detay
+nesnesinden (`a.yeni+a.tekrar`) türetildi. Dosya artık ayrıştırılıyor.
+
+⚠ Kapı **yine de koşmuyor**, ama artık başka bir sebeple: `./tam_test.js` repoda yok.
+
+### Repoda hiç var olmamış üç dosya (kapılar bu yüzden koşmuyor)
+
+`git log --all` ile doğrulandı — bunlar bir kez bile commit edilmemiş, yalnız
+`tus_tamami.tar.gz` devir paketinde yaşıyorlar:
+
+| eksik dosya | ölü kapı |
+|---|---|
+| `tam_test.js` | `kos.js` |
+| `senk_test.js` | `senk_poll.js` |
+| `eko.py` | `kural_test.py` |
+
+**Yeniden KURMADIM** (CLAUDE.md §30: bağlamdan/ezberden kurma, kullanıcıdan iste).
+Koşan 11 kapı temiz; `pu_test` bilinen 7 §229 hatasında sabit kaldı, yeni hata yok.
+
+**sürüm 2027-03-13a ↔ rota-2027-03-13a**
+
+---
+
+## §267 · KISMİ TARAMA "DENEME" DEĞİLDİR — kendi açtığım veri bütünlüğü deliği
+
+### Nasıl bulundu
+
+Kapılar temizken (§266) gerçek tarayıcıda gerçek veriyle bir sertlik turu koştum
+(`scratchpad/sertlik.js`: açılış · 6 zoom kademesi · odak · denetimler · altın yol ·
+OMR · 90 kare jank ölçümü). Çıktının çoğu iyiydi — kare ortancası **16.7 ms**
+(60 fps), odak mikro-yerleşimi sıkı (81 çocuk, en uzak 104 px), denetim paneli veriye
+dokunmuyor, geri tuşu eski UI'ı geri getirmiyor. Ama bir satır sırıttı:
+
+```
+"omr": { "okunan": 10, "dusuk": 6, "t": 0, "k": -1, "yazdiMi": false }
+```
+
+**k = −1.** Kadın Doğum'un 10 sorusundan güvenle okunan 4'ü de yanlıştı
+(0 − 4/4 = −1). Aritmetik doğru; **yönlendirme yanlıştı.**
+
+### Kusur
+
+`omrKaydet()` her taramayı `D.denemeler`'e yazıyordu. Ama `D.denemeler` kayıtları
+**200 soruluk TAM denemedir** ve `son()` bunların sonuncusunu alıp `para()`'ya verir —
+PARAKETE oradan doğar. 10 soruluk bir kitapçık sayfası oraya yazılsaydı motor onu
+"en son deneme" sanacak, `t:0 · k:−1` değerlerini 200 soruluk performans olarak
+okuyacaktı. **Ölçülen etki: parakete 59.35 → ~40.** Kullanıcı onayladığı anda
+altı denemelik gerçek geçmişin üstüne yazacaktı.
+
+⚠ Bunu motor yapmadı, **§265'te ben açtım**. Kapılar göremedi çünkü kapı da benim
+yazdığım beklentiydi (CLAUDE.md: "kapı geçmek hata yok demek değildir" — §87'nin
+aynısı, bu kez kendi kodumda).
+
+### Düzeltme · YENİ MODEL YOK, motorun zaten olan iki yolu
+
+Motorda kısmi/branş-bazlı örneklem için **`D.kal`** zaten var (dpanel'in yazdığı yer)
+ve `rCalHesap` onu **gerçek binom varyansıyla**, örneklem büyüklüğünün hak ettiği
+ağırlıkla kullanıyor ("4 soruluk bir gözlem çok belirsizdir" — kodun kendi notu).
+Doğru davranış yeni bir şey icat etmek değil, **doğru yola yönlendirmekti**:
+
+| tarama | koşul | yazılan yer | parakete |
+|---|---|---|---|
+| tam deneme | soru ≥ %90 **ve** branş ≥ tümü−2 | `D.denemeler` | güncellenir |
+| kısmi tarama | aksi | `D.kal` (branş başına bir kayıt) | **değişmez** |
+
+- `omrToplamSoru()` beklenen soru sayısını `SORU.den`'den **türetir** — sihirli
+  sabit 200 yazmadım (CLAUDE.md: tahmin değil ölçüm).
+- `omrKalKayit()` kaydı dpanel ile **birebir aynı şekilde** üretir
+  (`{tar,br,d,y,b,kap,konular}`), böylece `kayitGecerli` süzgecinden geçiyor.
+- Konu kırılımı **yalnız `KONU_DAG[br]`'de gerçekten karşılığı olan adlar** için
+  yazılıyor. Eşleşmeyen ad exception atmaz, sessizce 0 döner ve hata görünmez
+  (§153/§155 ailesi) — bu yüzden açık `!==undefined` kontrolü kondu.
+- Önizleme kartı kısmi taramada **toplam puan göstermiyor** (10 sorudan 200 soruluk
+  puan üretmek yanıltıcı olur); yerine "branş neti" ve açık uyarı var.
+
+### Gerçek tarayıcıda gerçek veriyle doğrulandı
+
+```
+pOnce 59.35 → pSonra 59.36   (fark 0.01)
+denemeArtti 0 · kalArtti 1 · sonAyni true
+kapsam {tam:false, okunan:10, beklenen:200, brans:["Kadın Doğum"]}
+konular: jinekolojik(1) · obstetri(2) · jinekolojik onkoloji(1)   ← üçü de gerçek katalogda
+sayfa hatası: yok
+```
+
+0.01'lik kayma **meşru ve istenen**: `D.kal` kalibrasyonu besler, R_CAL kıpırdar.
+Çöküş yok. Kapı bunu "parakete hiç değişmesin" diye ölçmeye kalkıştığımda haklı
+olarak kırıldı — iddia yanlıştı, düzeltildi: kapı artık `son()`'un değişmediğini ve
+kaymanın kalibrasyon ölçeğinde (<1 puan) kaldığını ölçüyor.
+
+`pu_test` OMR bölümü 9 → **26 kontrol**. Bilinen 7 §229 hatası sabit, yeni hata yok.
+
+**sürüm 2027-03-14a ↔ rota-2027-03-14a**
+
+---
+
+## §268 · TELEFON TURU — JARVIS sohbet penceresine dönüşmüştü
+
+Kullanıcının birincil cihazı telefon; kapılar yerleşim görmüyor. Üç viewport'ta
+gerçek tarayıcı turu koştum (`scratchpad/telefon.js` · iPhone 13 390×844@3x ·
+iPhone SE 375×667@2x · iPad 820×1180@2x).
+
+**İyi çıkanlar:** yatay taşma **0** (üç cihazda da) · tuval DPR'ye göre doğru
+ölçekleniyor (375×667 @2x → 750×1334 arka tampon) · denetim paneli telefonda
+ekranın %25–33'ü, iPad'de %8 · 414 düğüm her cihazda kuruluyor · sayfa hatası yok.
+
+### Kusur · JARVIS ekranın %72'sini yutuyordu
+
+Şartname: *"sağ üst köşede, küçük, nadir, saygılı tek satır — sohbet penceresi
+değil."* Ölçüm:
+
+| mesaj | kutu (telefon) | satır | ekran yüksekliği |
+|---|---|---|---|
+| "İyi çalışmalar efendim." | 156×37 | 1 | %4.3 |
+| OMR kısmi tarama | **281×87** | **5** | %10.3 |
+| OMR kayıt | **281×87** | **5** | %10.3 |
+
+Kutu içeriğe göre küçülüyordu — yani **CSS değil, benim yazdığım mesajlar** uzundu.
+Beş satırlık balon köşe satırı değil, sohbet penceresidir.
+
+**İki taraflı düzeltme:**
+1. **Mesajlar kısaldı.** Ayrıntı zaten haritadaki kartta yaşıyor (şartname:
+   "her şey haritada yaşar"), JARVIS yalnız duyurur.
+   `"Kısmi tarama okundu efendim: Kadın Doğum · 4 soru sayıldı · 6 düşük güvenli.
+   Deneme değil branş kaydı olarak yazacağım."` → `"Kısmi tarama efendim ·
+   Kadın Doğum · 4/10 sayıldı."` Altın yol, açılış selamı ve kayıt mesajları da aynı
+   şekilde tek nefeslik hale getirildi.
+2. **Yapısal koruma.** `-webkit-line-clamp:2` + `max-width` 72vw → **58vw**. Gelecekte
+   uzun bir mesaj yazılsa bile kutu iki satırı aşamaz.
+
+Gerçek kod yollarıyla (hardcode metin değil) yeniden ölçüldü — dördü de sığıyor,
+kırpılma yok:
+
+```
+"Hoş geldiniz efendim · 20 gün · parakete 59.4 · Anatomi bekliyor."   tasti:false
+"Kısmi tarama efendim · Kadın Doğum · 4/10 sayıldı."                  tasti:false
+"1 branş kaydı yazıldı efendim · parakete değişmedi."                 tasti:false
+"Rota hazır efendim · Pediatrik Alerji ile başlayın · +6.0 net."      tasti:false
+```
+
+Altın yol satırı ilk denemede kırpıldı (`tasti:true`); durak sayısı zaten haritada
+görünüyor diye satırdan çıkarıldı — kırpma yerine kısaltma.
+
+`pu_test`'e §268 bölümü eklendi (**8 kontrol**): line-clamp · overflow · sağ üst
+konum · ≤60vw · pointer-events · hiçbir çağrı yerinin düz metni >150 karakter
+olmaması · iki tam cümleden fazlası olmaması · "efendim" hitabının korunması.
+
+### ⚠ Kendi ölçüm hatam — CLAUDE.md'nin tam da uyardığı tuzak
+
+Aynı turda "kart alttan 18 px taşıyor, üç cihazda da" diye bir bulgu üretmiştim.
+Taşma yoktu: `atKartUp` animasyonunun `from{transform:translateY(18px)}` değerini
+ölçmüşüm — **animasyon otururken ölçüm** (§120–§122, §127, §139, §146, §148, §158
+ile aynı hata, sekizincisi). 600 ms bekleyip yeniden ölçünce:
+
+```
+iphone13: altTasma 0 · sagTasma 0 · yükseklik 253 (ekranın %30) · iç taşma yok
+ipad    : altTasma 0 · sagTasma 0 · yükseklik 201 (ekranın %17) · iç taşma yok
+```
+
+Kartta kusur yok; bulgu benim hatamdı. Ölçüm betiğine `waitForTimeout(600)` ve
+gerekçesi yorum olarak kondu.
+
+**sürüm 2027-03-15a ↔ rota-2027-03-15a**
+
+---
+
+## §269 · ÇERÇEVE — "sığdır" diyen kod hiçbir şey ölçmüyordu
+
+Telefon ekran görüntüsüne bakınca graf siyah denizde küçük bir ada gibi duruyordu.
+Ölçtüm — açılışta içerik ekranın **%57 eni / %24 boyu** kadardı.
+
+### Kusur 1 · açılış ölçeği
+
+```js
+/* açılış ölçeği ekrana SIĞDIRILIR (sabit değil — bayat ölçüm dersi) */
+const sSig=Math.max(.16,Math.min(.6,Math.min(atlas.w,atlas.h)/1950));
+```
+
+Yorum "sığdırılır" diyor, kod **içeriğe hiç bakmıyor**: viewport'u 1950 sihirli
+sabitine bölüyor. Kendi yazdığım yorum kendi kodumu yanlış anlatıyordu.
+
+`atlasSigdir()` yazıldı: üst düzey düğümlerin **gerçek sınır kutusundan** merkez ve
+ölçek türetiliyor. Tavan `.40`'ta — kitap düğümleri `atSm(.40,.72,s)` ile tam orada
+belirir, açılış her ekranda "ders takımyıldızı" kalsın diye.
+
+| cihaz | önce (en/boy) | sonra |
+|---|---|---|
+| iPhone 13 | %57 / %24 | **%83** / %35 |
+| iPhone SE | %57 / %29 | **%83** / %43 |
+
+Dikeyde boşluk kalması doğru: graf neredeyse kare, telefon 9:19.5 — **en** kısıtlıyor.
+
+### Kusur 2 · İKİZ KAYNAK — "ortala" düğmesi geride kalmıştı
+
+Kapı `/1950`'yi arayınca **ikinci bir kullanım** çıktı: `atOdakB` (ortala) düğmesi
+kendi kopyasını taşıyordu. Açılışı düzeltmiş, düğmeyi atlamıştım — kullanıcı ortala'ya
+bassa harita eski bozuk çerçeveye geri dönecekti. Düğme `atlasSigdir()`'e bağlandı.
+CLAUDE.md'nin "bir düzeltmeyi uygularken tüm varyantları tara" dersi (§112/§117/§151
+ile aynı aile) — bu kez kapı yakaladı.
+
+### Kusur 3 · odakta etiketler ekran dışına taşıyordu
+
+Odakta uzun konu adları iki yandan taşıyordu. İlk düzeltmem **ölçeği kısmaktı**
+(etiket genişliğini `measureText` ile ölçüp zoom'u ona göre daraltmak). Taşma bitti —
+ama **konu etiketleri bütünüyle kayboldu**.
+
+⚠ Sebep: etiket eşiklerini `atlasVur`'dan (isabet testi) okumuştum: `atSm(.72,1.18,s)`.
+Çizim bambaşka eşik kullanıyor: **`eKonu=atSm(1.8,2.7,s)`**. Ölçek 2.22 → 1.11'e
+düşünce eşiğin altına indi. **Kendi soktuğum gerileme.** İki kaynağı varsaydım,
+doğrulamadım.
+
+Doğru çözüm taşmayı **zoom'a değil çizime** yıkmak:
+- Halka etiketi ve ortalı etiket, yazının gideceği yöndeki **gerçek ekran boşluğuna**
+  göre ikili aramayla kısaltılıyor; dikeyde taşan satır hiç yazılmıyor.
+- Ölçek artık etiketi değil **halkayı** çerçeveliyor, böylece eşiği geçebiliyor.
+
+Doğrulama gerçek `fillText` çağrıları sarılarak yapıldı (kuralı taklit eden ölçüm
+değil — ilk ölçüm betiğim eski 20-karakter kesme kuralını yeniden yazıyordu ve
+uygulama kuralı değişince **yanlış alarm** veriyordu):
+
+```
+11 branş × 3 cihaz = 33 odak durumu   →  TAŞAN: 0
+çizilen yazı: 14–105 (önce odakta 9 idi, konu etiketi hiç yoktu)
+```
+
+Telefonda Dahiliye/Genel Cerrahi (81/84 konu) hâlâ 10-11 etiket çiziyor: ölçek 1.5,
+eşik 1.8. Bu **doğru davranış** — 84 konu telefona sığmaz, yakınlaşınca beliriyorlar
+(Obsidian aynısını yapar). iPad'de 3.15 ölçekte hepsi çiziliyor.
+
+`pu_test`'e §269 bölümü (**12 kontrol**): sınır kutusundan türetme · merkez içerikte ·
+açılışta sığma · tavan/taban · ikiz kaynak yok · ortala düğmesi aynı fonksiyonu
+kullanıyor · yatay/dikey kırpma · ölçeğin etikete göre kısılmadığı gerilemesi.
+
+**sürüm 2027-03-16a ↔ rota-2027-03-16a**
+
+---
+
+## §270 · DENEME GİRİLEMİYORDU — kabuk tersine çevrilirken açılan işlev deliği
+
+### Kusur
+
+"Uygulama tamamlandı mı" sorusuna cevap ararken erişilebilirliği ölçtüm
+(`scratchpad/erisim.js`): `dnmB` (deneme girişi) ve `puOrb` (Ölçüm) **kapalı** —
+`main{opacity:0;pointer-events:none}` altında. §258'de kabuğu tersine çevirirken
+eski sayfaların İÇİNDEKİ veri girişini haritaya bağlamayı unutmuşum. Sonuç:
+sınava 20 gün kala uygulamaya **deneme sonucu yazılamıyordu**; motorun kalbi olan
+deneme → kalibrasyon → öncelik döngüsü fiilen durmuştu. Gece raporumda bunu
+görmemiştim — görev #27'yi "günlük akış bağlandı" diye kapatıp deneme girişini
+ayrıca doğrulamamıştım.
+
+### Düzeltme · İKİZ FORM YOK — kanıtlı yollar haritaya bağlandı
+
+Keşif önce: `dpanel` ve `ppanel` zaten `main` **dışında**, koyu temalı, sabit
+katmanlar (satır 2272/2291 > `</main>` 2187) — çalışır durumdaydılar, yalnız
+açıcı düğmeleri gizliydi. Ölçüm sayfası (`#olcumIc`) ise main içinde.
+
+| işlem | yol |
+|---|---|
+| Tam deneme (11 branş D/Y, hızlı + soru-soru ayrıntılı) | kok kartı → "Deneme gir · Ölçüm defteri" → `atOlcumAc()`: `#olcumIc` DOM düğümü overlay'e **TAŞINIR** (kopya değil), `olcumCiz()` çizer, kapatınca eski yuvasına iade |
+| 24'lü branş denemesi | ders kartı → "24'lü sonuç gir" → `atDeneme24Ac(br)`: mevcut `dpanel` açılır, branş kullanıcı yolundan önseçilir (`değer + dataset.el + dpanelCiz()`) |
+| Power-up havuzu | kok kartı → `atPowerAc()` → mevcut `ppanel` |
+| Senk (eşitle/al/gönder) | Ölçüm defterinin içinde zaten var — artık erişilebilir |
+
+- Köprü fonksiyonları **kayıt yazmaz** (kapıyla sabitlendi): kayıt yalnız formların
+  kendi işleyicilerinde. Tek doğruluk kaynağı korunuyor.
+- Kapatınca `atHaritaTazele()`: yeni deneme düğümleri/altın yol/gruplar tazelenir.
+  Eski panellerin kendi ✕ düğmeleri için de dinleyici var.
+- Geri tuşu önce açık katmanı kapatır (`atOlcum` → `dpanel`/`ppanel` → ze*).
+- Ölçüm sayfasında giriş formu ~4000 px altta (üstte matris/trend) — ilk denemede
+  "üstü kapalı" sandım, ölçünce **ekran dışı** çıktı (elementFromPoint ekran dışına
+  null döner). Kartın niyeti "deneme GİR" olduğu için açılışta forma kaydırılıyor.
+
+### Gerçek tarayıcıda, gerçek veriyle, gerçek tıklamalarla kanıt
+
+```
+kok kartı → Ölçüm defteri     : açık, #olcumIc overlay içinde, girişler ekranda
+gerçek giriş (11 branş D/Y)   : D.denemeler 6 → 7 · T 41.5 / K 40.8 · parakete 59.35 → 59.40
+uygulamanın SİL düğmesi        : 7 → 6, geri alındı
+kapat                          : düğüm eski yuvasında (#olcum), overlay kapalı
+ders kartı → 24'lü            : dpanel açık, önseçim "Patoloji", {12D 4Y 2B} D.kal'a
+                                 yazıldı, dpanel'in kendi siliyle geri alındı
+power-up                       : ppanel açık, 2 liste bölümü dolu
+geri tuşu                      : overlay'i kapatır, evrenKip bozulmaz
+Playwright gerçek tıklama      : input'a tıkla + "7" yaz → değer "7" ✓
+sayfa hatası                   : 0 · dialog: 0 (Senk okur-kilidi tetiklenmedi)
+```
+
+`pu_test`'e §270 bölümü (**10 kontrol**): köprüler var · kart eylemleri bağlı ·
+köprüler kayıt yazmıyor · DOM taşınıyor/iade ediliyor · forma kaydırma · önseçim
+kullanıcı yolu · geri tuşu sırası · ✕ tazeleme dinleyicisi · atHaritaTazele.
+
+Görev #28 kapandı. Bilinen 7 §229 hatası sabit, yeni hata yok.
+
+**sürüm 2027-03-17a ↔ rota-2027-03-17a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
@@ -13022,4 +13665,13 @@ Bekleyen: kullanıcıdan etiketli deneme verisi (§230 formatı) · cihazdan "Ha
 - **Potansiyel ile gerçek artış** arasında ~0.42 net fark (§205'te belgeli, bilinçli muhafazakâr)
 - **Aynı kayıt iki kez girilirse** iki kez sayılıyor · yinelenen denetimi yok (bilinçli)
 - **Zihin evreni force-graph (§246) kullanıcı görsel onayı bekliyor** · onaysız ders↔ders çapraz kenarları + Deneme/Çalışma dalışı + anıt görselleri eklenmeyecek
-- **§229'un üç açık maddesi:** pu_test KONU TEKİLLİĞİ 7 hata (§227/228 davranışı yeniden incelenmeli) · kos.js sözdizimi kırık · paket boşlukları (eko.py, senk_test.js, senk_kos.js)
+- **§229'un üç açık maddesi (§266 durumu):**
+  - pu_test KONU TEKİLLİĞİ **7 hata** — kök sebep bulundu (grup bazlı `konuAnh` ↔ testin
+    ad bazlı gölgeleme beklentisi), kapsam 297 konudan 8'i. **A/B kararı kullanıcıda**,
+    kendiliğinden değiştirilmedi.
+  - kos.js sözdizimi **onarıldı** (§266) — ama `tam_test.js` repoda olmadığı için hâlâ koşmuyor.
+  - Paket boşlukları **sürüyor**: `eko.py` · `senk_test.js` · `tam_test.js` hiç commit
+    edilmemiş; `tus_tamami.tar.gz` gerekiyor.
+- **OMR gerçek malzeme eksikleri:** boş optik form fotoğrafı · cevap anahtarı formatı ·
+  kitap içindekiler tabloları (alt başlık seviyesi için). Kadın Doğum 191–200'ün
+  **6 sorusu düşük güvenle okundu**, kullanıcı doğrulaması bekliyor (§266).
