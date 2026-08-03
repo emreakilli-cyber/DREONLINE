@@ -13992,6 +13992,53 @@ Doğrulama gerçek dokunuşla (CDP touch, 9 px kaymalı): temiz tap → tamamlı
 
 ---
 
+## §280 · TTS KİTAPLARI GERÇEK İÇİNDEKİLERLE — mimari + Dahiliye/Biyokimya
+
+Kullanıcı: "Soru & Deneme kısmında TTS kitapları eksik; içindekilerini çekiyorum,
+hepsini ekle, uygun şekilde kazançlarını belirle." Gerçek içindekiler
+tablolarını fotoğrafladı.
+
+### Keşif (Explore ajanı) — kritik iki nokta
+
+- **`konuKayit()` (3557)** TTS tamamlamasını merkezi kayda sokmak için kitap adını
+  `TTS_KIT`'te arıyor → yeni kitap TTS_KIT'te yoksa tamamlama **kredi vermez**
+  (§271 power-up kredi hatasının aynısı). Bu yüzden TTS_KIT'e eklemek ŞART.
+- Mevcut TTS dalı (6068) kitaba özel konu listesi DESTEKLEMİYOR; branşın
+  `KONU_DAG` konularını gösteriyor. Gerçek başlıklar için yeni kod yolu gerekti.
+
+### Yapılanlar (KONU_DAG'a DOKUNULMADI)
+
+- **`TTS_KIT`'e** `["TTS Dahiliye","Dahiliye"]` + `["TTS Biyokimya","Biyokimya"]`.
+  İkisi de mevcut sabitlere (DEN_ESL/NET_SAYFA/TAVAN_G/GRUP_BN) temiz eşlendi.
+- **`TTS_ICERIK`** sabiti: kitap → {brans, toplamSf, b:[[konu, sayfaUzunluğu, grup]]}.
+  Gerçek içindekiler başlıkları + sayfa aralıkları (fotoğraftan). 78 (Dahiliye) +
+  67 (Biyokimya) bölüm.
+- **Kazanç · sayfa-payı türevli ağırlık:** `n = (sayfaUzunluğu/toplamSf)·toplamN`,
+  `toplamN = Σ KONU_DAG[branş]`. Böylece TTS_ICERIK toplam kazancı branşın
+  KONU_DAG toplamına **BİREBİR EŞİT** (ölçüldü: Dahiliye 0.194=0.194, Biyokimya
+  0.248=0.248) — çift sayım/şişme YOK. Mevcut TTS kazanç formülü (Rr·S_TEK tekrar
+  getirisi · bos/T2) birebir korundu. ⚠ VARSAYIM: sayfa uzunluğu ∝ konu ağırlığı.
+- **Render:** kitap sırası (içindekiler) korunuyor; gruplar (Hematoloji, Onkoloji…)
+  tam-genişlik `.glBlok` başlıklarıyla, iki-sütun (§276/§278) düzeninde.
+- TTS_ICERIK'i OLMAYAN kitaplar (Patoloji/Mikro, Klinisyen) eski KONU_DAG
+  davranışında kaldı — geriye dönük uyumlu.
+
+### Doğrulama
+
+Kazanç korunumu birebir · UI'da 11 gerçek grup başlığı · 78 satır · tamamlama
+`tts|TTS Dahiliye|Hematopoez` anahtarıyla `D.tts`'e yazıyor · `konuKayit()`
+merkezi kayda `Dahiliye grubu§hematopoez` olarak sokuyor (KREDİ veriyor) ·
+sayfa hatası 0 · batarya 0 hata.
+
+⚠ **YARIM:** Kullanıcı 5 kitap daha verdi (TTS Pediatri, Farmakoloji, Kadın Doğum,
+Genel Cerrahi, Patoloji 34. baskı) — fotoğrafları okunup TTS_ICERIK'e eklenecek.
+Mimari hazır; kalan yalnız veri. Patoloji: mevcut "TTS Patoloji / Mikrobiyoloji
+(34. baskı)" ile ilişkisi netleşecek.
+
+**sürüm 2027-02-18g ↔ rota-2027-02-18g**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
