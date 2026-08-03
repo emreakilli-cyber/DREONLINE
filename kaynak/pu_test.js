@@ -1128,11 +1128,30 @@ if(KT)process.exitCode=1;
 console.log('\n═══ KONU HAVUZU · İKAME ═══');
 let KX=0;const eX=(a,ok,x)=>{if(!ok){KX++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
 eX('TEKRAR_KAT sabiti',kod.indexOf('const TEKRAR_KAT=0.35;')>=0);
-eX('konu havuzu sayacı',kod.indexOf('const _kh={}, _khK={}, _khP={};')>=0);
-eX('ilk okuma bir kez',kod.indexOf('const yeniPay=Math.max(0,tamPay-Math.max(0,oncPay-(_khP[kkh]||0)));')>=0);
+/* §290 · Bu üç iddia eskiden kodun BİREBİR metnini arıyordu; biri (parça
+   bölmesi) doğrudan HATAYI sabitliyordu (`sira[1]` = blok iş sayısı).
+   Niyet korunarak yeni tek-yola göre yazıldı. */
+eX('konu havuzu sayaçları (tavan dahil)',/const _kh=\{\}, _khK=\{\}, _khP=\{\}, _khT=\{\};/.test(kod));
+eX('ilk okuma bir kez · konu TAVANIYLA sınırlı',
+  /const tavan=Math\.max\(tamKonu,_khT\[kh\]\|\|0\); _khT\[kh\]=tavan;/.test(kod)&&
+  /const yeniPay=Math\.max\(0,Math\.min\(tamPay,tavan-oncPay\)\);/.test(kod));
+eX('kazanç anahtarı KÖK bazlı (video eki soyuluyor)',/const kh=konuKok\(ad\);/.test(kod));
+eX('video ile kitap AYNI kaynak kökünde birleşiyor',
+  /const kaynak=kaynakKok\(g\.src\);/.test(kod)&&/kok:'Atilla Uslu Dahiliye'/.test(kod));
 eX('tekrar payı ayrı',kod.indexOf('const hamT=bosluk*R_CAL_VAR()*tekPay*TEKRAR_KAT;')>=0);
 eX('aynı kaynak tekrar sayılmıyor',kod.indexOf('const tekPay=ayniKaynak?0:(tamPay-yeniPay);')>=0);
-eX('parça bölmesi',kod.indexOf("const parca=(g.sira&&g.sira[1]>1)?g.sira[1]:1;")>=0);
+eX('parça bölmesi DOĞRU alandan (sira[1] DEĞİL)',
+  /const parca=gorevParca\(g\);/.test(kod)&&
+  /function gorevParca\(g\)\{[\s\S]{0,260}?g\.ot\[1\]/.test(kod)&&
+  !/const parca=\(g\.sira&&g\.sira\[1\]>1\)/.test(kod));
+eX('gorevParca gerçek görevlerde ad ile uyuşuyor',(function(){
+  const ad2=k=>{let m=String(k).match(/·\s*(\d+)\/(\d+)\.\s*parça/); if(m)return +m[2];
+    m=String(k).match(/[—–-]\s*(\d+)\/(\d+)\s*$/); if(m)return +m[2]; return 1};
+  const kotu=X.GOREVLER.filter(g=>R('gorevParca')(g)!==ad2(g.k));
+  return kotu.length===0})(),
+  X.GOREVLER.filter(g=>{const ad2=k=>{let m=String(k).match(/·\s*(\d+)\/(\d+)\.\s*parça/);
+    if(m)return +m[2]; m=String(k).match(/[—–-]\s*(\d+)\/(\d+)\s*$/); if(m)return +m[2]; return 1};
+    return R('gorevParca')(g)!==ad2(g.k)}).slice(0,3).map(g=>g.k));
 eX('ikameBul fonksiyonu',R('typeof ikameBul')==='function');
 eX('ikameAta fonksiyonu',R('typeof ikameAta')==='function');
 eX('ikame satırı üstü çizili',kod.indexOf('.glS.ikm .ko{text-decoration:line-through')>=0);

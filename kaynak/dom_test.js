@@ -227,6 +227,74 @@ const chk=(a,ok,x)=>{N++;if(!ok){H++;console.log('  ✗ '+a+(x!==undefined?' :: 
  chk('MAX_TOKENS anlaşılır hataya çevriliyor',yp.maxTokens,yp);
  chk('görsel SAF base64 gönderiliyor (data: öneki soyuluyor)',yp.safBase64,yp);
 
+ /* ══ §290–§292 · PROJEKSİYON + KAYDIRMA + DÜRTME ═════════════════ */
+ console.log('\n═══ DOM · §290–§292 ═══');
+ const pj=await pg.evaluate(()=>{
+   const ad2=k=>{let m=String(k).match(/·\s*(\d+)\/(\d+)\.\s*parça/); if(m)return +m[2];
+     m=String(k).match(/[—–-]\s*(\d+)\/(\d+)\s*$/); if(m)return +m[2]; return 1};
+   const kotu=GOREVLER.filter(g=>gorevParca(g)!==ad2(g.k)).map(g=>g.k).slice(0,3);
+   return {parcaKotu:kotu,
+     vidKok:konuKok('Hematoloji videoları — 1/9'),
+     kitKok:konuKok('Hematoloji'),
+     vidKaynak:kaynakKok('Atilla Uslu Dahiliye videoları · 1.5x'),
+     kitKaynak:kaynakKok('Atilla Uslu Dahiliye 1 sf 90–102'),
+     bskKaynak:kaynakKok('Emrullah Patoloji SST sf 1–10')};
+ });
+ chk('parça sayısı TÜM görevlerde ad ile uyuşuyor',pj.parcaKotu.length===0,pj.parcaKotu);
+ chk('video ile kitap AYNI konu kökünde',pj.vidKok===pj.kitKok,pj);
+ chk('video ile Atilla Uslu kitabı AYNI kaynak kökünde',
+   pj.vidKaynak===pj.kitKaynak&&pj.vidKaynak==='Atilla Uslu Dahiliye',pj);
+ chk('ilgisiz kaynak birleşmiyor',pj.bskKaynak!==pj.vidKaynak,pj);
+
+ /* konu tavanı: aynı konu iki kaynaktan tam pay ALMAMALI */
+ const tv=await pg.evaluate(()=>{
+   const T='2026-08-03';
+   /* ⚠ TEST YALITIMI: önceki blok D.denemeler'i t/k/bn'siz sentetik kayıtla
+      değiştiriyor; para() ondan NaN üretir. Motoru kendi tohumuna döndür. */
+   D.denemeler=JSON.parse(JSON.stringify(TOHUM));
+   const p0=()=>{const a=para();return +puan(a.t,a.k).toFixed(4)};
+   D.bitti={}; const bas=p0();
+   const vid=GOREVLER.filter(g=>/Hematoloji videoları/i.test(g.k));
+   vid.forEach(g=>D.bitti[id(g)]=T);
+   const sonra=p0();
+   D.bitti={};
+   return {bas,sonra,artis:+(sonra-bas).toFixed(4),video:vid.length};
+ });
+ chk('video serisi POZİTİF ama sınırlı kazanç veriyor',
+   tv.artis>0&&tv.artis<0.05,tv);
+
+ /* power-up: başka kaynaktan kapanmış konuya tam kazanç yazmamalı */
+ const pu=await pg.evaluate(()=>{
+   D.denemeler=JSON.parse(JSON.stringify(TOHUM));
+   const u=POWERUP.find(x=>/Atilla Uslu Dahiliye/i.test(x.kitap));
+   if(!u)return {yok:true};
+   D.bitti={}; const t=puDeger(u).net;
+   GOREVLER.forEach(g=>{ if(konuKok(g.k)===konuKok(u.konu))D.bitti[id(g)]='2026-08-03' });
+   const t2=puDeger(u).net; const tk=puDeger(u).tekrar;
+   D.bitti={};
+   return {once:+t.toFixed(4),sonra:+t2.toFixed(4),tekrar:!!tk,konu:u.konu};
+ });
+ if(!pu.yok) chk('power-up · konu başka kaynaktan kapandıysa kazanç DÜŞÜYOR',
+   pu.sonra<pu.once,pu);
+
+ /* §291–§292 · kaydırma ve dürtme fonksiyonları + baloncuk kaldırıldı */
+ const kd=await pg.evaluate(()=>{
+   const src=document.documentElement.outerHTML;
+   carkDurtmeBasla();
+   const c=document.getElementById('cark');
+   const durt=c.classList.contains('durt');
+   const anim=getComputedStyle(c).animationName;
+   carkDurtmeDur();
+   return {durt,anim,durdu:!c.classList.contains('durt'),
+     kayFn:typeof akisAc==='function',
+     baloncukCagrisi:/el\.classList\.add\('gor'\)[\s\S]{0,80}denincele/i.test(src),
+     merkezSart:/const merkezMi=\(x,y\)=>/.test(src),
+     tekParmak:/e\.touches\.length!==1\)\{ sBitti\(\); return \}/.test(src)};
+ });
+ chk('§292 · dürtme başlıyor ve duruyor',kd.durt&&kd.anim==='carkDurt'&&kd.durdu,kd);
+ chk('§292 · üst baloncuk çağrısı kaldırıldı',!kd.baloncukCagrisi,kd);
+ chk('§291 · merkez şartı ve tek-parmak koruması var',kd.merkezSart&&kd.tekParmak,kd);
+
  console.log('\n'+(H?('✗ '+H+' HATA / '+N+' kontrol'):('✓ SIFIR HATA — '+N+' DOM kontrolü')));
  console.log('SAYFA HATASI: '+(sayfaHata.length?JSON.stringify(sayfaHata.slice(0,3)):'(yok)'));
  if(sayfaHata.length)H++;

@@ -14397,6 +14397,73 @@ sebebini söylemeyen ayrıştırma hatası yerine). `yanit_test` bu üçünü s�
 
 ---
 
+## §290–§292 · Projeksiyon düzeltmesi + çark kaydırma + dürtme (2027-02-19b)
+
+### §290 · "Projeksiyon şişmesin — gerçeğe en yakın değer" (kullanıcı kararı alındı)
+Kullanıcı §284'te açık bırakılan iki maddeyi onayladı ve ikincisini netleştirdi:
+> "Dr Atilla Uslu videolarıyla Dahiliye 1-2 kitapları aslında AYNI çalışma ama
+> sistemde farklı kaynak gibi gözüküyor ve bu yanlış; videoları izlerken önümde
+> kitabım açık takip ediyorum, okumuş sayılıyorum zaten."
+
+Üç değişiklik (hepsi `para()` içinde, tek yer):
+1. **Kazanç anahtarı kök bazlı.** `renkAnh(ad)` → `konuKok(ad)`. Eskiden
+   "Hematoloji videoları — 1/9" ile "Hematoloji" AYRI konuydu; 9 videonun
+   **9 ayrı havuzu** vardı. §282'de rozet/çürüme zaten kök bazlıydı, kazanç geride kalmıştı.
+2. **Kaynak kökü** (`kaynakKok` + `KAYNAK_ESL`): `Atilla Uslu Dahiliye videoları · 1.5x`
+   ≡ `Atilla Uslu Dahiliye 1/2` → tek kök. Artık aynı çalışma, ikinci kaynak değil.
+3. **Konu tavanı** (`_khT`): bir konudan alınabilecek TOPLAM yeni-öğrenme payı,
+   o konu için görülen en büyük tek iddiayı aşamaz. Tavan olmadan video ve kitap
+   ayrı ayrı tam pay alıyordu. Tekrar getirisi (gerçekten farklı kitap) etkilenmez.
+4. **Parça böleni doğru alandan** (`gorevParca`): `g.ot[1]` ya da addaki "N/M".
+   `g.sira[1]` "bu blokta kaç iş var" demek — **196 görevin 146'sında yanlıştı**.
+5. **Power-up kazancı** (`puDeger`): konu başka kaynaktan kapandıysa artık
+   TEKRAR sayılıyor (`TEKRAR_KAT`, `S_TEK`). Liste "+0.29 net" derken yanındaki
+   §282 rozeti "başka kaynaktan" diyordu — çelişki giderildi.
+
+**ÖLÇÜLEN ETKİ (gerçek kullanıcı verisi, önce/sonra):**
+| senaryo | eski | yeni | Δ |
+|---|---|---|---|
+| şu anki veri | 59.3504 | 59.3504 | **0.0000** (uykuda) |
+| çok parçalı işler bugün bitse | 61.1866 | 60.4449 | **−0.7417** |
+| tüm program bugün bitse | 62.4141 | 62.6021 | **+0.1880** |
+
+⚠ Etki **iki yönlü** — sadece düşürmüyor. Eski kod hem şişiriyordu (video+kitap
+çift sayım, 9 video 9 ayrı havuz) hem de bastırıyordu (tek parçalı görev
+`sira[1]=2` yüzünden kazancı yarıya iniyordu). "Gerçeğe en yakın" bu demek.
+Bugünkü sayı değişmedi çünkü `para()` yalnız SON DENEMEDEN SONRA tamamlanan
+işleri sayıyor ve tamamlanmış 17 işin hepsi öncesinde.
+
+### §291 · Çarkın merkezini tutup sağa kaydır → deneme analizi
+Hem çark hem pinch→program/kitap görünümünde çalışıyor (`#gunListe` çarkın
+çocuğu; dinleyici kapsayıcıda, yakalama evresinde). Analiz tam ekran, sağ üstte
+çarpı. Deneme girişi/fotoğraf paneli ESKİ düğmesinde kaldı (kullanıcı isteği).
+Çakışma önlemleri: yalnız **tek parmak** (iki parmak pinch'in) · yalnız **merkez
+bandından** başlayan (kenar %18/%14 dışta) · yön bir kez kararlaştırılır, **dikey
+kaydırma serbest** · düğme/girdi üzerinde başlayan dokunuş sayılmaz. Masaüstünde
+fare sürüklemesi de var. Beşi de gerçek dokunmayla sınandı (sola/dikey/kenar açmıyor).
+
+### §292 · Üst baloncuk kaldırıldı, çark "ben burdayım" diye dürtüyor
+Analiz hazır olunca üstten bildirim ÇIKMIYOR. Bunun yerine çark bir bariyeri
+itip geri çekiliyormuş gibi ritmik hareket ediyor (`@keyframes carkDurt`,
+2.6 sn, nefesli — sürekli değil). Kullanıcı sağa kaydırıp analize bakınca
+duruyor. `D.analizBekliyor` ile **kalıcı**: uygulama kapanıp açılsa ritim
+kaldığı yerden sürer. Senkron beyaz listesinde DEĞİL (cihaza özel).
+`prefers-reduced-motion` açıksa animasyon yerine sabit altın çerçeve.
+
+### Kapılar
+`kaynak/dom_test.js` **36 → 49 kontrol**. Yeni iddialar düzeltme öncesi sürümde
+✗, sonrasında ✓ veriyor (boş kapı değil). `pu_test`teki üç iddia eski kodun
+birebir metnini arıyordu — **biri doğrudan HATAYI sabitliyordu** (`sira[1]`);
+niyet korunarak yeniden yazıldı. Tüm kapılar + 5 özellik testi **0 hata**.
+
+⚠ Kendi kapımda **test yalıtımı kusuru** buldum: §288 bloğu `D.denemeler`'i
+`t/k/bn`siz sentetik kayıtla değiştiriyor, sonraki `para()` NaN üretiyordu.
+§290 bloğu artık motoru kendi tohumuna döndürüyor.
+
+**sürüm 2027-02-19b ↔ rota-2027-02-19b**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
