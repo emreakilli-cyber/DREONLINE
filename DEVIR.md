@@ -13632,6 +13632,71 @@ Görev #28 kapandı. Bilinen 7 §229 hatası sabit, yeni hata yok.
 
 ---
 
+## §271 · §229'UN 7 HATASI KAPANDI — ve altından gerçek bir üretim hatası çıktı
+
+### Testi güncellerken bulunan GERÇEK kusur: harita işareti kredi vermiyordu
+
+§229 analizini yeniden ele aldım. Yedi hata, testin §228 ÖNCESİ (ad bazlı çapraz
+gölgeleme) davranışı beklemesinden geliyordu; §228 **kullanıcı onaylı** karar.
+"Test kırıldı ≠ uygulama bozuk" (CLAUDE.md) — bayat iddiaları güncellemek A/B
+kararını vermek değildir; **uygulamanın davranışına dokunulmadı**, B seçeneği
+(ad bazlı gölgeleme) kullanıcı kararıyla hâlâ açılabilir.
+
+Ama aynı-grup çiftiyle (Farmakoloji · Otonom Sinir Sistemi ↔ "Yavuz Şahin
+Farmakoloji SB") yeniden ölçünce test yine kırıldı — bu kez haklı olarak:
+
+```
+kitap işareti (çıplak D.pu yazımı) : parakete +0.0002   ← kredi YOK
+görev işareti                       : parakete +0.0545
+```
+
+**Kök neden:** eski `klpu` işleyicisi dört adımın hepsini yapıyor — `D.pu` yaz +
+`puSenkron()` (sentetik görev üret) + `ikameAta` + **sentetik görevin `D.bitti`
+işareti** (paraketeyi besleyen adım bu). Haritanın "Çalıştım"ı (`atlasKonuToggle`)
+ve `bcCal` yalnız `D.pu` yazıyordu: işaret haritada görünüyor, kredi verilmiyordu.
+"Aynı özelliği iki mekanizma sürmesin" ailesinin ta kendisi.
+
+**Düzeltme:** `puIsaretle(a,geri)` — dört adım tek fonksiyonda; üç çağrı yeri de
+(klpu · atlasKonuToggle · bcCal) artık onu kullanıyor. Ölçüm:
+
+```
+kitap kredisi 0.0002 → 0.0541 (görevle fark 0.0004 · "iki yol benzer getiri" ✓)
+gölge ✓ · potansiyel düşüyor ✓ · ikinci kaynak 0.0240 < 0.0541 (çift sayım ✓)
+geri alma paraketeyi BİREBİR eski değerine döndürüyor ✓ · tavan 66.3 (55–75 ✓)
+```
+
+Test bloğu yeniden yazıldı (20 → **25 kontrol**): aynı-grup çifti, gerçek
+işaretleme yolu (`puIsaretle`), geri-alma kontrolü ve üç çağrı yerinin ortak
+yolda olduğunun statik kanıtı eklendi. **pu_test ilk kez 0 hata.**
+
+## §272 · OMR DÜZELTME AKIŞI — düşük güvenli okuma kartın içinde karara bağlanır
+
+Kadın Doğum 191–200'ün 6 sorusu düşük güvenle okunmuştu ve kullanıcı düzeltmesi
+bekliyordu — ama uygulamada düzeltme ARACI yoktu; kullanıcıya "sabah birlikte
+düzeltiriz" demiştim. Araç kuruldu (şartnameye uygun: kartın içinde, panel yok):
+
+- Önizleme kartındaki düşük-güven çipleri artık **tıklanabilir**; açılan şeritte
+  o sorunun **okuma notu** ("yeşil B okunuyor; sol işaret okunamadı…") ve üç
+  karar: **Doğru / Yanlış / Boş bırak**.
+- Düzeltme okuma katmanından SONRA, eşleştirmeden ÖNCE uygulanır; onaylanan satır
+  güven 1.0 ile nete girer. **Boş bırakılan nete girmez** — uydurma yok.
+- Yeniden hesaplama sessiz (JARVIS tekrar konuşmaz); vazgeç/kaydet düzeltme
+  durumunu temizler.
+
+Gerçek veriyle E2E: #192 → "Yanlış" → düşük 6→5, sayılan 4→5, kayıt `{0D, 5Y}`
+(düzeltilen gerçekten sayıldı) · #193 → "Boş bırak" → nete girmedi · onay sonrası
+durum temiz · sayfa hatası 0.
+
+⚠ Bu turda kapı bir de **kendi yan etkimi** yakaladı: §272'nin yapışkan `kip`'i
+argümansız `omrOnizle()`'nin mock varsayılanını eziyordu (önceki "gercek" kipini
+miras alıyordu) — kalıcılık yalnız sessiz yeniden-çizime daraltıldı.
+
+`pu_test`'e §272 bölümü (**8 kontrol**). **Tüm batarya: 0 hata** (11 koşan kapı).
+
+**sürüm 2027-03-18a ↔ rota-2027-03-18a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
@@ -13665,13 +13730,15 @@ Bekleyen: kullanıcıdan etiketli deneme verisi (§230 formatı) · cihazdan "Ha
 - **Potansiyel ile gerçek artış** arasında ~0.42 net fark (§205'te belgeli, bilinçli muhafazakâr)
 - **Aynı kayıt iki kez girilirse** iki kez sayılıyor · yinelenen denetimi yok (bilinçli)
 - **Zihin evreni force-graph (§246) kullanıcı görsel onayı bekliyor** · onaysız ders↔ders çapraz kenarları + Deneme/Çalışma dalışı + anıt görselleri eklenmeyecek
-- **§229'un üç açık maddesi (§266 durumu):**
-  - pu_test KONU TEKİLLİĞİ **7 hata** — kök sebep bulundu (grup bazlı `konuAnh` ↔ testin
-    ad bazlı gölgeleme beklentisi), kapsam 297 konudan 8'i. **A/B kararı kullanıcıda**,
-    kendiliğinden değiştirilmedi.
-  - kos.js sözdizimi **onarıldı** (§266) — ama `tam_test.js` repoda olmadığı için hâlâ koşmuyor.
-  - Paket boşlukları **sürüyor**: `eko.py` · `senk_test.js` · `tam_test.js` hiç commit
-    edilmemiş; `tus_tamami.tar.gz` gerekiyor.
+- **§229 kapandı (§271):** pu_test **0 hata** — bayat iddialar §228'in kullanıcı onaylı
+  grup-bazlı davranışına göre güncellendi; altından çıkan gerçek kusur (harita işareti
+  parakete kredi vermiyordu) `puIsaretle` ortak yoluyla düzeltildi. **B seçeneği
+  (ad bazlı çapraz gölgeleme) istenirse hâlâ açılabilir** — o zaman davranış VE test
+  birlikte değişir; 297 konudan 8'ini etkiler.
+- kos.js sözdizimi **onarıldı** (§266) — ama `tam_test.js` repoda olmadığı için hâlâ koşmuyor.
+- Paket boşlukları **sürüyor**: `eko.py` · `senk_test.js` · `tam_test.js` hiç commit
+  edilmemiş; `tus_tamami.tar.gz` gerekiyor.
 - **OMR gerçek malzeme eksikleri:** boş optik form fotoğrafı · cevap anahtarı formatı ·
   kitap içindekiler tabloları (alt başlık seviyesi için). Kadın Doğum 191–200'ün
-  **6 sorusu düşük güvenle okundu**, kullanıcı doğrulaması bekliyor (§266).
+  6 düşük güvenli sorusu için **düzeltme aracı kuruldu (§272)** — kullanıcı kartın
+  içinden D/Y/Boş kararını verebilir; içerik doğrulaması hâlâ kullanıcıda.
