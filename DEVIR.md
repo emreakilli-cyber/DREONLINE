@@ -13572,6 +13572,66 @@ kullanıyor · yatay/dikey kırpma · ölçeğin etikete göre kısılmadığı 
 
 ---
 
+## §270 · DENEME GİRİLEMİYORDU — kabuk tersine çevrilirken açılan işlev deliği
+
+### Kusur
+
+"Uygulama tamamlandı mı" sorusuna cevap ararken erişilebilirliği ölçtüm
+(`scratchpad/erisim.js`): `dnmB` (deneme girişi) ve `puOrb` (Ölçüm) **kapalı** —
+`main{opacity:0;pointer-events:none}` altında. §258'de kabuğu tersine çevirirken
+eski sayfaların İÇİNDEKİ veri girişini haritaya bağlamayı unutmuşum. Sonuç:
+sınava 20 gün kala uygulamaya **deneme sonucu yazılamıyordu**; motorun kalbi olan
+deneme → kalibrasyon → öncelik döngüsü fiilen durmuştu. Gece raporumda bunu
+görmemiştim — görev #27'yi "günlük akış bağlandı" diye kapatıp deneme girişini
+ayrıca doğrulamamıştım.
+
+### Düzeltme · İKİZ FORM YOK — kanıtlı yollar haritaya bağlandı
+
+Keşif önce: `dpanel` ve `ppanel` zaten `main` **dışında**, koyu temalı, sabit
+katmanlar (satır 2272/2291 > `</main>` 2187) — çalışır durumdaydılar, yalnız
+açıcı düğmeleri gizliydi. Ölçüm sayfası (`#olcumIc`) ise main içinde.
+
+| işlem | yol |
+|---|---|
+| Tam deneme (11 branş D/Y, hızlı + soru-soru ayrıntılı) | kok kartı → "Deneme gir · Ölçüm defteri" → `atOlcumAc()`: `#olcumIc` DOM düğümü overlay'e **TAŞINIR** (kopya değil), `olcumCiz()` çizer, kapatınca eski yuvasına iade |
+| 24'lü branş denemesi | ders kartı → "24'lü sonuç gir" → `atDeneme24Ac(br)`: mevcut `dpanel` açılır, branş kullanıcı yolundan önseçilir (`değer + dataset.el + dpanelCiz()`) |
+| Power-up havuzu | kok kartı → `atPowerAc()` → mevcut `ppanel` |
+| Senk (eşitle/al/gönder) | Ölçüm defterinin içinde zaten var — artık erişilebilir |
+
+- Köprü fonksiyonları **kayıt yazmaz** (kapıyla sabitlendi): kayıt yalnız formların
+  kendi işleyicilerinde. Tek doğruluk kaynağı korunuyor.
+- Kapatınca `atHaritaTazele()`: yeni deneme düğümleri/altın yol/gruplar tazelenir.
+  Eski panellerin kendi ✕ düğmeleri için de dinleyici var.
+- Geri tuşu önce açık katmanı kapatır (`atOlcum` → `dpanel`/`ppanel` → ze*).
+- Ölçüm sayfasında giriş formu ~4000 px altta (üstte matris/trend) — ilk denemede
+  "üstü kapalı" sandım, ölçünce **ekran dışı** çıktı (elementFromPoint ekran dışına
+  null döner). Kartın niyeti "deneme GİR" olduğu için açılışta forma kaydırılıyor.
+
+### Gerçek tarayıcıda, gerçek veriyle, gerçek tıklamalarla kanıt
+
+```
+kok kartı → Ölçüm defteri     : açık, #olcumIc overlay içinde, girişler ekranda
+gerçek giriş (11 branş D/Y)   : D.denemeler 6 → 7 · T 41.5 / K 40.8 · parakete 59.35 → 59.40
+uygulamanın SİL düğmesi        : 7 → 6, geri alındı
+kapat                          : düğüm eski yuvasında (#olcum), overlay kapalı
+ders kartı → 24'lü            : dpanel açık, önseçim "Patoloji", {12D 4Y 2B} D.kal'a
+                                 yazıldı, dpanel'in kendi siliyle geri alındı
+power-up                       : ppanel açık, 2 liste bölümü dolu
+geri tuşu                      : overlay'i kapatır, evrenKip bozulmaz
+Playwright gerçek tıklama      : input'a tıkla + "7" yaz → değer "7" ✓
+sayfa hatası                   : 0 · dialog: 0 (Senk okur-kilidi tetiklenmedi)
+```
+
+`pu_test`'e §270 bölümü (**10 kontrol**): köprüler var · kart eylemleri bağlı ·
+köprüler kayıt yazmıyor · DOM taşınıyor/iade ediliyor · forma kaydırma · önseçim
+kullanıcı yolu · geri tuşu sırası · ✕ tazeleme dinleyicisi · atHaritaTazele.
+
+Görev #28 kapandı. Bilinen 7 §229 hatası sabit, yeni hata yok.
+
+**sürüm 2027-03-17a ↔ rota-2027-03-17a**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)

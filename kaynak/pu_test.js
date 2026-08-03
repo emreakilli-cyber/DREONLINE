@@ -1809,3 +1809,35 @@ eCer('GERİLEME: odak ölçeği artık etiket genişliğine göre KISILMIYOR',
 eCer('odak ölçeği halkayı çerçeveliyor',/Math\.min\(atlas\.w\*\.80\/2, atlas\.h\*\.72\/2\)\/R/.test(kod));
 console.log('\n'+(QCer?'✗ '+QCer+' HATA':'✓ SIFIR HATA — 12 ek kontrol'));
 if(QCer)process.exitCode=1;
+
+console.log('\n═══ VERİ GİRİŞİ HARİTADAN · deneme/24lü/power-up (§270) ═══');
+let QGir=0;const eGir=(a,ok,x)=>{if(!ok){QGir++;console.log('  ✗ '+a+(x!==undefined?' :: '+JSON.stringify(x):''))}};
+eGir('köprüler var: atOlcumAc/atOlcumKapat/atDeneme24Ac/atPowerAc',
+  R('typeof atOlcumAc')==='function'&&R('typeof atOlcumKapat')==='function'&&
+  R('typeof atDeneme24Ac')==='function'&&R('typeof atPowerAc')==='function');
+eGir('kart eylemleri bağlı: data-akolc + data-ak24 + data-akpu',
+  /data-akolc/.test(kod)&&/data-ak24/.test(kod)&&/data-akpu/.test(kod)&&
+  /\[data-akolc\]/.test(kod)&&/\[data-ak24\]/.test(kod)&&/\[data-akpu\]/.test(kod));
+/* İKİZ FORM YOK: köprüler kayıt YAZMAZ — kayıt yalnız mevcut form işleyicilerinde */
+(function(){
+  const al=(ad)=>{ const i=kod.indexOf('function '+ad);
+    return i<0?'':kod.slice(i,kod.indexOf('\nfunction ',i+10)) };
+  const govde=al('atOlcumAc')+al('atOlcumKapat')+al('atDeneme24Ac')+al('atPowerAc');
+  eGir('köprüler D.denemeler/D.kal YAZMIYOR (tek doğruluk kaynağı formlar)',
+    govde.indexOf('D.denemeler.push')<0&&govde.indexOf('D.kal.push')<0);
+  eGir('Ölçüm DOM düğümü TAŞINIYOR, kopyalanmıyor',
+    /hed\.appendChild\(ic\)/.test(govde)&&govde.indexOf('innerHTML=ic')<0);
+  eGir('kapatınca eski yuvasına İADE ediliyor',/yuva\.appendChild\(ic\)/.test(govde));
+  eGir('açılışta giriş formuna kaydırılıyor (form ~4000px altta, ölçüldü)',
+    /scrollIntoView/.test(govde));
+  eGir('24lü önseçim kullanıcı yoluyla birebir (dataset.el + yeniden çizim)',
+    /s\.dataset\.el='1'; dpanelCiz\(\)/.test(al('atDeneme24Ac')));
+})();
+eGir('geri tuşu önce Ölçüm/dpanel/ppanel katmanını kapatıyor',
+  /atOlcumKapat\(\); return/.test(kod)&&/'dpanel','ppanel','zeNot'/.test(kod));
+eGir('eski ✕ düğmeleri haritayı tazeliyor (dinleyici)',
+  /data-kapat="dpanel".*data-kapat="ppanel"/.test(kod)&&/setTimeout\(atHaritaTazele/.test(kod));
+eGir('kapatınca harita yeniden kuruluyor (atHaritaTazele)',
+  /function atHaritaTazele/.test(kod)&&/atlasYerlesim\(atlasVeri\(true\),true\)/.test(kod));
+console.log('\n'+(QGir?'✗ '+QGir+' HATA':'✓ SIFIR HATA — 10 ek kontrol'));
+if(QGir)process.exitCode=1;
