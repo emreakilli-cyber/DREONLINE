@@ -14736,6 +14736,100 @@ bataryası) **0 hata**.
 
 ---
 
+## §300 · İlk gerçek kullanımda çıkan üç kusur (2027-02-19g)
+
+Kullanıcı tek sayfa yükleyip akışı denedi. Okuma hızlı bitti, çark ritmi başladı;
+sonra üç şey bildirdi. **Üçü de gerçekti ve üçü de kapılardan temiz geçmişti.**
+
+### 1 · "İncele ve kaydet'e basınca beni ana ekrana atıyor"
+ÖLÇÜLDÜ (gerçek Chromium + gerçek dokunma):
+```
+kartAcSinifi: true   kartDisplay: "block"   kartIcerikVar: true
+katAcSinifi:  false  katDisplay:  "none"
+kartOlcu: {w:0, h:0, top:0}   →  kartEkrandaMi: false
+```
+Kök sebep: `denIncele()` paneli KAPATIP kartı `#atKart`'a çiziyordu. `#atKart`
+ise **`#atlasKat` katmanının İÇİNDE** yaşıyor; kullanıcı çark ekranındayken o
+katman `display:none` olduğu için kart `.ac` alıyor ama **0×0 kutuyla görünmez**
+kalıyordu. Kullanıcı çarka düşüyor, inceleme hiç açılmıyordu.
+
+Düzeltme: inceleme artık **panelin içinde** (`#dpIncele`) açılıyor, panel
+KAPANMIYOR. `OMR_DURUM.hedef` eklendi; `omrOnizle` hedefi oradan alıyor,
+`omrHedefKapat()` doğru kabı kapatıyor, `omrKaydet` panelde sonuç yazıyor.
+Panel yoksa eski yola düşüyor ama artık **katmanı da açıyor**.
+
+### 2 · "Çarkı sağa kaydıramadım"
+ÖLÇÜLDÜ (olay dizisi izlendi): `touchstart` geliyor → **BİR** `touchmove`
+(dx≈18 px) → sonra `touchcancel`. `sBirak` çalışıyor ama `sx==null` olduğu için
+hemen dönüyor.
+Kök sebep: **`#cark{touch-action:pan-x}`**. Tarayıcı yatay ekseni kendine alıp
+dokunuşu iptal ediyordu. **Fare ile çalışıyordu** (pointer olayları
+`touch-action`'dan etkilenmez) — §291 bu yüzden "çalışıyor" sanıldı.
+
+Düzeltme: `#cark{touch-action:none}`. Korunacak doğal yatay kaydırma YOK —
+görünümler (`.vw`) opaklıkla değişiyor, `#cark` ve `#gunListe` `overflow:hidden`,
+dikey sürükleme zaten JS'te. Ölçüldü: dikey sürükleme çalışmaya devam ediyor
+(aktif 58 → 60) ve yanlışlıkla analizi açmıyor.
+⚠ `cark_test.js`'te **kusuru koruyan bayat bir iddia** vardı
+(`'yatay kaydırma engellenmiyor (touch-action:pan-x)'`) — §290'daki `pu_test`
+olayının aynısı. Güncellendi.
+
+### 3 · "Yeşil bildirim gözükmedi"
+Doğru: **hiç üretilmemişti.** §292 üstten çıkan baloncuğu kaldırıp yerine yalnız
+ritmik itmeyi koymuştu. Kullanıcının tarifi: *"çarkın iç bükey alanını yeşil
+rengiyle bu bildirim dolduracak."*
+Eklendi: **`#carkAnaliz`** — ışık rayın yayının en sağ noktasından (sol kenar,
+dikey merkez) doğup çarkın iç boşluğunu dolduran yeşil radyal dolgu, itme
+ritmiyle aynı fazda nabız atıyor. Etiket: "DENEME ANALİZİ HAZIR · dokun ya da
+sağa kaydır ›". Etiket çarkın ÜST iç boşluğuna oturtuldu — ortada dururken
+etkin görev kartının yazısını örtüyordu (ekran görüntüsüyle ölçüldü).
+Katman aynı zamanda **hareketin tutamağı**: `touch-action:none` olduğundan
+tarayıcı yatay ekseni çalamıyor. Hem DOKUNMA hem SAĞA KAYDIRMA açıyor —
+hareketi bilmeyen kullanıcı kilitlenmesin.
+
+### 4 · "Bildirim 200 ↔ 24'lü arasında kaydırınca kayboldu"
+Kök sebep: kip düğmesinin işleyicisinde **koşulsuz `denOtoDurum('')`** vardı.
+Okunan sonuç ekrandan siliniyordu (bellekte duruyordu ama erişilemiyordu).
+Düzeltme: kip GERÇEKTEN değişmediyse hiçbir şey silinmiyor; değiştiyse okuma
+silinmiyor, **eskidiği söyleniyor** ve iki seçenek sunuluyor:
+"Okumaya dön ve kaydet" · "At, yeni okuma yapacağım".
+
+### 5 · Gerçek cevap anahtarı fotoğraflarından üç yeni gerçek
+Kullanıcı dört gerçek anahtar sayfası gönderdi. İstem buna göre düzeltildi:
+- Sayfalar telefonla **YAN** çekiliyor (metin 90° dönük) ve bir karede
+  **iki sayfa** birden oluyor. İstem artık bunu söylüyor.
+- Etiket yalnız `Tablo (Soru N)` değil, **`Şekil (Soru N)`** de oluyor
+  (ör. "Şekil (Soru 54): Klamidyanın yaşam döngüsü", "Şekil (Soru 63):
+  Kompleman Aktivasyon Yolları").
+- Soru kutusunun **İÇİNE gömülü etiketsiz görseller** var (soru 66'nın Kongo
+  kırmızısı preparatı gibi) — bunlar da kırpılıp saklanmalı.
+- Cilt kıvrımına yakın sütunlar kavisli/kesik. İstem artık **"tamamlama,
+  tahmin etme; okunamayan yeri `[…]` ile işaretle ve eşleşme güvenini düşür"**
+  diyor.
+
+### Kapılar
+Yeni kalıcı kapı **`kaynak/analiz_test.js` · 25 kontrol** (gerçek Chromium,
+gerçek dokunma, kullanıcı verisi YOK): touch-action · yeşil bildirim ·
+dokunma/kaydırma ile açılma · çark merkezinden kaydırma (iki görünümde) ·
+dikey sürüklemenin bozulmadığı · inceleme kartının EKRANDA olduğu · kaydetme ·
+kip değişiminde okumanın korunduğu.
+`cark_test` ve `dom_test`'teki iki bayat iddia güncellendi. Tüm kapılar 0 hata.
+
+### Bu turda yaptığım hatalar
+- **Üç kusuru da ben ürettim ve üçünü de kapılarım kaçırdı.** §291'i fare ile
+  doğrulayıp "çalışıyor" dedim — CLAUDE.md'de yazan "kapı geçmek hata yok
+  demek değildir" tuzağına yine düştüm. Gerçek dokunma olmadan dokunma
+  hareketi doğrulanamaz; §284'te öğrenilmişti, tekrar etti.
+- **§292'de "üstten bildirim çıkmasın" isteğini "bildirim olmasın" diye
+  uyguladım.** Kullanıcı bildirimin YERİNİ değiştirmemi istemişti, kaldırmamı
+  değil.
+- `cark_test`'teki iddia kusuru **koruyordu** — testin kendisi yanlış davranışı
+  sabitlemişti. Bu §290'da da olmuştu; kalıp tekrar ediyor.
+
+**sürüm 2027-02-19g ↔ rota-2027-02-19g**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)

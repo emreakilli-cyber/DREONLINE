@@ -307,7 +307,9 @@ const chk=(a,ok,x)=>{N++;if(!ok){H++;console.log('  ✗ '+a+(x!==undefined?' :: 
      kirmizi:/KIRMIZI/.test(ist),
      konuEl:/konuEl/.test(ist),
      dogruKalip:/Doğru cevap: \(E\)/.test(cev),
-     tabloEtiket:/Tablo \(Soru 107\)/.test(cev),
+     /* §300 · gerçek fotoğraflarla güncellendi: etiket yalnız "Tablo"
+        değil "Şekil" de olabiliyor; istem ikisini de bilmeli. */
+     tabloEtiket:/Tablo \(Soru \d+\)/.test(cev)&&/Şekil \(Soru \d+\)/.test(cev),
      turet:t.join(','),
      fn:typeof sonucHesapla==='function'&&typeof cakismaListesi==='function'};
  });
@@ -315,7 +317,7 @@ const chk=(a,ok,x)=>{N++;if(!ok){H++;console.log('  ✗ '+a+(x!==undefined?' :: 
  chk('§293 · istem kırmızı-Y ipucunu içeriyor',g93.kirmizi,g93);
  chk('§293 · istem elle yazılan konu etiketini (konuEl) istiyor',g93.konuEl,g93);
  chk('§293 · cevap anahtarı istemi "Doğru cevap: (X)" kalıbını biliyor',g93.dogruKalip,g93);
- chk('§293 · cevap anahtarı istemi "Tablo (Soru N)" etiketini biliyor',g93.tabloEtiket,g93);
+ chk('§293/§300 · istem "Tablo (Soru N)" VE "Şekil (Soru N)" etiketlerini biliyor',g93.tabloEtiket,g93);
  chk('§293 · sonuç anahtarla karşılaştırılarak türetiliyor (D,Y,B,null)',
    g93.turet==='D,Y,B,'||g93.turet==='D,Y,B,null',g93.turet);
  chk('§293 · türetme ve çakışma fonksiyonları var',g93.fn,g93);

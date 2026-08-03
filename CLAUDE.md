@@ -63,9 +63,9 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
 
 - Üretim sırası: `dizi3.py` → `yeniden.py` → `uret.py` (kural testi otomatik koşar)
   → `denet.py` → `kos.js`. FT/power-up tarafı: `ft_katalog.py` (tek kaynak) → `ft_uret.py`.
-- Tur sonu **on altı kapı**: `kural_test.py` · `denet.py` · `kos.js` · `derin_test.js` ·
+- Tur sonu **on yedi kapı**: `kural_test.py` · `denet.py` · `kos.js` · `derin_test.js` ·
   `kombo_test.js` · `cark_test.js` · `mola_test.js` · `pu_test.js` · `kal_test.js` ·
-  `dom_test.js` · `olcek_test.js` ·
+  `dom_test.js` · `olcek_test.js` · `analiz_test.js` ·
   `senk_kos/poll/etag/uc/rol.js`. Hepsi koşulur, **çıktının tamamı okunur**.
 - ⚠ **Kapı geçmek "hata yok" demek değildir** — kapılar kendi yazdığın kontrollerdir
   (§87'de kapılar temizken 4 gerçek hata bulundu). Belgeyi de denetlemezler (§12.10).
@@ -118,7 +118,7 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   varyantı atlanınca §112'nin düzeltmesi §117'ye kadar eksik kaldı; aynı kusur dört
   panelde birden vardı §151).
 
-## Güncel durum işaretçisi (sürüm `2027-02-19f`, DEVIR sonundaki devir notu)
+## Güncel durum işaretçisi (sürüm `2027-02-19g`, DEVIR sonundaki devir notu)
 
 - FT serisi 10 kitap power-up havuzuna işlendi (156 → 254 konu); konu tekilliği /
   net havuzu paylaşımı grup bazlı anahtarla tamamlandı (§219–§228).
@@ -180,6 +180,19 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   denenir. Karışık yığında cevap anahtarı sayfaları `sayfaTur:"anahtar"` ile
   ayrılır. ⚠ Parti-içi foto numarası genel sıraya çevrilir — eskiden kırpma
   ikinci partiden sonra yanlış fotoğrafa bakıyordu. Kapı: `kaynak/olcek_test.js`.
+- **§300 · ilk gerçek kullanımın üç kusuru.** (a) "İncele ve kaydet" kartı
+  `#atKart`'a çiziliyordu, o da `#atlasKat` İÇİNDE — katman kapalıyken 0×0,
+  görünmüyordu; artık panelin içinde (`#dpIncele`, `OMR_DURUM.hedef`).
+  (b) `#cark{touch-action:pan-x}` yüzünden sağa kaydırma gerçek dokunuşta
+  ölüyordu (tarayıcı `touchcancel` gönderiyor) → `none`. **Fare ile test etmek
+  dokunma hareketini doğrulamaz.** (c) Yeşil "analiz hazır" bildirimi hiç
+  üretilmemişti → `#carkAnaliz` çarkın iç bükey alanını dolduruyor, hem dokunma
+  hem sağa kaydırma açıyor. Ayrıca 200↔24 kip değişimi okunan sonucu siliyordu.
+  Kapı: `kaynak/analiz_test.js`.
+- **Gerçek cevap anahtarı sayfaları:** telefonla YAN çekiliyor (metin 90° dönük),
+  bir karede İKİ sayfa, etiketler `Tablo (Soru N)` **ve** `Şekil (Soru N)`,
+  soru kutusunda gömülü etiketsiz görseller (mikroskop/radyoloji), cilt
+  kıvrımında kesik sütunlar → istem "tamamlama, `[…]` ile işaretle" diyor.
 - **YARIM KALAN · TASARIM:** power-up paneli, matris ve seyir sayfalarının görsel
   tasarımı (beğenilen referans: `.glAnh` altın gradyan anahtar, `.glS` satır düzeni,
   §217 daire tamamlama düğmesi).
