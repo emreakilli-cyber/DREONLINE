@@ -14201,6 +14201,269 @@ fotoğraflarla doğruluk ayarı, gerekirse extended thinking, kart cilası.
 
 ---
 
+## §284 · Ölü tamamlama dairesi + power-up rozeti (2027-02-18k)
+
+**Kullanıcı bildirimi:** "pinch → program, 2 Ağustos Endokrin videosunun sağına
+tıklıyorum, tick olmuyor, beni çarka gönderiyor. Bu videolarla kitaplar arasında
+kurduğun refleks örgüsünü unuttun mu?"
+
+**ÜRETİLDİ (gerçek Chromium, gerçek dokunma, gerçek kullanıcı verisi):**
+```
+[3] Endokrin daire: {"daireIsleyici":false,"satirIsleyici":true}
+[3] tık ÖNCE bitti=false SONRA bitti=false        ← tik atmıyor
+[3] sonrası: {"gunKip":false,"gunGoster":null,"listeAc":false}  ← çarka ışınlandı
+```
+
+**KÖK SEBEP.** Gün listesini `innerHTML` ile yeniden kuran **yedi** nokta vardı;
+`gunKipAc` içindeki `[data-gun]` kopyası (eski 6438–6447) **`glBagla()` çağırmıyordu**.
+Gün oklarıyla (‹ ›) başka güne geçilince `[data-klgorev]` (tamamlama dairesi) dahil
+glBagla'nın bağladığı TÜM düğmeler bağsız kalıyor; daireye dokunuş satıra
+baloncuklanıyor ve satır işleyicisi `gunKipAc(false); gecis(i)` çalışıp kullanıcıyı
+çarka atıyordu. Satır işleyicilerinin hiçbirinde düğme koruması yoktu.
+⚠ Neden "bazen" oluyordu: ilk ok basışından sonra `gunBagla` okları KENDİ (sağlam)
+sürümüne yeniden bağlıyor — yani yalnız **gün kipi açıldıktan sonraki İLK ok
+basışı** kırık. Kapı da bunu birebir doğruladı (1. geçiş ✗, 2.–3. geçiş ✓).
+
+**DÜZELTME · tek yol:**
+- `glKur(gl,yenidenCiz)` — tek yeniden-kurulum yolu: `glBagla` + `gunBagla` +
+  `glSatirBagla` + `zeGunSatirBagla` + `gunOlcekle`. Kopya bırakılmadı.
+- `glSatirBagla(gl)` — satır işleyicisi artık **düğme korumalı**
+  (`ev.target.closest('button')` → satırı tetikleme). Savunma katmanı: bir düğme
+  ileride yine bağsız kalsa bile kullanıcı çarka ışınlanmaz.
+- `gunBagla`, `gunKipAc`, yedek olay devri ve `zeGunAc` hepsi `glKur`'a bağlandı.
+  Yeniden-kurulum noktası **7 → 3**; korumasız `[data-gi]` bağlaması **3 → 0**.
+
+**İKİNCİ KUSUR (aynı bildirimden çıktı) · power-up rozeti eksikti.**
+§282'de "başka kaynaktan" rozeti yalnız gün listesine ve kitap içindekilerine
+eklenmişti; **power-up paneli dışarıda kalmıştı** — kullanıcının §282 talebi bu
+yüzeyi de kapsıyordu. Ölçüldü: motor `konuBaskaKaynak('Endokrinoloji')`
+= "Atilla Uslu Dahiliye videoları · 1.5x" derken `#puListe`'de **0 rozet**.
+`ppanelCiz` satır şablonuna rozet + `.kit.bk` soluklaştırma eklendi → **0 → 8 rozet**.
+(`--gyaz` yalnız gün listesinde tanımlı olduğu için panele sabit ölçü verildi.)
+
+**YENİ KAPI · `kaynak/dom_test.js` (17 kontrol).** Mevcut kapıların hiçbiri bunu
+göremezdi: `derin_ortam.js` DOM'u taklit ediyor, `onclick` bağlama orada YOK.
+Bu kapı GERÇEK Chromium'da gerçek dokunmayla çalışır (kullanıcı verisi kullanmaz).
+Kapının gerçekten ayırt ettiği doğrulandı: düzeltme ÖNCESİ sürümde **4 hata**
+(ölü daire dahil, "Endokrinoloji videoları — 4/7" adıyla), SONRASINDA **0**.
+`cark_test`teki iki iddia eski kodun birebir metnini arıyordu (eskimiş iddia,
+uygulama kusuru değil) — niyet korunarak yeni tek yola göre yazıldı; onlar da
+düzeltme öncesi sürümde ✗, sonrasında ✓ veriyor.
+
+**KULLANICININ SORUSUNA CEVAP · refleks ağı (ölçüldü, gerçek veriyle):**
+| yüzey | durum |
+|---|---|
+| video tik → program görev kartı | ✓ çalışıyor |
+| video 7/7 bitince konu kitabı satırı | ✓ `✓ başka kaynaktan` (Atilla Uslu Dahiliye 2 · Endokrinoloji) |
+| power-up listesi | ✓ **§284'te eklendi** (öncesinde eksikti) |
+| kazanç tekliği (kitap ↔ kitap) | ✓ `renkAnh` havuzu ortak |
+| kazanç tekliği (**video ↔ kitap**) | ✗ **ortak DEĞİL** — aşağıya bak |
+
+**AÇIK · KARAR KULLANICIYA (düzeltilmedi, ölçüldü):**
+1. **Parça böleni yanlış alandan okunuyor.** `const parca=(g.sira&&g.sira[1]>1)?g.sira[1]:1`
+   — ama `g.sira[1]` "bu bloğun kaç işi var" demek (5260/5423 satırları bunu
+   böyle gösteriyor), parça sayısı değil. Doğru alan `g.ot[1]` (37/37 görevde
+   ad ile birebir uyuyor) ya da görev adı. **196 görevin 146'sında (%74) yanlış**
+   (ör. "Hematoloji videoları — 1/9" → bölen 9 yerine 4; tek parçalı "Kadın Genital
+   Sistem Hastalıkları" → bölen 1 yerine 2, kazancı yarıya iniyor).
+   Bugünkü etkisi **0.0000** — çünkü `para()` yalnız SON DENEMEDEN SONRA
+   tamamlanan işleri sayıyor (`b>o.tar`) ve tamamlanmış 17 işin hepsi öncesinde.
+   Çok parçalı işler bugün tamamlanırsa: PARAKETE **61.19 → 60.44 (Δ −0.74)**,
+   yani mevcut kod projeksiyonu **şişiriyor**.
+2. **Video ile kitap aynı kazanç havuzunu paylaşmıyor.** `para()` havuz anahtarı
+   `renkAnh`; `renkAnh("Hematoloji videoları — 1/9")="hematoloji videoları 1 9"`
+   ≠ `renkAnh("Hematoloji")="hematoloji"`. Dahası 9 videonun **9 ayrı havuzu** var.
+   §282'nin `konuKok`'u ikisini birleştiriyor ("hematoloji") ama konuKok yalnız
+   ROZET ve ÇÜRÜME için kullanılıyor, KAZANÇ için değil. Yani rozet/çürüme tek
+   sayıyor, kazanç video payını kitabın payına EK olarak yazıyor.
+   Ölçülen büyüklük küçük (4 video tiki → PARAKETE +0.0081) ama yön yanlış.
+
+Bu ikisi de **model değişikliği** (PARAKETE düşürür); sınava 20 gün kala kullanıcı
+onayı olmadan uygulanmadı. §0 ilkesi: kararı kullanıcı verir.
+
+**Kapılar:** derin/pu/cark/mola/kombo/kal/**dom** + denet.py — **0 hata**.
+node --check temiz. Sürüm eşleşmesi doğrulandı.
+
+⚠ **Ortam notu:** Bu tur sırasında kap yeniden kuruldu ve yerel klon §282'ye
+(1492a54) döndü; §283 kamera işi **origin'de duruyordu** (12f7499) ve oraya
+`merge --ff-only` + stash ile geri bindirildi. İş kaybı yok, doğrulandı
+(§283 izleri: BRANS_ARALIK/denemeGorusCagir/OMR_VIZYON mevcut).
+
+**sürüm 2027-02-18k ↔ rota-2027-02-18k**
+
+---
+
+## §285–§289 · Gemini okuma motoru + cevap anahtarı + analiz akışı (2027-02-19a)
+
+Kullanıcı beş parça istedi. Hepsi yapıldı; ikisinde kullanıcıya bırakılan karar var.
+
+### §285 · Okuma motoru Anthropic → **Gemini** (varsayılan)
+API biçimi **ezberden değil, resmî kaynaktan** alındı ve **canlı ölçüldü**:
+`$discovery/rest?version=v1beta` (rev. 20260731) indirildi · `google-gemini/cookbook`
+`Prompting_REST.ipynb` gerçek istek/yanıt hücreleri · CORS bir gerçek istekle sınandı.
+- Uç: `POST generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent`
+- Anahtar **başlıkta** (`x-goog-api-key`) — URL'de değil (adres/geçmişe sızmasın).
+- Görsel `inlineData:{mimeType,data}` · yanıt `candidates[0].content.parts[0].text`
+- `generationConfig.responseMimeType:'application/json'` ile JSON zorlanıyor.
+- **Tarayıcıdan doğrudan çağrı CORS'a takılmıyor** (ölçüldü) — sunucusuz mimari korunuyor.
+- ⚠ **`gemini-2.5-flash-lite` EMEKLİ** (404 bildirimleri var). Varsayılan
+  `gemini-flash-lite-latest` — kalıcı takma ad; model emekliye ayrılsa da elle
+  dağıtılan tek dosyalık uygulama kırılmaz. Kullanıcı isterse `gemini-3.1-flash-lite`.
+- Sağlayıcı seçici eklendi: **Gemini varsayılan**, Claude ikinci seçenek olarak duruyor
+  (kullanıcının "ikisini de destekleyip varsayılanı Gemini yap" seçeneği).
+- Anahtar hâlâ yalnız cihazda (`rota-gorus`), senkron/gist dışı, koda gömülü değil.
+
+### §286 · Cevap anahtarı fotoğrafından çözüm (ÜRETME değil OKUMA)
+İsteme üç kısıt açıkça yazıldı: (1) "GÖREVİN ÜRETMEK DEĞİL, OKUMAKTIR — kendi tıbbi
+bilgini kullanma, yorum ekleme, eksik gördüğün yeri tamamlama", (2) sadeleştirirken
+"HİÇBİR TIBBİ BİLGİYİ, SONUCU VEYA MANTIK ZİNCİRİNİ değiştirme veya atlama",
+(3) eşleştirme öz-denetimi: "bu çözüm gerçekten bu numaraya mı ait, numara kaymış olabilir mi".
+- Beklenen soru listesi (no · ders · soru kökü) isteme gömülüyor → model kaymayı fark edebiliyor.
+- `eslesme≥0.75` → doğrudan kaydedilir; altı **kaydedilmez**, gözden geçirme kuyruğuna düşer
+  ("#X net eşleşmedi, kontrol eder misin?" + gerekçe). Eşleşmeyenler ayrı kuyrukta,
+  elle soru numarası girilerek bağlanabiliyor. Her ikisi de elle düzeltilebilir (override).
+- Tablo/şema: model `kutu` (normalize [sol,üst,sağ,alt]) + `foto` veriyor; kırpma
+  **uygulamada** yapılıyor (`gorselKirp`), en-boy oranı korunuyor (gerilme yok, ölçüldü).
+
+### §287 · Tek deneme · ders bazlı hata özeti
+Yanlış/toplam oranına göre azalan; yatay bar, oran arttıkça dolu ve kırmızıya yakın.
+Renk **sürekli fonksiyon** (kademe yok, §135–§158); gerçek oranlar %15–55 bandında
+toplandığı için gamma 0.7 ile orta band açıldı.
+
+### §288 · Tüm denemeler · ders → konu zayıflık haritası
+Mevcut şema (`b/konu/s/e`) üzerine kuruldu — **yeni alan eklenmedi** (kullanıcı haklıydı:
+gerçek veride `konu` 200/200, `e` 200/200 dolu). Konular soru sayısına göre azalan;
+D/Y/B sayıları; baskın E/B/AK/U + doğru/yanlış eğiliminden **kural tabanlı** yorum
+(8 kombinasyon + nötr), API çağrısı yok. `Eminim+Yanlış` = kör nokta, `Bilmiyorum+Doğru`
+= şansa dayalı ayrıca vurgulanıyor. Gerçek veride: **0 kör nokta, 5 şansa dayalı konu**.
+
+### §289 · Kaydırmalı 4 sayfalık akış + responsive
+Story tarzı ilerleme çizgileri; dokunmatik swipe (yön bir kez kararlaştırılır, dikey
+kaydırma serbest kalır), fare sürükleme, ok tuşları, Esc. Oklar ≥720px'de görünür,
+dar ekranda gizli (kullanıcı isteği). **Sabit piksel yok** — `clamp()` + flex/grid.
+⚠ Uygulamanın pinch dinleyicileri YAKALAMA evresinde; akış kendi dokunuşlarını
+durduruyor ki çark kipi tetiklenmesin.
+
+### DEPOLAMA · ölçüldü, mimari ona göre kuruldu
+- Mevcut `localStorage`: **16,7 KB** (bol yer).
+- ⚠ `Senk.gonder` `temiz(D)`'nin TAMAMINI gist'e yolluyor ve `denemeler` olduğu gibi
+  gidiyor → **görseller D'ye konsaydı her senkronda megabaytlar yüklenirdi.**
+- Ölçüm: 300×200 q70 kırpma = localStorage muhasebesiyle **33–42 KB**; ama **300×200
+  bir TUS tablosunu okunur kılmıyor** — okunur olması için uzun kenar 800–1200px
+  gerekiyor → 5 MB'a yalnız **13–41 görsel** sığar, **tek deneme bile doldurur.**
+- Karar: **çözüm METNİ D'de** (küçük, cihazlar arası senkronlanır) ·
+  **görseller IndexedDB'de** (`GorselDepo`, disk tabanlı, senkron DIŞI, cihazda kalır),
+  uzun kenar 1000px / q0.72, `IntersectionObserver` ile **lazy-load**.
+
+### Doğrulama
+- Yeni: `akis_test` (4 ekran genişliği × swipe/taşma), `gemini_test` (istek gövdesi
+  resmî şemaya uyuyor mu + cevap anahtarı zinciri, **fetch taklidiyle — para/ağ
+  harcanmadı**), `gorsel_test` (kırpma/oran/IndexedDB/senkron dışılık).
+- `kaynak/dom_test.js` **17 → 36 kontrol**e çıkarıldı (yorum mantığının 8 kombinasyonu,
+  sıralama kuralları, akış taşması, Gemini varsayılanı dahil).
+- Tüm kapılar (derin/pu/cark/mola/kombo/kal/**dom** + denet.py) **0 hata**.
+
+### Araştırmanın kendi kodumda bulduğu iki kusur (düzeltildi)
+Paralel koşan API araştırması bittiğinde iddialarını kendi koduma karşı denetledim:
+1. **`thought` parçaları filtrelenmiyordu.** Gemini yanıtında `parts[]` birden fazla
+   olabiliyor ve düşünme parçaları da `text` taşıyabiliyor; bunlar JSON'a karışınca
+   ayrıştırma çökerdi. Artık `!p.thought` süzgeci var.
+2. **Metin parçaları `'\n'` ile birleştiriliyordu** — çok parçalı bir JSON gövdesi
+   satır sonuyla bölünüp bozuluyordu. Artık araya hiçbir şey konmadan birleşiyor.
+Ayrıca `finishReason:'MAX_TOKENS'` artık anlaşılır hataya çevriliyor (yarım JSON'un
+sebebini söylemeyen ayrıştırma hatası yerine). `yanit_test` bu üçünü sınıyor;
+`data:` önekinin soyulduğu da doğrulandı (zaten doğruymuş).
+
+### ⚠ AÇIK · KULLANICI KARARI BEKLEYEN
+1. **Şema ekleri.** `konu` için yeni alan gerekmedi (kullanıcı haklı). Ama sayfa 3'ün
+   "senin cevabın / doğru cevap"ı ve cevap anahtarı eşleşmesi için `no`, `sec`, `metin`,
+   `coz`, `dogru`, `gor` alanları **eklendi** — hepsi isteğe bağlı ve geriye dönük
+   uyumlu (eski kayıtlarda yoklar, arayüz "kayıtlı değil" yazıyor, uydurmuyor).
+2. **Gerçek API hiç çağrılmadı.** Anahtar kullanıcıda; tüm testler taklit yanıtla.
+   Okuma doğruluğu (el yazısı, çözüm eşleşmesi, kutu koordinatları) ilk gerçek
+   fotoğrafta görülecek. Kutu koordinatı sapıyorsa kırpma payı ayarlanmalı.
+3. **Ücretsiz katman limiti doğrulanamadı** — `ai.google.dev` bu ortamdan engelli.
+   Araştırmacı "emin değilim" dedi; uydurulmadı.
+4. **⚠ ANAHTAR KISITLAMASI · muhtemel engel.** Araştırma, Gemini API'nin bir tarihten
+   sonra **kısıtlanmamış (unrestricted) anahtarlardan gelen istekleri reddettiğini**
+   bildirdi: tarayıcıdan çağrı için anahtara Google Cloud Console'da **HTTP referrer
+   (Websites) kısıtlaması** gerekebilir, yoksa 403 gelir. Araştırmacı bunu resmî
+   sayfadan okuyamadı ("EMİN DEĞİLİM" — ai.google.dev engelliydi), WebSearch özetinden
+   geliyor. **Doğrulama yolu:** anahtarı alıp Cloud Console → API Keys → Application
+   restrictions → Websites'a GitHub Pages adresini eklemek ve gerçek cihazdan denemek.
+   403 alınırsa sebebi büyük olasılıkla budur, kod değil.
+
+**sürüm 2027-02-19a ↔ rota-2027-02-19a**
+
+---
+
+## §290–§292 · Projeksiyon düzeltmesi + çark kaydırma + dürtme (2027-02-19b)
+
+### §290 · "Projeksiyon şişmesin — gerçeğe en yakın değer" (kullanıcı kararı alındı)
+Kullanıcı §284'te açık bırakılan iki maddeyi onayladı ve ikincisini netleştirdi:
+> "Dr Atilla Uslu videolarıyla Dahiliye 1-2 kitapları aslında AYNI çalışma ama
+> sistemde farklı kaynak gibi gözüküyor ve bu yanlış; videoları izlerken önümde
+> kitabım açık takip ediyorum, okumuş sayılıyorum zaten."
+
+Üç değişiklik (hepsi `para()` içinde, tek yer):
+1. **Kazanç anahtarı kök bazlı.** `renkAnh(ad)` → `konuKok(ad)`. Eskiden
+   "Hematoloji videoları — 1/9" ile "Hematoloji" AYRI konuydu; 9 videonun
+   **9 ayrı havuzu** vardı. §282'de rozet/çürüme zaten kök bazlıydı, kazanç geride kalmıştı.
+2. **Kaynak kökü** (`kaynakKok` + `KAYNAK_ESL`): `Atilla Uslu Dahiliye videoları · 1.5x`
+   ≡ `Atilla Uslu Dahiliye 1/2` → tek kök. Artık aynı çalışma, ikinci kaynak değil.
+3. **Konu tavanı** (`_khT`): bir konudan alınabilecek TOPLAM yeni-öğrenme payı,
+   o konu için görülen en büyük tek iddiayı aşamaz. Tavan olmadan video ve kitap
+   ayrı ayrı tam pay alıyordu. Tekrar getirisi (gerçekten farklı kitap) etkilenmez.
+4. **Parça böleni doğru alandan** (`gorevParca`): `g.ot[1]` ya da addaki "N/M".
+   `g.sira[1]` "bu blokta kaç iş var" demek — **196 görevin 146'sında yanlıştı**.
+5. **Power-up kazancı** (`puDeger`): konu başka kaynaktan kapandıysa artık
+   TEKRAR sayılıyor (`TEKRAR_KAT`, `S_TEK`). Liste "+0.29 net" derken yanındaki
+   §282 rozeti "başka kaynaktan" diyordu — çelişki giderildi.
+
+**ÖLÇÜLEN ETKİ (gerçek kullanıcı verisi, önce/sonra):**
+| senaryo | eski | yeni | Δ |
+|---|---|---|---|
+| şu anki veri | 59.3504 | 59.3504 | **0.0000** (uykuda) |
+| çok parçalı işler bugün bitse | 61.1866 | 60.4449 | **−0.7417** |
+| tüm program bugün bitse | 62.4141 | 62.6021 | **+0.1880** |
+
+⚠ Etki **iki yönlü** — sadece düşürmüyor. Eski kod hem şişiriyordu (video+kitap
+çift sayım, 9 video 9 ayrı havuz) hem de bastırıyordu (tek parçalı görev
+`sira[1]=2` yüzünden kazancı yarıya iniyordu). "Gerçeğe en yakın" bu demek.
+Bugünkü sayı değişmedi çünkü `para()` yalnız SON DENEMEDEN SONRA tamamlanan
+işleri sayıyor ve tamamlanmış 17 işin hepsi öncesinde.
+
+### §291 · Çarkın merkezini tutup sağa kaydır → deneme analizi
+Hem çark hem pinch→program/kitap görünümünde çalışıyor (`#gunListe` çarkın
+çocuğu; dinleyici kapsayıcıda, yakalama evresinde). Analiz tam ekran, sağ üstte
+çarpı. Deneme girişi/fotoğraf paneli ESKİ düğmesinde kaldı (kullanıcı isteği).
+Çakışma önlemleri: yalnız **tek parmak** (iki parmak pinch'in) · yalnız **merkez
+bandından** başlayan (kenar %18/%14 dışta) · yön bir kez kararlaştırılır, **dikey
+kaydırma serbest** · düğme/girdi üzerinde başlayan dokunuş sayılmaz. Masaüstünde
+fare sürüklemesi de var. Beşi de gerçek dokunmayla sınandı (sola/dikey/kenar açmıyor).
+
+### §292 · Üst baloncuk kaldırıldı, çark "ben burdayım" diye dürtüyor
+Analiz hazır olunca üstten bildirim ÇIKMIYOR. Bunun yerine çark bir bariyeri
+itip geri çekiliyormuş gibi ritmik hareket ediyor (`@keyframes carkDurt`,
+2.6 sn, nefesli — sürekli değil). Kullanıcı sağa kaydırıp analize bakınca
+duruyor. `D.analizBekliyor` ile **kalıcı**: uygulama kapanıp açılsa ritim
+kaldığı yerden sürer. Senkron beyaz listesinde DEĞİL (cihaza özel).
+`prefers-reduced-motion` açıksa animasyon yerine sabit altın çerçeve.
+
+### Kapılar
+`kaynak/dom_test.js` **36 → 49 kontrol**. Yeni iddialar düzeltme öncesi sürümde
+✗, sonrasında ✓ veriyor (boş kapı değil). `pu_test`teki üç iddia eski kodun
+birebir metnini arıyordu — **biri doğrudan HATAYI sabitliyordu** (`sira[1]`);
+niyet korunarak yeniden yazıldı. Tüm kapılar + 5 özellik testi **0 hata**.
+
+⚠ Kendi kapımda **test yalıtımı kusuru** buldum: §288 bloğu `D.denemeler`'i
+`t/k/bn`siz sentetik kayıtla değiştiriyor, sonraki `para()` NaN üretiyordu.
+§290 bloğu artık motoru kendi tohumuna döndürüyor.
+
+**sürüm 2027-02-19b ↔ rota-2027-02-19b**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)

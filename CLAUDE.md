@@ -117,7 +117,7 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   varyantı atlanınca §112'nin düzeltmesi §117'ye kadar eksik kaldı; aynı kusur dört
   panelde birden vardı §151).
 
-## Güncel durum işaretçisi (sürüm `2027-02-18j`, DEVIR sonundaki devir notu)
+## Güncel durum işaretçisi (sürüm `2027-02-19b`, DEVIR sonundaki devir notu)
 
 - FT serisi 10 kitap power-up havuzuna işlendi (156 → 254 konu); konu tekilliği /
   net havuzu paylaşımı grup bazlı anahtarla tamamlandı (§219–§228).
@@ -128,6 +128,27 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   200→D.denemeler / 24'lü→D.kal. Okuma motoru **kullanıcının Anthropic anahtarıyla
   tarayıcıdan doğrudan Claude görüşü** (anahtar `rota-gorus` yerel deposunda, gist'e
   senkronlanmaz, koda gömülü değil). Gerçek fotoğraf doğruluğu kullanıcıda denenecek.
+- **§284 · ölü tamamlama dairesi düzeltildi.** Gün listesini yeniden kuran yedi
+  koddan biri `glBagla()` atlıyordu → ‹ › ile gün değişince daireler bağsız kalıp
+  tıklama kullanıcıyı çarka ışınlıyordu. Artık tek yol: `glKur()` + düğme korumalı
+  `glSatirBagla()`. Power-up paneline de "başka kaynaktan" rozeti eklendi.
+  **Yeni kapı `kaynak/dom_test.js`** — gerçek Chromium'da gerçek dokunma; harness
+  (`derin_ortam.js`) olay bağlamayı GÖREMEZ, bu sınıf kusur ondan kaçıyordu.
+- **§285–§289 · Gemini + analiz akışı.** Fotoğraf okuma **Google Gemini**'ye taşındı
+  (varsayılan `gemini-flash-lite-latest`; ⚠ `gemini-2.5-flash-lite` EMEKLİ). API biçimi
+  resmî Discovery şeması + cookbook'tan alındı, CORS canlı ölçüldü. Cevap anahtarı
+  fotoğrafından çözüm **okunuyor** (üretilmiyor); düşük güvenli eşleşme kaydedilmez,
+  gözden geçirme kuyruğuna düşer. Ders/konu zayıflık özeti mevcut `b/konu/s/e` şeması
+  üzerine kuruldu. 4 sayfalık kaydırmalı akış (`akisAc`), tamamı akışkan/responsive.
+  ⚠ **Görseller `D`'ye YAZILMAZ** — `Senk` `denemeler`i olduğu gibi gist'e yolluyor;
+  görseller `GorselDepo` (IndexedDB, senkron dışı) içinde, çözüm metni D'de.
+- **§290 · projeksiyon gerçeğe çekildi.** Kazanç anahtarı kök bazlı (`konuKok`),
+  video ≡ kitap tek kaynak kökü (`kaynakKok`/`KAYNAK_ESL`), konu tavanı (`_khT`),
+  parça böleni `gorevParca` (⚠ `g.sira[1]` parça sayısı DEĞİL, blok iş sayısı),
+  power-up kazancı zaten çalışılmış konuda TEKRAR sayılıyor. Etki iki yönlü.
+- **§291–§292 · çarkın merkezini tutup SAĞA kaydır → deneme analizi** (her iki
+  görünümde). Analiz hazır olunca üstten bildirim YOK; çark ritmik dürtüyor
+  (`#cark.durt`), `D.analizBekliyor` ile kalıcı, senkron dışı.
 - **YARIM KALAN · TASARIM:** power-up paneli, matris ve seyir sayfalarının görsel
   tasarımı (beğenilen referans: `.glAnh` altın gradyan anahtar, `.glS` satır düzeni,
   §217 daire tamamlama düğmesi).
