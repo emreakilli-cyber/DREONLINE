@@ -63,9 +63,9 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
 
 - Üretim sırası: `dizi3.py` → `yeniden.py` → `uret.py` (kural testi otomatik koşar)
   → `denet.py` → `kos.js`. FT/power-up tarafı: `ft_katalog.py` (tek kaynak) → `ft_uret.py`.
-- Tur sonu **on yedi kapı**: `kural_test.py` · `denet.py` · `kos.js` · `derin_test.js` ·
+- Tur sonu **on sekiz kapı**: `kural_test.py` · `denet.py` · `kos.js` · `derin_test.js` ·
   `kombo_test.js` · `cark_test.js` · `mola_test.js` · `pu_test.js` · `kal_test.js` ·
-  `dom_test.js` · `olcek_test.js` · `analiz_test.js` ·
+  `dom_test.js` · `olcek_test.js` · `analiz_test.js` · `gercek_akis_test.js` ·
   `senk_kos/poll/etag/uc/rol.js`. Hepsi koşulur, **çıktının tamamı okunur**.
 - ⚠ **Kapı geçmek "hata yok" demek değildir** — kapılar kendi yazdığın kontrollerdir
   (§87'de kapılar temizken 4 gerçek hata bulundu). Belgeyi de denetlemezler (§12.10).
@@ -118,7 +118,7 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   varyantı atlanınca §112'nin düzeltmesi §117'ye kadar eksik kaldı; aynı kusur dört
   panelde birden vardı §151).
 
-## Güncel durum işaretçisi (sürüm `2027-02-19g`, DEVIR sonundaki devir notu)
+## Güncel durum işaretçisi (sürüm `2027-02-19h`, DEVIR sonundaki devir notu)
 
 - FT serisi 10 kitap power-up havuzuna işlendi (156 → 254 konu); konu tekilliği /
   net havuzu paylaşımı grup bazlı anahtarla tamamlandı (§219–§228).
@@ -193,6 +193,22 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   bir karede İKİ sayfa, etiketler `Tablo (Soru N)` **ve** `Şekil (Soru N)`,
   soru kutusunda gömülü etiketsiz görseller (mikroskop/radyoloji), cilt
   kıvrımında kesik sütunlar → istem "tamamlama, `[…]` ile işaretle" diyor.
+- **§301 · ilk gerçek tam tur (15 soru + 34 anahtar sayfası).** İlk gerçek zamanlama:
+  8 istek ≈ 1.5–2 dk, 17 istek ≈ 3 dk (kullanıcı beyanı). Beş kusur: (a) kod kuyruğu
+  her çizimde listeyi yeniden hesaplayıp **her ikinci soruyu atlıyordu** (68→34);
+  (b) `if(!coz)return` çözüm metni boş gelen kayıtları atıyordu — oysa D/Y için
+  gereken **doğru şık**; üstelik "0 kaydedildi + hepsi net eşleşti" çelişkisi vardı;
+  (c) **kısmi tarama soru kırılımını hiç saklamıyordu** → cevap anahtarı bağlanamıyor,
+  analizde görünmüyordu; artık `kismi:true` ile `D.denemeler`'e de yazılıyor ve
+  `sirali()` bunları eliyor (net/parakete etkilenmez); (d) yeşil bildirim kaydırınca
+  kendisi de kayıyordu → dolgu sabit, etiket kayıyor, alt katman `carkSolukla` ile
+  soluklaşıyor; (e) kalan süre ortalama yerine **ortanca** ile hesaplanıyor.
+  İstem: güven kodu **iki konumda** aranıyor (sol kenarda D/Y/B'nin ALTI · şıkların
+  sağı) ve **eğik el yazısı** uyarısı eklendi — ⚠ gerçek fotoğrafla doğrulanmadı.
+  Kapı: `kaynak/gercek_akis_test.js`.
+- **YARIM KALAN · ÜST PANEL TASARIMI:** POTANSİYEL kartı 390 px'de ekranın 40 px
+  dışında (`overflow-x:clip` sessizce kesiyor), 320 px'de Parakete de taşıyor; panel
+  ekranın %19–23'ünü yiyor. Tasarım turnuvası oturum limitine takıldı, teslim edilmedi.
 - **YARIM KALAN · TASARIM:** power-up paneli, matris ve seyir sayfalarının görsel
   tasarımı (beğenilen referans: `.glAnh` altın gradyan anahtar, `.glS` satır düzeni,
   §217 daire tamamlama düğmesi).

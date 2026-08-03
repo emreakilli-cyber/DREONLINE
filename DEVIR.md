@@ -14830,6 +14830,94 @@ kip değişiminde okumanın korunduğu.
 
 ---
 
+## §301 · İLK GERÇEK TAM TUR · 15 soru sayfası + 34 anahtar sayfası (2027-02-19h)
+
+Kullanıcı gerçek API ile uçtan uca bir tur yaptı. **İlk gerçek zamanlama
+ölçümü de buradan geldi.** Beş kusur çıktı; beşi de kapılardan temiz geçmişti.
+
+### İLK GERÇEK ÖLÇÜMLER (kullanıcı beyanı — artık tahmin değil)
+- 15 soru sayfası (8 istek) → **1.5–2 dakika**, soru 1–131 okundu.
+- 34 anahtar sayfası (17 istek) → **~3 dakika**.
+- Yani istek başına kabaca 10–12 sn. ⚠ Bu kullanıcı beyanı, kod ölçümü değil.
+
+### 1 · Kod kuyruğu 68 dedi, 34 sordu
+"68 soru kodsuz" → 34 soru soruldu → "kalan 34 kodsuz bırakıldı".
+Sebep: `kodKuyrukCiz` listeyi **her çizimde yeniden hesaplıyordu**. Bir soruya
+kod verilince o soru listeden düşüyor, ama `KOD_KUYRUK.i` de ilerliyordu →
+**her ikinci soru atlanıyordu**. Kuyruk artık `kodKuyrukAc()` anında bir kez
+donduruluyor (`KOD_KUYRUK.L`).
+
+### 2 · 134 çözüm okundu, 0'ı kaydedildi — üstelik "hepsi net eşleşti" dedi
+İki ayrı kusur üst üste binmiş:
+- **`if(!coz)return`** — çözüm METNİ boş gelen kayıtlar sessizce atılıyordu.
+  Oysa D/Y türetmek için gereken şey metin değil **doğru şık** (`dogru`).
+  Artık ikisinden biri varsa kayıt yaşıyor; metinsizler sayılıp bildiriliyor.
+- Özet çelişkiliydi: `yaz=0, kuyruk=0, sahipsiz=0` durumunda "Hepsi net
+  eşleşti." yazıyordu. Artık hiçbir şey işlenmediyse **sebebi** yazılıyor
+  (kaç çözüm okundu, kaçı tamamen boştu, bağlanacak kayıt var mı).
+
+### 3 · KÖK SEBEP · 131 soruluk kısmi tarama soru kırılımını hiç saklamıyordu
+Kullanıcının üç ayrı şikâyeti tek sebebe çıkıyor:
+"8 branş kaydı yazıldı ama deneme analizinde göremedim" · "cevap anahtarı
+hiçbir soruya bağlanamadı" · "analiz sayfasında sadece eski deneme vardı".
+`omrKapsam` 131/200'ü tam saymıyor (doğru — 131 soru 200'lük deneme gibi
+sayılamaz) ve kısmi tarama **yalnız toplulaştırılmış `D.kal` branş kaydına**
+yazılıyordu; soru kırılımı hiçbir yere gitmiyordu.
+Çözüm: kalibrasyon yine `D.kal`'dan geliyor (muhafazakârlık korundu), **ama**
+kırılım `kismi:true` işaretli ayrıntılı kayıt olarak `D.denemeler`'e de
+yazılıyor. `sirali()` kismi kayıtları eliyor → `son()`, `denemeTrend()`,
+parakete etkilenmiyor; `ayrDenemeler()`, `konuZayiflik()`, `denemeMatris()`
+ve cevap anahtarı eşleştirmesi ise artık görüyor.
+⚠ `pu_test`teki iki iddia eski davranışı koruyordu — bilinçli olarak
+güncellendi; **kritik kısıt iddiaları (son() değişmiyor, parakete çökmüyor)
+aynen duruyor ve geçiyor.**
+
+### 4 · Yeşil bildirim kaydırınca kendisi de kayıyordu
+Kullanıcı: "yeşil alanın kayması lazım değil; sadece yazı kaysın, çark ile
+çipler silikleşmeye başlasın." Yapıldı: dolgu sabit, `.caEt` etiketi kayıyor,
+`carkSolukla(p)` ile gün listesi/sahne/ray/çipler kaydırma ilerledikçe
+soluklaşıyor, bırakılınca geri geliyor.
+
+### 5 · Kalan süre 7 dk → 3 dk zıpladı
+Sebep: ilk grup soğuk başlangıç yüzünden yavaş; **ortalama** onu taşıyıp
+tahmini şişiriyordu. Artık **ortanca** kullanılıyor ve tahmin en az iki grup
+bittikten sonra gösteriliyor.
+
+### 6 · Güven kodu (E/AK/B/U) okunamadı — istem düzeltildi
+Kullanıcı: "E harfi şıkların sağında değil, **D yazısının altında, soruların
+solunda**... şıkların sağında yazanları da okuyamamış... B ve U'yu da
+yazımları net olsa da **eğik** yazıldıklarından okuyamamış."
+İstem artık **iki konumu da** söylüyor (sol kenarda D/Y/B'nin ALTI · şıkların
+sağı), **eğik/italik el yazısını** açıkça uyarıyor ve "AK"ın iki harfli tek
+kod olduğunu belirtiyor.
+⚠ Bu bir istem değişikliği — **gerçek fotoğrafla doğrulanmadı**, kullanıcının
+bir sonraki turunda ölçülecek.
+
+### 7 · "Onayla ve kaydet" sessizce başarısız oluyordu
+Başarısızlık sebebi yalnız tek satırlık jarvis balonuna yazılıyordu; panelde
+iz kalmıyordu. Artık `omrKayHata()` sebebi panele yazıyor. Ayrıca kip geri
+alınırken "Okumaya dönüldü · kip ona geri alındı" satırı ekleniyor —
+kullanıcı bunu "ışınlandım" diye algılamıştı.
+
+### Kapılar
+Yeni kalıcı kapı **`kaynak/gercek_akis_test.js` · 15 kontrol**.
+`pu_test`teki iki bayat iddia güncellendi. On kalıcı kapı + sekiz çalışma
+kapısı: **0 hata**.
+
+### Bu turda yaptığım hatalar
+- **Beş kusurun beşi de bana ait ve beşini de kapılarım kaçırdı.** Sahte
+  `fetch` gerçek modelin davranışını (metinsiz çözüm döndürmesi) taklit
+  etmiyordu; kendi mock'um her zaman `coz` dolu döndürdüğü için `if(!coz)`
+  dalı hiç sınanmadı. Mock'u kendi kodumun beklentisine göre yazmışım.
+- **Kısmi taramanın analizde görünmemesi tasarım kusuruydu, kod hatası
+  değildi** — §283'ten beri oradaydı ve gerçek kullanıma kadar fark edilmedi.
+- Üst panel tasarım turnuvası **oturum limitine takıldı**; 3 tasarımdan 2'si
+  üretildi, jüriler ve sentez hiç koşmadı. Bu tur teslim edilemedi.
+
+**sürüm 2027-02-19h ↔ rota-2027-02-19h**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)

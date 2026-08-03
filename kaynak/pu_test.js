@@ -1840,8 +1840,18 @@ eO('okuma katmanı yalnız isaretOku içinde (değişecek tek yer)',
     'return {ok:ok,denemeArtti:D.denemeler.length-dOnce,kalArtti:D.kal.length-kOnce,'+
     'sonAyni:sOnce===JSON.stringify(son()),fark:+Math.abs(pOnce-pSonra).toFixed(3),'+
     'pOnce:+pOnce.toFixed(2),pSonra:+pSonra.toFixed(2),'+
-    'sonKal:D.kal[D.kal.length-1]||null}})()');
-  eO('kısmi tarama D.denemeler’e YAZMIYOR',ks.denemeArtti===0,ks);
+    'sonKal:D.kal[D.kal.length-1]||null,'+
+    'sonDen:D.denemeler[D.denemeler.length-1]||null}})()');
+  /* §301 · DAVRANIŞ BİLİNÇLİ OLARAK DEĞİŞTİ. Eskiden kısmi tarama YALNIZ
+     D.kal'a yazıyordu; soru kırılımı hiçbir yere gitmiyordu. Sonuç: gerçek
+     kullanımda cevap anahtarı bağlanacak soru bulamadı ("0 çözüm kaydedildi")
+     ve tarama deneme analizinde hiç görünmedi. Artık kırılım `kismi:true`
+     işaretiyle D.denemeler'e de yazılıyor. KRİTİK KISIT DEĞİŞMEDİ:
+     sirali() kismi kayıtları eler → son()/trend/parakete etkilenmez —
+     aşağıdaki iki iddia bunu korumaya devam ediyor. */
+  eO('§301 · kısmi tarama soru kırılımını D.denemeler’e yazıyor',ks.denemeArtti===1,ks);
+  eO('§301 · yazılan kayıt kismi:true (net hesabına girmez)',
+    !!ks.sonDen&&ks.sonDen.kismi===true,ks.sonDen&&{kismi:ks.sonDen.kismi,t:ks.sonDen.t});
   eO('kısmi tarama D.kal’a branş kaydı yazıyor',ks.kalArtti>=1,ks);
   /* ⚠ son() DEĞİŞMEMELİ: parakete son denemeden türer; kısmi sayfa
      "son deneme" olursa 10 soruluk örneklem 200 soru sanılır ve puan çöker. */
@@ -1973,8 +1983,9 @@ eK('yeni katman fonksiyonları var (soruDers/denemePrompt/denemeGorusEsle/deneme
     'kalKayit:D.kal[D.kal.length-1]}})()');
   eK('golden 24: tüm sorular seçilen derse (Dahiliye) atanıyor',g.allDah===true,g.allDah);
   eK('golden 24: TAM deneme DEĞİL → kal (branş) yolu',g.tam===false&&g.yol==='kal',g);
-  eK('golden 24: onayla → D.kal +1, D.denemeler DEĞİŞMİYOR (parakete korunur)',
-    g.ok===true&&g.kalArtti===1&&g.denArtti===0,g);
+  /* §301 · kırılım artık D.denemeler'e de yazılıyor (kismi:true, net dışı) */
+  eK('golden 24: onayla → D.kal +1 ve kırılım kaydı +1 (parakete korunur)',
+    g.ok===true&&g.kalArtti===1&&g.denArtti===1,g);
   eK('golden 24: kal kaydı dpanel şeklinde (tar/br/d/y/b) ve boş sayılıyor',
     !!g.kalKayit&&g.kalKayit.br==='Dahiliye'&&typeof g.kalKayit.d==='number'&&
     typeof g.kalKayit.b==='number'&&(g.kalKayit.b>=1),g.kalKayit);
