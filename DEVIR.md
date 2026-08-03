@@ -14918,6 +14918,69 @@ kapısı: **0 hata**.
 
 ---
 
+## §302 · AI Studio panosu · üç soru kapandı, bir israf ölçüldü (2027-02-19i)
+
+Kullanıcı gerçek turun AI Studio istatistiklerini gönderdi (iki ekran görüntüsü).
+
+### KAPANAN AÇIK NOKTALAR (artık varsayım değil, belge)
+1. **Hesap "Free tier" rozetiyle işaretli.** Tüketicideki **Gemini Pro
+   aboneliği API kotasına YANSIMIYOR** — bu, §299'dan beri açık duran soruydu.
+   Uygulama ücretsiz katman sınırlarıyla çalışıyor.
+2. **Başarı oranı %100 · "Total API Errors: No data available".** Yani bu turda
+   HİÇ 429 ve hiç hata olmadı. §295/§299'un dayanıklılık makinesi (yeniden
+   deneme, kota bekleme, kısmi başarı) **gerçekte hiç tetiklenmedi** — çalıştığı
+   kanıtlanmadı, yalnızca yola girmedi.
+3. **Model takma adı çözümlendi.** Panoda üç model görünüyor: Gemini 3.1 Flash
+   Lite · **Gemini 3.5 Flash Lite** · Gemini 3.6 Flash. Büyük sıçrama
+   3.5 Flash Lite'ta — yani `gemini-flash-lite-latest` şu an **Gemini 3.5 Flash
+   Lite**'a çözümleniyor. 3.6 Flash'taki küçük tümsek kullanıcının §295'te
+   elle denediği başarısız tur.
+
+### ÖLÇÜLEN İSRAF · istem şişmesi
+Panoda 28 günlük pencerede girdi tokenı 200K ekseninde ~175K'ya kadar çıkıyor
+(grafikten okundu, kesin sayı değil). Kod tarafında ÖLÇTÜM:
+
+| ne | karakter | ≈token | 17 istekte |
+|---|---|---|---|
+| anahtar istemi · taban (listesiz) | 3 298 | 825 | — |
+| anahtar istemi · 131 soruluk kök listesiyle | 15 750 | 3 938 | **66 946** |
+| yalnız listenin payı | 12 452 | 3 113 | **52 921** |
+
+Yani aynı soru listesi 17 isteğin **her birinde** yeniden gönderiliyordu ve tek
+başına ~53 000 girdi tokenı tutuyordu. Liste yalnız modelin kendi **eşleşme
+güvenini** sınaması için var; eşleştirmenin kendisi zaten `no` üzerinden.
+
+**§302 düzeltmesi:** liste `KOK_SINIR=60`'tan uzunsa soru kökleri düşürülüyor,
+`#numara · ders` kalıyor ve modele "kökler verilmedi, sayfada yazan numaraya
+daya, sıraya güvenme" deniyor. Kısa listede (tek sayfa) kökler korunuyor —
+orada maliyet önemsiz, doğrulama değerli.
+
+Ölçülen sonuç: 15 750 → **6 028 karakter (%62 düşüş)**; 17 istekte
+66 946 → 25 619 token, **~41 000 token tasarruf**.
+
+⚠ ÖDÜN: uzun listede model artık soru kökünü göremiyor, dolayısıyla `eslesme`
+güvenini yalnız numaraya dayandırıyor. Kullanıcı "cevap anahtarındaki numaralar
+zaten soru numarasıyla aynı" dediği için risk düşük görünüyor — ama bu bir
+ödün, gerçek turda eşleşme güveninin düşüp düşmediğine bakılmalı.
+
+### Kapı
+`kaynak/gercek_akis_test.js` **15 → 20 kontrol** (uzun listede kök yok · kısa
+listede kök var · numara+ders her hâlde duruyor · modele söyleniyor · %50'den
+fazla kısalma). Tüm kapılar 0 hata.
+
+### Bu turda yaptığım hatalar
+- **İstem şişmesini §299'da ölçmüştüm ve ertelemiştim.** "21 KB, görsellerle
+  karşılaştırınca küçük" diye geçmiştim; gerçek panoyu görene kadar 17 istekle
+  çarpmayı yapmadım. Tek istek maliyeti küçük görünse de **istek sayısıyla
+  çarpılmayan ölçüm eksik ölçümdür**.
+- İlk doğrulama betiğimde iki hatalı sonda vardı (131. sorunun dersini "Kadın
+  Doğum" sandım — o 191-200 aralığı; ve "soru kökü" ifadesini istemin başka bir
+  yerinde arayıp yanlış negatif aldım). Ölçümü satır bazlı yeniden yaptım.
+
+**sürüm 2027-02-19i ↔ rota-2027-02-19i**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)

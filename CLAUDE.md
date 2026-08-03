@@ -118,7 +118,7 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   varyantı atlanınca §112'nin düzeltmesi §117'ye kadar eksik kaldı; aynı kusur dört
   panelde birden vardı §151).
 
-## Güncel durum işaretçisi (sürüm `2027-02-19h`, DEVIR sonundaki devir notu)
+## Güncel durum işaretçisi (sürüm `2027-02-19i`, DEVIR sonundaki devir notu)
 
 - FT serisi 10 kitap power-up havuzuna işlendi (156 → 254 konu); konu tekilliği /
   net havuzu paylaşımı grup bazlı anahtarla tamamlandı (§219–§228).
@@ -206,6 +206,14 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   İstem: güven kodu **iki konumda** aranıyor (sol kenarda D/Y/B'nin ALTI · şıkların
   sağı) ve **eğik el yazısı** uyarısı eklendi — ⚠ gerçek fotoğrafla doğrulanmadı.
   Kapı: `kaynak/gercek_akis_test.js`.
+- **§302 · AI Studio panosu (gerçek).** Hesap **Free tier** — tüketicideki Gemini
+  Pro aboneliği **API kotasına yansımıyor** (açık nokta kapandı). Turda başarı
+  %100, hiç hata/429 yok → dayanıklılık makinesi gerçekte hiç tetiklenmedi.
+  `gemini-flash-lite-latest` şu an **Gemini 3.5 Flash Lite**'a çözümleniyor.
+  Ölçülen israf: 131 soruluk kök listesi 17 anahtar isteğinde ~53K token
+  tutuyordu → `KOK_SINIR=60` üstünde kökler düşürülüyor, %62 kısalma
+  (15 750 → 6 028 karakter), ~41K token tasarruf. ⚠ Ödün: uzun listede model
+  eşleşme güvenini yalnız numaraya dayıyor.
 - **YARIM KALAN · ÜST PANEL TASARIMI:** POTANSİYEL kartı 390 px'de ekranın 40 px
   dışında (`overflow-x:clip` sessizce kesiyor), 320 px'de Parakete de taşıyor; panel
   ekranın %19–23'ünü yiyor. Tasarım turnuvası oturum limitine takıldı, teslim edilmedi.

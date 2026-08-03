@@ -127,7 +127,30 @@ if(!fs.existsSync(YOL)){ console.log('⚠ '+YOL+' yok — ATLANDI'); process.exi
  chk('§301 · istem güven kodunun İKİ konumunu da söylüyor',s.ikiKonum,s);
  chk('§301 · istem eğik el yazısını uyarıyor',s.egik&&s.ak,s);
 
- console.log('\n═══ §301 · GERÇEK AKIŞ ═══');
+ /* 8 · §302 · İSTEM ŞİŞMESİ · uzun listede soru kökleri düşürülüyor
+    (kullanıcının AI Studio panosu ~175K girdi tokenı gösterdi; ölçüldü:
+     131 soruluk kök listesi 17 anahtar isteğinde tek başına ~53K token) */
+ const t=await pg.evaluate(()=>{
+   const mk=n=>{const S=[];for(let i=1;i<=n;i++)S.push({no:i,
+     b:soruDers(i,'200',null)||'Anatomi',
+     metin:'Kırk beş yaşında erkek hasta, üç haftadır süren halsizlik ve gece terlemesi…'});return S};
+   const uzun=cevapAnahtarPrompt(mk(131)), kisa=cevapAnahtarPrompt(mk(8));
+   const sat=uzun.split('\n').filter(x=>/^\s+#\d+/.test(x));
+   return {uzunBoy:uzun.length, kisaBoy:kisa.length, satir:sat.length,
+     ilk:sat[0]||'', son:sat[sat.length-1]||'',
+     uzunKok:/Kırk beş yaşında/.test(uzun), kisaKok:/Kırk beş yaşında/.test(kisa),
+     uyari:/soru kökleri verilmedi/.test(uzun), sinir:(typeof KOK_SINIR!=='undefined')?KOK_SINIR:null};
+ });
+ chk('§302 · uzun listede soru kökleri GÖNDERİLMİYOR',t.uzunKok===false,t);
+ chk('§302 · kısa listede soru kökleri KORUNUYOR',t.kisaKok===true,t);
+ chk('§302 · numara ve ders her hâlde duruyor',
+   /^\s+#1 · /.test(t.ilk)&&/^\s+#131 · /.test(t.son)&&t.satir===131,
+   {ilk:t.ilk,son:t.son,satir:t.satir});
+ chk('§302 · köklerin verilmediği modele SÖYLENİYOR',t.uyari===true,t);
+ chk('§302 · uzun istem kısaldı (%50\'den fazla)',t.uzunBoy<15750*0.5,
+   {yeni:t.uzunBoy,eski:15750});
+
+ console.log('\n═══ §301–§302 · GERÇEK AKIŞ ═══');
  console.log(R.join('\n'));
  console.log('\nSAYFA HATASI:',h.length?h.slice(0,3):'(yok)');
  console.log(R.__f?('\n✗ '+R.__f+' HATA'):'\n✓ SIFIR HATA');
