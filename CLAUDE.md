@@ -224,9 +224,11 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   "tamamlanan" rozeti HİÇ görünmüyormuş (`.gor` eklenmiyordu, §303 öncesinden).
   ⚠ `overflow-x:clip` taşmayı gizlediği için hiçbir kapı yakalamamıştı.
   Kapı: `kaynak/ust_test.js`; `cark_test.js`'te 15 bayat iddia güncellendi.
-- **YARIM KALAN · TASARIM:** power-up paneli, matris ve seyir sayfalarının görsel
-  tasarımı (beğenilen referans: `.glAnh` altın gradyan anahtar, `.glS` satır düzeni,
-  §217 daire tamamlama düğmesi).
+- **Tasarım işleri kapandı.** Power-up paneli (§229 · altın gradyan anahtar,
+  `.glAnh` dili), matris/branş gücü ve seyir grafikleri (§230), üst panel (§303) —
+  dördü de bitti ve gerçek tarayıcıda görsel olarak doğrulandı.
+  Beğenilen referans dili: `.glAnh` altın gradyan anahtar · `.glS` satır düzeni ·
+  §217 daire tamamlama düğmesi.
 - ⚠ **Gerçek API hiç çağrılmadı.** Bir isteğin kaç saniye sürdüğü bilinmiyor;
   38 isteğin toplam süresi hakkında sayı verilmemeli. §285–§298 kanıtı tamamen sahte `fetch` ve elle
   okunmuş yer gerçeği üzerinden. Sıradaki iş: kullanıcı anahtarı yenileyip gerçek

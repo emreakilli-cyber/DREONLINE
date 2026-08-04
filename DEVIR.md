@@ -15075,7 +15075,7 @@ Tüm kapılar 0 hata.
 
 §254 · **FAZ 5 · tek açıklanabilir öncelik katmanı + ulaşılabilir tavan bandı.** `gorevOncelik`/`gorevNeden` (rehberSec+puEtki birleşimi, branş§konu tekilleştirme, kanıt cümleleri) · `tavanBant` (kalan iş bitince R_CAL±1.96·sd bandı; kök kusur `_rcZorla` bayrağıyla düzeldi). Sürüm 2027-03-01a.
 
-## ⚠ YARIM KALAN · TASARIM
+## ✓ TASARIM İŞLERİ KAPANDI (§303'te doğrulandı)
 
 Kullanıcı altı ekran görüntüsüyle bildirdi: **power-up paneli, matris ve seyir sayfalarının tasarımı** kitap sekmesi/Program-Kitap anahtarı kadar iyi değil.
 
@@ -15087,7 +15087,13 @@ Düzeltilecekler:
 - ~~Matris tablosu · sütun hizaları ve tipografi~~ ✓ §230 (+ kör nokta rozeti)
 - ~~Seyir defteri grafikleri~~ ✓ §230 (branş trend kartları; ana seyir grafiği hafif dokunuş)
 
-Bekleyen: kullanıcıdan etiketli deneme verisi (§230 formatı) · cihazdan "Hata kaydı" dökümü.
+⚠ §303'te dördü de gerçek tarayıcıda görsel olarak doğrulandı (390 px ekran
+görüntüsü): power-up paneli altın gradyan anahtar + altın "Çarka çek" düğmeleri,
+branş gücü radarı ve net/puan seyri okunur, hiçbirinde yatay taşma yok.
+Üst panel de §303'te yeniden tasarlandı — böylece tasarım kalemi kapandı.
+
+Bekleyen (KULLANICI TARAFINDA, kod işi değil): etiketli deneme verisi (§230
+formatı) · cihazdan "Hata kaydı" dökümü.
 
 ## Bilinen açık noktalar
 
