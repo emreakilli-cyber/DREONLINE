@@ -14981,6 +14981,88 @@ fazla kısalma). Tüm kapılar 0 hata.
 
 ---
 
+## §303 · ÜST PANEL YENİDEN TASARLANDI · yarım kalan iş kapandı (2027-02-19j)
+
+Kullanıcı: *"o butonlar, kalan gün, tarih falan bayadır dokunmadık, uygulamanın
+kalanına göre basit kaldılar. Bak ekrana POTANSİYEL kısmı sığmıyor mesela."*
+
+### ÖLÇÜLEN KUSUR (gerçek Chromium)
+| genişlik | Ölçülen | Parakete | Potansiyel | panel |
+|---|---|---|---|---|
+| 390 | 142→249 ✓ | 258→347 ✓ | **356→430 · 40 px DIŞARIDA** | 163 px (%19) |
+| 360 | ✓ | ✓ | **70 px dışarıda** | 163 px (%21) |
+| 320 | ✓ | **kesik** | **kesik** | 163 px (%23) |
+
+Hiçbir kapı yakalamamıştı çünkü `header{overflow-x:clip}` taşmayı **sessizce
+kesiyordu**; gövde yatay taşma bildirmiyordu.
+
+### TASARIM · üç bant
+Üç okuma AYRI KUTU olmaktan çıkıp **tek cam şeride** girdi. Eski geometri
+(3 × 74 px min-width + 2 × 18 px boşluk + üç çerçeve) dar ekranda matematiksel
+olarak sığmıyordu; şeritte sıkışan yalnız yazı ölçüsü kalıyor.
+Bantlar: **(sayaç | ritim)** · **(orb'lar | nav)** · **ölçü şeridi**.
+≥760 px'te dört sütunlu tek satıra iniyor → iki bant.
+
+Diğer değişiklikler:
+- **Hiyerarşi:** PARAKETE artık en büyük tipografi (karar sayısı o); Ölçülen ve
+  Potansiyel yanında daha sessiz. Ayrımlar kutu değil **saç-teli çizgi**.
+- **Ritim satırı** haplardan çıkıp sessiz teknik metne döndü (iki hap ≈ 70 px
+  genişlik masrafıydı ve dar ekranda alta düşüyordu).
+- **Ölçek tek kaynaktan:** her değer `clamp()` ile 320→1112 arasında sürekli;
+  yükseklik ekseni de `min(vw, vh)` ile katıldı — yatay tablette panel %20'ye
+  çıkıyordu, ölçüldü ve düzeltildi.
+- **Nav** hap ray + kayan cam kabarcık (`:has` ile; desteklemeyen tarayıcıda
+  düğme kendi zeminini çiziyor).
+
+### ⚠ HTML VE JS DEĞİŞMEDİ
+Şerit saf CSS: `.ok` kapları `display:contents` olduğu için `.cap/.v/.s`
+doğrudan ızgaraya giriyor. `#oP #oN #hP #hN #tkV #tkS`, `.ok.tkl.gor`
+görünürlük anahtarı ve `etiketler()` çıktısı aynen çalışıyor.
+
+### ÖLÇÜLEN SONUÇ
+| genişlik | önce | sonra | taşma |
+|---|---|---|---|
+| 320×700 | 163 px (%23) | **131 px (%19)** | yok |
+| 360×780 | 163 px (%21) | **137 px (%18)** | yok |
+| 390×844 | 163 px (%19) | **145 px (%17)** | yok |
+| 430×932 | — | 155 px (%17) | yok |
+| 834×1112 | 159 px (%14) | **139 px (%13)** | yok |
+| 1112×834 | — | 130 px (%16) | yok |
+
+### YOL BOYUNCA ÇIKAN ÜÇ AYRI KUSUR
+1. **Dokunma hedefi 28–32 px'e düşmüştü.** Önce görünmez `::after` ile
+   büyütmeyi denedim — komşu orb'ların alanları ÜST ÜSTE BİNDİ ve 320 px'de
+   son düğmenin merkezi komşusuna kaldı (hit-test: `bitti 0×0`). Kutu gerçekten
+   34 px'e çıkarıldı; hiyerarşi boyutla değil **ağırlıkla** korunuyor.
+2. **Nav, "tamamlandı" düğmesinin üstüne biniyordu** (390 px'de 3 px, 320 px'de
+   tamamen). Sayaç+orb'lar+nav tek satıra ~397 px gerektiriyor; iki satıra
+   ayrıldı.
+3. **"Tamamlanan" rozeti HİÇ görünmüyormuş** — sayı yazılıyor ama `.gor`
+   sınıfı eklenmediği için `.dOrb s{display:none}` onu gizli tutuyordu.
+   §303 ÖNCESİNDE de böyleydi (HEAD'de doğrulandı), yani yeni kusur değil.
+4. `.ryd` için 660 px altında sabit ölçü ezmesi vardı; clamp'i bozup üst bandı
+   11 px şişiriyordu — kaldırıldı.
+
+### Kapılar
+Yeni kalıcı kapı **`kaynak/ust_test.js`**: altı genişlikte taşmayı KUTU KUTU
+ölçüyor (clip gizlese bile yakalar), panel yüksekliğini ekran oranıyla
+sınırlıyor, dokunma hedeflerini `elementFromPoint` ile GERÇEKTEN ölçüyor.
+`cark_test.js`'te **on beş bayat iddia** güncellendi — çoğu eski yerleşimi
+(kutulu istatistikler, 'sol nav ist' ızgarası, sabit 32 px düğme) sabitliyordu.
+Tüm kapılar 0 hata.
+
+### Bu turda yaptığım hatalar
+- **`overflow-x:clip` kusuru gizliyordu ve bunu ben koymuştum** (rozetler
+  kesilmesin diye). Taşmayı görünmez yapmak, taşmayı çözmek değil.
+- Dokunma hedefini görünmez `::after` ile büyütmek **komşu düğmeyi bozdu**;
+  ölçmeden "düzeldi" deseydim son düğme tıklanamaz kalacaktı.
+- İlk denememde sayaç+orb+nav'ı tek satıra koydum; gereken genişliği
+  **hesaplamadan** yerleştirdim ve nav düğmenin üstüne bindi.
+
+**sürüm 2027-02-19j ↔ rota-2027-02-19j**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)

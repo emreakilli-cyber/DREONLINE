@@ -63,9 +63,9 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
 
 - Üretim sırası: `dizi3.py` → `yeniden.py` → `uret.py` (kural testi otomatik koşar)
   → `denet.py` → `kos.js`. FT/power-up tarafı: `ft_katalog.py` (tek kaynak) → `ft_uret.py`.
-- Tur sonu **on sekiz kapı**: `kural_test.py` · `denet.py` · `kos.js` · `derin_test.js` ·
+- Tur sonu **on dokuz kapı**: `kural_test.py` · `denet.py` · `kos.js` · `derin_test.js` ·
   `kombo_test.js` · `cark_test.js` · `mola_test.js` · `pu_test.js` · `kal_test.js` ·
-  `dom_test.js` · `olcek_test.js` · `analiz_test.js` · `gercek_akis_test.js` ·
+  `dom_test.js` · `olcek_test.js` · `analiz_test.js` · `gercek_akis_test.js` · `ust_test.js` ·
   `senk_kos/poll/etag/uc/rol.js`. Hepsi koşulur, **çıktının tamamı okunur**.
 - ⚠ **Kapı geçmek "hata yok" demek değildir** — kapılar kendi yazdığın kontrollerdir
   (§87'de kapılar temizken 4 gerçek hata bulundu). Belgeyi de denetlemezler (§12.10).
@@ -118,7 +118,7 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   varyantı atlanınca §112'nin düzeltmesi §117'ye kadar eksik kaldı; aynı kusur dört
   panelde birden vardı §151).
 
-## Güncel durum işaretçisi (sürüm `2027-02-19i`, DEVIR sonundaki devir notu)
+## Güncel durum işaretçisi (sürüm `2027-02-19j`, DEVIR sonundaki devir notu)
 
 - FT serisi 10 kitap power-up havuzuna işlendi (156 → 254 konu); konu tekilliği /
   net havuzu paylaşımı grup bazlı anahtarla tamamlandı (§219–§228).
@@ -214,9 +214,16 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   tutuyordu → `KOK_SINIR=60` üstünde kökler düşürülüyor, %62 kısalma
   (15 750 → 6 028 karakter), ~41K token tasarruf. ⚠ Ödün: uzun listede model
   eşleşme güvenini yalnız numaraya dayıyor.
-- **YARIM KALAN · ÜST PANEL TASARIMI:** POTANSİYEL kartı 390 px'de ekranın 40 px
-  dışında (`overflow-x:clip` sessizce kesiyor), 320 px'de Parakete de taşıyor; panel
-  ekranın %19–23'ünü yiyor. Tasarım turnuvası oturum limitine takıldı, teslim edilmedi.
+- **§303 · üst panel yeniden tasarlandı (yarım kalan iş kapandı).** Üç okuma kutusu
+  tek cam şeride girdi; bantlar (sayaç|ritim) · (orb'lar|nav) · ölçü şeridi, ≥760 px'te
+  iki bant. PARAKETE en büyük tipografi. Ölçek `clamp()` ile sürekli, yükseklik ekseni
+  `min(vw,vh)` ile katıldı. **HTML ve JS değişmedi** — `.ok{display:contents}` sayesinde
+  tüm id'ler ve `.ok.tkl.gor` anahtarı aynen çalışıyor. Ölçülen: taşma sıfır,
+  panel 163→131 px (320'de %23→%19), 834'te 159→139 px. Yol boyunca üç kusur daha:
+  dokunma hedefi 28 px'e düşmüştü · nav "tamamlandı" düğmesine biniyordu ·
+  "tamamlanan" rozeti HİÇ görünmüyormuş (`.gor` eklenmiyordu, §303 öncesinden).
+  ⚠ `overflow-x:clip` taşmayı gizlediği için hiçbir kapı yakalamamıştı.
+  Kapı: `kaynak/ust_test.js`; `cark_test.js`'te 15 bayat iddia güncellendi.
 - **YARIM KALAN · TASARIM:** power-up paneli, matris ve seyir sayfalarının görsel
   tasarımı (beğenilen referans: `.glAnh` altın gradyan anahtar, `.glS` satır düzeni,
   §217 daire tamamlama düğmesi).

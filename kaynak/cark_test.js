@@ -118,8 +118,12 @@ c3('menü kaldırıldı',!/id="menuB"/.test(kod)&&!/class="mYay"/.test(kod));
 c3('power-up orb doğrudan',/class="puOrb" id="puOrb"/.test(kod));
 c3('telafi düğmesi doğrudan',/class="dOrb" id="kacir"/.test(kod));
 c3('deneme ve tamamlanan da doğrudan',/class="dOrb kck" id="dnmB"/.test(kod)&&/class="dOrb kck" id="bitti"/.test(kod));
-c3('düğmeler YATAY şeritte',/<div class="solUst">/.test(kod)&&/\.solUst\{display:flex;align-items:center/.test(kod));
-c3('mola çipi kendi satırında',kod.indexOf('.etSat{grid-area:mol')>=0);
+/* §303 · üst panel üç banda ayrıldı; .solUst artık kendi ızgara alanında
+   (grid-area:orbs) ve yine YATAY dizili. */
+c3('düğmeler YATAY şeritte',/<div class="solUst">/.test(kod)&&
+  /\.solUst\{grid-area:orbs;display:flex;align-items:center/.test(kod));
+/* §303 · ritim satırı kendi ızgara alanında (grid-area:rit) */
+c3('ritim satırı kendi alanında',kod.indexOf('.etSat{grid-area:rit')>=0);
 c3('kaçırılan sayısı rozette',/id="kacirN"/.test(kod)&&/\.dOrb s\.gor\{display:flex\}/.test(kod));
 console.log('\n'+(H3?'✗ '+H3+' EK HATA':'✓ EK KONTROLLER SIFIR HATA'));
 if(H3)process.exitCode=1;
@@ -136,8 +140,16 @@ c4('pinch ile gün kipi',/gunKipAc/.test(kod)&&/pinchD0/.test(kod));
 c4('düğmeler SVG ikonlu',/\.dOrb svg\{width:17px/.test(kod));
 c4('ikonlar metin rengini izliyor',/stroke:currentColor/.test(kod));
 c4('kaçırılan sayısı rozette',/e2\.textContent=String\(kc\.length\)/.test(kod));
-c4('tamamlanan sayısı rozette',/e3\.textContent=String\(bt\.length\)/.test(kod));
-c4('düğme ölçüsü kare',/\.dOrb\{[\s\S]{0,120}width:32px;height:32px/.test(kod));
+/* §303 · rozet HİÇ GÖRÜNMÜYORDU: sayı yazılıyor ama `.gor` eklenmiyordu.
+   Artık ikisi birlikte — iddia da görünürlüğü sınıyor. */
+c4('tamamlanan sayısı rozette VE rozet görünür',
+  /e3\.textContent=bt\.length\?String\(bt\.length\)/.test(kod)&&
+  /e3\.classList\.toggle\('gor',bt\.length>0\)/.test(kod));
+/* §303 · sabit 32px yerine --dOrb (34px) · dokunma hedefi tabanı.
+   Kare olma koşulu duruyor, ölçü tek kaynaktan geliyor. */
+c4('düğme ölçüsü kare ve dokunma tabanından',
+  /\.dOrb\{[\s\S]{0,220}width:var\(--dOrb\);height:var\(--dOrb\)/.test(kod)&&
+  /--dOrb:\s*34px/.test(kod));
 c4('tek karakterli sembol kalmadı',!/><span>◷<\/span></.test(kod)&&!/><span>⚠<\/span></.test(kod));
 c4('erişilebilir etiketler',/aria-label="Telafi"/.test(kod)&&/aria-label="Deneme sonucu gir"/.test(kod));
 c4('mola kartı ayrı renkte',/\.sr\.mm \.mola\{border-color:rgba\(140,190,225/.test(kod));
@@ -261,8 +273,8 @@ cC('touch-action manipulation',/html,body\{touch-action:manipulation/.test(kod))
 cC('tüm uygulamada metin seçilemez',/\*\{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none\}/.test(kod));
 cC('girdi alanları hariç',/input,textarea,select,\[contenteditable\]\{-webkit-user-select:text/.test(kod));
 cC('kayY sürükleme dışında sıfırlanıyor',/if\(!surukleKip\)kayY=0/.test(kod));
-cC('mola çipi kendi satırında',kod.indexOf('.etSat{grid-area:mol')>=0);
-cC('orb şeridi görünür',kod.indexOf('.solUst{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;padding-top:5px;overflow:visible}')>=0);
+cC('ritim satırı kendi alanında',kod.indexOf('.etSat{grid-area:rit')>=0);
+cC('orb şeridi görünür',/\.solUst\{grid-area:orbs;display:flex;align-items:center;\s*gap:clamp\(/.test(kod));
 cC('eski gpanel CSS de gitti',!/#gpanel\{/.test(kod));
 cC('gGun değişkeni kalmadı',!/let gGun/.test(kod));
 console.log('\n'+(HC?'✗ '+HC+' HATA':'✓ SIFIR HATA — 9 ek kontrol'));
@@ -271,11 +283,17 @@ if(HC)process.exitCode=1;
 console.log('\n═══ DAYANIKLILIK ═══');
 let HD=0;const cD=(a,ok,e)=>{if(!ok){HD++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
 cD('sıfır yükseklikte çizim ertleniyor',/if\(!kw\.height\|\|kw\.height<40\|\|!kw\.width\)\{requestAnimationFrame\(diz\);return\}/.test(kod));
-cD('üst şerit ızgara düzeninde',kod.indexOf("grid-template-areas:'sol nav ist'")>=0);
-cD('sol sütun kendi alanında',kod.indexOf('.sol{grid-area:sol')>=0);
-cD('nav kendi alanında ortada',kod.indexOf('nav{grid-area:nav;justify-self:center')>=0);
-cD('orb şeridi görünür',kod.indexOf('.solUst{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;padding-top:5px;overflow:visible}')>=0);
-cD('mola çipi tam görünür',kod.indexOf('overflow:visible;margin-top:2px}')>=0);
+/* §303 · üç bant: (sayaç|ritim) · (orb'lar|nav) · ölçü şeridi.
+   Eski 'sol nav ist' düzeni POTANSİYEL kartını ekran dışına taşırıyordu. */
+cD('üst şerit üç bantlı ızgarada',
+  kod.indexOf("grid-template-areas:'sayac rit' 'orbs nav' 'olcu olcu'")>=0);
+/* §303 · .sol artık salt sarmalayıcı: display:contents ile sayaç ve
+   orb'lar DOĞRUDAN ızgaraya giriyor (kendi alanlarına). */
+cD('sol sarmalayıcı ızgaraya saydam',kod.indexOf('.sol{display:contents}')>=0);
+cD('nav kendi alanında sağda',kod.indexOf('nav{grid-area:nav;justify-self:end')>=0);
+cD('orb şeridi görünür',/\.solUst\{grid-area:orbs;display:flex;align-items:center;\s*gap:clamp\(/.test(kod));
+/* §303 · ritim satırı kırpılmıyor; margin-top artık ızgara boşluğundan */
+cD('ritim satırı tam görünür',/\.etSat\{grid-area:rit;[\s\S]{0,240}overflow:visible\}/.test(kod));
 cD('kart sınıfı seyir kapsayıcısıyla çakışmıyor',/\.kdm\{border-radius:14px/.test(kod)&&/\.kd\{position:absolute;inset:0/.test(kod));
 console.log('\n'+(HD?'✗ '+HD+' HATA':'✓ SIFIR HATA — 7 ek kontrol'));
 if(HD)process.exitCode=1;
@@ -353,11 +371,17 @@ cI("konu satırı şeritte de görünür",kod.indexOf(".kdm1{height:calc(21px")>
 cI('sf satırı sürekli',kod.indexOf('.kdm2{height:calc(18px * var(--r2,0))')>=0);
 cI('blok satırı sürekli',kod.indexOf('.kdm3{height:calc(17px * var(--r3,0))')>=0);
 cI('son seans satırı sürekli',kod.indexOf('.kdm3b{height:calc(15px * var(--r4,0))')>=0);
-cI('header ızgara üç alan',kod.indexOf("grid-template-areas:'sol nav ist'")>=0);
-cI('nav kendi alanında',kod.indexOf('nav{grid-area:nav;justify-self:center')>=0);
-cI('istatistikler kutulu',kod.indexOf('.ok{text-align:right;padding:5px 9px 6px;border-radius:12px')>=0);
-cI('parakete yeşil kutu',kod.indexOf('.ok.hyl{background:rgba(111,163,90')>=0);
-cI('potansiyel mavi kutu',kod.indexOf('.ok.tkl{background:rgba(143,212,255')>=0);
+cI('header üç bantlı ızgara',
+  kod.indexOf("grid-template-areas:'sayac rit' 'orbs nav' 'olcu olcu'")>=0);
+cI('nav kendi alanında',kod.indexOf('nav{grid-area:nav;justify-self:end')>=0);
+/* §303 · üç ayrı kutu TEK cam şeride girdi (kutular 320-390px'de taşıyordu).
+   `.ok` artık display:contents; çerçeve ve zemin şeridin kendisinde. */
+cI('istatistikler tek şeritte',
+  kod.indexOf('.okumalar>.ok{display:contents}')>=0&&
+  /\.okumalar\{grid-area:olcu;[\s\S]{0,400}border-radius:12px/.test(kod));
+cI('parakete yeşil ve en büyük',
+  kod.indexOf('.ok.hyl .v{font-size:var(--oVb);color:var(--doomL)')>=0);
+cI('potansiyel mavi',kod.indexOf('.ok.tkl .v{color:var(--bilgi)}')>=0);
 cI('kalan gün takımyıldız',kod.indexOf('const RAKAM=')>=0&&kod.indexOf('function rakamSVG')>=0);
 cI('takımyıldız hareket azaltmada sabit',/prefers-reduced-motion:reduce\)\{\.ryd circle\{animation:none/.test(kod));
 console.log('\n'+(HI?'✗ '+HI+' HATA':'✓ SIFIR HATA — 15 ek kontrol'));
@@ -373,8 +397,14 @@ cJ('opaklık uçta sönüyor',kod.indexOf('SON_BAS=0.52, SON_UC=0.95')>=0);
 cJ('odak ve yakınlar TAM opak',kod.indexOf('ab<=SON_BAS?1:')>=0);
 cJ('eski soluk rampa kalmadı',kod.indexOf('komsu?.72:.52')<0);
 cJ('tıklama opaklıkla uyumlu',kod.indexOf('pointerEvents=op<0.05')>=0);
-cJ('dar ekranda iki satır',kod.indexOf("grid-template-areas:'sol ist' 'nav mol'")>=0);
-cJ('nav dar ekranda sola',kod.indexOf('nav{justify-self:start;margin-top:2px}')>=0);
+/* §303 · dar ekran ARTIK ÖZEL DURUM DEĞİL: üç bantlı düzen 320 px'de de
+   aynı; geniş ekranda (≥760) iki banda iniyor. Ayrık kademe ezmeleri
+   kaldırıldı, ölçek clamp() ile sürekli. */
+cJ('geniş ekranda iki bant',
+  kod.indexOf("grid-template-areas:'sayac orbs rit nav' 'olcu olcu olcu olcu'")>=0&&
+  /@media \(min-width:760px\)/.test(kod));
+cJ('ölçek tek kaynaktan clamp ile sürekli',
+  /--oVb:\s*clamp\(/.test(kod)&&/--ryH:\s*clamp\(/.test(kod));
 cJ('geçiş hata korumalı',kod.indexOf("gecis=__G(gecis,'gecis')")>=0);
 cJ('kart tıklaması try/catch',/el\.onclick=\(i!==aktif\)\?\(\(\)=>\{try\{/.test(kod));
 (function(){
@@ -418,22 +448,30 @@ cK('yıldızlar farklı fazda parlıyor',/animation-delay:/.test(kod)&&/@keyfram
 cK('erişilebilir etiket',/setAttribute\('aria-label',n\+' gün kaldı'\)/.test(kod));
 cK('yalnız değişince yeniden çiziliyor',/el\.dataset\.n!==String\(n\)/.test(kod));
 cK('kümeleme kaldırıldı',kod.indexOf('kk?0.34:1')<0);
-cK('mola çipi ayrı ızgara alanında',kod.indexOf("grid-template-areas:'sol nav ist' 'mol mol mol'")>=0);
+cK('ritim ayrı ızgara alanında',
+  kod.indexOf("grid-template-areas:'sayac rit' 'orbs nav' 'olcu olcu'")>=0);
 console.log('\n'+(HK?'✗ '+HK+' HATA':'✓ SIFIR HATA — 18 ek kontrol'));
 if(HK)process.exitCode=1;
 
 console.log('\n═══ MOLA ÇİPİ · TAKIMYILDIZ OKUNURLUĞU ═══');
 let HL=0;const cL=(a,ok,e)=>{if(!ok){HL++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
-cL('mola çipi kendi ızgara alanında',kod.indexOf('.etSat{grid-area:mol')>=0);
-cL('geniş ekranda tam satır',kod.indexOf("'mol mol mol'")>=0);
-cL('dar ekranda nav ile yan yana',kod.indexOf("'nav mol'")>=0);
+cL('ritim kendi ızgara alanında',kod.indexOf('.etSat{grid-area:rit')>=0);
+cL('ölçü şeridi tam satır',kod.indexOf("'olcu olcu'")>=0);
+cL('orb şeridi nav ile yan yana',kod.indexOf("'orbs nav'")>=0);
 cL('çip artık orb şeridinde değil',kod.indexOf('id="etSat"')>kod.indexOf('</nav>'));
-cL('orb şeridi kırpmıyor',kod.indexOf('padding-top:5px;overflow:visible}')>=0);
-cL('sol sütun kırpmıyor',kod.indexOf('.sol{grid-area:sol;display:flex;flex-direction:column;gap:6px;min-width:0}')>=0);
+/* §303 · rozetler orb'un dışına taşıyor; şerit kırpmamalı */
+cL('orb şeridi kırpmıyor',/\.solUst\{grid-area:orbs;[\s\S]{0,200}overflow:visible\}/.test(kod));
+/* §303 · .sol artık saydam sarmalayıcı; kırpma zaten yok */
+cL('sol sarmalayıcı saydam',kod.indexOf('.sol{display:contents}')>=0);
 cL('takımyıldız çizgileri parlak',kod.indexOf('stroke:rgba(206,230,255,.72);stroke-width:1.5')>=0);
 cL('çizgilerde parıltı',kod.indexOf('filter:drop-shadow(0 0 3px rgba(160,205,255,.62))')>=0);
 cL('çizgiler nefes alıyor',kod.indexOf('@keyframes yolIz{')>=0&&kod.indexOf('animation:yolIz 5.6s')>=0);
-cL('takımyıldız büyüdü (okunurluk)',kod.indexOf('.ryd{width:26px;height:42px')>=0);
+/* §303 · takımyıldız ölçüsü sabit değil, --ryH clamp'inden geliyor.
+   ⚠ Eskiden 660px altında `.ryd{width:23px;height:37px}` ezmesi vardı ve
+   clamp'i bozup üst bandı 11 px şişiriyordu — kaldırıldı. */
+cL('takımyıldız ölçüsü tek kaynaktan (--ryH)',
+  kod.indexOf('.ryd{width:calc(var(--ryH) * .62);height:var(--ryH)')>=0&&
+  !/\.ryd\{width:23px;height:37px\}/.test(kod));
 cL('hareket azaltmada çizgi sabit',/prefers-reduced-motion:reduce\)\{\.ryd line\{animation:none\}\}/.test(kod));
 console.log('\n'+(HL?'✗ '+HL+' HATA':'✓ SIFIR HATA — 11 ek kontrol'));
 if(HL)process.exitCode=1;
