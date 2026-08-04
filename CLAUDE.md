@@ -63,9 +63,9 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
 
 - Üretim sırası: `dizi3.py` → `yeniden.py` → `uret.py` (kural testi otomatik koşar)
   → `denet.py` → `kos.js`. FT/power-up tarafı: `ft_katalog.py` (tek kaynak) → `ft_uret.py`.
-- Tur sonu **on yedi kapı**: `kural_test.py` · `denet.py` · `kos.js` · `derin_test.js` ·
+- Tur sonu **on dokuz kapı**: `kural_test.py` · `denet.py` · `kos.js` · `derin_test.js` ·
   `kombo_test.js` · `cark_test.js` · `mola_test.js` · `pu_test.js` · `kal_test.js` ·
-  `dom_test.js` · `olcek_test.js` · `analiz_test.js` ·
+  `dom_test.js` · `olcek_test.js` · `analiz_test.js` · `gercek_akis_test.js` · `ust_test.js` ·
   `senk_kos/poll/etag/uc/rol.js`. Hepsi koşulur, **çıktının tamamı okunur**.
 - ⚠ **Kapı geçmek "hata yok" demek değildir** — kapılar kendi yazdığın kontrollerdir
   (§87'de kapılar temizken 4 gerçek hata bulundu). Belgeyi de denetlemezler (§12.10).
@@ -118,7 +118,7 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   varyantı atlanınca §112'nin düzeltmesi §117'ye kadar eksik kaldı; aynı kusur dört
   panelde birden vardı §151).
 
-## Güncel durum işaretçisi (sürüm `2027-02-19g`, DEVIR sonundaki devir notu)
+## Güncel durum işaretçisi (sürüm `2027-02-19j`, DEVIR sonundaki devir notu)
 
 - FT serisi 10 kitap power-up havuzuna işlendi (156 → 254 konu); konu tekilliği /
   net havuzu paylaşımı grup bazlı anahtarla tamamlandı (§219–§228).
@@ -193,9 +193,42 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   bir karede İKİ sayfa, etiketler `Tablo (Soru N)` **ve** `Şekil (Soru N)`,
   soru kutusunda gömülü etiketsiz görseller (mikroskop/radyoloji), cilt
   kıvrımında kesik sütunlar → istem "tamamlama, `[…]` ile işaretle" diyor.
-- **YARIM KALAN · TASARIM:** power-up paneli, matris ve seyir sayfalarının görsel
-  tasarımı (beğenilen referans: `.glAnh` altın gradyan anahtar, `.glS` satır düzeni,
-  §217 daire tamamlama düğmesi).
+- **§301 · ilk gerçek tam tur (15 soru + 34 anahtar sayfası).** İlk gerçek zamanlama:
+  8 istek ≈ 1.5–2 dk, 17 istek ≈ 3 dk (kullanıcı beyanı). Beş kusur: (a) kod kuyruğu
+  her çizimde listeyi yeniden hesaplayıp **her ikinci soruyu atlıyordu** (68→34);
+  (b) `if(!coz)return` çözüm metni boş gelen kayıtları atıyordu — oysa D/Y için
+  gereken **doğru şık**; üstelik "0 kaydedildi + hepsi net eşleşti" çelişkisi vardı;
+  (c) **kısmi tarama soru kırılımını hiç saklamıyordu** → cevap anahtarı bağlanamıyor,
+  analizde görünmüyordu; artık `kismi:true` ile `D.denemeler`'e de yazılıyor ve
+  `sirali()` bunları eliyor (net/parakete etkilenmez); (d) yeşil bildirim kaydırınca
+  kendisi de kayıyordu → dolgu sabit, etiket kayıyor, alt katman `carkSolukla` ile
+  soluklaşıyor; (e) kalan süre ortalama yerine **ortanca** ile hesaplanıyor.
+  İstem: güven kodu **iki konumda** aranıyor (sol kenarda D/Y/B'nin ALTI · şıkların
+  sağı) ve **eğik el yazısı** uyarısı eklendi — ⚠ gerçek fotoğrafla doğrulanmadı.
+  Kapı: `kaynak/gercek_akis_test.js`.
+- **§302 · AI Studio panosu (gerçek).** Hesap **Free tier** — tüketicideki Gemini
+  Pro aboneliği **API kotasına yansımıyor** (açık nokta kapandı). Turda başarı
+  %100, hiç hata/429 yok → dayanıklılık makinesi gerçekte hiç tetiklenmedi.
+  `gemini-flash-lite-latest` şu an **Gemini 3.5 Flash Lite**'a çözümleniyor.
+  Ölçülen israf: 131 soruluk kök listesi 17 anahtar isteğinde ~53K token
+  tutuyordu → `KOK_SINIR=60` üstünde kökler düşürülüyor, %62 kısalma
+  (15 750 → 6 028 karakter), ~41K token tasarruf. ⚠ Ödün: uzun listede model
+  eşleşme güvenini yalnız numaraya dayıyor.
+- **§303 · üst panel yeniden tasarlandı (yarım kalan iş kapandı).** Üç okuma kutusu
+  tek cam şeride girdi; bantlar (sayaç|ritim) · (orb'lar|nav) · ölçü şeridi, ≥760 px'te
+  iki bant. PARAKETE en büyük tipografi. Ölçek `clamp()` ile sürekli, yükseklik ekseni
+  `min(vw,vh)` ile katıldı. **HTML ve JS değişmedi** — `.ok{display:contents}` sayesinde
+  tüm id'ler ve `.ok.tkl.gor` anahtarı aynen çalışıyor. Ölçülen: taşma sıfır,
+  panel 163→131 px (320'de %23→%19), 834'te 159→139 px. Yol boyunca üç kusur daha:
+  dokunma hedefi 28 px'e düşmüştü · nav "tamamlandı" düğmesine biniyordu ·
+  "tamamlanan" rozeti HİÇ görünmüyormuş (`.gor` eklenmiyordu, §303 öncesinden).
+  ⚠ `overflow-x:clip` taşmayı gizlediği için hiçbir kapı yakalamamıştı.
+  Kapı: `kaynak/ust_test.js`; `cark_test.js`'te 15 bayat iddia güncellendi.
+- **Tasarım işleri kapandı.** Power-up paneli (§229 · altın gradyan anahtar,
+  `.glAnh` dili), matris/branş gücü ve seyir grafikleri (§230), üst panel (§303) —
+  dördü de bitti ve gerçek tarayıcıda görsel olarak doğrulandı.
+  Beğenilen referans dili: `.glAnh` altın gradyan anahtar · `.glS` satır düzeni ·
+  §217 daire tamamlama düğmesi.
 - ⚠ **Gerçek API hiç çağrılmadı.** Bir isteğin kaç saniye sürdüğü bilinmiyor;
   38 isteğin toplam süresi hakkında sayı verilmemeli. §285–§298 kanıtı tamamen sahte `fetch` ve elle
   okunmuş yer gerçeği üzerinden. Sıradaki iş: kullanıcı anahtarı yenileyip gerçek

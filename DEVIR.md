@@ -14830,6 +14830,239 @@ kip değişiminde okumanın korunduğu.
 
 ---
 
+## §301 · İLK GERÇEK TAM TUR · 15 soru sayfası + 34 anahtar sayfası (2027-02-19h)
+
+Kullanıcı gerçek API ile uçtan uca bir tur yaptı. **İlk gerçek zamanlama
+ölçümü de buradan geldi.** Beş kusur çıktı; beşi de kapılardan temiz geçmişti.
+
+### İLK GERÇEK ÖLÇÜMLER (kullanıcı beyanı — artık tahmin değil)
+- 15 soru sayfası (8 istek) → **1.5–2 dakika**, soru 1–131 okundu.
+- 34 anahtar sayfası (17 istek) → **~3 dakika**.
+- Yani istek başına kabaca 10–12 sn. ⚠ Bu kullanıcı beyanı, kod ölçümü değil.
+
+### 1 · Kod kuyruğu 68 dedi, 34 sordu
+"68 soru kodsuz" → 34 soru soruldu → "kalan 34 kodsuz bırakıldı".
+Sebep: `kodKuyrukCiz` listeyi **her çizimde yeniden hesaplıyordu**. Bir soruya
+kod verilince o soru listeden düşüyor, ama `KOD_KUYRUK.i` de ilerliyordu →
+**her ikinci soru atlanıyordu**. Kuyruk artık `kodKuyrukAc()` anında bir kez
+donduruluyor (`KOD_KUYRUK.L`).
+
+### 2 · 134 çözüm okundu, 0'ı kaydedildi — üstelik "hepsi net eşleşti" dedi
+İki ayrı kusur üst üste binmiş:
+- **`if(!coz)return`** — çözüm METNİ boş gelen kayıtlar sessizce atılıyordu.
+  Oysa D/Y türetmek için gereken şey metin değil **doğru şık** (`dogru`).
+  Artık ikisinden biri varsa kayıt yaşıyor; metinsizler sayılıp bildiriliyor.
+- Özet çelişkiliydi: `yaz=0, kuyruk=0, sahipsiz=0` durumunda "Hepsi net
+  eşleşti." yazıyordu. Artık hiçbir şey işlenmediyse **sebebi** yazılıyor
+  (kaç çözüm okundu, kaçı tamamen boştu, bağlanacak kayıt var mı).
+
+### 3 · KÖK SEBEP · 131 soruluk kısmi tarama soru kırılımını hiç saklamıyordu
+Kullanıcının üç ayrı şikâyeti tek sebebe çıkıyor:
+"8 branş kaydı yazıldı ama deneme analizinde göremedim" · "cevap anahtarı
+hiçbir soruya bağlanamadı" · "analiz sayfasında sadece eski deneme vardı".
+`omrKapsam` 131/200'ü tam saymıyor (doğru — 131 soru 200'lük deneme gibi
+sayılamaz) ve kısmi tarama **yalnız toplulaştırılmış `D.kal` branş kaydına**
+yazılıyordu; soru kırılımı hiçbir yere gitmiyordu.
+Çözüm: kalibrasyon yine `D.kal`'dan geliyor (muhafazakârlık korundu), **ama**
+kırılım `kismi:true` işaretli ayrıntılı kayıt olarak `D.denemeler`'e de
+yazılıyor. `sirali()` kismi kayıtları eliyor → `son()`, `denemeTrend()`,
+parakete etkilenmiyor; `ayrDenemeler()`, `konuZayiflik()`, `denemeMatris()`
+ve cevap anahtarı eşleştirmesi ise artık görüyor.
+⚠ `pu_test`teki iki iddia eski davranışı koruyordu — bilinçli olarak
+güncellendi; **kritik kısıt iddiaları (son() değişmiyor, parakete çökmüyor)
+aynen duruyor ve geçiyor.**
+
+### 4 · Yeşil bildirim kaydırınca kendisi de kayıyordu
+Kullanıcı: "yeşil alanın kayması lazım değil; sadece yazı kaysın, çark ile
+çipler silikleşmeye başlasın." Yapıldı: dolgu sabit, `.caEt` etiketi kayıyor,
+`carkSolukla(p)` ile gün listesi/sahne/ray/çipler kaydırma ilerledikçe
+soluklaşıyor, bırakılınca geri geliyor.
+
+### 5 · Kalan süre 7 dk → 3 dk zıpladı
+Sebep: ilk grup soğuk başlangıç yüzünden yavaş; **ortalama** onu taşıyıp
+tahmini şişiriyordu. Artık **ortanca** kullanılıyor ve tahmin en az iki grup
+bittikten sonra gösteriliyor.
+
+### 6 · Güven kodu (E/AK/B/U) okunamadı — istem düzeltildi
+Kullanıcı: "E harfi şıkların sağında değil, **D yazısının altında, soruların
+solunda**... şıkların sağında yazanları da okuyamamış... B ve U'yu da
+yazımları net olsa da **eğik** yazıldıklarından okuyamamış."
+İstem artık **iki konumu da** söylüyor (sol kenarda D/Y/B'nin ALTI · şıkların
+sağı), **eğik/italik el yazısını** açıkça uyarıyor ve "AK"ın iki harfli tek
+kod olduğunu belirtiyor.
+⚠ Bu bir istem değişikliği — **gerçek fotoğrafla doğrulanmadı**, kullanıcının
+bir sonraki turunda ölçülecek.
+
+### 7 · "Onayla ve kaydet" sessizce başarısız oluyordu
+Başarısızlık sebebi yalnız tek satırlık jarvis balonuna yazılıyordu; panelde
+iz kalmıyordu. Artık `omrKayHata()` sebebi panele yazıyor. Ayrıca kip geri
+alınırken "Okumaya dönüldü · kip ona geri alındı" satırı ekleniyor —
+kullanıcı bunu "ışınlandım" diye algılamıştı.
+
+### Kapılar
+Yeni kalıcı kapı **`kaynak/gercek_akis_test.js` · 15 kontrol**.
+`pu_test`teki iki bayat iddia güncellendi. On kalıcı kapı + sekiz çalışma
+kapısı: **0 hata**.
+
+### Bu turda yaptığım hatalar
+- **Beş kusurun beşi de bana ait ve beşini de kapılarım kaçırdı.** Sahte
+  `fetch` gerçek modelin davranışını (metinsiz çözüm döndürmesi) taklit
+  etmiyordu; kendi mock'um her zaman `coz` dolu döndürdüğü için `if(!coz)`
+  dalı hiç sınanmadı. Mock'u kendi kodumun beklentisine göre yazmışım.
+- **Kısmi taramanın analizde görünmemesi tasarım kusuruydu, kod hatası
+  değildi** — §283'ten beri oradaydı ve gerçek kullanıma kadar fark edilmedi.
+- Üst panel tasarım turnuvası **oturum limitine takıldı**; 3 tasarımdan 2'si
+  üretildi, jüriler ve sentez hiç koşmadı. Bu tur teslim edilemedi.
+
+**sürüm 2027-02-19h ↔ rota-2027-02-19h**
+
+---
+
+## §302 · AI Studio panosu · üç soru kapandı, bir israf ölçüldü (2027-02-19i)
+
+Kullanıcı gerçek turun AI Studio istatistiklerini gönderdi (iki ekran görüntüsü).
+
+### KAPANAN AÇIK NOKTALAR (artık varsayım değil, belge)
+1. **Hesap "Free tier" rozetiyle işaretli.** Tüketicideki **Gemini Pro
+   aboneliği API kotasına YANSIMIYOR** — bu, §299'dan beri açık duran soruydu.
+   Uygulama ücretsiz katman sınırlarıyla çalışıyor.
+2. **Başarı oranı %100 · "Total API Errors: No data available".** Yani bu turda
+   HİÇ 429 ve hiç hata olmadı. §295/§299'un dayanıklılık makinesi (yeniden
+   deneme, kota bekleme, kısmi başarı) **gerçekte hiç tetiklenmedi** — çalıştığı
+   kanıtlanmadı, yalnızca yola girmedi.
+3. **Model takma adı çözümlendi.** Panoda üç model görünüyor: Gemini 3.1 Flash
+   Lite · **Gemini 3.5 Flash Lite** · Gemini 3.6 Flash. Büyük sıçrama
+   3.5 Flash Lite'ta — yani `gemini-flash-lite-latest` şu an **Gemini 3.5 Flash
+   Lite**'a çözümleniyor. 3.6 Flash'taki küçük tümsek kullanıcının §295'te
+   elle denediği başarısız tur.
+
+### ÖLÇÜLEN İSRAF · istem şişmesi
+Panoda 28 günlük pencerede girdi tokenı 200K ekseninde ~175K'ya kadar çıkıyor
+(grafikten okundu, kesin sayı değil). Kod tarafında ÖLÇTÜM:
+
+| ne | karakter | ≈token | 17 istekte |
+|---|---|---|---|
+| anahtar istemi · taban (listesiz) | 3 298 | 825 | — |
+| anahtar istemi · 131 soruluk kök listesiyle | 15 750 | 3 938 | **66 946** |
+| yalnız listenin payı | 12 452 | 3 113 | **52 921** |
+
+Yani aynı soru listesi 17 isteğin **her birinde** yeniden gönderiliyordu ve tek
+başına ~53 000 girdi tokenı tutuyordu. Liste yalnız modelin kendi **eşleşme
+güvenini** sınaması için var; eşleştirmenin kendisi zaten `no` üzerinden.
+
+**§302 düzeltmesi:** liste `KOK_SINIR=60`'tan uzunsa soru kökleri düşürülüyor,
+`#numara · ders` kalıyor ve modele "kökler verilmedi, sayfada yazan numaraya
+daya, sıraya güvenme" deniyor. Kısa listede (tek sayfa) kökler korunuyor —
+orada maliyet önemsiz, doğrulama değerli.
+
+Ölçülen sonuç: 15 750 → **6 028 karakter (%62 düşüş)**; 17 istekte
+66 946 → 25 619 token, **~41 000 token tasarruf**.
+
+⚠ ÖDÜN: uzun listede model artık soru kökünü göremiyor, dolayısıyla `eslesme`
+güvenini yalnız numaraya dayandırıyor. Kullanıcı "cevap anahtarındaki numaralar
+zaten soru numarasıyla aynı" dediği için risk düşük görünüyor — ama bu bir
+ödün, gerçek turda eşleşme güveninin düşüp düşmediğine bakılmalı.
+
+### Kapı
+`kaynak/gercek_akis_test.js` **15 → 20 kontrol** (uzun listede kök yok · kısa
+listede kök var · numara+ders her hâlde duruyor · modele söyleniyor · %50'den
+fazla kısalma). Tüm kapılar 0 hata.
+
+### Bu turda yaptığım hatalar
+- **İstem şişmesini §299'da ölçmüştüm ve ertelemiştim.** "21 KB, görsellerle
+  karşılaştırınca küçük" diye geçmiştim; gerçek panoyu görene kadar 17 istekle
+  çarpmayı yapmadım. Tek istek maliyeti küçük görünse de **istek sayısıyla
+  çarpılmayan ölçüm eksik ölçümdür**.
+- İlk doğrulama betiğimde iki hatalı sonda vardı (131. sorunun dersini "Kadın
+  Doğum" sandım — o 191-200 aralığı; ve "soru kökü" ifadesini istemin başka bir
+  yerinde arayıp yanlış negatif aldım). Ölçümü satır bazlı yeniden yaptım.
+
+**sürüm 2027-02-19i ↔ rota-2027-02-19i**
+
+---
+
+## §303 · ÜST PANEL YENİDEN TASARLANDI · yarım kalan iş kapandı (2027-02-19j)
+
+Kullanıcı: *"o butonlar, kalan gün, tarih falan bayadır dokunmadık, uygulamanın
+kalanına göre basit kaldılar. Bak ekrana POTANSİYEL kısmı sığmıyor mesela."*
+
+### ÖLÇÜLEN KUSUR (gerçek Chromium)
+| genişlik | Ölçülen | Parakete | Potansiyel | panel |
+|---|---|---|---|---|
+| 390 | 142→249 ✓ | 258→347 ✓ | **356→430 · 40 px DIŞARIDA** | 163 px (%19) |
+| 360 | ✓ | ✓ | **70 px dışarıda** | 163 px (%21) |
+| 320 | ✓ | **kesik** | **kesik** | 163 px (%23) |
+
+Hiçbir kapı yakalamamıştı çünkü `header{overflow-x:clip}` taşmayı **sessizce
+kesiyordu**; gövde yatay taşma bildirmiyordu.
+
+### TASARIM · üç bant
+Üç okuma AYRI KUTU olmaktan çıkıp **tek cam şeride** girdi. Eski geometri
+(3 × 74 px min-width + 2 × 18 px boşluk + üç çerçeve) dar ekranda matematiksel
+olarak sığmıyordu; şeritte sıkışan yalnız yazı ölçüsü kalıyor.
+Bantlar: **(sayaç | ritim)** · **(orb'lar | nav)** · **ölçü şeridi**.
+≥760 px'te dört sütunlu tek satıra iniyor → iki bant.
+
+Diğer değişiklikler:
+- **Hiyerarşi:** PARAKETE artık en büyük tipografi (karar sayısı o); Ölçülen ve
+  Potansiyel yanında daha sessiz. Ayrımlar kutu değil **saç-teli çizgi**.
+- **Ritim satırı** haplardan çıkıp sessiz teknik metne döndü (iki hap ≈ 70 px
+  genişlik masrafıydı ve dar ekranda alta düşüyordu).
+- **Ölçek tek kaynaktan:** her değer `clamp()` ile 320→1112 arasında sürekli;
+  yükseklik ekseni de `min(vw, vh)` ile katıldı — yatay tablette panel %20'ye
+  çıkıyordu, ölçüldü ve düzeltildi.
+- **Nav** hap ray + kayan cam kabarcık (`:has` ile; desteklemeyen tarayıcıda
+  düğme kendi zeminini çiziyor).
+
+### ⚠ HTML VE JS DEĞİŞMEDİ
+Şerit saf CSS: `.ok` kapları `display:contents` olduğu için `.cap/.v/.s`
+doğrudan ızgaraya giriyor. `#oP #oN #hP #hN #tkV #tkS`, `.ok.tkl.gor`
+görünürlük anahtarı ve `etiketler()` çıktısı aynen çalışıyor.
+
+### ÖLÇÜLEN SONUÇ
+| genişlik | önce | sonra | taşma |
+|---|---|---|---|
+| 320×700 | 163 px (%23) | **131 px (%19)** | yok |
+| 360×780 | 163 px (%21) | **137 px (%18)** | yok |
+| 390×844 | 163 px (%19) | **145 px (%17)** | yok |
+| 430×932 | — | 155 px (%17) | yok |
+| 834×1112 | 159 px (%14) | **139 px (%13)** | yok |
+| 1112×834 | — | 130 px (%16) | yok |
+
+### YOL BOYUNCA ÇIKAN ÜÇ AYRI KUSUR
+1. **Dokunma hedefi 28–32 px'e düşmüştü.** Önce görünmez `::after` ile
+   büyütmeyi denedim — komşu orb'ların alanları ÜST ÜSTE BİNDİ ve 320 px'de
+   son düğmenin merkezi komşusuna kaldı (hit-test: `bitti 0×0`). Kutu gerçekten
+   34 px'e çıkarıldı; hiyerarşi boyutla değil **ağırlıkla** korunuyor.
+2. **Nav, "tamamlandı" düğmesinin üstüne biniyordu** (390 px'de 3 px, 320 px'de
+   tamamen). Sayaç+orb'lar+nav tek satıra ~397 px gerektiriyor; iki satıra
+   ayrıldı.
+3. **"Tamamlanan" rozeti HİÇ görünmüyormuş** — sayı yazılıyor ama `.gor`
+   sınıfı eklenmediği için `.dOrb s{display:none}` onu gizli tutuyordu.
+   §303 ÖNCESİNDE de böyleydi (HEAD'de doğrulandı), yani yeni kusur değil.
+4. `.ryd` için 660 px altında sabit ölçü ezmesi vardı; clamp'i bozup üst bandı
+   11 px şişiriyordu — kaldırıldı.
+
+### Kapılar
+Yeni kalıcı kapı **`kaynak/ust_test.js`**: altı genişlikte taşmayı KUTU KUTU
+ölçüyor (clip gizlese bile yakalar), panel yüksekliğini ekran oranıyla
+sınırlıyor, dokunma hedeflerini `elementFromPoint` ile GERÇEKTEN ölçüyor.
+`cark_test.js`'te **on beş bayat iddia** güncellendi — çoğu eski yerleşimi
+(kutulu istatistikler, 'sol nav ist' ızgarası, sabit 32 px düğme) sabitliyordu.
+Tüm kapılar 0 hata.
+
+### Bu turda yaptığım hatalar
+- **`overflow-x:clip` kusuru gizliyordu ve bunu ben koymuştum** (rozetler
+  kesilmesin diye). Taşmayı görünmez yapmak, taşmayı çözmek değil.
+- Dokunma hedefini görünmez `::after` ile büyütmek **komşu düğmeyi bozdu**;
+  ölçmeden "düzeldi" deseydim son düğme tıklanamaz kalacaktı.
+- İlk denememde sayaç+orb+nav'ı tek satıra koydum; gereken genişliği
+  **hesaplamadan** yerleştirdim ve nav düğmenin üstüne bindi.
+
+**sürüm 2027-02-19j ↔ rota-2027-02-19j**
+
+---
+
 # ⚠ DEVİR NOTU · KALDIĞIM YER
 
 ## Tamamlanan (bu oturumda)
@@ -14842,7 +15075,7 @@ kip değişiminde okumanın korunduğu.
 
 §254 · **FAZ 5 · tek açıklanabilir öncelik katmanı + ulaşılabilir tavan bandı.** `gorevOncelik`/`gorevNeden` (rehberSec+puEtki birleşimi, branş§konu tekilleştirme, kanıt cümleleri) · `tavanBant` (kalan iş bitince R_CAL±1.96·sd bandı; kök kusur `_rcZorla` bayrağıyla düzeldi). Sürüm 2027-03-01a.
 
-## ⚠ YARIM KALAN · TASARIM
+## ✓ TASARIM İŞLERİ KAPANDI (§303'te doğrulandı)
 
 Kullanıcı altı ekran görüntüsüyle bildirdi: **power-up paneli, matris ve seyir sayfalarının tasarımı** kitap sekmesi/Program-Kitap anahtarı kadar iyi değil.
 
@@ -14854,7 +15087,13 @@ Düzeltilecekler:
 - ~~Matris tablosu · sütun hizaları ve tipografi~~ ✓ §230 (+ kör nokta rozeti)
 - ~~Seyir defteri grafikleri~~ ✓ §230 (branş trend kartları; ana seyir grafiği hafif dokunuş)
 
-Bekleyen: kullanıcıdan etiketli deneme verisi (§230 formatı) · cihazdan "Hata kaydı" dökümü.
+⚠ §303'te dördü de gerçek tarayıcıda görsel olarak doğrulandı (390 px ekran
+görüntüsü): power-up paneli altın gradyan anahtar + altın "Çarka çek" düğmeleri,
+branş gücü radarı ve net/puan seyri okunur, hiçbirinde yatay taşma yok.
+Üst panel de §303'te yeniden tasarlandı — böylece tasarım kalemi kapandı.
+
+Bekleyen (KULLANICI TARAFINDA, kod işi değil): etiketli deneme verisi (§230
+formatı) · cihazdan "Hata kaydı" dökümü.
 
 ## Bilinen açık noktalar
 
