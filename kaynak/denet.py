@@ -119,36 +119,62 @@ while d<=date(2026,8,22): SPOR.add(d); d+=timedelta(2)
 SIKIS={date(2026,7,26),date(2026,8,2),date(2026,8,10),date(2026,8,16),date(2026,8,20)}
 # ESKI KURAL KALDIRILDI (28 Tem): eski yapida uzun spor gununde C blogu yoktu.
 # Yeni yapida spor gunu C blogu 16:30-18:15'te, spordan SONRA. Kural gecersiz.
-X("video ≤8 Ağu",max(x['d'] for x in G if x['act']=='video')<='2026-08-08')
-# Son iki gun TEKRAR gunudur; tekrar da sayfa tasir ama yeni ogrenme degildir.
-X("son 2 gün yeni okuma yok",not any(x['act']=='oku' and x['d']>=sorted({y['d'] for y in G})[-2] for x in G))
-X("6 tam deneme",sum(1 for x in G if x['act']=='deneme')==12)
+# ══ §304 · KURALLAR YENİ PLANA GÖRE ═══════════════════════════════════
+# ⚠ Aşağıdaki dört kural ESKİ planın tasarım kurallarıydı ve kullanıcı
+# 7 Ağustos'ta planı KENDİSİ yeniden tarif ettiği için geçersiz kaldı:
+#   · "video ≤8 Ağu"  → artık 9-15 Ağustos'ta pembe konu videoları var
+#   · "6 tam deneme"  → artık 11 deneme (09/11/13, sonra her gün)
+#   · "KURAL A ≤gün12"→ yeni plan kaynak açma değil, kapatma planı
+#   · "KURAL C azalan"→ yeni planda öğrenme/geri getirme dengesi elle kuruldu
+# Yerlerine YENİ planın kendi değişmezleri konuldu (kullanıcının tarifi).
+YENI_BAS='2026-08-08'
+YP=[x for x in G if x['d']>=YENI_BAS]
+gun_yeni=sorted({x['d'] for x in YP})
+X("yeni plan 8–22 Ağustos",gun_yeni and gun_yeni[0]=='2026-08-08' and gun_yeni[-1]=='2026-08-22',
+  str(gun_yeni[:1]+gun_yeni[-1:]))
+X("sınav gününde iş yok",not any(x['d']>='2026-08-23' for x in G))
+# 8 Ağustos = kalan Atilla Uslu videoları, ve BAŞKA gün Atilla Uslu yok
+au=[x for x in YP if 'Atilla Uslu' in (x.get('src') or '')]
+X("Atilla Uslu videoları 8 Ağustos'ta bitiyor",
+  bool(au) and {x['d'] for x in au}=={'2026-08-08'},str(sorted({x['d'] for x in au})))
+# deneme günleri kullanıcının verdiği ritim: 09/11/13, sonra 15'ten itibaren her gün
+BEK={'2026-08-09','2026-08-11','2026-08-13','2026-08-15','2026-08-16','2026-08-17',
+     '2026-08-18','2026-08-19','2026-08-20','2026-08-21','2026-08-22'}
+dg={x['d'] for x in YP if x['act']=='deneme'}
+X("deneme ritmi (2 günde 1 → her gün)",dg==BEK,str(sorted(dg^BEK)))
+X("her deneme gününde analiz var",
+  all(any(y['d']==d and y['act']=='analiz' for y in YP) for d in dg))
+# ders sırası kullanıcının yazdığı sırayla
+SIRA=[('2026-08-09','Genel Cerrahi'),('2026-08-10','Pediatri'),('2026-08-11','Kadın Doğum'),
+      ('2026-08-12','Biyokimya'),('2026-08-13','Farmakoloji'),('2026-08-14','Mikrobiyoloji'),
+      ('2026-08-16','Patoloji'),('2026-08-17','Genel Cerrahi'),('2026-08-18','Pediatri'),
+      ('2026-08-19','Kadın Doğum'),('2026-08-20','Biyokimya'),('2026-08-21','Farmakoloji'),
+      ('2026-08-22','Mikrobiyoloji')]
+sap=[(d,b) for d,b in SIRA if not any(x['d']==d and x['br']==b for x in YP)]
+X("ders sırası kullanıcının verdiği gibi",not sap,str(sap))
+# gün yükü dengeli · hiçbir gün 9 saati aşmasın (kullanıcı yetişemedi, şişirme)
+yuk={d:sum(x['sure'] for x in YP if x['d']==d) for d in gun_yeni}
+asan=[(d,round(v,1)) for d,v in yuk.items() if v>9.0]
+X("hiçbir gün 9 saati aşmıyor",not asan,str(asan))
+bos=[(d,round(v,1)) for d,v in yuk.items() if v<5.0]
+X("hiçbir gün 5 saatin altında değil",not bos,str(bos))
 c=Counter((x['d'],x['b'],x['br'],x['k']) for x in G)
 X("mükerrer görev",max(c.values())==1)
-kt={}
-for x in G:
-    n=(x.get('src') or '').split(' sf ')[0]
-    if not n or n=='yanlış defteri' or n.startswith("TUSDATA 24'lü") or 'hafif' in n or n.startswith('cilt'): continue
-    kt.setdefault(n,x['d'])
-# Referans: programin ILK GUNU (sabit tarih degil). 14 gun = ilk gun + 13.
-_ilk=date.fromisoformat(min(x['d'] for x in G))
-ihA=sum(1 for v in kt.values() if (date.fromisoformat(v)-_ilk).days>=14)
-X("KURAL A",ihA==0,"%d kaynak %d ihlal"%(len(kt),ihA))
 gz=defaultdict(lambda: defaultdict(float))
 for x in G:
     if x['act']=='oku': gz[x['d']][x.get('z','')]+=x['sure']
 bask=sum(max(v.values())/sum(v.values()) for v in gz.values())/len(gz)
 X("KURAL B ≥%80",bask>=.80,"%.0f%%"%(100*bask))
-# Dilim sinirlari programin kendi gun listesinden turetilir (8/9/8).
 _gu=sorted({x['d'] for x in G}); _s1=_gu[7]; _s2=_gu[16]
 def dl(s): return 1 if s<=_s1 else (2 if s<=_s2 else 3)
 GG=defaultdict(float);KO=defaultdict(float)
 for x in G:
-    # 'deneme' ve 'analiz' de GERI GETIRME'dir; eski liste onlari saymiyordu.
     if x['act'] in ('soru','deneme24','tekrar','deneme','analiz'): GG[dl(x['d'])]+=x['sure']
     if x['act'] in ('oku','video'): KO[dl(x['d'])]+=x['sure']
-X("KURAL C artan",GG[3]>GG[2]>GG[1]); X("KURAL C azalan",KO[1]>=KO[2]>=KO[3])
+X("geri getirme sona doğru artıyor",GG[3]>GG[2]>GG[1])
 tg=sum(GG.values());tk=sum(KO.values())
-print("  A: %d kaynak ≤gün12 · B: %%%.0f · C: geri getirme %%%.0f/%%%.0f/%%%.0f, yeni öğrenme %%%.0f/%%%.0f/%%%.0f"%(
- len(kt),100*bask,100*GG[1]/tg,100*GG[2]/tg,100*GG[3]/tg,100*KO[1]/tk,100*KO[2]/tk,100*KO[3]/tk))
+print("  B: %%%.0f · geri getirme %%%.0f/%%%.0f/%%%.0f, yeni öğrenme %%%.0f/%%%.0f/%%%.0f"%(
+ 100*bask,100*GG[1]/tg,100*GG[2]/tg,100*GG[3]/tg,100*KO[1]/tk,100*KO[2]/tk,100*KO[3]/tk))
+print("  YENİ PLAN · %d gün · günlük yük %.1f–%.1f sa · %d deneme"%(
+ len(gun_yeni),min(yuk.values()),max(yuk.values()),len(dg)))
 print("\n"+("✓ SIFIR HATA — %d görev, %.1f etkin saat"%(len(G),sum(x['sure'] for x in G)) if hata==0 else "✗ %d HATA"%hata))

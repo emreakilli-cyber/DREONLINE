@@ -467,6 +467,10 @@ e3('sentetik görev çarkta üstte',kod.indexOf("if(g.pu||g.ek||(D.erken||{})[k]
 e3('kapalı görev çarkta yok',kod.indexOf("if((D.kapali||{})[k])continue;")>=0);
 (function(){
   C.setGun('2026-07-30'); X.D.bitti={}; X.D.kal=[]; X.D.ekDen={}; X.D.kapali={}; X.D.erken={};
+  /* §304 · yeni planda programlı 24'lü kart yok → fikstürle kuruluyor
+     (bkz. derin_ortam.js). Havuz/numaralandırma/yer açma makinesi
+     kapı kaybı yaşamasın diye. */
+  R('den24Temizle(); den24Fikstur("Biyokimya",["2026-08-13","2026-08-17","2026-08-21"])');
   R('denSenkron(); denYerAc()');
   const H=R('denemeHavuz()');
   e3("on bir branş kartı (Küçük Stajlar dahil)",H.length===11,H.length);
@@ -481,9 +485,19 @@ e3('kapalı görev çarkta yok',kod.indexOf("if((D.kapali||{})[k])continue;")>=0
   e3('iki sentetik görev oluştu',X.GOREVLER.length===n0+2,X.GOREVLER.length-n0);
   e3('sentetikler bugüne',X.GOREVLER.filter(g=>g.ek).every(g=>g.d===R('bgun()')));
   e3('çarkta en üstte',R('carkListe().slice(0,2)').every(i=>X.GOREVLER[i].ek));
+  /* §304 · YENİ PLANDA PROGRAMLI 24'LÜ KART YOK. Kullanıcının yeni planı
+     kalan 15 günü tam denemeye ve ders günlerine ayırdı; 24'lü deneme artık
+     yalnız havuzdan ÇEKİLEREK geliyor. Sabit "#3" / "kalan 17" beklentileri
+     eski planın kart sayısını ezberlemişti — sayılar artık PLANDAN türetiliyor,
+     sınanan şey numaralandırma ve kalan hesabının KURALI. */
+  const prog=R('denProgram("Biyokimya")'), cek=R('denEk("Biyokimya")');
+  e3('çekilenler programın önüne geçiyor',cek===2,cek);
   const pg=X.GOREVLER.find(g=>g.act==='deneme24'&&g.br==='Biyokimya'&&!g.ek);
-  e3('program numarası kaydı (#3)',R('denNo(GOREVLER['+X.GOREVLER.indexOf(pg)+'])')===3);
-  e3('kalan 17',R('denKalan("Biyokimya")')===17,R('denKalan("Biyokimya")'));
+  e3('programlı kart numarası çekilenlerin ardından başlıyor',
+    !pg||R('denNo(GOREVLER['+X.GOREVLER.indexOf(pg)+'])')===cek+1,
+    pg?R('denNo(GOREVLER['+X.GOREVLER.indexOf(pg)+'])'):'programlı kart yok');
+  e3('kalan = 24 − program − çekilen',R('denKalan("Biyokimya")')===24-prog-cek,
+    {kalan:R('denKalan("Biyokimya")'),prog:prog,cek:cek});
   /* GETİRİ · yalnız kayıttan */
   const ek=X.GOREVLER.findIndex(g=>g.ek);
   const K0=(()=>{const p=X.para();return X.puan(p.t,p.k)})();
@@ -495,21 +509,34 @@ e3('kapalı görev çarkta yok',kod.indexOf("if((D.kapali||{})[k])continue;")>=0
   const K2=(()=>{const p=X.para();return X.puan(p.t,p.k)})();
   e3('kayıt paraketeye yansıyor',K2>K0);
   e3('çözülen sayacı arttı',R('denCozulen("Biyokimya")')===1);
-  /* YER AÇMA */
+  /* YER AÇMA · yalnız PROGRAMLI kart varsa anlamlı. §304'ten sonra yeni
+     planda programlı 24'lü kart yok; o zaman "kapatacak kart yok" da
+     doğrulanması gereken bir davranıştır (eskiden burada undefined'a
+     dokunup ÇÖKÜYORDU — kapı çökmesi, sessiz geçiş değil). */
   R('denYerAc()');
   const ileri=X.GOREVLER.filter(g=>g.act==='deneme24'&&g.br==='Biyokimya'&&!g.ek)
     .sort((a,b)=>a.d<b.d?1:-1)[0];
-  e3('en ileri program kartı kapandı',!!R('(D.kapali||{})[id(GOREVLER['+X.GOREVLER.indexOf(ileri)+'])]'));
-  e3('kapanan kart çarkta yok',R('carkListe()').indexOf(X.GOREVLER.indexOf(ileri))<0);
-  /* GERİ AL */
-  delete X.D.bitti[X.id(X.GOREVLER[ek])];
-  R('denYerAc()');
-  e3('geri alınca kart açıldı',!R('(D.kapali||{})[id(GOREVLER['+X.GOREVLER.indexOf(ileri)+'])]'));
+  if(ileri){
+    const ii=X.GOREVLER.indexOf(ileri);
+    e3('en ileri program kartı kapandı',!!R('(D.kapali||{})[id(GOREVLER['+ii+'])]'));
+    e3('kapanan kart çarkta yok',R('carkListe()').indexOf(ii)<0);
+    /* GERİ AL */
+    delete X.D.bitti[X.id(X.GOREVLER[ek])];
+    R('denYerAc()');
+    e3('geri alınca kart açıldı',!R('(D.kapali||{})[id(GOREVLER['+ii+'])]'));
+  }else{
+    console.log('  · programlı 24\'lü kart yok (§304 planı) — yer açma çökmeden geçti');
+    e3('programlı kart yokken denYerAc kimseyi kapatmıyor',
+      Object.keys(X.D.kapali||{}).length===0,X.D.kapali);
+    delete X.D.bitti[X.id(X.GOREVLER[ek])];
+    R('denYerAc()');
+  }
   X.D.ekDen={}; X.D.bitti={}; X.D.kal=[]; X.D.kapali={};
   R('denSenkron()');
   e3('sentetikler temizlendi',X.GOREVLER.filter(g=>g.ek).length===0);
+  e3('fikstür geri alındı',R('den24Temizle()')===0);
 })();
-console.log('\n'+(K3?'✗ '+K3+' HATA':'✓ SIFIR HATA — 24 ek kontrol'));
+console.log('\n'+(K3?'✗ '+K3+' HATA':'✓ SIFIR HATA — 24lü havuz kontrolleri'));
 if(K3)process.exitCode=1;
 
 console.log('\n═══ DENEME SATIRI GÖRÜNÜMÜ ═══');
@@ -543,6 +570,7 @@ let KB=0;const eB=(a,ok,x)=>{if(!ok){KB++;console.log('  ✗ '+a+(x!==undefined?
 (function(){
   /* 24'ün tamamını erken çözme */
   C.setGun('2026-07-30'); X.D.bitti={}; X.D.kal=[]; X.D.ekDen={}; X.D.kapali={}; X.D.erken={};
+  R('den24Temizle(); den24Fikstur("Anatomi",["2026-08-19"])');   /* §304 fikstür */
   R('denSenkron(); denYerAc()');
   const n0=X.GOREVLER.length;
   R('D.ekDen={Anatomi:23}; denSenkron()');
@@ -565,6 +593,7 @@ let KB=0;const eB=(a,ok,x)=>{if(!ok){KB++;console.log('  ✗ '+a+(x!==undefined?
   X.D.ekDen={}; X.D.bitti={}; X.D.kal=[]; X.D.kapali={};
   R('denSenkron(); denYerAc()');
   eB('tam temizlik',X.GOREVLER.length===n0&&Object.keys(X.D.kapali).length===0);
+  eB('fikstür geri alındı',R('den24Temizle()')===0);
 })();
 (function(){
   /* Çekip çözmeden geri yollama */
@@ -581,6 +610,8 @@ let KB=0;const eB=(a,ok,x)=>{if(!ok){KB++;console.log('  ✗ '+a+(x!==undefined?
 })();
 (function(){
   /* Matrise kapsam çizen görev tipleri */
+  /* §304 · planda programlı 24'lü kart kalmadı; kural yine sınanmalı. */
+  R('den24Temizle(); den24Fikstur("Patoloji",["2026-08-19"])');
   const ciz=a=>{
     X.D.bitti={}; X.D.kal=[]; X.D.denKaz={};
     const g=X.GOREVLER.find(x=>x.act===a); if(!g)return null;
@@ -594,6 +625,7 @@ let KB=0;const eB=(a,ok,x)=>{if(!ok){KB++;console.log('  ✗ '+a+(x!==undefined?
   eB('okuma matrise çiziyor',ciz('oku')===true);
   eB('VİDEO matrise çiziyor',ciz('video')===true);
   eB('deneme çizmiyor (kayıt gerekli)',ciz('deneme24')===false);
+  R('den24Temizle()');
   eB('analiz çizmiyor (soru değeri yok)',ciz('analiz')===false);
 })();
 console.log('\n'+(KB?'✗ '+KB+' HATA':'✓ SIFIR HATA — 15 ek kontrol'));
@@ -1183,7 +1215,13 @@ eX("iş yükünden düşüyor",kod.indexOf("if(!ikameMi(g)){ top+=g.sure;")>=0);
   R('_kcOnb.a=null');
   const KB=oku();
   eX('başka kaynak kazanç veriyor',KB>K0);
-  eX('ikame işaretlendi',Object.keys(X.D.ikame).length===2,Object.keys(X.D.ikame).length);
+  /* §304 · Sabit "2" eski planın Neoplazi görev sayısıydı. Yeni planda
+     16 Ağustos Patoloji komple tekrar günü üçüncü bir Neoplazi görevi
+     ekliyor; ikame HEPSİNİ işaretlemeli. Beklenti artık PLANDAN sayılıyor. */
+  const neoP=X.GOREVLER.filter(x=>!x.pu&&!x.ek&&/Neoplazi/i.test(x.k)).length;
+  eX('ikame plandaki TÜM Neoplazi görevlerini işaretledi',
+    Object.keys(X.D.ikame).length===neoP,
+    {ikame:Object.keys(X.D.ikame).length,plandaki:neoP});
   eX('ikame edilen görev üstü çizili',(function(){
     R('D.glKip=null; gunGoster="2026-08-01"');
     const h=R('gunListe()');
@@ -1238,9 +1276,15 @@ eQ('ikame saatten düşülüyor',kod.indexOf('if(!ikameMi(g)){ top+=g.sure;')>=0
   sf();
   const a=oku();
   /* AYNI GRUP çifti: görev adı ve kitap konusu birebir aynı anahtara düşer */
-  const g=X.GOREVLER.find(x=>x.act==='oku'&&x.br==='Farmakoloji'&&/Otonom Sinir Sistemi/.test(x.k));
+  /* §304 · Eski prob (Farmakoloji · Otonom Sinir Sistemi) planın SİLİNEN
+     gelecek bölümündeydi; yeni planda yok ve find() undefined dönüp kapı
+     çöküyordu. Yerine yine "aynı grup, başka kitap" olan ve yeni planda
+     DURAN bir çift seçildi: program görevi Speetus Genel Cerrahi ·
+     Pankreas, power-up FT Genel Cerrahi · Pankreas (Genel Cerrahi grubu). */
+  const g=X.GOREVLER.find(x=>x.act==='oku'&&x.br==='Genel Cerrahi'&&/Pankreas/i.test(x.k));
+  eQ('prob görev planda duruyor',!!g);
   const gi=X.GOREVLER.indexOf(g);
-  const anh=R('puAnh(POWERUP.find(x=>/otonom/i.test(x.konu)&&x.kitap==="Yavuz Şahin Farmakoloji SB"))');
+  const anh=R('puAnh(POWERUP.find(x=>/pankreas/i.test(x.konu)&&x.kitap==="FT Genel Cerrahi"))');
   /* A · programdaki görevin kendisi */
   X.D.bitti[X.id(g)]='2026-08-01';
   const b=oku(); sf();
@@ -1280,7 +1324,7 @@ eQ('ikame saatten düşülüyor',kod.indexOf('if(!ikameMi(g)){ top+=g.sure;')>=0
   R('gunGoster='+JSON.stringify(g.d)+'; D.glKip=null');
   const h=R('gunListe()');
   eQ('listede üstü çizili',/glS[^"]*glg/.test(h));
-  eQ('kaynak adı yazıyor',/klI">Yavuz Şahin/.test(h));
+  eQ('kaynak adı yazıyor',/klI">FT Genel Cerrahi/.test(h));   /* §304 · yeni prob çifti */
   sf();
 })();
 /* §271 · işaretleme TEK yoldan: üç çağrı yeri de puIsaretle kullanıyor */
