@@ -58,23 +58,18 @@ if(!_c){ console.log('⚠ playwright yok — KRONOMETRE kapısı ATLANDI'); proc
  chk('düğme ▶ oldu',c2.dug==='▶',c2.dug);
 
  // BAŞKA GÖREVE GEÇ (satır çipi)
- /* §306 · ŞERİT ÇAKIŞMASI: dibe yapışık şeridin ŞEFFAF üst dolgusu bir
-    tur boyunca görünür satırların dokunuşunu yutuyordu. Kontrol artık
-    ekranın üst yarısındaki (kesinlikle şeridin üstündeki) çipe dokunuyor
-    ve AYRICA hiçbir görünür satırın dokunuşunun çalınmadığını ölçüyor. */
- const calan=await pg.evaluate(()=>{
-   const alt=document.querySelector('.kocAlt').getBoundingClientRect();
-   return [...document.querySelectorAll('#kocLis [data-kron], #kocLis .kocIs')].map(e=>{
+ /* §306'da dibe yapışık şeridin ŞEFFAF dolgusu görünür satırların
+    dokunuşunu yutuyordu. Şerit §308'de tamamen kalktı; kural yine de
+    sınanıyor: EKRANDA GÖRÜNEN hiçbir satırın dokunuşu çalınmamalı. */
+ const calan=await pg.evaluate(()=>
+   [...document.querySelectorAll('#kocLis [data-kron], #kocLis .kocIs')].map(e=>{
      const q=e.getBoundingClientRect();
-     if(q.bottom>alt.top||q.top<0)return null;
+     if(q.top<0||q.bottom>innerHeight)return null;
      const el=document.elementFromPoint(q.left+Math.min(q.width/2,20),q.top+q.height/2);
      return (el&&(el===e||e.contains(el)))?null:{y:Math.round(q.top),calan:el?(el.id||el.className):'yok'}
-   }).filter(Boolean)});
- chk('görünür satırın dokunuşunu yapışkan şerit ÇALMIYOR',calan.length===0,calan);
- const dugE=await pg.evaluate(()=>[...document.querySelectorAll('.kocAlt .kocB')].map(b=>{
-   const q=b.getBoundingClientRect(); const el=document.elementFromPoint(q.left+q.width/2,q.top+q.height/2);
-   return {id:b.id,ok:!!(el&&(el===b||b.contains(el)))}}));
- chk('alt şeridin düğmeleri hâlâ ulaşılabilir',dugE.every(d=>d.ok),dugE);
+   }).filter(Boolean));
+ chk('görünür satırın dokunuşunu başka katman ÇALMIYOR',calan.length===0,calan);
+ chk('dibe yapışık şerit KALDIRILDI',await pg.evaluate(()=>!document.querySelector('.kocAlt')));
  const cips=await pg.locator('#kocLis [data-kron]');
  const bb=await cips.nth(1).boundingBox();
  await pg.touchscreen.tap(bb.x+bb.width/2,bb.y+bb.height/2);
@@ -114,13 +109,18 @@ if(!_c){ console.log('⚠ playwright yok — KRONOMETRE kapısı ATLANDI'); proc
    await pg.evaluate(()=>{try{const k=JSON.parse(JSON.stringify(D.kron));return !!k&&typeof k.gun==='object'}catch(e){return false}}));
  chk('süre TİK ile değil DAMGA ile hesaplanıyor',
    /Math\.max\(0,Date\.now\(\)-K\.ak\.bas\)/.test(KOD)&&!/kron[A-Za-z]*\+\+/.test(KOD));
- const dk=await pg.evaluate(()=>kronDokum());
- chk('TUSBuddy dökümü toplam satırıyla başlıyor',/^TUSBuddy · \d{4}-\d\d-\d\d · TOPLAM /.test(dk),dk.split('\n')[0]);
- chk('dökümde görev satırı var',/\n\s+\d+:\d\d\s{2}\S/.test(dk),dk);
- const dg=await pg.evaluate(()=>[...document.querySelectorAll('.kocKop')].map(b=>b.textContent));
- /* §307'de üçüncü düğme (TUSBuddy köprüsü) eklendi. */
- chk('kopyalama ve köprü düğmeleri duruyor',
-   dg.indexOf('süreleri kopyala')>=0&&dg.some(x=>/TUSBuddy/.test(x)),dg);
+ /* §308 · ARAYÜZ SOYULDU. Kullanıcı: fotoğrafla deneme girme kaldırılsın,
+    eski arayüz görünmesin, TUSBuddy ve uyku/HRV elle giriş istiyorsa olmasın.
+    Ekranda kalması GEREKENLER ve kalmaMASI gerekenler burada sınanıyor. */
+ const dg=await pg.evaluate(()=>({
+   kop:[...document.querySelectorAll('.kocKop')].map(b=>b.textContent),
+   kocDug:[...document.querySelectorAll('#koc button')].map(b=>b.id).filter(Boolean),
+   yok:['kocAyrinti','kocDeneme','kocAnaliz','tbAc','tbKutu','sag','sagKutu','kronKop']
+        .filter(k=>!!document.getElementById(k))}));
+ chk('yalnız "durumu kopyala" kaldı',dg.kop.length===1&&/durumu kopyala/.test(dg.kop[0]),dg.kop);
+ chk('kaldırılan arayüz parçaları GERÇEKTEN yok',dg.yok.length===0,dg.yok);
+ chk('ekranda başka düğme yok',
+   dg.kocDug.filter(x=>x!=='kocKop'&&x!=='kronD').length===0,dg.kocDug);
  /* Aranan şey UYDURMA UÇ NOKTA — kelime değil. §307'de arayüz metni
     kullanıcıya "tusbuddy.com/web'i aç" diyor; o kalsın. Kodda tam bir
     https adresi ya da gömülü kimlik bilgisi OLMAMALI. */
@@ -130,7 +130,7 @@ if(!_c){ console.log('⚠ playwright yok — KRONOMETRE kapısı ATLANDI'); proc
     (K.match(/https?:\/\/[^"'\s]*tusbuddy[^"'\s]*/i)||[])[0]);}
  console.log('\nSAYFA HATASI: '+(err.join(' | ')||'(yok)'));
  console.log('\n═══ §305 · KRONOMETRE ═══');
- console.log(H?('✗ '+H+' HATA'):'✓ SIFIR HATA — 29 gerçek dokunuş kontrolü');
+ console.log(H?('✗ '+H+' HATA'):'✓ SIFIR HATA — 30 gerçek dokunuş kontrolü');
  await pg.screenshot({path:'/tmp/kron_390.png'}).catch(()=>{});
  await br.close(); process.exitCode=H?1:0;
 })();

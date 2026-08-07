@@ -64,40 +64,61 @@ def hm(t):
     return '%02d:%02d' % (t // 60, t % 60)
 
 # ── o dersin konu listesi · UYGULAMANIN KENDİ VERİSİNDEN ───────────────
+def sade(a):
+    """konuSade'nin python karşılığı — aynı konunun iki adını eşitlemek için"""
+    import re
+    a = re.sub(r'\s*\([^)]*\)', '', str(a or ''))
+    a = re.sub(r'\s*·\s*\d+/\d+\.\s*parça', '', a)
+    a = re.sub(r'[\/\-–—]', ' ', a)
+    return re.sub(r'\s+', ' ', a.replace('İ', 'i').replace('I', 'ı').lower()).strip()
+
+def bas_harf(a):
+    a = str(a or '').strip()
+    return a[:1].upper() + a[1:] if a else a
+
 def ders_konulari(ders):
-    """1) mevcut planda o dersin konuları — pembe önce, sonra soru ağırlığı
-       2) yoksa KONU_DAG soru ağırlığı"""
+    """§308 · İKİ KAYNAK BİRLEŞTİRİLİYOR ve PARÇAYA BÖLÜNMÜYOR.
+
+    Eskiden yalnız plandaki konular alınıyordu; Mikrobiyoloji'de 1, Kadın
+    Doğum'da 2, Biyokimya'da 3 konu çıkıyordu ve gün dolsun diye tek konu
+    "· 1/4. parça … 4/4. parça" diye bölünüyordu. Kullanıcı haklı olarak
+    "görev sıralamaları anlamsız olmuş" dedi: bir günün tamamı
+    "Mikoloji 1/4, 2/4, 3/4, 4/4" oluyordu.
+
+    Artık: plandaki konular (pembe önce) + KONU_DAG'ın soru ağırlığı
+    sırası, `sade()` ile tekilleştirilerek birleşiyor. İkisi de
+    uygulamanın kendi verisi — uydurma konu yok.
+    """
     sira = {'pembe': 0, 'turuncu': 1, 'sari': 2, 'mavi': 3}
+    L, gor = [], {}
+
+    def ekle(k, src, tag, soru, br):
+        a = sade(k)
+        if not a or a in gor: return
+        gor[a] = 1
+        L.append({'k': k, 'src': src, 'tag': tag, 'soru': soru, 'br': br})
+
     if ders == 'Küçük Stajlar':
         ks = [g for g in G if 'TUSTIME Küçük Stajlar' in g.get('src', '')]
-        gor = {}
-        # ⚠ br UYDURULMUYOR: uygulamanın branş kümesinde "Küçük Stajlar" YOK
-        # (10 branş: Anatomi…Kadın Doğum). Her konunun branşı kendi kaynak
-        # görevinden taşınıyor — Ortopedi/Çocuk Cerrahisi/Üroloji 'Genel
-        # Cerrahi', kalanı 'Dahiliye'. Toptan 'Dahiliye' yazmak bu üçünün
-        # kalibrasyonunu yanlış branşa yazardı.
+        # ⚠ br UYDURULMUYOR: uygulamanın branş kümesinde "Küçük Stajlar" YOK.
+        # Ortopedi/Çocuk Cerrahisi/Üroloji 'Genel Cerrahi', kalanı 'Dahiliye'.
+        ks.sort(key=lambda g: (sira.get(g.get('tag'), 9), -g.get('soru', 0)))
         for g in ks:
-            gor.setdefault(g['k'], {'k': g['k'], 'src': g['src'].split(' sf ')[0],
-                                    'sf': g['src'].split(' sf ')[-1], 'br': g['br'],
-                                    'tag': g.get('tag', 'turuncu'), 'soru': g.get('soru', 0)})
-        L = list(gor.values())
-    else:
-        pl = [g for g in G if g['br'] == ders and g['act'] in ('oku', 'video')]
-        gor = {}
-        for g in pl:
-            ad = g['k'].split(' · ')[0]                    # parça eki atılır
-            if ad in gor:
-                gor[ad]['soru'] = max(gor[ad]['soru'], g.get('soru', 0))
-                if sira.get(g.get('tag'), 9) < sira.get(gor[ad]['tag'], 9):
-                    gor[ad]['tag'] = g.get('tag')
-                continue
-            gor[ad] = {'k': ad, 'src': g['src'].split(' sf ')[0], 'br': g['br'],
-                       'sf': None, 'tag': g.get('tag', 'turuncu'), 'soru': g.get('soru', 0)}
-        L = list(gor.values())
-        if not L:                                          # plana hiç girmemiş ders
-            L = [{'k': k, 'src': None, 'sf': None, 'br': ders, 'tag': 'pembe', 'soru': v}
-                 for k, v in sorted(KD.get(ders, {}).items(), key=lambda x: -x[1])]
-    L.sort(key=lambda x: (sira.get(x['tag'], 9), -x['soru']))
+            ekle(g['k'].split(' — ')[0], g['src'].split(' sf ')[0],
+                 g.get('tag', 'turuncu'), g.get('soru', 0), g['br'])
+        return L
+
+    pl = [g for g in G if g['br'] == ders and g['act'] in ('oku', 'video')]
+    pl.sort(key=lambda g: (sira.get(g.get('tag'), 9), -g.get('soru', 0)))
+    for g in pl:
+        ekle(g['k'].split(' · ')[0], g['src'].split(' sf ')[0],
+             g.get('tag', 'turuncu'), g.get('soru', 0), ders)
+    for k, v in sorted(KD.get(ders, {}).items(), key=lambda x: -x[1]):
+        # KONU_DAG'da dersin ADIYLA aynı bir "torba" kalem olabiliyor
+        # (Mikrobiyoloji · Mikrobiyoloji, Farmakoloji · Farmakoloji).
+        # Görev satırında anlamsız duruyor, atlanıyor.
+        if sade(k) == sade(ders): continue
+        ekle(bas_harf(k), None, 'pembe', v, ders)
     return L
 
 # ── gün üretimi ────────────────────────────────────────────────────────
@@ -131,8 +152,13 @@ bloklar = [('A', '08:00', '10:00', mola('10:00', '10:15', 15, 'kisa', '15 dk ara
            ('B', '10:15', '12:30', mola('12:30', '13:30', 60, 'ogle', '60 dk öğle')),
            ('C', '13:30', '15:45', mola('15:45', '16:00', 15, 'kisa', '15 dk ara')),
            ('D', '16:00', '17:30', mola('17:30', '23:00', 330, 'yavas', 'gün bitti — akşam serbest'))]
-pay = [[], [], [], []]
-for i, v in enumerate(AU_KALAN): pay[i % 4].append(v)
+# ⚠ §308 · SIRA KORUNUYOR. Eskiden `i % 4` ile dağıtılıyordu ve gün
+# "Göğüs 4/6 · Nefroloji 2/4 · Gastro 2/7 · Gastro 6/7 · Romatoloji 3/4"
+# diye başlıyordu — video 6/7'yi 1/7'den önce izlemek anlamsız.
+# Artık ardışık dilimleniyor: 1,2,3,4 → A · 5,6,7,8 → B …
+pay, _n = [], len(AU_KALAN)
+_d = -(-_n // 4)
+for i in range(4): pay.append(AU_KALAN[i * _d:(i + 1) * _d])
 for (bl, a, b, ml), grup in zip(bloklar, pay):
     blok_doldur(g, bl, a, b,
                 [(v['br'], v['k'], v['src'], 'video', 'pembe', v.get('soru', 0)) for v in grup],
@@ -195,26 +221,20 @@ def ders_gunu(g, ders, kip):
     # bloklar boş kalıyor ve gün yarım doluyordu (Mikrobiyoloji 2.0 sa).
     # Artık günün TOPLAM dakikası konulara paylaştırılıyor; az konulu derste
     # her konuya daha çok vakit düşüyor, gün dolu kalıyor.
+    # §308 · Slot en az 40 dk. Konu listesi artık plan+KONU_DAG birleşimi
+    # olduğu için her ders yeterli konuya sahip; PARÇAYA BÖLME KALDIRILDI.
     topDk = sum(dk(b) - dk(a) for _, a, b, _ in bloklar)
-    enAz = 25
-    kap = max(1, min(len(L), topDk // enAz))
+    enAz = 40
+    kap = max(len(bloklar), min(len(L), topDk // enAz))
     kon = L[:kap]
-    # ⚠ Ders az konuluysa (Mikrobiyoloji 1, Biyokimya 3) konular tek bloğa
-    # düşüp gün 1.5 saatte bitiyordu. Konu sayısı blok sayısından azsa konu
-    # PARÇALARA bölünüyor — mevcut planın kendi "· 1/2. parça" dili.
-    if len(kon) < len(bloklar):
-        gen = []
-        kat = -(-len(bloklar) // len(kon))          # yukarı yuvarlama
-        for k in kon:
-            if kat == 1: gen.append(k); continue
-            for i in range(kat):
-                y = dict(k); y['k'] = '%s · %d/%d. parça' % (k['k'], i + 1, kat)
-                y['soru'] = round(k['soru'] / kat, 2)
-                gen.append(y)
-        kon = gen[:max(len(bloklar), len(gen))]
-    # blokları SIRAYLA doldur — her blok en az bir konu alsın
-    pay = [[] for _ in bloklar]
-    for i, k in enumerate(kon): pay[i % len(bloklar)].append(k)
+    # Konular SIRAYI koruyarak bloklara ardışık dağıtılıyor (önem sırası
+    # bozulmasın: en ağır konu sabahın ilk işi olsun).
+    # Dengeli bölüm: 6 konu / 4 blok → 2,2,1,1 (eskiden 2,2,2,0 çıkıp
+    # günün son bloğu boş kalıyordu, gün 6.5 saate düşüyordu).
+    n = len(bloklar); pay = []; ix = 0
+    for i in range(n):
+        al = len(kon) // n + (1 if i < len(kon) % n else 0)
+        pay.append(kon[ix:ix + al]); ix += al
     for (bl, a, b, ml), grup in zip(bloklar, pay):
         isler = []
         for k in grup:
@@ -251,7 +271,7 @@ pat = ders_konulari('Patoloji')
 # boşluğa çevriliyor ve kök "neoplazi tekrar" olup konu bağını koparıyor.
 blok_doldur(g, 'D', '15:45', '17:45',
     [('Patoloji', k['k'] + ' (komple tekrar)', 'Emrullah Patoloji SST', 'oku',
-      k['tag'], k['soru']) for k in pat[:5]],
+      k['tag'], k['soru']) for k in pat[:3]],
     mola('17:45', '23:00', 315, 'yavas', 'gün bitti — akşam serbest'),
     'Patoloji komple tekrar', '')
 for t in YENI:

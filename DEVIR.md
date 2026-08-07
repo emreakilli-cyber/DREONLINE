@@ -15487,3 +15487,81 @@ nokta" kontrolü artık kelimeyi değil ADRESİ arıyor).
   yapıştırıp "bağlantıyı sına" · Gemini anahtarını yenile · Kısayollar ile
   günlük uyku/HRV JSON'u.
 - Açık karar (§304): tekrar kredisi (a) olduğu gibi / (b) `TEKRAR_KAT`.
+
+---
+
+# §308 · UYGULAMA SOYULDU · PLAN SIRALAMASI DÜZELTİLDİ
+### sürüm `2027-02-20e` ↔ `rota-2027-02-20e`
+
+Kullanıcı §305–§307'yi reddetti, gerekçeleriyle:
+
+| dediği | yapılan |
+|---|---|
+| "fotoğrafla deneme girme hiç stabil değil, koyma" | 📷 düğmesi ve "Deneme analizi" düğmesi KALDIRILDI |
+| "eski arayüzü görmek istemiyorum" | "ayrıntı ›" KALDIRILDI · eski kabuk hiçbir yoldan açılmıyor |
+| "görev sıralamaları anlamsız olmuş" | plan üreticisi düzeltildi (aşağıda) |
+| "iPad'de arka plandaki uygulamayı kontrol etsin" | MÜMKÜN DEĞİL — iOS uygulama kutuları ayrık; web sayfası başka bir uygulamanın sayacını göremez |
+| "TUSBuddy kullanamıyorsam kronometre koy" | TUSBuddy köprüsü KALDIRILDI, sade kronometre kaldı |
+| "Bevel/Apple Health elle girilecekse koyma" | uyku/HRV KALDIRILDI |
+
+Ekranda kalan: **kalan gün · eritme yüzdesi · kronometre · o günün işleri ·
+"durumu kopyala"**. Başka hiçbir şey yok.
+
+⚠ Eski kabuk KODU silinmedi (≈900 KB, 16 gün kala riskli). Arayüzden
+erişilemiyor; `kocKapat()` yalnız kapılar için duruyor.
+
+## Planın neden anlamsız göründüğü · üç gerçek kusur
+
+1. **Atilla Uslu videoları KARIŞIK sıralanmıştı.** Üretici `i % 4` ile
+   dağıtıyordu; gün "Göğüs 4/6 · Nefroloji 2/4 · Gastro 2/7 · Gastro 6/7 ·
+   Romatoloji 3/4" diye başlıyordu. Video 6/7'yi 1/7'den önce izlemek
+   anlamsız. Artık ardışık dilimleniyor → 4/6, 5/6, 6/6, 1/4, 2/4 …
+2. **Tek konu sahte "parça"lara bölünüyordu.** Mikrobiyoloji'de plan
+   verisinde 1 konu (Mikoloji) vardı; gün dolsun diye "Mikoloji · 1/4.
+   parça … 4/4. parça" üretiliyordu — bir günün tamamı bu. Bölme
+   TAMAMEN KALDIRILDI.
+3. **Konu listeleri çok kısaydı** (Kadın Doğum 2, Biyokimya 3,
+   Mikrobiyoloji 1). Artık plan konuları (pembe önce) + `KONU_DAG`ın soru
+   ağırlığı sırası `sade()` ile tekilleştirilerek BİRLEŞTİRİLİYOR. İkisi de
+   uygulamanın kendi verisi; uydurma konu yok. Dersin adıyla aynı "torba"
+   kalemler (Mikrobiyoloji · Mikrobiyoloji) eleniyor.
+
+Ek düzeltmeler: slot en az 40 dk (24 dk'lık sahte hassasiyet gitti) ·
+bloklara dengeli bölüm (6 konu / 4 blok → 2,2,1,1; eskiden 2,2,2,0 çıkıp
+günün son bloğu boş kalıyordu).
+
+**191 görev · 15 gün · 8.0 sa/gün · 187.7 etkin saat · denet.py ✓ sıfır hata.**
+
+## PLAN_BAS · terk edilen eski program ekranı doldurmuyor
+
+`const PLAN_BAS='2026-08-08'`. Bundan önceki tamamlanmamış işler ne
+"bugünün listesi"nde görünüyor ne de eritme yüzdesine giriyor — kullanıcı o
+programı terk etti, oran kalıcı %0 görünüyordu ve ekran yapılmayacak işlerle
+doluydu. **Veri silinmedi** (`D.bitti` ve kalibrasyon bozulmasın).
+Bugün planda yoksa ekran bir sonraki plan gününü "YARIN · PLAN BAŞLIYOR"
+başlığıyla gösteriyor.
+
+## Kaldırılanların akıbeti
+
+Fotoğrafla okuma (§283–§302), TUSBuddy köprüsü (§307), uyku/HRV (§306)
+motorları kodda uykuda duruyor — geri istenirse arayüz bağı yeniden
+kurulur. Kapıları silindi: `sag_test.js`, `tusb_test.js`.
+
+⚠ **Artık deneme sonucu girilemiyor.** Fotoğraf yolu ve eski panel
+kapandığı için `D.denemeler`/`D.kal` beslenmiyor; PARAKETE ve kalibrasyon
+son kaydın üstünde donuyor. Kullanıcıya bildirildi; isterse 4 rakamlık
+(T doğru/yanlış · K doğru/yanlış) sade bir alan eklenecek.
+
+## Kapılar
+
+`denet.py` ✓ 191 görev · `derin_test` · `pu_test` · `kal_test` · `cark_test` ·
+`kombo_test` · `mola_test` · `dom_test` · `olcek_test` · `analiz_test` ·
+`gercek_akis_test` · `ust_test` · `kron_test` — hepsi sıfır hata.
+`kron_test` artık **kaldırılanların gerçekten yok olduğunu** da sınıyor
+(`kocAyrinti · kocDeneme · kocAnaliz · tbAc · sag · kronKop` yok, ekranda
+yalnız `kocKop` ve `kronD`).
+
+## ⚠ DEVİR NOTU · KALDIĞIM YER
+
+- Sürüm `2027-02-20e` ↔ `rota-2027-02-20e`. Yayın: `index.html` + `sw.js`.
+- Açık: deneme sonucu girişi (kullanıcı kararı) · §304 tekrar kredisi.

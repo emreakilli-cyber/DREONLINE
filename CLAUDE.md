@@ -118,7 +118,7 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   varyantı atlanınca §112'nin düzeltmesi §117'ye kadar eksik kaldı; aynı kusur dört
   panelde birden vardı §151).
 
-## Güncel durum işaretçisi (sürüm `2027-02-20d`, DEVIR sonundaki devir notu)
+## Güncel durum işaretçisi (sürüm `2027-02-20e`, DEVIR sonundaki devir notu)
 
 - FT serisi 10 kitap power-up havuzuna işlendi (156 → 254 konu); konu tekilliği /
   net havuzu paylaşımı grup bazlı anahtarla tamamlandı (§219–§228).
@@ -286,6 +286,24 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   iki tur arayla tekrarladı — `kron_test.js` artık kural olarak sınıyor.
 - ⚠ Kullanıcı TUSBuddy şifresini sohbete yazdı; koda girmedi, **değiştirmesi
   gerekiyor** (Gemini anahtarı gibi).
+- **§308 · UYGULAMA SOYULDU (kullanıcı isteği).** Ekranda kalan: kalan gün ·
+  eritme yüzdesi · kronometre · o günün işleri · "durumu kopyala". KALDIRILAN:
+  fotoğrafla deneme girme, "Deneme analizi", "ayrıntı ›" (eski kabuk artık
+  hiçbir yoldan açılmıyor), TUSBuddy köprüsü, uyku/HRV girişi. Motorları kodda
+  uykuda; kapıları (`sag_test`, `tusb_test`) silindi.
+  ⚠ **Deneme sonucu artık girilemiyor** — PARAKETE/kalibrasyon son kaydın
+  üstünde donuyor. Kullanıcı isterse 4 rakamlık sade alan eklenecek.
+- **§308 · plan sıralaması düzeltildi.** Üç gerçek kusur: Atilla Uslu
+  videoları `i % 4` ile KARIŞTIRILIYORDU (artık ardışık) · tek konu sahte
+  "· N/M. parça"lara bölünüyordu (bölme kaldırıldı) · konu listeleri çok
+  kısaydı (artık plan + `KONU_DAG` birleşimi, `sade()` ile tekil).
+  Slot en az 40 dk, bloklara dengeli bölüm. **191 görev.**
+- **§308 · `PLAN_BAS='2026-08-08'`** — bundan önceki tamamlanmamış işler
+  ekranda ve eritme yüzdesinde SAYILMIYOR (kullanıcı o programı terk etti);
+  veri silinmedi. Bugün planda yoksa ekran sonraki plan gününü gösteriyor.
+- ⚠ **iOS'ta arka plandaki başka bir uygulamanın (TUSBuddy) sayacı
+  OKUNAMAZ.** Uygulama kutuları ayrık; ne Safari'den ne PWA'dan erişilir.
+  Bu bir eksiklik değil, işletim sistemi kuralı — yeniden denenmesin.
 - Bilinen açık noktalar: FT Geriatri 0.51 soru (kullanıcı onaylı varsayım) ·
   D_ORAN ±0.57 belirsizliği · potansiyel-gerçek ~0.42 net farkı (bilinçli muhafazakâr,
   §205) · yinelenen deneme kaydı denetimsiz (bilinçli) · Fizyoloji/Histo aralığı
