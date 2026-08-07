@@ -15306,3 +15306,102 @@ tekrar günlerinde 0 gösteriyor**. Motor değiştirilmedi — karar kullanıcı
 - Rutin kuruldu ve bu oturuma bağlı; ilk atış 2026-08-08 00:31 UTC.
 - Sıradaki iş kullanıcıda: **Gemini anahtarını yenile** ve gerçek foto okuması dene.
 - Açık karar: yukarıdaki **(a)/(b) tekrar kredisi**.
+
+---
+
+# §305–§306 · KRONOMETRE (TUSBuddy yerine) · UYKU/HRV GİRİŞİ
+### sürüm `2027-02-20c` ↔ `rota-2027-02-20c`
+
+## §305 · Kronometre · "tek uygulamadan bağlanayım"
+
+Kullanıcı çalışma süresini TUSBuddy'de tutuyordu: iPad'den başlatıp molada
+durduruyordu. Sayaç uygulamaya taşındı ve GÖREVE bağlandı.
+
+- `D.kron = {ak:{gid,gun,bas}, gun:{'YYYY-AA-GG':{gorevId:ms}}}` · senkrona giriyor
+- KOÇ ekranında eritme kartının altında şerit: büyük süre · şu anki iş · gün toplamı
+- Her görev satırında süre çipi — dokununca O görevin sayacı açılıp kapanıyor;
+  satırın kendisi hâlâ "tamamlandı" anahtarı (çip `stopPropagation` yapıyor)
+- Görev tamamlanınca sayaç kendiliğinden duruyor
+- `kronDokum()` → gün sonunda süreleri tek blok metin olarak veriyor
+  ("süreleri kopyala"), kullanıcı TUSBuddy'ye günde BİR kez giriyor
+
+⚠ **TİK SAYILMIYOR.** Süre `Date.now()` farkından türetiliyor, biriken sayaç
+yok. Sebep: iOS arka planda `setInterval`i donduruyor; tik sayan bir sayaçta
+ekran kapanınca saatler kaybolurdu. Kaydedilen tek şey oturumun başlangıç
+damgası. `visibilitychange`'de yeniden hesaplanıyor.
+
+⚠ **Geceye sarkan oturum** başladığı GÜNÜN sonunda (23:59:59) kapatılıyor ve
+kullanıcıya `D.kocNot` ile söyleniyor. Rastgele bir üst sınır ("6 saat")
+uydurulmadı — gün sınırı gerçek bir sınır.
+
+### TUSBuddy API'si · NEDEN OTOMATİK DEĞİL
+
+- Uygulamamız sunucusuz, tek dosyalık, GitHub Pages'ten açılan bir sayfa.
+  TUSBuddy'ye yapılacak istek **başka bir kaynaktan (cross-origin)** olur ve
+  ancak TUSBuddy sunucusu `Access-Control-Allow-Origin` ile izin verirse çalışır.
+  Mobil istemci için yazılmış bir arka uçta bunun olduğuna dair kanıt yok.
+- **Bu ortamdan ölçülemedi:** `tusbuddy.com` ağ politikası tarafından kapalı
+  (curl `CONNECT tunnel failed, 403`; WebFetch `EGRESS_BLOCKED`). Yani
+  "denedim olmadı" değil, "buradan denenemiyor".
+- Uç nokta **UYDURULMADI** (CLAUDE.md "Tahmin yok"). `kron_test.js` uydurma
+  bir `tusbuddy` URL'si girmediğini ayrıca sınıyor.
+- Otomatik köprü ancak kullanıcı gerçek istek/yanıt biçimini (tusbuddy.com/web
+  ağ kaydından) verirse yazılabilir.
+
+⚠ **Kullanıcı TUSBuddy şifresini sohbete yazdı.** Koda girmedi, commit
+edilmedi, hiçbir yere gönderilmedi. **Şifreyi değiştirmesi gerekiyor.**
+
+## §306 · Uyku · HRV · enerji · stres
+
+Kullanıcı Apple Sağlık uykusuna ve Bevel'deki HRV/enerji/stres değerlerine
+bakılmasını istedi.
+
+⚠ **KISIT (mimari, ölçüm değil):** Safari/WebKit'te HealthKit'e erişen bir web
+API'si YOK. Bir web sayfası — PWA olsa bile — Sağlık verisini kendiliğinden
+okuyamaz. Bevel de skorlarını HealthKit üzerinden paylaşıyor. Veri bu yüzden
+CİHAZDAN uygulamaya VERİLİYOR:
+
+- Kısayollar (Shortcuts) ile üretilen küçük JSON yapıştırılıyor, ya da
+- üç–beş alan elle giriliyor.
+
+`D.saglik = {'YYYY-AA-GG':{uyku,hrv,dnb,enerji,stres,kaynak}}` · senkrona giriyor.
+Ayrıştırıcı `7h20m` · `7:20` · `7,5` · `440` (dakika) biçimlerini ve
+İngilizce anahtarları (`sleep/hrv/rhr/energy/stress/date`) kabul ediyor.
+**Tanımadığı anahtarı sessizce atmıyor** — kaç alan okundu, hangileri
+atlandı, ekranda yazıyor (§153 "sessiz sıfır" tuzağı).
+
+Uyarı eşikleri **uydurma "sağlıklı aralık" değil**: kullanıcının kendi son
+7 gününün ortancası. "uyku kendi ortancandan 2.5 sa kısa" · "HRV ortancanın
+%30 altında". Üç günden az veri varsa uyarı üretilmiyor.
+
+Hem `kocDurumMetni()`'ne hem koç rutininin gördüğü metne giriyor.
+
+## Bu turda yaptığım hatalar
+
+1. **Yapışkan alt şeridin şeffaf dolgusu dokunuşu yutuyordu.** `.kocAlt`
+   perdesi `padding-top:18px` idi; o 18 px görünmüyordu ama en üstteydi.
+   Ölçüldü: y=706'daki görev çipi TAMAMEN GÖRÜNÜRKEN
+   `elementFromPoint` `.kocAlt` dönüyordu — parmak boşa gidiyordu. §300'ün
+   ("İncele ve kaydet ana ekrana atıyor") aynı sınıfı, iki tur arayla
+   tekrar. Perde `::before`e taşındı (`pointer-events:none`), `.kocAlt`ın
+   kutusu artık yalnız düğmeler. Aynı kusur uyku kutusunun "kaydet"
+   düğmesini de çalıyordu.
+   **Kapıya kural olarak eklendi:** görünür hiçbir satırın dokunuşu
+   çalınmayacak + alt şeridin düğmeleri ulaşılabilir kalacak.
+2. `sagYaz(tar,kay,...)` parametre adı genel `kay()` kaydetme fonksiyonunu
+   gölgeliyordu; kayıt diske yazılmıyordu. `deger` olarak düzeltildi.
+
+## Kapılar
+
+`denet.py` ✓ 190 görev · `derin_test` · `pu_test` · `kal_test` · `cark_test` ·
+`kombo_test` · `mola_test` · `dom_test` · `olcek_test` · `analiz_test` ·
+`gercek_akis_test` · `ust_test` · **`kron_test` (yeni, 29 gerçek dokunuş)** ·
+**`sag_test` (yeni, 21 gerçek dokunuş)** — hepsi sıfır hata.
+
+## ⚠ DEVİR NOTU · KALDIĞIM YER
+
+- Sürüm `2027-02-20c` ↔ `rota-2027-02-20c`. Yayın: `index.html` + `sw.js`.
+- Kullanıcıda bekleyen: **TUSBuddy şifresini değiştir** · **Gemini anahtarını
+  yenile** · isterse TUSBuddy ağ kaydını ver (otomatik köprü için) ·
+  Kısayollar ile günlük uyku/HRV JSON'u üret.
+- Açık karar (§304'ten devam): tekrar kredisi (a) olduğu gibi / (b) `TEKRAR_KAT`.

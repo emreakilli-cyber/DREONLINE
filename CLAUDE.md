@@ -118,7 +118,7 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   varyantı atlanınca §112'nin düzeltmesi §117'ye kadar eksik kaldı; aynı kusur dört
   panelde birden vardı §151).
 
-## Güncel durum işaretçisi (sürüm `2027-02-20b`, DEVIR sonundaki devir notu)
+## Güncel durum işaretçisi (sürüm `2027-02-20c`, DEVIR sonundaki devir notu)
 
 - FT serisi 10 kitap power-up havuzuna işlendi (156 → 254 konu); konu tekilliği /
   net havuzu paylaşımı grup bazlı anahtarla tamamlandı (§219–§228).
@@ -261,6 +261,24 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
 - **§304 · yeni planda programlı 24'lü branş denemesi yok** (eskiden 39). Havuz/
   çekme makinesi duruyor; kapılar `derin_ortam.js`teki `den24Fikstur()` ile
   kendi kartlarını kuruyor.
+- **§305 · KRONOMETRE uygulamaya taşındı** (TUSBuddy yerine). `D.kron`
+  senkrona giriyor; süre TİK ile değil `Date.now()` DAMGASI ile hesaplanıyor
+  (iOS arka planda setInterval'i donduruyor). Geceye sarkan oturum gününün
+  sonunda kapanıyor. `kronDokum()` → "süreleri kopyala" ile TUSBuddy'ye günde
+  bir manuel aktarım.
+  ⚠ **TUSBuddy'ye otomatik bağlanılamıyor:** sunucusuz PWA'dan cross-origin
+  istek ancak onların CORS izniyle çalışır, kanıt yok; üstelik `tusbuddy.com`
+  bu ortamda ağ politikasıyla KAPALI (ölçülemedi). Uç nokta UYDURULMADI.
+- **§306 · UYKU/HRV girişi** (`D.saglik`, senkrona giriyor). ⚠ Tarayıcıdan
+  HealthKit'e erişen bir web API'si YOK — veri cihazdan VERİLİYOR (Kısayollar
+  JSON'u ya da elle). Uyarı eşikleri kullanıcının KENDİ son 7 gün ortancası,
+  uydurma "sağlıklı aralık" değil. Tanınmayan alan sessizce atılmıyor.
+- ⚠ **§306 · YAPIŞKAN ŞERİT DERSİ:** `position:sticky` bir çubuğun ŞEFFAF
+  dolgusu altındaki GÖRÜNÜR düğmelerin dokunuşunu yutar. Perde ayrı bir
+  `::before` katmanına konur (`pointer-events:none`). §300 ile aynı sınıf,
+  iki tur arayla tekrarladı — `kron_test.js` artık kural olarak sınıyor.
+- ⚠ Kullanıcı TUSBuddy şifresini sohbete yazdı; koda girmedi, **değiştirmesi
+  gerekiyor** (Gemini anahtarı gibi).
 - Bilinen açık noktalar: FT Geriatri 0.51 soru (kullanıcı onaylı varsayım) ·
   D_ORAN ±0.57 belirsizliği · potansiyel-gerçek ~0.42 net farkı (bilinçli muhafazakâr,
   §205) · yinelenen deneme kaydı denetimsiz (bilinçli) · Fizyoloji/Histo aralığı
