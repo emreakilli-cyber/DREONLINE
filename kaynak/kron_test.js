@@ -118,9 +118,16 @@ if(!_c){ console.log('⚠ playwright yok — KRONOMETRE kapısı ATLANDI'); proc
  chk('TUSBuddy dökümü toplam satırıyla başlıyor',/^TUSBuddy · \d{4}-\d\d-\d\d · TOPLAM /.test(dk),dk.split('\n')[0]);
  chk('dökümde görev satırı var',/\n\s+\d+:\d\d\s{2}\S/.test(dk),dk);
  const dg=await pg.evaluate(()=>[...document.querySelectorAll('.kocKop')].map(b=>b.textContent));
- chk('iki kopyalama düğmesi de duruyor',dg.length===2&&dg.indexOf('süreleri kopyala')>=0,dg);
- chk('uydurma TUSBuddy uç noktası YOK',
-   !/tusbuddy\.com|api\.tusbuddy|com\.tusbuddy/i.test(fs.readFileSync(DOSYA,'utf8').replace(/\/\*[\s\S]*?\*\//g,'')));
+ /* §307'de üçüncü düğme (TUSBuddy köprüsü) eklendi. */
+ chk('kopyalama ve köprü düğmeleri duruyor',
+   dg.indexOf('süreleri kopyala')>=0&&dg.some(x=>/TUSBuddy/.test(x)),dg);
+ /* Aranan şey UYDURMA UÇ NOKTA — kelime değil. §307'de arayüz metni
+    kullanıcıya "tusbuddy.com/web'i aç" diyor; o kalsın. Kodda tam bir
+    https adresi ya da gömülü kimlik bilgisi OLMAMALI. */
+ {const K=fs.readFileSync(DOSYA,'utf8');
+  chk('koda gömülü TUSBuddy adresi/kimlik bilgisi YOK',
+    !/https?:\/\/[^"'\s]*tusbuddy|1354659|emreakll58/i.test(K),
+    (K.match(/https?:\/\/[^"'\s]*tusbuddy[^"'\s]*/i)||[])[0]);}
  console.log('\nSAYFA HATASI: '+(err.join(' | ')||'(yok)'));
  console.log('\n═══ §305 · KRONOMETRE ═══');
  console.log(H?('✗ '+H+' HATA'):'✓ SIFIR HATA — 29 gerçek dokunuş kontrolü');

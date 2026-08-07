@@ -15405,3 +15405,85 @@ Hem `kocDurumMetni()`'ne hem koç rutininin gördüğü metne giriyor.
   yenile** · isterse TUSBuddy ağ kaydını ver (otomatik köprü için) ·
   Kısayollar ile günlük uyku/HRV JSON'u üret.
 - Açık karar (§304'ten devam): tekrar kredisi (a) olduğu gibi / (b) `TEKRAR_KAT`.
+
+---
+
+# §307 · TUSBuddy KÖPRÜSÜ · isteği KULLANICI veriyor
+### sürüm `2027-02-20d` ↔ `rota-2027-02-20d`
+
+§305'te kronometre uygulamaya taşındı ama kullanıcının asıl istediği
+"**TUSBuddy üyeliğime bağlı** kronometre"ydi; elle kopyalama o isteği
+karşılamıyordu. §307 gerçek bağlantıyı kuruyor.
+
+## Sorun ve neden tahmin edilmedi
+
+- TUSBuddy'nin yayımlanmış bir API'si YOK (arandı, bulunamadı).
+- `tusbuddy.com` bu geliştirme ortamından **ağ politikasıyla kapalı**
+  (`CONNECT tunnel failed 403` / `EGRESS_BLOCKED`). Erişilebilen tek dış
+  alan GitHub. Yani uç nokta buradan keşfedilemiyor.
+- Uç noktayı uydurmak CLAUDE.md'nin açık kuralına aykırı.
+
+## Çözüm · cURL tekrar oynatma
+
+Kullanıcı kendi tarayıcısından **gerçek isteği** veriyor:
+`tusbuddy.com/web` → giriş → kronometreyi başlat/durdur → Web Denetçisi →
+Ağ → **Copy as cURL** → uygulamadaki kutuya yapıştır.
+
+- `curlCoz()` Safari/Chrome cURL çıktısını okur: tırnak kaçışları, satır
+  sonu ters bölüleri, `$'...'`, `-X · -H · -b · -d/--data-raw · -u · --url`.
+  `Content-Length`, `Host`, `Origin`, `Referer` gibi tarayıcının kendi
+  yöneteceği başlıklar atılır (fetch reddediyor). **Yalnız `https`** kabul.
+- Yer tutucular gönderim anında dolar:
+  `{{BAS}} {{BIT}} {{BAS_MS}} {{BIT_MS}} {{SN}} {{DK}} {{TARIH}} {{BASLIK}} {{TOKEN}}`.
+- İsteğe bağlı **giriş isteği** + **jeton yolu** (`data.token`): 401/403
+  alınınca bir kez giriş yenilenip tekrar denenir.
+- Kronometre durunca oturum otomatik gider. **Kronometre köprüye bağlı
+  değil:** gönderim başarısızsa yerel sayaç yine yazar, oturum
+  `rota-tusb-kuyruk`'a düşer ve bir sonraki açılışta yeniden denenir.
+- "bağlantıyı sına" düğmesi sonucu **insan dilinde** yazar: CORS mu, 401 mi,
+  200 mü — ve sunucu yanıtının ilk 180 karakteri.
+
+## Güvenlik
+
+Şablon oturum jetonu/çerez taşır. `rota-tusb` **yalnız cihazda**
+(localStorage), **gist senkronuna girmez**, koda gömülmez — Gemini
+anahtarıyla aynı kural (§33). Kapı, `D` içinde şablonun geçmediğini ve
+kodda gömülü bir `https://…tusbuddy…` adresi ya da kullanıcının şifresinin
+bulunmadığını ayrıca sınıyor.
+
+## Kanıt · UÇTAN UCA ÖLÇÜLDÜ
+
+`kaynak/tusb_test.js` yerel bir **HTTPS sahte TUSBuddy sunucusu** kuruyor
+(kendinden imzalı sertifika) ve uygulamanın gerçekte ne gönderdiğini
+ölçüyor. Sunucuya ulaşan istekler:
+
+    POST /timer   → 401 (jeton yok)
+    POST /login   → jeton verildi          ← kendiliğinden
+    POST /timer   → 200 (kabul edildi)
+    POST /timer   → kuyruktan gelen oturum
+
+Doğrulananlar: gövdede gerçek saniye · ISO başlangıç/bitiş · görev adı ·
+tarih gitti · 401'de giriş yenilendi · sunucu kapalıyken oturum kuyruğa
+alındı ve **yerel süre yine de yazıldı** · sunucu dönünce kuyruk boşaldı.
+
+⚠ **Bu, TUSBuddy'nin gerçek sunucusuyla değil, davranışı taklit eden bir
+sunucuyla yapıldı.** Gerçek TUSBuddy'nin CORS izni verip vermediği hâlâ
+BİLİNMİYOR — kullanıcı "bağlantıyı sına" deyince öğrenilecek. İzin
+vermiyorsa kutu bunu açıkça söylüyor ve "süreleri kopyala" yolu duruyor.
+
+## Kapılar
+
+`denet.py` + `derin_test` · `pu_test` · `kal_test` · `cark_test` ·
+`kombo_test` · `mola_test` · `dom_test` · `olcek_test` · `analiz_test` ·
+`gercek_akis_test` · `ust_test` · `kron_test` · `sag_test` ·
+**`tusb_test` (yeni, 38 kontrol)** — hepsi sıfır hata.
+`kron_test`te iki bayat iddia güncellendi (üçüncü düğme · "uydurma uç
+nokta" kontrolü artık kelimeyi değil ADRESİ arıyor).
+
+## ⚠ DEVİR NOTU · KALDIĞIM YER
+
+- Sürüm `2027-02-20d` ↔ `rota-2027-02-20d`.
+- Kullanıcıda bekleyen: **TUSBuddy şifresini değiştir** · TUSBuddy cURL'ünü
+  yapıştırıp "bağlantıyı sına" · Gemini anahtarını yenile · Kısayollar ile
+  günlük uyku/HRV JSON'u.
+- Açık karar (§304): tekrar kredisi (a) olduğu gibi / (b) `TEKRAR_KAT`.

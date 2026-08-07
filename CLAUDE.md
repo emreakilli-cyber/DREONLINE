@@ -118,7 +118,7 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   varyantı atlanınca §112'nin düzeltmesi §117'ye kadar eksik kaldı; aynı kusur dört
   panelde birden vardı §151).
 
-## Güncel durum işaretçisi (sürüm `2027-02-20c`, DEVIR sonundaki devir notu)
+## Güncel durum işaretçisi (sürüm `2027-02-20d`, DEVIR sonundaki devir notu)
 
 - FT serisi 10 kitap power-up havuzuna işlendi (156 → 254 konu); konu tekilliği /
   net havuzu paylaşımı grup bazlı anahtarla tamamlandı (§219–§228).
@@ -266,9 +266,16 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   (iOS arka planda setInterval'i donduruyor). Geceye sarkan oturum gününün
   sonunda kapanıyor. `kronDokum()` → "süreleri kopyala" ile TUSBuddy'ye günde
   bir manuel aktarım.
-  ⚠ **TUSBuddy'ye otomatik bağlanılamıyor:** sunucusuz PWA'dan cross-origin
-  istek ancak onların CORS izniyle çalışır, kanıt yok; üstelik `tusbuddy.com`
-  bu ortamda ağ politikasıyla KAPALI (ölçülemedi). Uç nokta UYDURULMADI.
+- **§307 · TUSBuddy KÖPRÜSÜ · isteği KULLANICI veriyor.** Uç nokta
+  uydurulmuyor: kullanıcı `tusbuddy.com/web`'den "Copy as cURL" ile GERÇEK
+  isteği yapıştırıyor, `curlCoz()` ayrıştırıyor, uygulama yer tutucuları
+  (`{{BAS}} {{BIT}} {{SN}} {{DK}} {{TARIH}} {{BASLIK}} {{TOKEN}}`) doldurup
+  tekrar oynatıyor. 401'de giriş kendiliğinden yenileniyor; başarısız
+  gönderim `rota-tusb-kuyruk`'a düşüyor. **Kronometre köprüye bağlı değil.**
+  Şablon `rota-tusb`'de, YALNIZ cihazda, senkrona girmez, koda gömülmez.
+  Kanıt: `kaynak/tusb_test.js` yerel HTTPS sahte sunucu kurup uçtan uca
+  ölçüyor. ⚠ Gerçek TUSBuddy'nin CORS izni HÂLÂ BİLİNMİYOR — kullanıcı
+  "bağlantıyı sına" deyince öğrenilecek.
 - **§306 · UYKU/HRV girişi** (`D.saglik`, senkrona giriyor). ⚠ Tarayıcıdan
   HealthKit'e erişen bir web API'si YOK — veri cihazdan VERİLİYOR (Kısayollar
   JSON'u ya da elle). Uyarı eşikleri kullanıcının KENDİ son 7 gün ortancası,
