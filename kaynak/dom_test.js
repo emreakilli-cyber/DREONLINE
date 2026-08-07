@@ -34,6 +34,12 @@ const chk=(a,ok,x)=>{N++;if(!ok){H++;console.log('  ✗ '+a+(x!==undefined?' :: 
  await pg.goto('file://'+YOL);
  await pg.waitForTimeout(2600);
 
+  /* §304: KOÇ ekranı artık AÇILIŞ ekranı (body.kocKip). Klasik arayüz
+     altında duruyor ama opacity:0 + pointer-events:none oluyor —
+     ölçüm ve dokunma testleri önce onu kapatmalı. */
+  await pg.evaluate(()=>{try{kocKapat()}catch(e){document.body.classList.remove('kocKip')}});
+  await pg.waitForTimeout(250);
+
  console.log('═══ DOM · GÜN LİSTESİ BAĞLARI (§284) ═══');
 
  /* Yardımcı: satır + dairesinin durumu */

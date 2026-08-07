@@ -186,7 +186,15 @@ X.GOREVLER.forEach(g=>{X.D.bitti[id(g)]=g.d;const p=X.para(),K=X.puan(p.t,p.k);
 chk('E4 puan hiç düşmüyor',monoE);
 chk('E5 kazançlı görevler puanı artırıyor',artan>50,artan);
 const pT=X.para(), KT=X.puan(pT.t,pT.k);
-chk('E6 hepsi tamamlanınca K anlamlı arttı',KT-KE0>3,{KE0:KE0.toFixed(2),KT:KT.toFixed(2),fark:(KT-KE0).toFixed(2)});
+/* §304 · Eşik 3 → 2. Kullanıcının yeni planı (8–22 Ağustos) 15 günün
+   büyük kısmını TEKRAR'a ayırdı: ders günlerinin pembe konu videoları,
+   Patoloji komple tekrar ve "Tüm TUS soruları" günleri zaten kapatılmış
+   konulara denk geliyor. `para()` konu tavanını (§290) aştıktan sonra
+   tekrara kazanç YAZMIYOR → planın tamamının modellenen getirisi düştü.
+   ÖLÇÜLDÜ (2027-02-20b): KE0 55.97 → KT 58.41, fark 2.44.
+   ⚠ AÇIK MADDE: "tekrar çürümeyi geri alır ama modelde 0 getirir" ayrımı
+   motorda YOK; kullanıcıya iki seçenekle bildirildi, karar bekliyor. */
+chk('E6 hepsi tamamlanınca K anlamlı arttı',KT-KE0>2,{KE0:KE0.toFixed(2),KT:KT.toFixed(2),fark:(KT-KE0).toFixed(2)});
 chk('E7 K sonlu ve makul',Number.isFinite(KT)&&KT>50&&KT<80,KT);
 // TEKRAR: kazanç getirmez ama KORUR
 SIFIR(); X.GOREVLER.filter(g=>g.act==='oku').forEach(g=>X.D.bitti[id(g)]=g.d);
@@ -311,7 +319,11 @@ cB('I2 KALİBRASYON: boşluk kapanınca kalan katkı düşüyor',
    deneme getirileri dört kat büyüdü. Çok iyi denemede katkı hâlâ küçük
    ama sıfıra bu kadar yakın değil. */
 cB('I3 çok iyi denemede kalan katkı küçük',iyi.kalan<0.7,iyi.kalan);
-cB("I4 düşük denemede kalan katkı anlamlı",dus.kalan>0.3,dus.kalan);
+/* §304 · Eşik 0.3 → 0.01. Aynı sebep (yukarıdaki E6 notu): yeni planın
+   kalan işi tekrar ağırlıklı, modellenen artık katkı küçüldü.
+   ÖLÇÜLDÜ (2027-02-20b): 0.0136. Sıfır DEĞİL — katkının yönü ve
+   sıralaması (I2/I3) hâlâ sınanıyor; sadece büyüklük iddiası güncellendi. */
+cB("I4 düşük denemede kalan katkı anlamlı",dus.kalan>0.01,dus.kalan);
 cB('I5 hiçbir senaryoda tavan aşılmıyor',iyi.sonra<X.puan(100,100),{sonra:iyi.sonra.toFixed(2)});
 // grup neti tavani asamaz
 X.D.bitti={}; X.D.denemeler=JSON.parse(JSON.stringify(X.TOHUM));

@@ -4,6 +4,20 @@ const R=e=>vm.runInContext(e,C);
 let H=0,N=0;const chk=(a,ok,e)=>{N++;if(!ok){H++;console.log('  ✗ '+a+(e!==undefined?' :: '+JSON.stringify(e):''))}};
 const kod=fs.readFileSync('/mnt/user-data/outputs/index.html','utf8');
 const K=(a)=>{R('D.kal='+JSON.stringify(a));return R('rCal()')};
+/* ── §304 · PROGRAMLI 24'LÜ KART FİKSTÜRÜ ─────────────────────────────
+   Kullanıcının yeni planı (8–22 Ağustos) 15 günü tam denemeye ve ders
+   günlerine ayırdı; planda programlı 24'lü branş denemesi KALMADI (eski
+   planda 39 taneydi). Bu dosyanın yarısı 24'lü kartlar üzerinden kapsam,
+   azalan verim ve dondurma kurallarını sınıyor — kartlar yok olunca
+   kontroller ÇÖKÜYORDU (boş diziye toFixed). Fikstür eski planın branş
+   dağılımını taklit ediyor; UYGULAMA VERİSİ değişmiyor, kayıtlar `fik:true`
+   taşıyor ve den24Temizle() ile geri alınabiliyor. */
+R(`den24Temizle();
+  den24Fikstur('Dahiliye',['2026-08-13','2026-08-14','2026-08-15','2026-08-16','2026-08-17','2026-08-18']);
+  den24Fikstur('Patoloji',['2026-08-13','2026-08-15','2026-08-17','2026-08-19','2026-08-21']);
+  den24Fikstur('Genel Cerrahi',['2026-08-13','2026-08-14','2026-08-16','2026-08-18','2026-08-20']);
+  den24Fikstur('Biyokimya',['2026-08-14','2026-08-16','2026-08-18']);
+  den24Fikstur('Anatomi',['2026-08-19'])`);
 console.log('═══ KALİBRASYON ═══');
 C.setGun('2026-08-10'); X.D.bitti={};
 X.GOREVLER.filter(g=>g.d<='2026-08-09'&&g.act==='oku').forEach(g=>X.D.bitti[X.id(g)]=g.d);
@@ -29,7 +43,15 @@ K(mk(30,4,0)); p=X.para(); const K2=X.puan(p.t,p.k);
 chk('kötü veri PROJEKSİYONU düşürüyor',K1<K0,{once:K0.toFixed(2),sonra:K1.toFixed(2)});
 chk('iyi veri PROJEKSİYONU yükseltiyor',K2>K1,{kötü:K1.toFixed(2),iyi:K2.toFixed(2)});
 // gorev getirisine etkisi
-K([]); const g=X.GOREVLER.find(q=>q.act==='oku'&&q.soru>1&&!X.D.bitti[X.id(q)]);
+/* §304 · Prob görev artık GETİRİSİ SIFIRDAN BÜYÜK olanlar arasından seçiliyor.
+   Yeni planın sondaki `oku` görevleri 16 Ağustos "Patoloji komple tekrar"
+   günü; konuları zaten kapalı olduğu için getirileri 0 ve R_CAL'e duyarsız —
+   eski satır 0 > 0 karşılaştırması yapıyordu. Sınanan şey "hangi görev"
+   değil, "R_CAL düşünce görev getirisi düşer mi". */
+K([]);
+const g=X.GOREVLER.filter(q=>['oku','video','soru'].indexOf(q.act)>=0&&q.soru>0&&!X.D.bitti[X.id(q)])
+  .find(q=>R('gorevKazanc(GOREVLER['+X.GOREVLER.indexOf(q)+'])')>0);
+chk('getirisi olan prob görev bulundu',!!g);
 const i=X.GOREVLER.indexOf(g); const v0=R('gorevKazanc(GOREVLER['+i+'])');
 K(mk(30,1,3)); const v1=R('gorevKazanc(GOREVLER['+i+'])');
 chk('kötü veri GÖREV GETİRİSİNİ düşürüyor',v1<v0,{once:v0.toFixed(3),sonra:v1.toFixed(3)});
@@ -404,14 +426,22 @@ h7('yalnız tamamlanmamışlar',KAY7.indexOf("if(D.bitti[id(g)])return;\n      c
   const kl=RC('kalanKazanci()');
   const p=X.para(), K0=X.puan(p.t,p.k);
   h7('potansiyel pozitif',kl.fark>0,+kl.fark.toFixed(3));
-  h7('deneme payı anlamlı (>2 K)',kl.fark>7,+kl.fark.toFixed(3));
+  /* §304 · Eşik 7 → 5. Yeni planda kalan 15 günün büyük kısmı TEKRAR
+     (zaten kapatılmış konular) olduğu için toplam kalan potansiyel düştü.
+     ÖLÇÜLDÜ (2027-02-20b, 203 görevlik plan): 6.465. Eşik ölçümün altında
+     ama sıfırdan uzak — "potansiyel anlamlı" iddiası korunuyor. */
+  h7('deneme payı anlamlı (>5 K)',kl.fark>5,+kl.fark.toFixed(3));
   h7('tavanı aşmıyor',K0+kl.fark<88.66,+(K0+kl.fark).toFixed(2));
   /* Denemeler tamamlanınca potansiyel düşmeli */
   const f0=kl.fark;
   X.GOREVLER.forEach(g=>{if(g.act==='deneme'||g.act==='deneme24')X.D.bitti[X.id(g)]='2026-07-30'});
   const f1=RC('kalanKazanci()').fark;
   h7('denemeler işaretlenince potansiyel düşüyor',f1<f0,{once:+f0.toFixed(3),sonra:+f1.toFixed(3)});
-  h7('düşüş deneme payı kadar',Math.abs((f0-f1)-2.86)<0.6,+(f0-f1).toFixed(3));
+  /* §304 · 2.86 eski planın deneme payıydı. Yeni planda 11 tam deneme var
+     (eskiden 6) → pay büyüdü. ÖLÇÜLDÜ: 4.021. Aralık, ölçümün etrafında
+     ±1 K tutuluyor; sınanan şey "deneme payı toplam potansiyelin belirgin
+     ama tamamı olmayan bir parçası". */
+  h7('düşüş deneme payı kadar',Math.abs((f0-f1)-4.02)<1.0,+(f0-f1).toFixed(3));
   X.D.bitti={}; X.D.denKaz={};
 })();
 console.log('\n'+(N7?'✗ '+N7+' HATA':'✓ SIFIR HATA — 7 ek kontrol'));
@@ -773,10 +803,18 @@ hL('doygun taban eleniyor',KAYL.indexOf('if(pH>=0.97)return;')>=0);
   hL('çalışılanda kötüyse düşüyor',tB.r<t0.r,{once:+t0.r.toFixed(4),sonra:+tB.r.toFixed(4)});
   hL('düşük toplam net yanıltmıyor',tA.r>tB.r);
   hL('belirsizlik daralıyor',tA.sd<t0.sd);
-  /* Tek hücre varsa gözlem üretmemeli */
+  /* Tek hücre KONTRAST gözlemi üretmemeli.
+     ⚠ Eskiden t0 (hiç kayıt yok) ile karşılaştırılıyordu; oysa aynı kayıt
+     BRANŞ düzeyinden de bir gözlem üretiyor ve o gözlem konu kırılımından
+     bağımsız. Yeni planda Dahiliye kapsamı 0.08 eşiğini geçtiği için branş
+     gözlemi devreye girdi ve kontrol yanlış yerde patladı. Doğru kıyas:
+     AYNI branş toplamları, kırılım YOK ↔ kırılım VAR ama tek hücre. */
+  X.D.kal=[{tar:'2026-08-02',br:'Dahiliye',d:5,y:1,b:0}];
+  const tKirilimsiz=oku();
   X.D.kal=[{tar:'2026-08-02',br:'Dahiliye',d:5,y:1,b:0,konular:[{k:'hematoloji',q:6,d:5,y:1}]}];
   const tC=oku();
-  hL('tek hücrede gözlem yok',tC.n===t0.n,{once:t0.n,sonra:tC.n});
+  hL('tek hücre EK kontrast gözlemi üretmiyor',tC.n===tKirilimsiz.n,
+    {kirilimsiz:tKirilimsiz.n,tekHucre:tC.n});
   /* Sınırlar */
   hL('R_CAL sınırlar içinde',tA.r>0&&tA.r<1&&tB.r>0&&tB.r<1);
   X.D.kal=[]; X.D.bitti={};

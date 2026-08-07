@@ -15132,3 +15132,177 @@ formatı) · cihazdan "Hata kaydı" dökümü.
   commit edilmedi. Kullanıcı o anahtarı **iptal edip yenisini üretmeli** ve
   yalnız uygulamanın ayar alanına girmeli (`localStorage: rota-gorus`,
   gist senkronuna dahil değil).
+
+---
+
+# §304 · PLAN DEĞİŞTİ · KOÇ EKRANI · 12 SAATLİK RUTİN
+### sürüm `2027-02-20b` ↔ `rota-2027-02-20b`
+
+## Kullanıcının söylediği (birebir niyet)
+
+"programa uyamadım sadece atilla uslu videolarının göğüs hastalıkları 3 olan
+kısmına kadar izleyebildim ve çok stres oldum" → plan yeniden yazıldı:
+
+| gün | ne |
+|---|---|
+| 08-08 | kalan Atilla Uslu videoları (18 iş) — bugün bitiyor |
+| 08-09 | DENEME + Genel Cerrahi ┐ |
+| 08-10 | Pediatri │ |
+| 08-11 | DENEME + Kadın Doğum │ 7 derse 1'er gün |
+| 08-12 | Biyokimya │ pembe konu videoları + ezber |
+| 08-13 | DENEME + Farmakoloji │ |
+| 08-14 | Mikrobiyoloji │ |
+| 08-15 | DENEME + Küçük Stajlar ┘ |
+| 08-16 | DENEME + Patoloji SST komple tekrar |
+| 08-17…22 | DENEME + Genel Cerrahi/Pediatri/Kadın Doğum/Biyokimya/Farma/Mikro · Tüm TUS soruları + deneme yanlışları |
+| 08-23 | SINAV |
+
+Deneme ritmi kullanıcının dediği gibi: 09/11/13 (6 gün boyunca 2 günde 1),
+15'ten itibaren **her sabah**. Toplam 11 tam deneme.
+
+Üretici: **`kaynak/yeniplan_304.py`** (repoda). Girdi: uygulamanın kendi
+`gorevler.json` + `konu_dag.json`. **Konu listeleri uydurulmadı** — o dersin
+plandaki mevcut konuları (pembe önce), yoksa KONU_DAG soru ağırlığı sırası.
+
+Sonuç: **190 görev · 15 gün · günlük yük 8.0 sa · 187.7 etkin saat.**
+`denet.py` kural bölümü yeni plana göre baştan yazıldı (eski "video ≤8 Ağu",
+"6 tam deneme", "KURAL A/C" kuralları geçersizdi) → **✓ SIFIR HATA**.
+
+## KOÇ EKRANI (`#koc`) · açılış ekranı
+
+"bunun dışındaki her şeyden arındır uygulamayı, claude veya gemini ana ekranı
+kadar berrak olsun" → tek sütun, dört blok:
+
+1. **kalan gün** + `ayrıntı ›` (eski arayüze geçiş)
+2. **görevleri eritme** kartı: %, çubuk, `bitti/toplam · bugün x/y · kalan G günde N iş (S sa)`
+3. **koç notu** (`D.kocNot`, boşken görünmez)
+4. **BUGÜN** listesi — daireye dokun = `D.bitti` aç/kapa (çarkla aynı veri)
+5. dibe yapışık iki düğme: **📷 Deneme sonucu gir** · **Deneme analizi**
+
+Eski arayüzün tamamı altta duruyor (`body.kocKip` yalnız opacity/pointer-events
+kapatıyor); `KOC_ACILIS=false` ile eski açılışa dönülür. Motor değişmedi.
+
+Ölçüldü (gerçek Chromium, 390×844 ve 320×700): taşma yok, sayfa hatası yok,
+düğmeler kaydırmadan erişilebilir.
+
+⚠ Yol boyunca iki gerçek yerleşim kusuru: (a) düğmeler listenin altında ekran
+DIŞINA düşüyordu → `position:sticky;bottom:0`; (b) yapışan ikincil düğme yarı
+saydamdı, altındaki kartın yazısı içinden okunuyordu → opak zemin + perde.
+
+## "durumu kopyala" · rutinin gözü
+
+Rutin uygulamanın verisini **göremez** (sunucu yok, her şey localStorage'da).
+`kocDurumMetni()` durumu tek blok metne çeviriyor: tarih · kalan gün · sürüm ·
+eritme % · gecikmiş iş · bugünün yapılmayanları · kalan yük · PARAKETE (T/K) ·
+son deneme · sıradaki 3 gün. Pano izni yoksa metin seçilebilir kutuda gösteriliyor.
+Her satır uygulamanın kendi fonksiyonundan geliyor — tahmin yok.
+
+## Rutin
+
+`trig_01KEUhfyVUKfR6VrEEi3FX2N` · `31 */12 * * *` (UTC) · **bu oturuma** düşüyor.
+İçeriği: bugünün plan gününü oku → durum metnini iste → karşılaştır → en fazla
+3 somut tavsiye. "Uydurma sayı üretme" ve "deneme + analiz her zaman korunur,
+ilk kesilecek tekrar konularıdır" kuralları isteme gömülü.
+
+## ÜST PANEL · ritim satırı artık VERİYE BAĞLI DEĞİL
+
+Yeni planda sıradaki görevin branş adı uzayınca ritim satırı sarıp 23 → 46 px
+oldu; panel 145 → 162 px'e çıktı. Yani **panel yüksekliği görev adının
+uzunluğuna bağlıydı**. Artık sarmıyor: daralma sırası `<s>` (shrink 200) →
+`<b>` (shrink 1), ikisi de üç noktaya düşebiliyor. 320 px'te iki değerin
+gerektirdiği 341 px ölçüldü; değer de kısalarak taşma sıfırlandı.
+Panel §303 değerlerine döndü: 131/137/145/155/139/130 px.
+
+## Bu turda yaptığım hatalar
+
+1. **95 KB veri sildim.** `GOREVLER`i gömerken dizi sonunu `s.find('];')` ile
+   aradım. Oysa dosyada `const GOREVLER=[...], TOHUM=[...], SORU={...},
+   KOMBO=[...] ...;` tek bir `const` zinciri; ilk `];` zincirin DEĞİL, ondan
+   sonraki `SOZ` dizisinin sonuydu. TOHUM · SORU · KOMBO · KHARITA · ISARET ·
+   SOZ uçtu. Harness `SORU is not defined` verince yakalandı; HEAD'den kuyruk
+   çıkarılıp budanmış KOMBO geri takılarak onarıldı ve bütün adlar sayıldı.
+   **Ders: gömme işlemi DENGELİ PARANTEZ ile sınır bulmalı; `find('];')` gibi
+   metin araması bu dosyada yasak.** İkinci gömme öyle yapıldı ve doğrulandı.
+2. **Atilla Uslu videolarını iki kere yazdım.** Kullanıcı "Göğüs 3"e kadar
+   gelmişti; kalan 18 videonun 13'ü eski planda 4/6/7 Ağustos'a yazılıydı ve
+   "geçmiş korunuyor" diye orada bırakıldı, üstelik 8 Ağustos'a yeniden
+   üretildi. Aynı video iki kayıt → eritme yüzdesi ve iş sayısı şişiyordu
+   (203 → 190). Üreticiye düşme kuralı eklendi.
+3. **Küçük Stajlar branşını toptan 'Dahiliye' yazdım.** Uygulamanın branş
+   kümesinde "Küçük Stajlar" yok; ama Ortopedi/Çocuk Cerrahisi/Üroloji
+   'Genel Cerrahi'. Seçilen 4 konu tesadüfen hep Dahiliye olduğu için çıktı
+   değişmedi — yine de branş artık kaynak görevden taşınıyor.
+4. **Patoloji tekrar günü kitap görünümünde satır yineliyordu** (kapı yakaladı).
+   Ad `… (komple tekrar)` oldu; parantezli ek `konuSade` tarafından soyulduğu
+   için **konu kökü değişmiyor**. "— tekrar" kullanılmadı: tire ayraç olarak
+   boşluğa çevriliyor ve kök "neoplazi tekrar" olup konu bağını koparıyordu.
+
+## Kapılar
+
+`denet.py` ✓ 190 görev · `derin_test` · `pu_test` · `kal_test` · `cark_test` ·
+`kombo_test` · `mola_test` · `dom_test` · `olcek_test` · `analiz_test` ·
+`gercek_akis_test` · `ust_test` — **hepsi sıfır hata.**
+
+Plan değişikliği kapılarda **yedi bayat iddia** ortaya çıkardı:
+- `ust_test`/`dom_test`/`analiz_test`/`olcek_test`/`gercek_akis_test` KOÇ katmanı
+  açıkken ölçüyordu → hepsi önce `kocKapat()` çağırıyor.
+- Yeni planda **programlı 24'lü branş denemesi kalmadı** (eskiden 39). `pu_test`
+  ve `kal_test`in yarısı o kartlar üzerinden kural sınıyordu ve `undefined`a
+  dokunup ÇÖKÜYORDU. Kapı kaybını sessizce kabul etmek yerine `derin_ortam.js`e
+  **`den24Fikstur()` / `den24Temizle()`** eklendi; kapılar kendi kartlarını
+  kuruyor, uygulama verisi değişmiyor (`fik:true`).
+- `pu_test`in prob görevi (Farmakoloji · Otonom Sinir Sistemi) planın silinen
+  gelecek bölümündeydi → Genel Cerrahi · Pankreas çiftiyle değiştirildi.
+- `kal_test` "tek hücrede gözlem yok" kontrolü branş düzeyi gözlemi ile konu
+  kontrastını karıştırıyordu; artık kırılımsız ↔ tek hücre kıyaslanıyor.
+- `derin_test` E6 (>3 → >2) ve I4 (>0.3 → >0.01), `kal_test` deneme payı
+  (>7 → >5; 2.86 → 4.02) sayıları yeni plana göre yeniden ölçüldü.
+
+## ⚠ EN ÖNEMLİ BULGU · tekrarın modellenen getirisi SIFIR
+
+Ölçüldü (yeni plan, tüm geçmiş tamamlanmış varsayımıyla, `gorevKazanc`):
+
+| gün | iş | modellenen kazanç |
+|---|---|---|
+| 08-08 Atilla Uslu kalanı | 18 | **0.000** |
+| 08-09 Genel Cerrahi | 4 | **0.000** |
+| 08-10 Pediatri | 12 | 0.012 |
+| 08-12 Biyokimya | 6 | 0.072 |
+| 08-14 Mikrobiyoloji | 4 | **0.000** |
+| 08-16 Patoloji komple tekrar | 5 | **0.000** |
+| 08-17…22 Tüm TUS soruları | 18 | 0.085 toplam |
+| her deneme günü | 2 | 1.467 |
+
+Sebep **sessiz bir isim uyuşmazlığı DEĞİL** (kontrol edildi: `konuKok` ve
+`kaynakKok` eşleşiyor) — §290'ın **konu tavanı**: bir konu bir kez kapandıktan
+sonra `para()` aynı konuya ikinci kez kazanç yazmıyor. Kullanıcının yeni planı
+tanımı gereği tekrar planı olduğu için motor "kalan 15 gün ~0 net değerinde"
+diyor.
+
+Bunun pratik etkisi sınırlı (KOÇ ekranı **iş sayısı** üzerinden çalışıyor, çark
+sırası gün bazlı), ama **POTANSİYEL sayısı ve görev kartlarındaki kazanç çipi
+tekrar günlerinde 0 gösteriyor**. Motor değiştirilmedi — karar kullanıcının:
+
+- **(a) olduğu gibi bırak:** projeksiyon muhafazakâr kalır, tekrar günleri 0 gösterir.
+- **(b) tekrara kısmi kredi ver:** power-up tarafında zaten var olan `TEKRAR_KAT`
+  ve `S_TEK` (daha yavaş çürüme) `para()` görev kapsamına da taşınır. Etki
+  bütün projeksiyon sayılarını kaydırır, tüm kapı sabitleri yeniden ölçülür.
+
+## Veri boşlukları (uydurulmadı)
+
+1. **Uygulamada Dahiliye dışında hiçbir derse ait video kaynağı yok.** Ders
+   günlerinin kaynağı `<ders> · pembe konu videoları` diye yazıldı; hangi seriyi
+   izleyeceğini kullanıcı biliyor.
+2. **Kadın Doğum, Mikrobiyoloji ve Küçük Stajlar'da pembe etiketli konu yok.**
+   O derslerde sıralama KONU_DAG soru ağırlığına düştü.
+3. **Deneme günleri derse yalnız 2 saat bırakıyor** (gün zaten 2×2.25 sınav +
+   1.5 analiz = 6 sa). Genel Cerrahi · Kadın Doğum · Farmakoloji · Küçük Stajlar
+   deneme gününe denk geldiği için 4'er konu alıyor; Pediatri · Biyokimya ·
+   Mikrobiyoloji tam gün alıyor. Bu kullanıcının ritminin doğrudan sonucu.
+
+## ⚠ DEVİR NOTU · KALDIĞIM YER
+
+- Sürüm `2027-02-20b` ↔ `rota-2027-02-20b`. Yayın: `index.html` + `sw.js`.
+- Rutin kuruldu ve bu oturuma bağlı; ilk atış 2026-08-08 00:31 UTC.
+- Sıradaki iş kullanıcıda: **Gemini anahtarını yenile** ve gerçek foto okuması dene.
+- Açık karar: yukarıdaki **(a)/(b) tekrar kredisi**.

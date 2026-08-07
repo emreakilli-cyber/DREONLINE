@@ -118,7 +118,7 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   varyantı atlanınca §112'nin düzeltmesi §117'ye kadar eksik kaldı; aynı kusur dört
   panelde birden vardı §151).
 
-## Güncel durum işaretçisi (sürüm `2027-02-19j`, DEVIR sonundaki devir notu)
+## Güncel durum işaretçisi (sürüm `2027-02-20b`, DEVIR sonundaki devir notu)
 
 - FT serisi 10 kitap power-up havuzuna işlendi (156 → 254 konu); konu tekilliği /
   net havuzu paylaşımı grup bazlı anahtarla tamamlandı (§219–§228).
@@ -233,6 +233,34 @@ Cevaplarda abartı yok, kendini övme yok — ne yapıldığı ve ne bulunamadı
   38 isteğin toplam süresi hakkında sayı verilmemeli. §285–§298 kanıtı tamamen sahte `fetch` ve elle
   okunmuş yer gerçeği üzerinden. Sıradaki iş: kullanıcı anahtarı yenileyip gerçek
   okuma denesin, istem doğruluğu gerçek çıktıya göre ayarlansın.
+- **§304 · PLAN DEĞİŞTİ (kullanıcının kendi tarifi).** 8–22 Ağustos yeniden
+  yazıldı: 08-08 kalan Atilla Uslu · 09/11/13 iki günde bir, 15'ten sonra HER
+  SABAH deneme (11 tam deneme) · 7 derse 1'er gün pembe konu videosu ·
+  16 Ağustos Patoloji SST komple tekrar · 17–22 Tüm TUS soruları + deneme
+  yanlışları. **190 görev · 8.0 sa/gün.** Üretici `kaynak/yeniplan_304.py`,
+  `denet.py` kural bölümü yeni plana göre yeniden yazıldı.
+- **§304 · KOÇ EKRANI açılış ekranı oldu** (`#koc`, `body.kocKip`): kalan gün ·
+  eritme yüzdesi · koç notu (`D.kocNot`) · bugünün listesi (dokun = `D.bitti`) ·
+  dibe yapışık "📷 Deneme sonucu gir" / "Deneme analizi". Eski arayüzün tamamı
+  altta duruyor, `ayrıntı ›` ile açılıyor; `KOC_ACILIS=false` ile geri alınır.
+  `kocDurumMetni()` + "durumu kopyala" düğmesi rutinin tek veri kaynağı.
+- **§304 · 12 saatlik koç rutini** `trig_01KEUhfyVUKfR6VrEEi3FX2N` bu oturuma düşüyor.
+- ⚠ **§304 · GÖMME KURALI:** `index.html`'de `GOREVLER` bir `const` ZİNCİRİNİN
+  ilk halkası (`GOREVLER=[...], TOHUM=[...], SORU={...}, KOMBO=[...] ...;`).
+  Diziyi değiştirirken sınır **dengeli parantezle** bulunur; `find('];')` gibi
+  metin araması 95 KB veriyi siler (bu turda yaşandı, DEVIR §304).
+- ⚠ **§304 · TEKRARIN MODELLENEN GETİRİSİ SIFIR.** §290 konu tavanı yüzünden
+  zaten kapatılmış konuyu tekrar çalışmak `para()`ya kazanç yazmıyor; yeni plan
+  tanımı gereği tekrar planı olduğu için POTANSİYEL ve kazanç çipleri tekrar
+  günlerinde 0 gösteriyor. Motor DEĞİŞTİRİLMEDİ — (a) olduğu gibi bırak /
+  (b) `TEKRAR_KAT`+`S_TEK`'i görev kapsamına taşı kararı kullanıcıda.
+- ⚠ **§304 · veri boşlukları:** Dahiliye dışında hiçbir derse ait video kaynağı
+  yok (ders günlerinin kaynağı ders adıyla yazıldı) · Kadın Doğum, Mikrobiyoloji
+  ve Küçük Stajlar'da pembe etiketli konu yok · deneme günleri derse yalnız
+  2 saat bırakıyor (kullanıcının ritminin doğrudan sonucu).
+- **§304 · yeni planda programlı 24'lü branş denemesi yok** (eskiden 39). Havuz/
+  çekme makinesi duruyor; kapılar `derin_ortam.js`teki `den24Fikstur()` ile
+  kendi kartlarını kuruyor.
 - Bilinen açık noktalar: FT Geriatri 0.51 soru (kullanıcı onaylı varsayım) ·
   D_ORAN ±0.57 belirsizliği · potansiyel-gerçek ~0.42 net farkı (bilinçli muhafazakâr,
   §205) · yinelenen deneme kaydı denetimsiz (bilinçli) · Fizyoloji/Histo aralığı

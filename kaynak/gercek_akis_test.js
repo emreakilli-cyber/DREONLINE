@@ -30,6 +30,12 @@ if(!fs.existsSync(YOL)){ console.log('⚠ '+YOL+' yok — ATLANDI'); process.exi
  const pg=await br.newPage({viewport:{width:390,height:844},deviceScaleFactor:2,hasTouch:true});
  const h=[]; pg.on('pageerror',e=>h.push(e.message));
  await pg.goto('file://'+YOL); await pg.waitForTimeout(2700);
+
+  /* §304: KOÇ ekranı artık AÇILIŞ ekranı (body.kocKip). Klasik arayüz
+     altında duruyor ama opacity:0 + pointer-events:none oluyor —
+     ölçüm ve dokunma testleri önce onu kapatmalı. */
+  await pg.evaluate(()=>{try{kocKapat()}catch(e){document.body.classList.remove('kocKip')}});
+  await pg.waitForTimeout(250);
  const R=[]; const chk=(a,ok,x)=>{R.push((ok?'  ✓ ':'  ✗ ')+a+(!ok&&x!==undefined?' :: '+JSON.stringify(x).slice(0,300):''));if(!ok)R.__f=(R.__f||0)+1};
 
  /* 1 · KOD KUYRUĞU · 68 eksikte 68 soru sorulmalı (34 değil) */

@@ -53,6 +53,27 @@ vm.runInContext(js+`;globalThis.API={GOREVLER,TOHUM,SORU,KOMBO,KHARITA,ISARET,SO
  RB,DB,TEMEL,D,SURUM,SINAV,BITIS,YKD};
  globalThis.setSaat=m=>{globalThis.__SAAT=m};
  globalThis.setGun=d=>{globalThis.__GUN=d};`,c);
+
+/* ── §304 · KAPI FİKSTÜRÜ · PROGRAMLI 24'LÜ BRANŞ DENEMESİ ────────────
+   Kullanıcının yeni planı (8–22 Ağustos) 15 günün tamamını tam denemeye ve
+   ders günlerine ayırdı; planda PROGRAMLI 24'lü kart KALMADI (eski planda
+   39 taneydi). Havuz · çekme · numaralandırma · yer açma makinesi hâlâ
+   kodda ve sınanmaya devam etmeli — yoksa kapı kaybı sessiz olurdu.
+   Kapılar bu fikstürle kendi kartlarını kuruyor; UYGULAMA VERİSİ (GOREVLER
+   içindeki gerçek plan) DEĞİŞMİYOR, eklenen kayıtlar `fik:true` taşıyor ve
+   den24Temizle() ile geri alınıyor. */
+vm.runInContext(`globalThis.den24Fikstur=function(br,gunler){
+  const T=['Anatomi','Fizyoloji','Biyokimya','Mikrobiyoloji','Patoloji','Farmakoloji','Histo-Embriyoloji'];
+  gunler.forEach(function(d,i){GOREVLER.push({d:d,b:'D',t:'16:00–16:56',
+    blokT:'16:00–17:15',blokSon:'17:15',br:br,
+    k:"24'lü deneme "+(i+1)+" · "+br,src:"TUSDATA 24'lü branş denemeleri",
+    sure:0.94,act:'deneme24',tur:(T.indexOf(br)>=0?'T':'K'),kaz:0,soru:0,
+    z:(DEN_ESL[br]||br),mola:null,sira:[1,1],fik:true,
+    why:"Kapı fikstürü · 24'lü branş denemesi.",tag:'turuncu'})});
+  return GOREVLER.filter(function(g){return g.fik}).length};
+globalThis.den24Temizle=function(){
+  for(let i=GOREVLER.length-1;i>=0;i--)if(GOREVLER[i].fik)GOREVLER.splice(i,1);
+  return GOREVLER.filter(function(g){return g.fik}).length};`,c);
 c.setPanel=(u,p)=>{UZ=u;PW=p;brifEl.classList._s.clear()};
 c.getSinif=()=>[...brifEl.classList._s];
 c.getIcerik=()=>icerik(brifEl.classList._s,PW);

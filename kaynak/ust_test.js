@@ -30,6 +30,12 @@ const OLC=[{ad:'kucuk',w:320,h:700},{ad:'dar',w:360,h:780},{ad:'telefon',w:390,h
     hasTouch:o.w<900,isMobile:o.w<900});
   const h=[]; pg.on('pageerror',e=>h.push(e.message));
   await pg.goto('file://'+YOL); await pg.waitForTimeout(2700);
+
+  /* §304: KOÇ ekranı artık AÇILIŞ ekranı (body.kocKip). Klasik arayüz
+     altında duruyor ama opacity:0 + pointer-events:none oluyor —
+     ölçüm ve dokunma testleri önce onu kapatmalı. */
+  await pg.evaluate(()=>{try{kocKapat()}catch(e){document.body.classList.remove('kocKip')}});
+  await pg.waitForTimeout(250);
   const r=await pg.evaluate(()=>{
     const u=document.getElementById('ust');
     const W=window.innerWidth;
